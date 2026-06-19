@@ -221,30 +221,76 @@ def rank_order_surrogate_test(
     n_surrogates: int = 19,
     alpha: float = 0.05,
     seed: int = 123,
+    max_iter: int = 200,
+    tol: float = 1e-3,
+    fallback: FallbackMode = "warn",
+    max_relative_spectrum_error: float = 0.10,
+    max_covariance_relative_rmsd: float = 0.35,
 ) -> dict[str, object]:
-    """One-sided non-parametric rank-order surrogate test."""
+    """One-sided non-parametric rank-order surrogate test.
+
+    Every surrogate is generated under an explicit MIAAFT budget and its
+    convergence plus spectral/covariance fidelity is measured, not assumed. The
+    null model that produced the p-value is therefore auditable: a non-converged
+    or low-fidelity surrogate set is reported through ``surrogate_convergence`` so
+    callers can refuse to promote a verdict that rests on a mis-specified null.
+
+    This closes the historical hole where the verdict path silently ran a fixed,
+    sub-convergence iteration budget and discarded the convergence flag, letting a
+    SURVIVED/REFUTED verdict ride on a null that never plateaued.
+    """
     minimum = int(1 / alpha) - 1
     if n_surrogates < minimum:
         raise ValueError(f"n_surrogates must be >= {minimum} for alpha={alpha}")
     rng = np.random.default_rng(seed)
-    original_stat = float(statistic(np.asarray(signal, dtype=float)))
-    surrogate_stats = []
+    x = np.asarray(signal, dtype=float)
+    original_stat = float(statistic(x))
+    surrogate_stats: list[float] = []
+    n_nonconverged = 0
+    worst_spectrum_error = 0.0
+    worst_covariance_rmsd = 0.0
     for _ in range(n_surrogates):
-        s = miaaft_surrogate(
-            np.asarray(signal, dtype=float),
-            n_iter=30,
-            tol=1e-4,
+        s, diag = miaaft_surrogate(
+            x,
+            max_iter=max_iter,
+            tol=tol,
             seed=int(rng.integers(0, 2**32 - 1)),
+            fallback=fallback,
+            return_diagnostics=True,
         )
+        spectrum_error = float(diag["relative_spectrum_error"])
+        covariance_rmsd = float(diag["covariance_relative_rmsd"])
+        accepted = bool(
+            diag["converged"]
+            and spectrum_error <= max_relative_spectrum_error
+            and covariance_rmsd <= max_covariance_relative_rmsd
+        )
+        if not accepted:
+            n_nonconverged += 1
+        worst_spectrum_error = max(worst_spectrum_error, spectrum_error)
+        worst_covariance_rmsd = max(worst_covariance_rmsd, covariance_rmsd)
         surrogate_stats.append(float(statistic(np.asarray(s, dtype=float))))
     surrogate_stats_arr = np.array(surrogate_stats, dtype=float)
     exceed = int(np.sum(surrogate_stats_arr >= original_stat))
     p_value = (exceed + 1) / (n_surrogates + 1)
     rejected = bool(p_value <= alpha)
+    convergence = {
+        "all_converged": bool(n_nonconverged == 0),
+        "n_nonconverged": int(n_nonconverged),
+        "n_surrogates": int(n_surrogates),
+        "max_iter": int(max_iter),
+        "tol": float(tol),
+        "fallback": str(fallback),
+        "max_relative_spectrum_error": float(max_relative_spectrum_error),
+        "max_covariance_relative_rmsd": float(max_covariance_relative_rmsd),
+        "worst_relative_spectrum_error": float(worst_spectrum_error),
+        "worst_covariance_relative_rmsd": float(worst_covariance_rmsd),
+    }
     return {
         "original_statistic": original_stat,
         "surrogate_statistics": surrogate_stats_arr.tolist(),
         "p_value": float(p_value),
         "alpha": alpha,
         "rejected": rejected,
+        "surrogate_convergence": convergence,
     }

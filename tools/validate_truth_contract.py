@@ -24,6 +24,29 @@ REQUIRED_LIMIT_DISCLOSURES = [
     "not regulatory validation",
     "does **not** prove BCI claims",
 ]
+# Explicitly enumerated negated/non-goal uses of an otherwise-forbidden lexeme.
+# Every legitimate occurrence is listed and reviewable; any NEW affirmative use
+# (e.g. "BSFF proves BCI claims") that is not on this list trips the gate.
+ALLOWED_NEGATED_PHRASES = [
+    "prove BCI claims true",  # docs/ARCHITECTURE.md "Non-goals: BSFF does not: ..."
+]
+
+
+def find_forbidden_claims(corpus: str) -> list[str]:
+    """Return forbidden affirmative claims present in ``corpus``.
+
+    Negated disclosures and explicitly enumerated non-goal phrasings are stripped
+    first so a legitimate "does not prove BCI claims" sentence is not mistaken for
+    the affirmative "proves BCI claims"; matching is case-insensitive so
+    capitalised patterns ("TISEAN validated", "proves BCI claims") actually
+    enforce instead of silently never firing against a lower-cased corpus.
+    """
+    scan = corpus.lower()
+    for phrase in (*REQUIRED_LIMIT_DISCLOSURES, *ALLOWED_NEGATED_PHRASES):
+        scan = scan.replace(phrase.lower(), " ")
+    return [
+        claim for claim in FORBIDDEN_UNQUALIFIED_CLAIMS if re.search(claim, scan, re.IGNORECASE)
+    ]
 
 
 def main() -> int:
@@ -42,10 +65,8 @@ def main() -> int:
         for p in [ROOT / "README.md", ROOT / "VERDICT.md", *sorted((ROOT / "docs").glob("*.md"))]
         if p.exists()
     )
-    lower = corpus.lower()
-    for claim in FORBIDDEN_UNQUALIFIED_CLAIMS:
-        if re.search(claim, lower):
-            failures.append(f"forbidden unqualified claim present: {claim}")
+    for claim in find_forbidden_claims(corpus):
+        failures.append(f"forbidden unqualified claim present: {claim}")
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     for disclosure in REQUIRED_LIMIT_DISCLOSURES:
         if disclosure not in readme:

@@ -28,6 +28,18 @@ def load_json(path: str | Path) -> dict[str, Any]:
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
+def canonical_artifact_sha256(report: dict[str, Any]) -> str:
+    """Recompute the artifact hash over the report with its own hash field removed.
+
+    The generator hashes the report *before* inserting ``artifact_sha256``; this
+    reproduces that exact byte sequence so a tampered or non-canonical artifact is
+    machine-detectable instead of a decorative trust-me string.
+    """
+    clone = {k: v for k, v in report.items() if k != "artifact_sha256"}
+    serialized = json.dumps(clone, ensure_ascii=False, indent=2)
+    return sha256_bytes(serialized.encode("utf-8"))
+
+
 def validate_phase1_artifact(report: dict[str, Any]) -> list[str]:
     """Return machine-checkable failures for a BSFF validation artifact."""
     failures: list[str] = []
@@ -37,6 +49,10 @@ def validate_phase1_artifact(report: dict[str, Any]) -> list[str]:
         failures.append("pipeline did not complete")
     if report.get("status") != "SURVIVED_PHASE_1_GATES":
         failures.append("phase1 status is not SURVIVED_PHASE_1_GATES")
+    if "artifact_sha256" in report:
+        expected = canonical_artifact_sha256(report)
+        if report["artifact_sha256"] != expected:
+            failures.append("artifact_sha256 mismatch (artifact tampered or non-canonical)")
     gates = report.get("gates")
     if not isinstance(gates, dict):
         failures.append("gates must be a dictionary")
@@ -50,6 +66,17 @@ def validate_phase1_artifact(report: dict[str, Any]) -> list[str]:
     leak = gates.get("block_design_leakage", {})
     if isinstance(leak, dict) and not leak.get("flagged"):
         failures.append("block-design leakage smoke did not flag leakage")
+    # A SURVIVED artifact may not ride on a non-converged null: every surrogate
+    # gate that carries convergence evidence must report all_converged.
+    for gate_name in ("ar1_null_not_rejected", "henon_power_smoke"):
+        gate = gates.get(gate_name, {})
+        if not isinstance(gate, dict):
+            continue
+        gate_conv = gate.get("surrogate_convergence")
+        if gate_conv is None:
+            failures.append(f"{gate_name} missing surrogate_convergence evidence")
+        elif not gate_conv.get("all_converged"):
+            failures.append(f"{gate_name} surrogate null did not converge")
     return failures
 
 
