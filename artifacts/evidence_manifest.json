@@ -12,9 +12,9 @@
     "src/bsff/calibration.py": "96eb02c83fed508bfb90b40c9e8d90dc6f3ffed58e28dc69a7c0b08fae2ae57e",
     "src/bsff/validation.py": "51df72641509c66ca40cd2eeaaea911ffa287fcb9ce51b9e488d97761b03581a",
     ".github/workflows/ci.yml": "43294d9e4e9e6657d40e73a6312ea8028772672a9a552cd0b05f856bc028e3e6",
-    ".github/workflows/security.yml": "d7ee876cbac85be3b6eb2b33dbb42f862fbd5cbd82ae9be2a78cab869708c860",
+    ".github/workflows/security.yml": "4f930a2cd46b59f049efce4cdded3f1dea9cd2c1d983f414c2335624a7c08a37",
     ".github/dependabot.yml": "6799d8ab038944260dee951e91ae6de1ef1357f98838da299c49b3735f0ed4ef"
   },
   "provenance_manifest": "artifacts/provenance_manifest.json",
-  "provenance_manifest_sha256": "1301aa7fabdb42a15bed26aa909fc5d681e0b8e9df5f2f756f7a1de38b9466e4"
+  "provenance_manifest_sha256": "b90eddc68100a64493ea17acd80fe394e3b8670eb68c058d40b92429a7d4e5fd"
 }
