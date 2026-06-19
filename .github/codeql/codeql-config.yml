@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+#
+# Advanced CodeQL configuration for BSFF. Replaces the default query set with the
+# security-extended and security-and-quality suites plus this project's own
+# domain-specific queries (reproducibility, fail-closed, leakage hygiene).
+name: "BSFF CodeQL advanced configuration"
+
+# Analyse the shipped kernel and tooling; do not spend budget on tests/fixtures
+# (their asserts and fixtures are not the attack surface).
+paths:
+  - src/bsff
+  - tools
+paths-ignore:
+  - tests
+  - "**/*.md"
+
+queries:
+  - uses: security-extended
+  - uses: security-and-quality
+  # Custom domain-specific pack (./codeql/custom-queries/python) is wired in once
+  # each query is compiled and run against a local CodeQL database — never shipped
+  # into the required check unverified.
+
+# Keep the signal high: drop low-precision noise, keep everything security- or
+# correctness-bearing.
+query-filters:
+  - exclude:
+      precision: low
