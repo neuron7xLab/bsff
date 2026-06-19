@@ -123,8 +123,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": ".github/workflows/security.yml",
-      "sha256": "ab13231e4e51d5ba09793b6a115c0f76db1beba7763be25bc9a78b305c9d8906",
-      "size_bytes": 2188
+      "sha256": "d7ee876cbac85be3b6eb2b33dbb42f862fbd5cbd82ae9be2a78cab869708c860",
+      "size_bytes": 2647
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -977,5 +977,5 @@
       "size_bytes": 1810
     }
   ],
-  "manifest_sha256": "8fd30b824fe5e7567b20fa2bafa85f2ec1329feaa57d53cad1a7df4faba31c3e"
+  "manifest_sha256": "1c848606ad5e4b5d90757c77f289eb916ffd6729de4d41135a02d909746fb7e4"
 }
