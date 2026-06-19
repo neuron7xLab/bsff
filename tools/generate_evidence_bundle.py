@@ -51,6 +51,9 @@ def main() -> int:
             "tests/*.py",
             "tools/*.py",
             "docs/*.md",
+            "paper/*.md",
+            "paper/*.bib",
+            ".zenodo.json",
             ".github/workflows/*.yml",
         ],
     )

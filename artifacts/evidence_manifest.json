@@ -2,19 +2,19 @@
   "document_ref": "OS-BSFF-CORE-2026.1",
   "evidence_status": "SURVIVED_PHASE_1_GATES",
   "validation_artifact": "artifacts/bsff_phase1_validation.json",
-  "validation_artifact_sha256": "68fe3cf73342d6837b7bd1932a56edede9fd42e1f9c20dc4d2e92c6116e47bfe",
+  "validation_artifact_sha256": "834790e4e4142c8ac28ba0f801ce9de2fc3020c67b9b1f5badddba20c614fa68",
   "tracked_files": {
-    "README.md": "2903086d9a9fedc3b9b267e13bebf0e1d248f8ca7622fe78db7eb175b3d54cb8",
+    "README.md": "9fe110e3e89e6a71a23181a3cec8ea6370ec6937640c58791774a755f637ff9b",
     "VERDICT.md": "a538921680300b4d10b6f31e0e5243b3e6904148f0b0413bb7c64c09549121eb",
-    "pyproject.toml": "8d497e4e3a6f6d35d181f059cedc6dcd4cf4477f4340f1774095e9b0dbb1e348",
+    "pyproject.toml": "8746cf6cdb687b26be6c909276f3caa9c757429e1fb00395f8c5cc7b74372ddf",
     "src/bsff/surrogate_engine.py": "74647f1d1c2a84b9e6bfdfb6bcbf40a4defda2a67b848708e67db0b50d6fdefe",
     "src/bsff/verdict_engine.py": "8ed4a0f7258b6d215a3f1131f6f7146760f58073b7467020f34cb193047b1ed6",
     "src/bsff/calibration.py": "96eb02c83fed508bfb90b40c9e8d90dc6f3ffed58e28dc69a7c0b08fae2ae57e",
     "src/bsff/validation.py": "bcd47d3d1aee4d256f340c7cd6b3428f2a9b02d313c8d17222cdb13bf96f773c",
-    ".github/workflows/ci.yml": "c5c30d377745d9e9debbf13bd57da431c0f9dc6a7963127c9975cff3b36a0f9a",
-    ".github/workflows/security.yml": "925918c0b6f376af9d9bc9c8f0c7d53b9fff82fd16790094b7d6bc06dbc92fd0",
+    ".github/workflows/ci.yml": "43294d9e4e9e6657d40e73a6312ea8028772672a9a552cd0b05f856bc028e3e6",
+    ".github/workflows/security.yml": "be9da9ba617c250245881f688893299d5bbcb676af55ccb71667f337f6b8cacb",
     ".github/dependabot.yml": "6799d8ab038944260dee951e91ae6de1ef1357f98838da299c49b3735f0ed4ef"
   },
   "provenance_manifest": "artifacts/provenance_manifest.json",
-  "provenance_manifest_sha256": "510983e5e3b66dab4445424251d35c08487d01a569c8455cb5e62fb616e0a995"
+  "provenance_manifest_sha256": "f438cc983cfd5487c0c447fed221f6951fe822e3fc3a20d49539a1cf3a281715"
 }
