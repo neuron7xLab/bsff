@@ -39,7 +39,15 @@ jobs:
       - name: Triage SARIF — hard-fail on critical, surface the rest
         run: |
           sarif="$(ls sarif-results/*.sarif | head -1)"
-          python3 tools/triage_sarif.py "$sarif" --block-at critical --json sarif-results/triage.json
+          {
+            echo "### CodeQL SARIF triage"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          python3 tools/triage_sarif.py "$sarif" --block-at critical \
+            --json sarif-results/triage.json | tee -a "$GITHUB_STEP_SUMMARY"
+          code=${PIPESTATUS[0]}
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          exit "$code"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
