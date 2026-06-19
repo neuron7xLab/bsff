@@ -5,7 +5,7 @@
   "status": "ADAPTIVE_ARCHITECTURE_CONTROL_PLANE_READY",
   "generated_at_utc": "2026-06-19T12:14:00Z",
   "validation_summary": {
-    "tests": "28/28 passed",
+    "tests": "38/38 passed",
     "ruff": "PASS",
     "architecture_contract": "PASS",
     "truth_contract": "PASS",
