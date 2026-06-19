@@ -1,0 +1,58 @@
+{
+  "all_passed": true,
+  "cases": [
+    {
+      "amplitude_spectrum_rel_error": 0.011352,
+      "channels": 4,
+      "checks": {
+        "miaaft_covariance_ok": true,
+        "miaaft_marginal_exact": true,
+        "miaaft_spectrum_ok": true,
+        "var_phase_covariance_ok": true
+      },
+      "marginal_max_abs_diff": 0.0,
+      "miaaft_covariance_rel_error": 0.000349,
+      "passed": true,
+      "samples": 1024,
+      "var_phase_covariance_rel_error": 0.004808
+    },
+    {
+      "amplitude_spectrum_rel_error": 0.006758,
+      "channels": 8,
+      "checks": {
+        "miaaft_covariance_ok": true,
+        "miaaft_marginal_exact": true,
+        "miaaft_spectrum_ok": true,
+        "var_phase_covariance_ok": true
+      },
+      "marginal_max_abs_diff": 0.0,
+      "miaaft_covariance_rel_error": 0.000342,
+      "passed": true,
+      "samples": 2048,
+      "var_phase_covariance_rel_error": 0.00458
+    },
+    {
+      "amplitude_spectrum_rel_error": 0.013633,
+      "channels": 16,
+      "checks": {
+        "miaaft_covariance_ok": true,
+        "miaaft_marginal_exact": true,
+        "miaaft_spectrum_ok": true,
+        "var_phase_covariance_ok": true
+      },
+      "marginal_max_abs_diff": 0.0,
+      "miaaft_covariance_rel_error": 0.000903,
+      "passed": true,
+      "samples": 1024,
+      "var_phase_covariance_rel_error": 0.003784
+    }
+  ],
+  "ensemble": 20,
+  "schema": "bsff.cross_validation.v1",
+  "tisean_reference": "not_available_on_path",
+  "tolerances": {
+    "covariance_rel": 0.05,
+    "marginal_exact": 1e-10,
+    "spectrum_rel": 0.05
+  }
+}

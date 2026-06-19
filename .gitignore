@@ -16,3 +16,4 @@ dist/
 .env.*
 !.env.example
 artifacts/*.tmp
+.hypothesis/

@@ -15,9 +15,14 @@ FallbackMode = Literal["warn", "var_phase", "raise"]
 def _as_2d(x: FloatArray) -> FloatArray:
     arr = np.asarray(x, dtype=float)
     if arr.ndim == 1:
-        return arr[None, :]
-    if arr.ndim != 2:
+        arr = arr[None, :]
+    elif arr.ndim != 2:
         raise ValueError("signal must be shaped (channels, samples) or (samples,)")
+    # Fail closed on non-finite input: a surrogate test that silently propagates
+    # NaN/Inf would emit a statistic that looks decisive but is meaningless. The
+    # whole point of this engine is to refuse to launder garbage into a verdict.
+    if not np.all(np.isfinite(arr)):
+        raise ValueError("signal must be finite; got NaN or Inf")
     return arr
 
 
