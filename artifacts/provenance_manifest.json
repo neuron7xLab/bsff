@@ -183,8 +183,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "README.md",
-      "sha256": "210ee05289ec78377c805820462c57eac7b329e52a9b97648a82aa6ffb795d7b",
-      "size_bytes": 18698
+      "sha256": "caf12649bf9d52fd847cd905314b51c83eb86ec7d53a0fb916fc36a69eb48ba3",
+      "size_bytes": 18785
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -373,8 +373,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "pyproject.toml",
-      "sha256": "02543578aef7c47ad3e91fe29b460a3939300587704d38d3cab18a346b4bda83",
-      "size_bytes": 1390
+      "sha256": "72e69b0362846b1dcded905dafc27dececb68f22d566655fc6e4cc9fc67977bf",
+      "size_bytes": 1407
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -383,8 +383,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "src/bsff/__init__.py",
-      "sha256": "fe8d9b19eb9f7d3602f64d2a2e96d85494e724a3f634e16e7c565f294cdedc65",
-      "size_bytes": 1713
+      "sha256": "92e8f38e394e71b8970b40d3cf6331a5edd249a2c5a48d6f73977a6856196066",
+      "size_bytes": 1881
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -425,6 +425,16 @@
       "artifact_path": "src/bsff/evidence.py",
       "sha256": "a758758763b45ed313fa281d90cd7912b2fdf62c5d1cc27620ef5db77ebac271",
       "size_bytes": 1618
+    },
+    {
+      "project": "BSFF: BCI Signal Falsification Framework",
+      "author": "Yaroslav Vasylenko / neuron7xLab",
+      "repository": "https://github.com/neuron7xLab/bsff",
+      "code_license": "GPL-3.0-or-later",
+      "docs_license": "CC-BY-4.0",
+      "artifact_path": "src/bsff/json_schema.py",
+      "sha256": "f6df612568c0d1a7f6e52aabbf8d1edb12f71c2fc5b4d24c1e10d2f5794b380e",
+      "size_bytes": 3312
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -642,6 +652,16 @@
       "repository": "https://github.com/neuron7xLab/bsff",
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
+      "artifact_path": "tests/test_json_schema.py",
+      "sha256": "c621dfb7fb5a42a4f807183360106f3426995e9d14faa8dd1eeb7a8bf5b02258",
+      "size_bytes": 2818
+    },
+    {
+      "project": "BSFF: BCI Signal Falsification Framework",
+      "author": "Yaroslav Vasylenko / neuron7xLab",
+      "repository": "https://github.com/neuron7xLab/bsff",
+      "code_license": "GPL-3.0-or-later",
+      "docs_license": "CC-BY-4.0",
       "artifact_path": "tests/test_miaaft_convergence.py",
       "sha256": "2f229ffc902752262e313d527d8030ed8775aab341041d5158792cc77caeb915",
       "size_bytes": 924
@@ -842,6 +862,16 @@
       "repository": "https://github.com/neuron7xLab/bsff",
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
+      "artifact_path": "tools/export_schemas.py",
+      "sha256": "f5690ce55f654f41153bdf3db4e2445d12a00f8c2129813fca28eaa0bd83cc7a",
+      "size_bytes": 1069
+    },
+    {
+      "project": "BSFF: BCI Signal Falsification Framework",
+      "author": "Yaroslav Vasylenko / neuron7xLab",
+      "repository": "https://github.com/neuron7xLab/bsff",
+      "code_license": "GPL-3.0-or-later",
+      "docs_license": "CC-BY-4.0",
       "artifact_path": "tools/generate_evidence_bundle.py",
       "sha256": "02b550239f79a3103ea0e236a77a553af70d96489cd8dfab86ad36e7ed45b2da",
       "size_bytes": 2284
@@ -947,5 +977,5 @@
       "size_bytes": 1810
     }
   ],
-  "manifest_sha256": "eba583c9bc440c36c087c9e9343f446670911bf0bfdb05f77fc4c8ff4e712eef"
+  "manifest_sha256": "b4b761345436878f5b1f3a75c759102142a9435aa4a3c69645a83060ff62179e"
 }

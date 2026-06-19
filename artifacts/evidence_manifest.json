@@ -2,19 +2,19 @@
   "document_ref": "OS-BSFF-CORE-2026.1",
   "evidence_status": "SURVIVED_PHASE_1_GATES",
   "validation_artifact": "artifacts/bsff_phase1_validation.json",
-  "validation_artifact_sha256": "834790e4e4142c8ac28ba0f801ce9de2fc3020c67b9b1f5badddba20c614fa68",
+  "validation_artifact_sha256": "0710770017bc7278e66aa1ce1cba1f85bacff11cda745d466aee6083faba4e6a",
   "tracked_files": {
-    "README.md": "5d2a0184cb1d12e2f8b085ff221aaad48a8cdcd3ff6321319f4d2ca5f14d4402",
-    "VERDICT.md": "a538921680300b4d10b6f31e0e5243b3e6904148f0b0413bb7c64c09549121eb",
-    "pyproject.toml": "02543578aef7c47ad3e91fe29b460a3939300587704d38d3cab18a346b4bda83",
-    "src/bsff/surrogate_engine.py": "1649a04dc7dafe3b9442d9e35ced434ff4fc39bf74312a19b9f85eb19c42a06f",
-    "src/bsff/verdict_engine.py": "8ed4a0f7258b6d215a3f1131f6f7146760f58073b7467020f34cb193047b1ed6",
+    "README.md": "caf12649bf9d52fd847cd905314b51c83eb86ec7d53a0fb916fc36a69eb48ba3",
+    "VERDICT.md": "02016c459ed66359e1513b7d429f7be3c47a38a5bc1b626e9ee6e9cdd7e9b643",
+    "pyproject.toml": "72e69b0362846b1dcded905dafc27dececb68f22d566655fc6e4cc9fc67977bf",
+    "src/bsff/surrogate_engine.py": "4ab68684b7848f5a2a14ef2cc7936ec67ff8df22443b1f112e8400eaf1b3733e",
+    "src/bsff/verdict_engine.py": "d255e9e24a7e5d682b091b5a39c303124cd85101920c527172b3082461f14d1e",
     "src/bsff/calibration.py": "96eb02c83fed508bfb90b40c9e8d90dc6f3ffed58e28dc69a7c0b08fae2ae57e",
-    "src/bsff/validation.py": "bcd47d3d1aee4d256f340c7cd6b3428f2a9b02d313c8d17222cdb13bf96f773c",
+    "src/bsff/validation.py": "51df72641509c66ca40cd2eeaaea911ffa287fcb9ce51b9e488d97761b03581a",
     ".github/workflows/ci.yml": "43294d9e4e9e6657d40e73a6312ea8028772672a9a552cd0b05f856bc028e3e6",
     ".github/workflows/security.yml": "ab13231e4e51d5ba09793b6a115c0f76db1beba7763be25bc9a78b305c9d8906",
     ".github/dependabot.yml": "6799d8ab038944260dee951e91ae6de1ef1357f98838da299c49b3735f0ed4ef"
   },
   "provenance_manifest": "artifacts/provenance_manifest.json",
-  "provenance_manifest_sha256": "9adf3d8648949a647d21f6812116a1e9514e8c36bece9bc7ee1aff33d730fdb9"
+  "provenance_manifest_sha256": "8473b74b6ad37f549d61782577bbc40cbcababbca38ebe4388a8d83eebe24195"
 }

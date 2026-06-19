@@ -1,0 +1,70 @@
+{
+  "$id": "https://neuron7xlab.github.io/bsff/schemas/claim_spec.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "alpha": {
+      "type": "number"
+    },
+    "claim_id": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "n_channels": {
+      "type": "integer"
+    },
+    "n_samples": {
+      "type": "integer"
+    },
+    "null_model": {
+      "type": "string"
+    },
+    "sampling_rate_hz": {
+      "type": "number"
+    },
+    "signal_type": {
+      "enum": [
+        "EEG",
+        "ECoG",
+        "sEEG",
+        "spike",
+        "LFP"
+      ],
+      "type": "string"
+    },
+    "split_policy": {
+      "type": "string"
+    },
+    "stationarity_gate": {
+      "type": "string"
+    },
+    "statistic": {
+      "type": "string"
+    },
+    "surrogate_count": {
+      "type": "integer"
+    },
+    "task_type": {
+      "enum": [
+        "classification",
+        "regression",
+        "connectivity",
+        "nonlinear_structure"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "claim_id",
+    "signal_type",
+    "task_type",
+    "sampling_rate_hz",
+    "n_channels",
+    "n_samples",
+    "statistic"
+  ],
+  "title": "BSFF ClaimSpec",
+  "type": "object"
+}
