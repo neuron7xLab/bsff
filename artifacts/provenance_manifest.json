@@ -183,7 +183,7 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "README.md",
-      "sha256": "c8fb76795567e5c024d1cf6c306110f953401c3b3ed25dbe0674538129f3a5df",
+      "sha256": "7ee9623334922736ce45a8e378eb7f0c01f63e618de0358afad7e1a3144a389a",
       "size_bytes": 18443
     },
     {
@@ -235,6 +235,16 @@
       "artifact_path": "docs/DEVELOPMENT_PACKAGE.md",
       "sha256": "216feccfa97b7417baecc77e324ee269206af485db66eacabdc4f53413b66ea8",
       "size_bytes": 2075
+    },
+    {
+      "project": "BSFF: BCI Signal Falsification Framework",
+      "author": "Yaroslav Vasylenko / neuron7xLab",
+      "repository": "https://github.com/neuron7xLab/bsff",
+      "code_license": "GPL-3.0-or-later",
+      "docs_license": "CC-BY-4.0",
+      "artifact_path": "docs/FAILURE_MODES.md",
+      "sha256": "967b58ce38c96eeed0db3d58754fd08a7da8009b97bc440b7e7d8fa12b180843",
+      "size_bytes": 2083
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -363,8 +373,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "pyproject.toml",
-      "sha256": "8746cf6cdb687b26be6c909276f3caa9c757429e1fb00395f8c5cc7b74372ddf",
-      "size_bytes": 1373
+      "sha256": "02543578aef7c47ad3e91fe29b460a3939300587704d38d3cab18a346b4bda83",
+      "size_bytes": 1390
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -513,8 +523,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "src/bsff/surrogate_engine.py",
-      "sha256": "74647f1d1c2a84b9e6bfdfb6bcbf40a4defda2a67b848708e67db0b50d6fdefe",
-      "size_bytes": 9095
+      "sha256": "1649a04dc7dafe3b9442d9e35ced434ff4fc39bf74312a19b9f85eb19c42a06f",
+      "size_bytes": 9442
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -672,6 +682,26 @@
       "repository": "https://github.com/neuron7xLab/bsff",
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
+      "artifact_path": "tests/test_surrogate_chaos.py",
+      "sha256": "1a03bc07e9bff8f50a1085402eeac1a7db89657a7ba113be1a8ba83f45f05685",
+      "size_bytes": 3178
+    },
+    {
+      "project": "BSFF: BCI Signal Falsification Framework",
+      "author": "Yaroslav Vasylenko / neuron7xLab",
+      "repository": "https://github.com/neuron7xLab/bsff",
+      "code_license": "GPL-3.0-or-later",
+      "docs_license": "CC-BY-4.0",
+      "artifact_path": "tests/test_surrogate_cross_validation.py",
+      "sha256": "6803d58c066666d63d4e97a14bc5becb827216795b44a80628a99f09ef912343",
+      "size_bytes": 1251
+    },
+    {
+      "project": "BSFF: BCI Signal Falsification Framework",
+      "author": "Yaroslav Vasylenko / neuron7xLab",
+      "repository": "https://github.com/neuron7xLab/bsff",
+      "code_license": "GPL-3.0-or-later",
+      "docs_license": "CC-BY-4.0",
       "artifact_path": "tests/test_surrogate_fallback.py",
       "sha256": "3fb2cd04f24cae071a64d97e02f9b28b41ba5aeb53ebd69266047dfc259da236",
       "size_bytes": 2137
@@ -735,6 +765,16 @@
       "artifact_path": "tools/check_github_actions_policy.py",
       "sha256": "092f7d9e000cbb49ae04232963b486d53f7e116a1e486eb722224b4a736d5950",
       "size_bytes": 2099
+    },
+    {
+      "project": "BSFF: BCI Signal Falsification Framework",
+      "author": "Yaroslav Vasylenko / neuron7xLab",
+      "repository": "https://github.com/neuron7xLab/bsff",
+      "code_license": "GPL-3.0-or-later",
+      "docs_license": "CC-BY-4.0",
+      "artifact_path": "tools/cross_validate_surrogate.py",
+      "sha256": "a8edd9e73a73d02677c07b1e86610c44078e32158e930602ec717defb63dfd61",
+      "size_bytes": 4878
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -837,5 +877,5 @@
       "size_bytes": 1810
     }
   ],
-  "manifest_sha256": "130a5d01763431384bfba852564e1d57a00e1568553e716b3cd0a5b5d13d8d62"
+  "manifest_sha256": "68544c756cad5a40095d23fe34970bacee13c1f9e41950f32232d0904313eb97"
 }
