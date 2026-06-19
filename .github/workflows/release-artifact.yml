@@ -1,0 +1,43 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+
+name: Release Artifact
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  build-attest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip build
+      - run: python -m build
+      - run: python tools/generate_evidence_bundle.py
+      - run: python tools/generate_provenance_manifest.py
+      - run: python tools/validate_ip_provenance.py
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            dist/*
+            artifacts/*.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bsff-release-${{ github.ref_name }}
+          path: |
+            dist/*
+            artifacts/*.json
+            NOTICE
+            CITATION.cff

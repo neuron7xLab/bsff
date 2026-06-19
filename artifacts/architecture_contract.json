@@ -1,0 +1,108 @@
+{
+  "claim_id": "architecture-contract-smoke",
+  "verdict": "SURVIVED",
+  "policy": {
+    "name": "smoke",
+    "alpha": 0.05,
+    "surrogate_count": 19,
+    "stationarity_mode": "warn",
+    "bayesian_evidence": false,
+    "leakage_fail_closed": true,
+    "miaaft_max_iter": 200,
+    "miaaft_tol": 0.001,
+    "miaaft_fallback": "warn",
+    "max_channels_ci": 32,
+    "max_samples_ci": 8192,
+    "covariance_rmsd_warn": 0.35,
+    "spectrum_error_warn": 0.1
+  },
+  "evidence_graph": {
+    "node_count": 4,
+    "nodes": [
+      {
+        "stage_id": "stationarity_gate",
+        "status": "PASS",
+        "fatal": false,
+        "evidence": {
+          "detector": "kpss_stationarity_gate",
+          "alpha": 0.05,
+          "all_stationary": true,
+          "n_channels_failed": 0,
+          "channel_results": [
+            {
+              "channel": 0,
+              "statistic": 0.4084933870285002,
+              "p_value": 0.07349422972909475,
+              "lags": 40,
+              "stationary": true
+            }
+          ]
+        },
+        "caveats": [],
+        "evidence_sha256": "c1d1bcb27a7d51f4393d75fc6e60f07e5acbe6dbbb10a7dae4b42c433210676c"
+      },
+      {
+        "stage_id": "leakage_gate",
+        "status": "PASS",
+        "fatal": false,
+        "evidence": {
+          "leakage_flags": {},
+          "flagged": false
+        },
+        "caveats": [],
+        "evidence_sha256": "752fdb69e1d1fe8e22b59b3f3e5c2070b4e3284ab2f001a17d00f16d3494058e"
+      },
+      {
+        "stage_id": "surrogate_attack",
+        "status": "PASS",
+        "fatal": false,
+        "evidence": {
+          "original_statistic": 0.6704736455669387,
+          "surrogate_statistics": [
+            0.08382540533620798,
+            0.04056887370140522,
+            0.07920657430846363,
+            0.08038082198844738,
+            0.11113834876637409,
+            0.14413256579593695,
+            0.11109485703595516,
+            0.06741683286676903,
+            0.0952071478538205,
+            0.06879070897010199,
+            0.08926764847231776,
+            0.07346759376491034,
+            0.08911887736050007,
+            0.06056249879761815,
+            0.062237954284475906,
+            0.10237263431580035,
+            0.08747113980941426,
+            0.11512796239798383,
+            0.04429981485194489
+          ],
+          "p_value": 0.05,
+          "alpha": 0.05,
+          "rejected": true
+        },
+        "caveats": [
+          "Low surrogate count: CI smoke evidence, not publication-grade evidence."
+        ],
+        "evidence_sha256": "0ec2d92d907ddba0dc2c454388982330a37d0734b2d071f1a2cade951f31bde6"
+      },
+      {
+        "stage_id": "bayesian_evidence",
+        "status": "SKIP",
+        "fatal": false,
+        "evidence": {
+          "reason": "bayesian evidence disabled"
+        },
+        "caveats": [],
+        "evidence_sha256": "6f38be237de5df4876af7184c66ffb33e35aaa9cb9a7adadc718d91443676c3f"
+      }
+    ],
+    "graph_sha256": "2b5bfdfc6fd3bc2fd59f6866491e8bd3b634d150906198c12dca84049a26fd6f"
+  },
+  "caveats": [
+    "Low surrogate count: CI smoke evidence, not publication-grade evidence."
+  ],
+  "contract_sha256": "e82337e071a557cea9cc8ce77e59f5f0aced653e8f05cca73f6099c1de19178c"
+}

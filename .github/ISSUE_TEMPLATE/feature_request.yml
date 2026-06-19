@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+
+name: Feature request
+about: Propose a falsification, validation, or governance feature
+labels: [enhancement, needs-design]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What kind of false claim does this prevent?
+    validations:
+      required: true
+  - type: textarea
+    id: mechanism
+    attributes:
+      label: Proposed mechanism
+      description: Describe the detector, invariant, calibration gate, or artifact contract.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Give deterministic pass/fail checks.
+    validations:
+      required: true

@@ -1,0 +1,42 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+
+name: Falsification claim
+about: Submit a BCI/EEG claim that BSFF should try to break
+labels: [claim, falsification, needs-evidence]
+body:
+  - type: input
+    id: claim_id
+    attributes:
+      label: Claim ID
+      placeholder: e.g. dataset-model-metric-2026-001
+    validations:
+      required: true
+  - type: textarea
+    id: claim
+    attributes:
+      label: Claim statement
+      description: State the exact metric or certificate being challenged.
+    validations:
+      required: true
+  - type: textarea
+    id: data_protocol
+    attributes:
+      label: Data/split/preprocessing protocol
+      description: Include split policy, preprocessing, stationarity handling, and leakage controls.
+    validations:
+      required: true
+  - type: dropdown
+    id: signal_type
+    attributes:
+      label: Signal type
+      options: [EEG, ECoG, sEEG, LFP, spike, other]
+    validations:
+      required: true
+  - type: textarea
+    id: artifacts
+    attributes:
+      label: Reproducibility artifacts
+      description: Link papers, code, data cards, logs, or JSON artifacts. No private medical data.
+    validations:
+      required: true

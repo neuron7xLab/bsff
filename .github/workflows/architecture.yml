@@ -1,0 +1,39 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+
+name: Architecture Contract
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  architecture-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[dev,leakage]'
+      - run: python tools/validate_architecture_contract.py
+      - run: python tools/validate_truth_contract.py
+      - run: python tools/check_github_actions_policy.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bsff-architecture-contract-${{ github.sha }}
+          path: artifacts/architecture_contract.json
+          if-no-files-found: error

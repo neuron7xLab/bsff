@@ -1,0 +1,7 @@
+Creative Commons Attribution 4.0 International
+
+SPDX-License-Identifier: CC-BY-4.0
+
+The canonical legal code is maintained by Creative Commons. This repository uses CC-BY-4.0 for documentation, diagrams, specifications, examples, and non-code text unless a file-level SPDX identifier states otherwise. Attribution must preserve title, author, source, license, and modification notice.
+
+Reference: https://creativecommons.org/licenses/by/4.0/legalcode

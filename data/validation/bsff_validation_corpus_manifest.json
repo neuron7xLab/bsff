@@ -1,0 +1,43 @@
+{
+  "arrays": {
+    "ar1_null_bank": [
+      16,
+      32,
+      1024
+    ],
+    "block_design_features": [
+      4096,
+      32
+    ],
+    "block_design_labels": [
+      4096
+    ],
+    "correlated_linear_null_bank": [
+      16,
+      32,
+      1024
+    ],
+    "gaussian_noise_bank": [
+      32,
+      32,
+      1024
+    ],
+    "henon_nonlinear_series": [
+      8192
+    ],
+    "nonstationary_walk_bank": [
+      8,
+      32,
+      1024
+    ]
+  },
+  "artifact": "data/validation/bsff_validation_corpus_v0_1_5.npz",
+  "bytes": 10028942,
+  "clinical_data": false,
+  "purpose": "deterministic validation corpus for open-source BSFF development and CI calibration",
+  "schema": "bsff.validation_corpus.v1",
+  "seed": 20260619,
+  "sha256": "c4fa6c15446f57c5ac5bdfb22f97946e961f935432417ebf8ec496c1a2b131dd",
+  "synthetic_only": true,
+  "version": "0.1.5"
+}

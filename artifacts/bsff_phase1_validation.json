@@ -1,0 +1,169 @@
+{
+  "document_ref": "OS-BSFF-CORE-2026.1",
+  "pipeline_status": "EXECUTION_COMPLETE",
+  "phase": "PHASE_1_OPERATIONAL_KERNEL",
+  "gates": {
+    "miaaft_convergence": {
+      "engine": "miaaft_common_phase",
+      "covariance_rmsd": 0.0009326820393120165,
+      "covariance_relative_rmsd": 0.0013074054436388184,
+      "mean_abs_spectrum_error": 0.3748889649141437,
+      "relative_spectrum_error": 0.01496180145184023,
+      "convergence_delta": 0.0005063805079669192,
+      "n_iter_actual": 33,
+      "max_iter": 200,
+      "tol": 0.001,
+      "converged": true,
+      "warning": ""
+    },
+    "ar1_null_not_rejected": {
+      "original_statistic": 0.02516474386644194,
+      "surrogate_statistics": [
+        0.021376479823083976,
+        0.0034841579062651596,
+        0.009411369355378505,
+        0.04376801695546362,
+        0.06305629247345469,
+        0.02514717760223239,
+        0.03907792903519451,
+        0.04502314716634437,
+        0.009666981474029127,
+        0.03324493600887529,
+        0.09278099749761676,
+        0.012047729769129097,
+        0.03640575156118858,
+        0.005834277546504846,
+        0.0034621847877134722,
+        0.018646090968222284,
+        0.0021673233783363953,
+        0.007458134918291368,
+        0.014851493802018546
+      ],
+      "p_value": 0.4,
+      "alpha": 0.05,
+      "rejected": false
+    },
+    "henon_power_smoke": {
+      "original_statistic": 0.6704736455669387,
+      "surrogate_statistics": [
+        0.08382540533620798,
+        0.04056887370140522,
+        0.07920657430846363,
+        0.08038082198844738,
+        0.11113834876637409,
+        0.14413256579593695,
+        0.11109485703595516,
+        0.06741683286676903,
+        0.0952071478538205,
+        0.06879070897010199,
+        0.08926764847231776,
+        0.07346759376491034,
+        0.08911887736050007,
+        0.06056249879761815,
+        0.062237954284475906,
+        0.10237263431580035,
+        0.08747113980941426,
+        0.11512796239798383,
+        0.04429981485194489
+      ],
+      "p_value": 0.05,
+      "alpha": 0.05,
+      "rejected": true
+    },
+    "block_design_leakage": {
+      "detector": "block_design_temporal_autocorrelation",
+      "flagged": true,
+      "mean_block_label_purity": 1.0,
+      "label_transition_rate": 0.05759162303664921,
+      "n_blocks": 12
+    },
+    "verdict_json": {
+      "claim_id": "bsff-cli-smoke",
+      "verdict": "SURVIVED",
+      "p_value": 0.05,
+      "original_statistic": 0.6704736455669387,
+      "surrogate_min": 0.04056887370140522,
+      "surrogate_max": 0.14413256579593695,
+      "leakage_flags": {},
+      "evidence": {
+        "stationarity_gate": {
+          "detector": "kpss_stationarity_gate",
+          "alpha": 0.05,
+          "all_stationary": true,
+          "n_channels_failed": 0,
+          "channel_results": [
+            {
+              "channel": 0,
+              "statistic": 0.4084933870285002,
+              "p_value": 0.07349422972909475,
+              "lags": 40,
+              "stationary": true
+            }
+          ]
+        },
+        "surrogate_test": {
+          "original_statistic": 0.6704736455669387,
+          "surrogate_statistics": [
+            0.08382540533620798,
+            0.04056887370140522,
+            0.07920657430846363,
+            0.08038082198844738,
+            0.11113834876637409,
+            0.14413256579593695,
+            0.11109485703595516,
+            0.06741683286676903,
+            0.0952071478538205,
+            0.06879070897010199,
+            0.08926764847231776,
+            0.07346759376491034,
+            0.08911887736050007,
+            0.06056249879761815,
+            0.062237954284475906,
+            0.10237263431580035,
+            0.08747113980941426,
+            0.11512796239798383,
+            0.04429981485194489
+          ],
+          "p_value": 0.05,
+          "alpha": 0.05,
+          "rejected": true
+        }
+      },
+      "caveats": [
+        "Low surrogate count: suitable for CI smoke, not final evidence."
+      ]
+    },
+    "surrogate_budget_calibration": {
+      "selected_max_iter": 40,
+      "accepted": true,
+      "criteria": {
+        "tol": 0.001,
+        "max_relative_spectrum_error": 0.05,
+        "max_covariance_relative_rmsd": 0.01
+      },
+      "candidates": [
+        {
+          "max_iter": 20,
+          "converged": false,
+          "n_iter_actual": 20,
+          "convergence_delta": 0.005709401351555565,
+          "relative_spectrum_error": 0.01736904202502541,
+          "covariance_relative_rmsd": 0.001464279204987271,
+          "accepted": false
+        },
+        {
+          "max_iter": 40,
+          "converged": true,
+          "n_iter_actual": 33,
+          "convergence_delta": 0.0005063805079669192,
+          "relative_spectrum_error": 0.01496180145184023,
+          "covariance_relative_rmsd": 0.0013074054436388184,
+          "accepted": true
+        }
+      ]
+    },
+    "rank_order_min_surrogates_alpha_0_05": 19
+  },
+  "status": "SURVIVED_PHASE_1_GATES",
+  "artifact_sha256": "2ef65511a18a46cfff0644a7434c43c5e9e586b3749f192fc650588e55657874"
+}

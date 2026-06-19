@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.6
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+  - repo: local
+    hooks:
+      - id: bsff-truth-contract
+        name: BSFF truth contract
+        entry: python tools/validate_truth_contract.py
+        language: system
+        pass_filenames: false
+      - id: bsff-secret-scan
+        name: BSFF local secret scan
+        entry: python tools/scan_secrets.py
+        language: system
+        pass_filenames: false
+      - id: bsff-ip-provenance
+        name: BSFF IP/provenance contract
+        entry: python tools/validate_ip_provenance.py
+        language: system
+        pass_filenames: false

@@ -1,0 +1,17 @@
+BSFF — BCI Signal Falsification Framework
+
+Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab.
+
+This project is released as open source with explicit attribution, provenance, and citation requirements.
+
+Required attribution for redistribution, public forks, derivative works, packages, papers, demos, posts, and commercial evaluations:
+
+  BSFF: BCI Signal Falsification Framework
+  Author: Yaroslav Vasylenko / neuron7xLab
+  Repository: https://github.com/neuron7xLab/bsff
+  License: GPL-3.0-or-later for code; CC-BY-4.0 for documentation/specifications unless stated otherwise.
+  Citation: see CITATION.cff
+
+You may not imply that neuron7xLab or Yaroslav Vasylenko endorses a derivative work unless written permission exists. Modified versions must be marked as modified and must not remove upstream copyright, license, NOTICE, or citation metadata.
+
+The project name, ⊛ marker, and neuron7xLab identity are attribution markers, not permission to impersonate the original author. Humanity needed that sentence, apparently.

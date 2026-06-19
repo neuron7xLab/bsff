@@ -1,0 +1,20 @@
+{
+  "document_ref": "OS-BSFF-CORE-2026.1",
+  "evidence_status": "SURVIVED_PHASE_1_GATES",
+  "validation_artifact": "artifacts/bsff_phase1_validation.json",
+  "validation_artifact_sha256": "68fe3cf73342d6837b7bd1932a56edede9fd42e1f9c20dc4d2e92c6116e47bfe",
+  "tracked_files": {
+    "README.md": "2903086d9a9fedc3b9b267e13bebf0e1d248f8ca7622fe78db7eb175b3d54cb8",
+    "VERDICT.md": "a538921680300b4d10b6f31e0e5243b3e6904148f0b0413bb7c64c09549121eb",
+    "pyproject.toml": "8d497e4e3a6f6d35d181f059cedc6dcd4cf4477f4340f1774095e9b0dbb1e348",
+    "src/bsff/surrogate_engine.py": "74647f1d1c2a84b9e6bfdfb6bcbf40a4defda2a67b848708e67db0b50d6fdefe",
+    "src/bsff/verdict_engine.py": "8ed4a0f7258b6d215a3f1131f6f7146760f58073b7467020f34cb193047b1ed6",
+    "src/bsff/calibration.py": "96eb02c83fed508bfb90b40c9e8d90dc6f3ffed58e28dc69a7c0b08fae2ae57e",
+    "src/bsff/validation.py": "bcd47d3d1aee4d256f340c7cd6b3428f2a9b02d313c8d17222cdb13bf96f773c",
+    ".github/workflows/ci.yml": "c5c30d377745d9e9debbf13bd57da431c0f9dc6a7963127c9975cff3b36a0f9a",
+    ".github/workflows/security.yml": "925918c0b6f376af9d9bc9c8f0c7d53b9fff82fd16790094b7d6bc06dbc92fd0",
+    ".github/dependabot.yml": "6799d8ab038944260dee951e91ae6de1ef1357f98838da299c49b3735f0ed4ef"
+  },
+  "provenance_manifest": "artifacts/provenance_manifest.json",
+  "provenance_manifest_sha256": "510983e5e3b66dab4445424251d35c08487d01a569c8455cb5e62fb616e0a995"
+}

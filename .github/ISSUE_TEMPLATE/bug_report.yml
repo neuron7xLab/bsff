@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+
+name: Bug report
+about: Report deterministic failure in BSFF behavior
+labels: [bug, needs-triage]
+body:
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: What failed? Include command and exact output.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence artifact
+      description: Paste relevant JSON from artifacts/bsff_phase1_validation.json or test output.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: BSFF version / commit
+    validations:
+      required: true

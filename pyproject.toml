@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bsff"
+version = "0.1.5"
+description = "Adaptive falsification-first architecture for EEG/BCI signal claims with OSS provenance, validation corpus, and development control plane"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.11",
+  "statsmodels>=0.14",
+]
+
+[project.scripts]
+bsff-validate = "bsff.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-cov", "ruff>=0.8", "build>=1.2"]
+stats = ["pingouin>=0.5.5"]
+leakage = ["scikit-learn>=1.4"]
+full = ["pingouin>=0.5.5", "scikit-learn>=1.4"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+
+
+[tool.coverage.run]
+source = ["src/bsff"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests", "tools"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "RUF"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[project.urls]
+Homepage = "https://github.com/neuron7xLab/bsff"
+Repository = "https://github.com/neuron7xLab/bsff"
+Issues = "https://github.com/neuron7xLab/bsff/issues"
+
