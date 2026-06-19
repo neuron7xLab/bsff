@@ -31,7 +31,10 @@ jobs:
       - uses: github/codeql-action/init@v3
         with:
           languages: python
+          config-file: ./.github/codeql/codeql-config.yml
       - uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:python"
 
   dependency-review:
     name: dependency-review
