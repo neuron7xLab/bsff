@@ -1,0 +1,136 @@
+{
+  "max_iter": 200,
+  "results": [
+    {
+      "channels": 4,
+      "converged": true,
+      "n_iter": 14,
+      "rel_cov": 0.0025,
+      "samples": 512,
+      "time_s": 0.003
+    },
+    {
+      "channels": 4,
+      "converged": true,
+      "n_iter": 29,
+      "rel_cov": 0.0004,
+      "samples": 2048,
+      "time_s": 0.018
+    },
+    {
+      "channels": 4,
+      "converged": true,
+      "n_iter": 46,
+      "rel_cov": 0.0,
+      "samples": 4096,
+      "time_s": 0.056
+    },
+    {
+      "channels": 4,
+      "converged": true,
+      "n_iter": 41,
+      "rel_cov": 0.0001,
+      "samples": 8192,
+      "time_s": 0.105
+    },
+    {
+      "channels": 8,
+      "converged": true,
+      "n_iter": 21,
+      "rel_cov": 0.0017,
+      "samples": 512,
+      "time_s": 0.009
+    },
+    {
+      "channels": 8,
+      "converged": true,
+      "n_iter": 39,
+      "rel_cov": 0.0005,
+      "samples": 2048,
+      "time_s": 0.057
+    },
+    {
+      "channels": 8,
+      "converged": true,
+      "n_iter": 49,
+      "rel_cov": 0.0003,
+      "samples": 4096,
+      "time_s": 0.107
+    },
+    {
+      "channels": 8,
+      "converged": true,
+      "n_iter": 52,
+      "rel_cov": 0.0001,
+      "samples": 8192,
+      "time_s": 0.285
+    },
+    {
+      "channels": 16,
+      "converged": true,
+      "n_iter": 29,
+      "rel_cov": 0.0046,
+      "samples": 512,
+      "time_s": 0.023
+    },
+    {
+      "channels": 16,
+      "converged": true,
+      "n_iter": 49,
+      "rel_cov": 0.0006,
+      "samples": 2048,
+      "time_s": 0.14
+    },
+    {
+      "channels": 16,
+      "converged": true,
+      "n_iter": 60,
+      "rel_cov": 0.0002,
+      "samples": 4096,
+      "time_s": 0.314
+    },
+    {
+      "channels": 16,
+      "converged": true,
+      "n_iter": 52,
+      "rel_cov": 0.0002,
+      "samples": 8192,
+      "time_s": 0.534
+    },
+    {
+      "channels": 32,
+      "converged": true,
+      "n_iter": 28,
+      "rel_cov": 0.0024,
+      "samples": 512,
+      "time_s": 0.041
+    },
+    {
+      "channels": 32,
+      "converged": true,
+      "n_iter": 38,
+      "rel_cov": 0.0006,
+      "samples": 2048,
+      "time_s": 0.186
+    },
+    {
+      "channels": 32,
+      "converged": true,
+      "n_iter": 61,
+      "rel_cov": 0.0002,
+      "samples": 4096,
+      "time_s": 0.589
+    },
+    {
+      "channels": 32,
+      "converged": true,
+      "n_iter": 58,
+      "rel_cov": 0.0001,
+      "samples": 8192,
+      "time_s": 1.155
+    }
+  ],
+  "schema": "bsff.benchmark.v1",
+  "seed": 0,
+  "tol": 0.001
+}

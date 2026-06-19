@@ -123,12 +123,16 @@ NOTICE · AUTHORS.md · SPDX headers · GPL/CC-BY license texts
 ---
 
 
-## v0.1.5 development package
+## v0.2.0 development package
 
-This package adds the deterministic synthetic validation corpus and the development control plane required for public repository work. It keeps the open-source security/provenance layer from v0.1.3 and the adaptive architecture from v0.1.4, then adds corpus validation and release-mass integrity.
+This release adds reference-covariance surrogate validation, a published MIAAFT
+benchmark matrix, a `pipeline.run()` alias, a deterministic `UNSUPPORTED` verdict
+test, a MOABB falsification example, and a JOSS paper scaffold — on top of the
+v0.1.5 deterministic synthetic validation corpus and development control plane.
+It keeps the open-source security/provenance layer from v0.1.3 and the adaptive architecture from v0.1.4, then adds corpus validation and release-mass integrity.
 
 ```text
-pytest: 28/28 passing
+pytest: 34/34 passing
 validation corpus: synthetic-only, non-clinical, SHA-256 pinned
 package mass target: 7-10 MB
 license: GPL-3.0-or-later for code; CC-BY-4.0 for documentation/specs
@@ -140,7 +144,7 @@ Measured in the current package, not emotionally inferred, because the CPU does 
 
 | Gate | Value | Status |
 |---|---:|---|
-| Test suite | 26 / 26 passed | ✓ |
+| Test suite | 34 / 34 passed | ✓ |
 | CLI validation | `SURVIVED_PHASE_1_GATES` | ✓ |
 | MIAAFT M=32, N=1024 convergence | 33 / 200 iterations | ✓ tol=1e-3 |
 | Convergence delta | 0.000506 | ✓ |
@@ -157,6 +161,24 @@ Measured in the current package, not emotionally inferred, because the CPU does 
 | IP/provenance validation | PASS | ✓ |
 | Markdown validation | PASS | ✓ |
 | Wheel build | PASS | ✓ |
+
+### MIAAFT performance matrix
+
+Measured single-surrogate wall-clock on CPU (`max_iter=200`, `tol=1e-3`, `seed=0`),
+reproducible via `PYTHONPATH=src python tools/benchmark_miaaft.py`. Every cell
+converges; covariance fidelity is reported, not assumed.
+
+| channels | samples | time (s) | converged | iters | rel. covariance |
+|---:|---:|---:|:--:|---:|---:|
+| 4  | 512  | 0.003 | ✓ | 14 | 0.0025 |
+| 4  | 8192 | 0.105 | ✓ | 41 | 0.0001 |
+| 8  | 4096 | 0.107 | ✓ | 49 | 0.0003 |
+| 16 | 4096 | 0.314 | ✓ | 60 | 0.0002 |
+| 32 | 4096 | 0.589 | ✓ | 61 | 0.0002 |
+| 32 | 8192 | 1.155 | ✓ | 58 | 0.0001 |
+
+Worst case in the 4–32 channel × 512–8192 sample grid stays well under the 30 s
+budget. Full grid: `artifacts/benchmark_miaaft.json`.
 
 The primary machine-readable validation artifact is:
 
@@ -398,7 +420,8 @@ v0.1.0  kernel: MIAAFT · LeakageProbe · VerdictJSON
 v0.1.1  Phase 1: convergence monitor · stationarity gate · validation artifact
 v0.1.2  OSS control plane: CI · security · Scorecard · Dependabot · evidence gates
 v0.1.3  IP/provenance: GPL · CC-BY · SPDX · NOTICE · citation · attestations
-v0.2.0  TISEAN/reference validation · stronger surrogate benchmark matrix
+v0.2.0  reference covariance validation · benchmark matrix · run() alias ·
+        deterministic UNSUPPORTED · MOABB example · JOSS paper scaffold  [current]
 v0.3.0  Bayesian evidence hardening · upstream leakage benchmark suite
 v0.4.0  BIDS-App container · DataLad provenance · real EEG dataset path
 v1.0.0  JOSS submission candidate

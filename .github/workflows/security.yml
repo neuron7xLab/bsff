@@ -71,6 +71,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[dev,leakage]'
       - run: python tools/scan_secrets.py
       - run: python tools/generate_provenance_manifest.py
       - run: python tools/validate_ip_provenance.py
