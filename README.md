@@ -18,7 +18,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/ci.yml?branch=main&style=flat-square&label=CI&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/ci.yml)
 [![Security](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/security.yml?branch=main&style=flat-square&label=security&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/security.yml)
 [![Provenance](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/provenance.yml?branch=main&style=flat-square&label=provenance&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/provenance.yml)
-[![Tests](https://img.shields.io/badge/tests-71%2F71%20passing-2d6a2d?style=flat-square)](tests/)
+[![Tests](https://img.shields.io/badge/tests-80%2F80%20passing-2d6a2d?style=flat-square)](tests/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-2d2d2d?style=flat-square)](pyproject.toml)
 [![License](https://img.shields.io/badge/code-GPL--3.0--or--later-2d2d2d?style=flat-square)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-CC--BY--4.0-2d2d2d?style=flat-square)](NOTICE)
@@ -83,6 +83,7 @@ This repository is ready to be published as an open-source project with CI, secu
 ```text
 src/bsff/
 ├── schemas.py          — ClaimSpec · VerdictJSON
+├── json_schema.py      — JSON Schema (draft 2020-12) export for the contracts
 ├── synthetic.py        — AR(1) · Hénon · block-design fixtures
 ├── stationarity.py     — KPSS per-channel stationarity gate
 ├── surrogate_engine.py — multivariate IAAFT-style surrogate engine
@@ -133,7 +134,7 @@ v0.1.5 deterministic synthetic validation corpus and development control plane.
 It keeps the open-source security/provenance layer from v0.1.3 and the adaptive architecture from v0.1.4, then adds corpus validation and release-mass integrity.
 
 ```text
-pytest: 71/71 passing
+pytest: 80/80 passing
 validation corpus: synthetic-only, non-clinical, SHA-256 pinned
 package mass target: 7-10 MB
 license: GPL-3.0-or-later for code; CC-BY-4.0 for documentation/specs
@@ -145,7 +146,7 @@ Measured in the current package, not emotionally inferred, because the CPU does 
 
 | Gate | Value | Status |
 |---|---:|---|
-| Test suite | 71 / 71 passed | ✓ |
+| Test suite | 80 / 80 passed | ✓ |
 | CLI validation | `SURVIVED_PHASE_1_GATES` | ✓ |
 | MIAAFT M=32, N=1024 convergence | 33 / 200 iterations | ✓ tol=1e-3 |
 | Verdict-path null convergence | enforced per surrogate | ✓ fail-closed → UNSUPPORTED |

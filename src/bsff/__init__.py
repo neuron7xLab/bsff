@@ -3,6 +3,7 @@
 """BSFF falsification-first BCI/EEG signal-claim kernel."""
 
 from .bayesian import jzs_bayes_factor
+from .json_schema import claim_spec_schema, dataclass_json_schema, verdict_json_schema
 from .leakage_deep import (
     detect_cross_frequency_leakage,
     detect_phase_locking_leakage,
@@ -34,8 +35,10 @@ __all__ = [
     "ar1_multichannel",
     "block_design_dataset",
     "check_stationarity",
+    "claim_spec_schema",
     "covariance_relative_rmsd",
     "covariance_rmsd",
+    "dataclass_json_schema",
     "detect_block_design_leakage",
     "detect_cross_frequency_leakage",
     "detect_feature_selection_leakage",
@@ -50,6 +53,7 @@ __all__ = [
     "phase_locking_value",
     "rank_order_surrogate_test",
     "var_phase_randomized_surrogate",
+    "verdict_json_schema",
 ]
 
 __version__ = "0.2.0"
