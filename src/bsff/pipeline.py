@@ -142,6 +142,16 @@ class FalsificationPipeline:
         )
         if surrogate is None or surrogate.status == "SKIP":
             return "UNSUPPORTED"
+        # Fail-closed: a non-converged null model invalidates the p-value, so no
+        # confident SURVIVED/REFUTED can be claimed regardless of the rank order.
+        surrogate_evidence = context.scratch.get("surrogate_attack", {})
+        convergence = (
+            surrogate_evidence.get("surrogate_convergence", {})
+            if isinstance(surrogate_evidence, dict)
+            else {}
+        )
+        if convergence and not bool(convergence.get("all_converged", True)):
+            return "UNSUPPORTED"
         if surrogate.status == "PASS":
             return "SURVIVED"
         bayes = context.scratch.get("bayesian_evidence")

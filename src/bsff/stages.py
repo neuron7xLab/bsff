@@ -79,6 +79,11 @@ class SurrogateAttackStage:
             n_surrogates=context.policy.surrogate_count,
             alpha=context.policy.alpha,
             seed=context.seed,
+            max_iter=context.policy.miaaft_max_iter,
+            tol=context.policy.miaaft_tol,
+            fallback=context.policy.miaaft_fallback,
+            max_relative_spectrum_error=context.policy.spectrum_error_warn,
+            max_covariance_relative_rmsd=context.policy.covariance_rmsd_warn,
         )
         context.scratch[self.stage_id] = result
         rejected = bool(result["rejected"])
@@ -87,6 +92,13 @@ class SurrogateAttackStage:
         if context.policy.surrogate_count < 99:
             caveats.append(
                 "Low surrogate count: CI smoke evidence, not publication-grade evidence."
+            )
+        convergence = result["surrogate_convergence"]
+        if not bool(convergence["all_converged"]):
+            caveats.append(
+                f"Surrogate null mis-specified: {convergence['n_nonconverged']}/"
+                f"{convergence['n_surrogates']} surrogate(s) failed the convergence/fidelity "
+                "gate; verdict cannot exceed UNSUPPORTED."
             )
         return StageResult(self.stage_id, status, fatal=False, evidence=result, caveats=caveats)
 

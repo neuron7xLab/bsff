@@ -70,6 +70,8 @@ def validate_kernel(output: Path) -> dict[str, object]:
         },
         "status": "SURVIVED_PHASE_1_GATES"
         if surrogate_diag["converged"]
+        and ar1["surrogate_convergence"]["all_converged"]
+        and henon["surrogate_convergence"]["all_converged"]
         and ar1["p_value"] > 0.05
         and henon["p_value"] <= 0.05
         and leakage["flagged"]

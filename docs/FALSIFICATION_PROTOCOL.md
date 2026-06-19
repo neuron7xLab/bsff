@@ -12,9 +12,10 @@ BSFF starts from the hostile assumption that a BCI claim may be inflated by leak
 2. Stationarity warning gate: KPSS per channel.
 3. Leakage gate: block-design temporal autocorrelation detector.
 4. Surrogate gate: common-phase MIAAFT rank-order null attack.
-5. Calibration gate: deterministic MIAAFT budget selection.
-6. Artifact gate: JSON verdict + SHA-256 manifest.
-7. Truth gate: README and docs must disclose limits.
+5. Convergence gate: every surrogate's convergence and spectral/covariance fidelity is measured at verdict time. The MIAAFT budget is driven by the active policy, not a fixed constant, and a non-converged or low-fidelity null **fails closed** — the verdict is demoted to `UNSUPPORTED` because a mis-specified null makes both `SURVIVED` and `REFUTED` unearned.
+6. Calibration gate: deterministic MIAAFT budget selection.
+7. Artifact gate: JSON verdict + SHA-256 manifest, recomputed and verified on load.
+8. Truth gate: README and docs must disclose limits; forbidden affirmative over-claims are matched case-insensitively.
 
 ## Verdicts
 

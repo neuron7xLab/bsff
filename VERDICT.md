@@ -9,6 +9,7 @@
 ## Closed operations
 
 - T-00 closed: MIAAFT convergence monitor added with `max_iter`, `tol`, `n_iter_actual`, `converged`, `convergence_delta`, spectrum diagnostics, covariance diagnostics, and explicit fallback policy.
+- T-00b closed: the convergence monitor is now wired into the verdict path. `rank_order_surrogate_test` consumes the policy MIAAFT budget/tolerance/fallback (previously a hardcoded `n_iter=30, tol=1e-4` that never plateaued), measures every surrogate's convergence, and a non-converged null fails closed to `UNSUPPORTED` across `evaluate_claim` and the staged pipeline. Truth-contract forbidden-claim matching is now case-insensitive and the artifact `artifact_sha256` is recomputed and verified on load.
 - T-01 closed: KPSS stationarity gate implemented and integrated into `evaluate_claim` evidence payload.
 - T-04 partially closed: upstream feature-selection leakage detector implemented behind optional `bsff[leakage]` dependency.
 - T-05 closed: GitHub Actions CI added for Python 3.10, 3.11, 3.12 plus scheduled extended lane.
@@ -19,7 +20,7 @@
 ## Machine verification
 
 ```text
-pytest: 12/12 passed
+pytest: 48/48 passed
 bsff-validate: SURVIVED_PHASE_1_GATES
 MIAAFT M=32,N=1024: converged=True, n_iter_actual=33/200, delta=0.000506
 AR(1) null: p=0.40, not rejected

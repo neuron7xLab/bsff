@@ -31,15 +31,15 @@
           "channel_results": [
             {
               "channel": 0,
-              "statistic": 0.4084933870285002,
-              "p_value": 0.07349422972909475,
+              "statistic": 0.40849338702850035,
+              "p_value": 0.07349422972909468,
               "lags": 40,
               "stationary": true
             }
           ]
         },
         "caveats": [],
-        "evidence_sha256": "c1d1bcb27a7d51f4393d75fc6e60f07e5acbe6dbbb10a7dae4b42c433210676c"
+        "evidence_sha256": "fadca533d41dda9be6ec700447b688b7849caec9f5b0a61218e9fdd9f8a86873"
       },
       {
         "stage_id": "leakage_gate",
@@ -57,36 +57,48 @@
         "status": "PASS",
         "fatal": false,
         "evidence": {
-          "original_statistic": 0.6704736455669387,
+          "original_statistic": 0.6704736455669389,
           "surrogate_statistics": [
-            0.08382540533620798,
-            0.04056887370140522,
-            0.07920657430846363,
-            0.08038082198844738,
-            0.11113834876637409,
-            0.14413256579593695,
-            0.11109485703595516,
-            0.06741683286676903,
-            0.0952071478538205,
-            0.06879070897010199,
-            0.08926764847231776,
-            0.07346759376491034,
-            0.08911887736050007,
-            0.06056249879761815,
-            0.062237954284475906,
-            0.10237263431580035,
-            0.08747113980941426,
-            0.11512796239798383,
-            0.04429981485194489
+            0.08357691865564784,
+            0.04044064260547794,
+            0.07930022691788087,
+            0.08016489494650256,
+            0.11123062962318983,
+            0.14420960443804315,
+            0.11136594396947272,
+            0.06715160415005429,
+            0.0949627258718953,
+            0.06888235279444249,
+            0.08943084077634506,
+            0.07360917449335919,
+            0.08913786805786422,
+            0.060459058835411965,
+            0.06191634917496918,
+            0.10238507524762726,
+            0.08757323087846468,
+            0.1152265879280612,
+            0.04434619109961923
           ],
           "p_value": 0.05,
           "alpha": 0.05,
-          "rejected": true
+          "rejected": true,
+          "surrogate_convergence": {
+            "all_converged": true,
+            "n_nonconverged": 0,
+            "n_surrogates": 19,
+            "max_iter": 200,
+            "tol": 0.001,
+            "fallback": "warn",
+            "max_relative_spectrum_error": 0.1,
+            "max_covariance_relative_rmsd": 0.35,
+            "worst_relative_spectrum_error": 0.007955230582756155,
+            "worst_covariance_relative_rmsd": 4.435109686921772e-16
+          }
         },
         "caveats": [
           "Low surrogate count: CI smoke evidence, not publication-grade evidence."
         ],
-        "evidence_sha256": "0ec2d92d907ddba0dc2c454388982330a37d0734b2d071f1a2cade951f31bde6"
+        "evidence_sha256": "e30fad6be4c8bba282607a34ff482a69577474de7c0fdc5f08210c25c1553647"
       },
       {
         "stage_id": "bayesian_evidence",
@@ -99,10 +111,10 @@
         "evidence_sha256": "6f38be237de5df4876af7184c66ffb33e35aaa9cb9a7adadc718d91443676c3f"
       }
     ],
-    "graph_sha256": "2b5bfdfc6fd3bc2fd59f6866491e8bd3b634d150906198c12dca84049a26fd6f"
+    "graph_sha256": "169b1dfbddf52ee534150610a7ec9b7bb972c3925c3e831473fb95308392e206"
   },
   "caveats": [
     "Low surrogate count: CI smoke evidence, not publication-grade evidence."
   ],
-  "contract_sha256": "e82337e071a557cea9cc8ce77e59f5f0aced653e8f05cca73f6099c1de19178c"
+  "contract_sha256": "d6a90ac68d5622f9a18a9717b8f2e469d628b17702b2a5572a85a2d80a958b0e"
 }

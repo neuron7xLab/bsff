@@ -15,6 +15,9 @@ def evaluate_claim(
     leakage_flags: dict | None = None,
     seed: int = 123,
     bayesian_evidence: bool | None = None,
+    max_iter: int = 200,
+    tol: float = 1e-3,
+    miaaft_fallback: str = "warn",
 ) -> VerdictJSON:
     """Evaluate one claim through leakage-first and surrogate-test logic."""
     spec.validate()
@@ -49,10 +52,37 @@ def evaluate_claim(
         n_surrogates=spec.surrogate_count,
         alpha=spec.alpha,
         seed=seed,
+        max_iter=max_iter,
+        tol=tol,
+        fallback=miaaft_fallback,  # type: ignore[arg-type]
     )
     surrogate_stats = result["surrogate_statistics"]
     rejected = bool(result["rejected"])
     verdict = "SURVIVED" if rejected else "REFUTED"
+
+    # Fail-closed: a verdict can never exceed UNSUPPORTED when the null model that
+    # produced the p-value did not converge to the spectral/covariance constraints.
+    # A mis-specified null makes both SURVIVED and REFUTED unearned certainty.
+    convergence = result["surrogate_convergence"]
+    evidence["surrogate_convergence"] = convergence
+    if not bool(convergence["all_converged"]):
+        caveats.append(
+            f"Surrogate null mis-specified: {convergence['n_nonconverged']}/"
+            f"{convergence['n_surrogates']} surrogate(s) failed the convergence/fidelity "
+            "gate. Verdict demoted to UNSUPPORTED — the p-value rests on an invalid null."
+        )
+        evidence["surrogate_test"] = result
+        return VerdictJSON(
+            claim_id=spec.claim_id,
+            verdict="UNSUPPORTED",
+            p_value=float(result["p_value"]),
+            original_statistic=float(result["original_statistic"]),
+            surrogate_min=float(min(surrogate_stats)),
+            surrogate_max=float(max(surrogate_stats)),
+            leakage_flags=leakage_flags,
+            evidence=evidence,
+            caveats=caveats,
+        )
 
     use_bayes = bool(
         spec.metadata.get("bayesian_evidence", False)
