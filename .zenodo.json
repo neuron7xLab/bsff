@@ -1,0 +1,28 @@
+{
+  "title": "BSFF: BCI Signal Falsification Framework",
+  "description": "Falsification-first open-source kernel for EEG/BCI claim auditing: stationarity gating, leakage detection, multivariate MIAAFT surrogate testing, and a three-way machine-readable verdict (SURVIVED/REFUTED/UNSUPPORTED), with deterministic validation corpus and full provenance.",
+  "upload_type": "software",
+  "license": "GPL-3.0-or-later",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Vasylenko, Yaroslav",
+      "affiliation": "neuron7xLab"
+    }
+  ],
+  "keywords": [
+    "brain-computer interface",
+    "EEG",
+    "falsification",
+    "surrogate testing",
+    "leakage detection",
+    "reproducibility"
+  ],
+  "related_identifiers": [
+    {
+      "relation": "isSupplementTo",
+      "identifier": "https://github.com/neuron7xLab/bsff",
+      "scheme": "url"
+    }
+  ]
+}

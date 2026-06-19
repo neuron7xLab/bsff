@@ -56,6 +56,15 @@ def test_pipeline_survives_henon_smoke_claim():
     assert result.to_verdict_json().verdict == "SURVIVED"
 
 
+def test_pipeline_run_is_alias_of_evaluate():
+    pipeline = FalsificationPipeline()
+    signal = henon_series(n_samples=768, seed=11)
+    via_run = pipeline.run(_henon_spec(), signal, seed=101)
+    via_evaluate = pipeline.evaluate(_henon_spec(), signal, seed=101)
+    assert via_run.verdict == via_evaluate.verdict == "SURVIVED"
+    assert via_run.contract_sha256 == via_evaluate.contract_sha256
+
+
 def test_pipeline_refutes_leakage_before_surrogate():
     _features, labels, block_ids = block_design_dataset(n_blocks=12, block_len=16)
     flags = {"block_design": detect_block_design_leakage(labels, block_ids)}

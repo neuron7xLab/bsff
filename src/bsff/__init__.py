@@ -42,4 +42,4 @@ __all__ = [
     "var_phase_randomized_surrogate",
 ]
 
-__version__ = "0.1.5"
+__version__ = "0.2.0"

@@ -75,6 +75,22 @@ class FalsificationPipeline:
     def __init__(self, registry: StageRegistry | None = None) -> None:
         self.registry = registry or default_stage_registry()
 
+    def run(
+        self,
+        spec: ClaimSpec,
+        signal: object,
+        *,
+        policy: PolicyProfile | str = "smoke",
+        leakage_flags: dict[str, Any] | None = None,
+        seed: int = 123,
+    ) -> PipelineVerdict:
+        """Alias of :meth:`evaluate` for callers that expect a ``run`` entry point.
+
+        The falsification semantics are identical; this exists only so that the
+        common ``pipeline.run(spec, signal)`` idiom does not raise AttributeError.
+        """
+        return self.evaluate(spec, signal, policy=policy, leakage_flags=leakage_flags, seed=seed)
+
     def evaluate(
         self,
         spec: ClaimSpec,
