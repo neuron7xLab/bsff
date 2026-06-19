@@ -9,10 +9,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from bsff.cli import validate_kernel  # noqa: E402
 from bsff.provenance import build_provenance_manifest  # noqa: E402
 from bsff.validation import sha256_file  # noqa: E402
+
+# Single source of truth: the provenance pattern set lives in one place so the
+# two writers of provenance_manifest.json can never drift and pin mismatched
+# digests against each other.
+from generate_provenance_manifest import TRACKED_PATTERNS as PROVENANCE_PATTERNS  # noqa: E402
 
 TRACKED = [
     "README.md",
@@ -38,25 +44,7 @@ def main() -> int:
         "validation_artifact_sha256": sha256_file(artifact_path),
         "tracked_files": {rel: sha256_file(ROOT / rel) for rel in TRACKED if (ROOT / rel).exists()},
     }
-    provenance = build_provenance_manifest(
-        ROOT,
-        [
-            "README.md",
-            "LICENSE",
-            "NOTICE",
-            "CITATION.cff",
-            "AUTHORS.md",
-            "pyproject.toml",
-            "src/bsff/*.py",
-            "tests/*.py",
-            "tools/*.py",
-            "docs/*.md",
-            "paper/*.md",
-            "paper/*.bib",
-            ".zenodo.json",
-            ".github/workflows/*.yml",
-        ],
-    )
+    provenance = build_provenance_manifest(ROOT, PROVENANCE_PATTERNS)
     provenance_out = ROOT / "artifacts" / "provenance_manifest.json"
     provenance_out.write_text(
         json.dumps(provenance, ensure_ascii=False, indent=2), encoding="utf-8"
