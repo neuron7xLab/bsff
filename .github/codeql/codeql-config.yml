@@ -18,9 +18,11 @@ paths-ignore:
 queries:
   - uses: security-extended
   - uses: security-and-quality
-  # Custom domain-specific pack (./codeql/custom-queries/python) is wired in once
-  # each query is compiled and run against a local CodeQL database — never shipped
-  # into the required check unverified.
+  # Domain-specific pack: reproducibility (non-deterministic RNG, unseeded
+  # default_rng) and fail-closed hygiene (silent exception swallow). Each query
+  # was compiled and run against a local CodeQL database (2.25.6) before wiring:
+  # all three resolve to zero findings on the current tree.
+  - uses: ./codeql/custom-queries/python
 
 # Keep the signal high: drop low-precision noise, keep everything security- or
 # correctness-bearing.

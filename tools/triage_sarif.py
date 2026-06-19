@@ -43,14 +43,18 @@ def _rule_index(run: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return {r.get("id", ""): r for r in rules if isinstance(r, dict)}
 
 
+def _coerce_float(value: Any) -> float | None:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def _result_tier(result: dict[str, Any], rules: dict[str, dict[str, Any]]) -> str:
     rule = rules.get(result.get("ruleId", ""), {})
-    score = rule.get("properties", {}).get("security-severity")
+    score = _coerce_float(rule.get("properties", {}).get("security-severity"))
     if score is not None:
-        try:
-            return _score_to_tier(float(score))
-        except (TypeError, ValueError):
-            pass
+        return _score_to_tier(score)
     return _LEVEL_TO_TIER.get(str(result.get("level", "warning")), "medium")
 
 

@@ -913,8 +913,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "tools/triage_sarif.py",
-      "sha256": "f0e25d9a5f89ffda4acf9fe73d360aaa492f1cc703a1afa133d5b64e378735bf",
-      "size_bytes": 3996
+      "sha256": "7c2bd591bb9f289d5a7ed4d9abaf3241dd6c61d1877e3c276cff2e2a6bfde974",
+      "size_bytes": 4072
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -977,5 +977,5 @@
       "size_bytes": 1810
     }
   ],
-  "manifest_sha256": "b4b761345436878f5b1f3a75c759102142a9435aa4a3c69645a83060ff62179e"
+  "manifest_sha256": "8fd30b824fe5e7567b20fa2bafa85f2ec1329feaa57d53cad1a7df4faba31c3e"
 }
