@@ -3,6 +3,12 @@
 """BSFF falsification-first BCI/EEG signal-claim kernel."""
 
 from .bayesian import jzs_bayes_factor
+from .leakage_deep import (
+    detect_cross_frequency_leakage,
+    detect_phase_locking_leakage,
+    modulation_index,
+    phase_locking_value,
+)
 from .leakage_detector import detect_block_design_leakage, detect_feature_selection_leakage
 from .pipeline import FalsificationPipeline, PipelineVerdict, evaluate_claim_pipeline
 from .policy import PolicyProfile, adapt_policy_for_signal, get_policy_profile
@@ -31,13 +37,17 @@ __all__ = [
     "covariance_relative_rmsd",
     "covariance_rmsd",
     "detect_block_design_leakage",
+    "detect_cross_frequency_leakage",
     "detect_feature_selection_leakage",
+    "detect_phase_locking_leakage",
     "evaluate_claim",
     "evaluate_claim_pipeline",
     "get_policy_profile",
     "henon_series",
     "jzs_bayes_factor",
     "miaaft_surrogate",
+    "modulation_index",
+    "phase_locking_value",
     "rank_order_surrogate_test",
     "var_phase_randomized_surrogate",
 ]

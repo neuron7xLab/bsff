@@ -18,7 +18,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/ci.yml?branch=main&style=flat-square&label=CI&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/ci.yml)
 [![Security](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/security.yml?branch=main&style=flat-square&label=security&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/security.yml)
 [![Provenance](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/provenance.yml?branch=main&style=flat-square&label=provenance&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/provenance.yml)
-[![Tests](https://img.shields.io/badge/tests-47%2F47%20passing-2d6a2d?style=flat-square)](tests/)
+[![Tests](https://img.shields.io/badge/tests-55%2F55%20passing-2d6a2d?style=flat-square)](tests/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-2d2d2d?style=flat-square)](pyproject.toml)
 [![License](https://img.shields.io/badge/code-GPL--3.0--or--later-2d2d2d?style=flat-square)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-CC--BY--4.0-2d2d2d?style=flat-square)](NOTICE)
@@ -87,6 +87,7 @@ src/bsff/
 ├── stationarity.py     — KPSS per-channel stationarity gate
 ├── surrogate_engine.py — multivariate IAAFT-style surrogate engine
 ├── leakage_detector.py — block-design leakage · optional MI feature leakage
+├── leakage_deep.py      — phase-locking + phase-amplitude-coupling leakage probes
 ├── bayesian.py         — optional Bayes-factor evidence layer
 ├── policy.py           — smoke/standard/strict adaptive policy profiles
 ├── registry.py         — deterministic plugin/stage registry
@@ -132,7 +133,7 @@ v0.1.5 deterministic synthetic validation corpus and development control plane.
 It keeps the open-source security/provenance layer from v0.1.3 and the adaptive architecture from v0.1.4, then adds corpus validation and release-mass integrity.
 
 ```text
-pytest: 47/47 passing
+pytest: 55/55 passing
 validation corpus: synthetic-only, non-clinical, SHA-256 pinned
 package mass target: 7-10 MB
 license: GPL-3.0-or-later for code; CC-BY-4.0 for documentation/specs
@@ -144,7 +145,7 @@ Measured in the current package, not emotionally inferred, because the CPU does 
 
 | Gate | Value | Status |
 |---|---:|---|
-| Test suite | 47 / 47 passed | ✓ |
+| Test suite | 55 / 55 passed | ✓ |
 | CLI validation | `SURVIVED_PHASE_1_GATES` | ✓ |
 | MIAAFT M=32, N=1024 convergence | 33 / 200 iterations | ✓ tol=1e-3 |
 | Convergence delta | 0.000506 | ✓ |

@@ -4,7 +4,7 @@
   "validation_artifact": "artifacts/bsff_phase1_validation.json",
   "validation_artifact_sha256": "834790e4e4142c8ac28ba0f801ce9de2fc3020c67b9b1f5badddba20c614fa68",
   "tracked_files": {
-    "README.md": "7ee9623334922736ce45a8e378eb7f0c01f63e618de0358afad7e1a3144a389a",
+    "README.md": "3e50305694c88fcccba70513526d2f27066bd1e0b0af9dd7280de44f12b2dada",
     "VERDICT.md": "a538921680300b4d10b6f31e0e5243b3e6904148f0b0413bb7c64c09549121eb",
     "pyproject.toml": "02543578aef7c47ad3e91fe29b460a3939300587704d38d3cab18a346b4bda83",
     "src/bsff/surrogate_engine.py": "1649a04dc7dafe3b9442d9e35ced434ff4fc39bf74312a19b9f85eb19c42a06f",
@@ -16,5 +16,5 @@
     ".github/dependabot.yml": "6799d8ab038944260dee951e91ae6de1ef1357f98838da299c49b3735f0ed4ef"
   },
   "provenance_manifest": "artifacts/provenance_manifest.json",
-  "provenance_manifest_sha256": "6a8cf8a87d7322e6c4aa29fe4c02dea4d7cea1a02ee86061e5bf8b43b2836ab7"
+  "provenance_manifest_sha256": "33e9b95b77beb30f747420770fdeb7518a3b12b5036575596da272018f7087b4"
 }

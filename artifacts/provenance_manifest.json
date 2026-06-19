@@ -183,8 +183,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "README.md",
-      "sha256": "7ee9623334922736ce45a8e378eb7f0c01f63e618de0358afad7e1a3144a389a",
-      "size_bytes": 18443
+      "sha256": "3e50305694c88fcccba70513526d2f27066bd1e0b0af9dd7280de44f12b2dada",
+      "size_bytes": 18534
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -383,8 +383,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "src/bsff/__init__.py",
-      "sha256": "91167801b43d3e3d32b5fb8d965e5de9fe872797301ae9162d43ba7f0818144b",
-      "size_bytes": 1441
+      "sha256": "fe8d9b19eb9f7d3602f64d2a2e96d85494e724a3f634e16e7c565f294cdedc65",
+      "size_bytes": 1713
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -425,6 +425,16 @@
       "artifact_path": "src/bsff/evidence.py",
       "sha256": "a758758763b45ed313fa281d90cd7912b2fdf62c5d1cc27620ef5db77ebac271",
       "size_bytes": 1618
+    },
+    {
+      "project": "BSFF: BCI Signal Falsification Framework",
+      "author": "Yaroslav Vasylenko / neuron7xLab",
+      "repository": "https://github.com/neuron7xLab/bsff",
+      "code_license": "GPL-3.0-or-later",
+      "docs_license": "CC-BY-4.0",
+      "artifact_path": "src/bsff/leakage_deep.py",
+      "sha256": "f2dae9d72e6592a0e7ead467723a7500a1e11333823942636c52239a6fcc3bb8",
+      "size_bytes": 6861
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -595,6 +605,16 @@
       "artifact_path": "tests/test_claimspec_schema.py",
       "sha256": "982f284338cb8508c254fb2de8ab03b1e356f64101033eec7df6b8b7d5d0a299",
       "size_bytes": 919
+    },
+    {
+      "project": "BSFF: BCI Signal Falsification Framework",
+      "author": "Yaroslav Vasylenko / neuron7xLab",
+      "repository": "https://github.com/neuron7xLab/bsff",
+      "code_license": "GPL-3.0-or-later",
+      "docs_license": "CC-BY-4.0",
+      "artifact_path": "tests/test_deep_leakage_probes.py",
+      "sha256": "6154b3496ffb5338c23c3b9a7dea4b202b93ee74b83a2d64325a6792d8f17eff",
+      "size_bytes": 5536
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -877,5 +897,5 @@
       "size_bytes": 1810
     }
   ],
-  "manifest_sha256": "68544c756cad5a40095d23fe34970bacee13c1f9e41950f32232d0904313eb97"
+  "manifest_sha256": "099b6757014be2c903f8f80b0a4bc9b2d4c0d9a48a2822188d341a60fff8f36a"
 }
