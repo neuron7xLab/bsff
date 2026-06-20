@@ -7,10 +7,12 @@ import json
 from pathlib import Path
 
 from .adjudication import (
+    BatchItem,
     ProposedClaim,
     SourceDocument,
     TruthLedger,
     adjudicate,
+    adjudicate_batch,
     fetch_arxiv,
 )
 from .calibration import calibrate_miaaft_budget, required_rank_order_surrogates
@@ -138,6 +140,46 @@ def _run_adjudicate(args: argparse.Namespace) -> None:
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 
+def _build_batch_item(entry: dict, base: Path) -> BatchItem:
+    if entry.get("arxiv"):
+        source = fetch_arxiv(entry["arxiv"])
+    elif entry.get("source_text"):
+        text = (base / entry["source_text"]).read_text(encoding="utf-8")
+        source = SourceDocument.from_text(
+            source_id=entry.get("source_id", entry["source_text"]),
+            kind=entry.get("kind", "text"),
+            uri=entry.get("uri", ""),
+            text=text,
+        )
+    else:
+        raise ValueError("each manifest source needs 'arxiv' or 'source_text'")
+
+    claims_spec = entry.get("claims", [])
+    if isinstance(claims_spec, str):
+        claims_spec = json.loads((base / claims_spec).read_text(encoding="utf-8"))
+    if not isinstance(claims_spec, list):
+        raise ValueError("'claims' must be a list or a path to a JSON list")
+    claims = [ProposedClaim.from_dict(c) for c in claims_spec]
+    return BatchItem(source=source, claims=claims)
+
+
+def _run_adjudicate_batch(args: argparse.Namespace) -> None:
+    manifest_path = Path(args.manifest)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    sources = manifest.get("sources") if isinstance(manifest, dict) else manifest
+    if not isinstance(sources, list):
+        raise ValueError("manifest must be a list of sources or {'sources': [...]}")
+    base = manifest_path.parent
+    items = [_build_batch_item(entry, base) for entry in sources]
+    ledger = TruthLedger(args.ledger) if args.ledger else None
+    report = adjudicate_batch(items, ledger=ledger)
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+
+
 def _run_ledger_verify(args: argparse.Namespace) -> None:
     result = TruthLedger(args.ledger).verify()
     print(json.dumps(result, ensure_ascii=False, indent=2))
@@ -204,6 +246,18 @@ def main(argv: list[str] | None = None) -> None:
     adj.add_argument("--ledger", default=None, help="Path to a JSONL truth ledger to append to.")
     adj.add_argument("--out", default=None, help="Path to write the adjudication report JSON.")
 
+    adj_batch = sub.add_parser(
+        "adjudicate-batch",
+        help="Adjudicate a corpus from a manifest; consolidate dispositions + accountability.",
+    )
+    adj_batch.add_argument(
+        "--manifest", required=True, help="JSON manifest: {'sources': [{source, claims}, ...]}."
+    )
+    adj_batch.add_argument(
+        "--ledger", default=None, help="Path to a JSONL truth ledger to append to."
+    )
+    adj_batch.add_argument("--out", default=None, help="Path to write the batch report JSON.")
+
     ledger_verify = sub.add_parser(
         "ledger-verify", help="Verify the hash-chain integrity of a truth ledger."
     )
@@ -225,6 +279,9 @@ def main(argv: list[str] | None = None) -> None:
         return
     if args.command == "adjudicate":
         _run_adjudicate(args)
+        return
+    if args.command == "adjudicate-batch":
+        _run_adjudicate_batch(args)
         return
     if args.command == "ledger-verify":
         _run_ledger_verify(args)

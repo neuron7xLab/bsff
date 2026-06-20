@@ -171,6 +171,32 @@ falsification battery and embeds the resulting verdict and its case-file hash.
 Without it, the claim is honestly held at `PENDING_EVIDENCE` with a manifest of
 what is required to test it.
 
+## Batch: a corpus, and accountability for the extraction
+
+Running BSFF against one paper is a spot check; `bsff adjudicate-batch` runs it
+against a corpus and consolidates the result into one report and one ledger.
+
+```bash
+bsff adjudicate-batch --manifest corpus.json --ledger ledger.jsonl --out batch.json
+```
+
+```json
+{
+  "sources": [
+    {"source_id": "arXiv:1706.03762", "source_text": "papers/a.txt", "claims": "claims/a.json"},
+    {"arxiv": "2401.00001", "claims": [ {"claim_id": "c1", "quote": "...", "proposer": "llm:gpt"} ]}
+  ]
+}
+```
+
+The report consolidates dispositions and tiers across the corpus **and turns the
+lens on the extraction process itself**. A source whose claims mostly fail to
+anchor, or a proposer whose proposals are mostly fabricated or non-falsifiable,
+is flagged in `integrity_flags` (`HIGH_UNANCHORED_RATE`, `PROPOSER_FABRICATION`,
+`PROPOSER_LOW_FALSIFIABILITY`) with per-proposer accountability. The integrity of
+the verdicts is no stronger than the integrity of whoever proposed the claims,
+and the report refuses to hide that.
+
 ## Non-goals (what this kernel does **not** do)
 
 - It does not decide the truth of a claim; it decides what scrutiny a claim
