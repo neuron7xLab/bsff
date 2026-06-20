@@ -38,6 +38,25 @@ bsff adjudicate-data --data region_a.npy --target region_b.npy --test directed_c
 samples aborts rather than coercing real data into a verdict. The data's sha256
 is recorded in the result, so the verdict is traceable to the exact bytes.
 
+### Raw signal only — not someone's preprocessing
+
+BSFF must test a **raw or near-raw time-domain signal**. Feed it a feature
+table, an accuracy/metric matrix, one-hot labels, or a cleaned result matrix and
+it would be testing the authors' preprocessing decisions, not the neural signal —
+which is lab cosplay, not science. By default `load_series` runs `check_rawness`
+and **refuses** input that shows the signatures of pre-processed data:
+
+- all-integer values (labels, counts, one-hot),
+- few distinct values (categorical / quantized / an accuracy table),
+- more series than samples (a transposed feature/result matrix),
+- values confined to `[0,1]` with little variety (probabilities/accuracies).
+
+Windowed float features that look numerically like a signal cannot be caught
+here — that is a provenance question, so the override is **on the record**:
+`require_raw=False` (CLI `--allow-nonraw`) loads the data anyway but stamps the
+override and the rawness reasons into the verdict provenance. Default is reject;
+an override is accountable, never silent.
+
 ## The honest boundary
 
 This module does **not** ship real published datasets, and it does not invent
