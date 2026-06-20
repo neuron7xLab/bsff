@@ -36,6 +36,15 @@ updates:
       day: "monday"
       time: "04:30"
     open-pull-requests-limit: 5
+    # Cooldown gives a window to detect a malicious/broken release before it lands
+    # (the tj-actions / Trivy class of supply-chain attack). One grouped PR instead
+    # of a per-action flood keeps review tractable; never auto-merge workflow edits.
+    cooldown:
+      default-days: 7
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     labels:
       - "github-actions"
       - "automated"
