@@ -11,25 +11,29 @@ on:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  security-events: write
-  id-token: write
-  actions: read
+# Top-level is read-only. The scorecard publish API rejects any workflow-level
+# write permission (and returns HTTP 400), so every write scope is declared on
+# the job that needs it. This is the Token-Permissions best score AND the
+# precondition for publish_results: true.
+permissions: read-all
 
 jobs:
   scorecard:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      security-events: write # upload SARIF to the code-scanning dashboard
+      id-token: write # OIDC for publish_results on api.scorecard.dev
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
-      - uses: ossf/scorecard-action@v2.4.0
+      - uses: ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a # v2.4.3
         with:
           results_file: scorecard-results.sarif
           results_format: sarif
           publish_results: true
-      - uses: github/codeql-action/upload-sarif@v3
+      - uses: github/codeql-action/upload-sarif@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3.36.2
         with:
           sarif_file: scorecard-results.sarif

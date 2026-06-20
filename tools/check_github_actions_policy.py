@@ -13,6 +13,9 @@ ALLOWED_TAGGED_ACTION_PREFIXES = (
     "actions/",
     "github/",
     "ossf/scorecard-action@",
+    # slsa-github-generator MUST be referenced by tag, not SHA: slsa-verifier
+    # cannot verify a reusable workflow pinned by digest (ossf/scorecard#2174).
+    "slsa-framework/slsa-github-generator/",
 )
 FORBIDDEN = (
     "pull_request_target:",

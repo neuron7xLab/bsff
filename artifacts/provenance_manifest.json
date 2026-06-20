@@ -63,8 +63,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": ".github/workflows/architecture.yml",
-      "sha256": "a6793784ccdfa305564c570484f672d82b5d98f1ebb86da9b712bfc5f9552fcc",
-      "size_bytes": 1053
+      "sha256": "4506dd99501089c7f356c7033e1e3bce6e887b92ad4a7049cb2d8c9c88ee7c42",
+      "size_bytes": 1245
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -73,8 +73,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": ".github/workflows/ci.yml",
-      "sha256": "34a7969349b48d0256cd8f119da28cbfdeb3a25a406d56e34c67abc1b81a0a12",
-      "size_bytes": 2978
+      "sha256": "5b3a4078b62b40ba25e711fabc73ae3f19f417165ef42259f6e9785344c294cc",
+      "size_bytes": 3507
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -83,8 +83,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": ".github/workflows/provenance.yml",
-      "sha256": "0a67451b6d2cbeb44a434dd02826c93aea751fa0b8e25801b4d8f5944440e8de",
-      "size_bytes": 1267
+      "sha256": "4b78d48076d1a2d9642f84a486ecfd9c5b174613e0831609fdd7db57cc4fddd1",
+      "size_bytes": 1459
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -93,8 +93,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": ".github/workflows/publish-pypi.yml",
-      "sha256": "71815780e83e4b98c980bbae1ea92ad75fc2b4cab69d4c3daae6f11797aab769",
-      "size_bytes": 1514
+      "sha256": "5eb0ab57da51abf77aa8fa0227b199a9563ef6b8d4702ba5246e29fed2f69e8c",
+      "size_bytes": 1732
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -103,8 +103,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": ".github/workflows/release-artifact.yml",
-      "sha256": "7b6d9071b1fadcef65891c4c940343738aa9ccbacc08d1567533cb52efac6cf5",
-      "size_bytes": 1126
+      "sha256": "b13b9ef1c7b6e52b04ffc35ea744ac02fbb1cb53de421eb5ee49f482a3cbbd72",
+      "size_bytes": 2882
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -113,8 +113,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": ".github/workflows/scorecard.yml",
-      "sha256": "179d3422277895216f6e5dd0a248633a887cd625c6b56e31b5f90d8cea900840",
-      "size_bytes": 778
+      "sha256": "62c3bbd0d94545c8b54fe0ab12d2af4aee1bd0b56fb907c6a38e7cfe097df3e6",
+      "size_bytes": 1306
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -123,8 +123,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": ".github/workflows/security.yml",
-      "sha256": "4f930a2cd46b59f049efce4cdded3f1dea9cd2c1d983f414c2335624a7c08a37",
-      "size_bytes": 2911
+      "sha256": "c538070b5b85497548ef5156524dcc8d12f42b33dd25d13eaeba5206e7843db8",
+      "size_bytes": 4518
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -903,8 +903,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "tools/check_github_actions_policy.py",
-      "sha256": "092f7d9e000cbb49ae04232963b486d53f7e116a1e486eb722224b4a736d5950",
-      "size_bytes": 2099
+      "sha256": "ff521232a58050e2a69c2d480924b01c944ab4a0e5f494b69621996631520807",
+      "size_bytes": 2302
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -993,8 +993,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "tools/validate_ip_provenance.py",
-      "sha256": "2b90352504aa5805351ef471951c7332039a9e047e3880fc563fb776c1cd1105",
-      "size_bytes": 3441
+      "sha256": "c4cca260e8e790bcd99c6830743ecbab68aa167f29e0050f3b765b6545e62a6a",
+      "size_bytes": 3573
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -1037,5 +1037,5 @@
       "size_bytes": 1810
     }
   ],
-  "manifest_sha256": "d78264162d8b22aa1e2454a728bc56c89b85cbc41c548b2060b83dbfbdb61080"
+  "manifest_sha256": "7708105e8b727383926bbcb28646d28633fa1cda42662e01876593b145cd5dd8"
 }

@@ -8,33 +8,45 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
+# Top-level read-only; every write scope is declared on the job that needs it.
 permissions:
   contents: read
-  id-token: write
-  attestations: write
 
 jobs:
   build-attest:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write # OIDC for actions/attest-build-provenance
+      attestations: write # write the GitHub build-provenance attestation
+    outputs:
+      # base64(sha256sum dist/*) — the subjects the SLSA generator signs.
+      hashes: ${{ steps.hash.outputs.hashes }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: "3.12"
-          cache: pip
       - run: python -m pip install --upgrade pip build
       - run: python -m build
       - run: python -m pip install -e '.[dev,leakage]'
       - run: python tools/generate_evidence_bundle.py
       - run: python tools/generate_provenance_manifest.py
       - run: python tools/validate_ip_provenance.py
-      - uses: actions/attest-build-provenance@v2
+      - uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
         with:
           subject-path: |
             dist/*
             artifacts/*.json
-      - uses: actions/upload-artifact@v4
+      - name: Hash distribution artifacts for SLSA provenance
+        id: hash
+        run: |
+          cd dist
+          echo "hashes=$(sha256sum ./* | base64 -w0)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: bsff-release-${{ github.ref_name }}
           path: |
@@ -42,3 +54,21 @@ jobs:
             artifacts/*.json
             NOTICE
             CITATION.cff
+
+  # SLSA Build L3 provenance. With upload-assets: true on a tag push this
+  # attaches a `*.intoto.jsonl` provenance file to the GitHub release for the
+  # tag — the asset OpenSSF Scorecard's Signed-Releases check scores 10/10.
+  # NOTE: slsa-github-generator MUST be referenced by tag, not SHA: slsa-verifier
+  # cannot verify a reusable workflow pinned by digest (ossf/scorecard#2174).
+  provenance:
+    needs: [build-attest]
+    permissions:
+      actions: read # read the workflow run for provenance
+      id-token: write # Sigstore keyless signing via OIDC
+      contents: write # upload the provenance asset to the release
+    # slsa-verifier requires a tag, not a digest (ossf/scorecard#2174).
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.1.0 # zizmor: ignore[unpinned-uses]
+    with:
+      base64-subjects: ${{ needs.build-attest.outputs.hashes }}
+      provenance-name: bsff-${{ github.ref_name }}.intoto.jsonl
+      upload-assets: true

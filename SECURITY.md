@@ -6,11 +6,19 @@
 
 | Version | Supported |
 |---|---|
-| 0.1.x | Yes, research kernel only |
+| 0.2.x | Yes, research kernel only |
 
 ## Reporting a vulnerability
 
-Use GitHub Security Advisories after the repository is public. Do **not** paste private EEG/BCI data, credentials, medical records, access tokens, or subject identifiers into public issues. Humans keep doing that and then call it “collaboration”. It is not.
+Report privately through GitHub Security Advisories:
+<https://github.com/neuron7xLab/bsff/security/advisories/new>
+or by email to <neuron7x@ukr.net>.
+
+We aim to acknowledge a report within **3 business days** and to publish a fix or
+coordinated-disclosure timeline within **30 days**. Please do **not** open a
+public issue for a vulnerability, and do **not** paste private EEG/BCI data,
+credentials, medical records, access tokens, or subject identifiers into public
+issues. Humans keep doing that and then call it “collaboration”. It is not.
 
 Report:
 

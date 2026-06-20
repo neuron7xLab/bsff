@@ -68,7 +68,9 @@ def main() -> int:
         for needle in [
             "id-token: write",
             "attestations: write",
-            "actions/attest-build-provenance@v2",
+            # Pin-agnostic: the action is hash-pinned (@<sha> # v2.4.0), so match
+            # the prefix instead of a specific tag.
+            "actions/attest-build-provenance@",
         ]:
             if needle not in text:
                 failures.append(f"release workflow missing provenance control: {needle}")

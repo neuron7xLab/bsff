@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "minimumReleaseAge": "7 days",
+  "prConcurrentLimit": 5,
+  "packageRules": [
+    {
+      "description": "Pin GitHub Actions to commit SHA, never auto-merge workflow changes (auto-merge of a moved SHA within a tag is itself an attack vector).",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["pin", "pinDigest", "digest", "minor", "patch"],
+      "groupName": "github-action digests",
+      "automerge": false
+    },
+    {
+      "description": "slsa-github-generator must stay tag-pinned: slsa-verifier cannot verify a reusable workflow pinned by digest.",
+      "matchDepNames": ["slsa-framework/slsa-github-generator"],
+      "pinDigests": false
+    }
+  ]
+}
