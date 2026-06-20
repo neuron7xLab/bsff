@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from .calibration import calibrate_miaaft_budget, required_rank_order_surrogates
+from .case import run_case
 from .leakage_detector import detect_block_design_leakage
 from .schemas import ClaimSpec
 from .surrogate_engine import miaaft_surrogate, rank_order_surrogate_test
@@ -83,14 +84,57 @@ def validate_kernel(output: Path) -> dict[str, object]:
     return report
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Run BSFF operational kernel validation.")
+def _run_falsify(args: argparse.Namespace) -> None:
+    artifact = run_case(
+        args.claim,
+        args.signal,
+        policy=args.policy,
+        seed=args.seed,
+        out_path=args.out,
+    )
+    print(json.dumps(artifact, ensure_ascii=False, indent=2))
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(
+        prog="bsff", description="BSFF — falsification-first verdicts for signal claims."
+    )
+    # Backward-compatible top-level flag: `bsff-validate --output X` keeps working
+    # with no subcommand and runs the operational-kernel self-validation.
     parser.add_argument(
+        "--output",
+        default="artifacts/bsff_phase1_validation.json",
+        help="Path for the self-validation artifact (no-subcommand / selftest mode).",
+    )
+    sub = parser.add_subparsers(dest="command")
+
+    selftest = sub.add_parser("selftest", help="Run BSFF operational kernel self-validation.")
+    selftest.add_argument(
         "--output",
         default="artifacts/bsff_phase1_validation.json",
         help="Path for machine-readable validation artifact.",
     )
-    args = parser.parse_args()
+
+    falsify = sub.add_parser(
+        "falsify",
+        help="Aim BSFF at an external claim + signal; emit a provenance-stamped verdict case-file.",
+    )
+    falsify.add_argument("--claim", required=True, help="ClaimSpec file (.json/.yaml).")
+    falsify.add_argument("--signal", required=True, help="Signal file (.npy/.csv/.tsv).")
+    falsify.add_argument(
+        "--policy",
+        default="strict",
+        choices=("smoke", "standard", "strict"),
+        help="Falsification policy profile (default: strict).",
+    )
+    falsify.add_argument("--seed", type=int, default=123, help="Deterministic surrogate seed.")
+    falsify.add_argument("--out", default=None, help="Path to write the verdict case-file JSON.")
+
+    args = parser.parse_args(argv)
+
+    if args.command == "falsify":
+        _run_falsify(args)
+        return
     report = validate_kernel(Path(args.output))
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
