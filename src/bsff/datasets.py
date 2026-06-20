@@ -183,6 +183,10 @@ def load_series(path: str | Path, *, require_raw: bool = True) -> FloatArray:
         array = np.load(p)
     elif suffix in (".csv", ".tsv", ".txt"):
         array = np.loadtxt(p, delimiter="\t" if suffix == ".tsv" else ",", ndmin=2)
+    elif suffix in (".edf", ".bdf"):
+        from .normalize import read_edf
+
+        array = read_edf(p).data
     else:
         raise ValueError(f"unsupported dataset format '{suffix}'")
     array = np.asarray(array, dtype=float)

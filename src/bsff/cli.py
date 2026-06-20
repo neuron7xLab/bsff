@@ -228,6 +228,45 @@ def _run_adjudicate_data(args: argparse.Namespace) -> None:
     print(json.dumps(verdict, ensure_ascii=False, indent=2))
 
 
+def _run_normalize(args: argparse.Namespace) -> None:
+    import numpy as np
+
+    from .normalize import read_edf
+
+    signal = read_edf(args.input)
+    if args.list:
+        print(json.dumps(signal.to_provenance(), ensure_ascii=False, indent=2))
+        return
+
+    data = signal.data
+    if args.channel is not None:
+        idx = (
+            signal.labels.index(args.channel)
+            if args.channel in signal.labels
+            else int(args.channel)
+        )
+        data = data[idx : idx + 1]
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        np.save(out, data)
+        out.with_suffix(out.suffix + ".provenance.json").write_text(
+            json.dumps(signal.to_provenance(), ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+    print(
+        json.dumps(
+            {
+                "normalized": list(data.shape),
+                "sample_rate_hz": signal.sample_rate_hz,
+                "labels": signal.labels,
+                "out": str(args.out) if args.out else None,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+
+
 def _run_ledger_verify(args: argparse.Namespace) -> None:
     result = TruthLedger(args.ledger).verify()
     print(json.dumps(result, ensure_ascii=False, indent=2))
@@ -336,6 +375,16 @@ def main(argv: list[str] | None = None) -> None:
     adj_data.add_argument("--seed", type=int, default=123, help="Deterministic seed.")
     adj_data.add_argument("--out", default=None, help="Path to write the verdict JSON.")
 
+    normalize = sub.add_parser(
+        "normalize", help="Read a raw EDF/EDF+/BDF file to a canonical signal array."
+    )
+    normalize.add_argument("--input", required=True, help="Path to an .edf/.bdf file.")
+    normalize.add_argument("--out", default=None, help="Write the signal as .npy (+ provenance).")
+    normalize.add_argument("--channel", default=None, help="Select one channel (label or index).")
+    normalize.add_argument(
+        "--list", action="store_true", help="List channels + rates without extracting."
+    )
+
     ledger_verify = sub.add_parser(
         "ledger-verify", help="Verify the hash-chain integrity of a truth ledger."
     )
@@ -363,6 +412,9 @@ def main(argv: list[str] | None = None) -> None:
         return
     if args.command == "adjudicate-data":
         _run_adjudicate_data(args)
+        return
+    if args.command == "normalize":
+        _run_normalize(args)
         return
     if args.command == "render":
         _run_render(args)

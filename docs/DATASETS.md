@@ -57,6 +57,31 @@ here — that is a provenance question, so the override is **on the record**:
 override and the rawness reasons into the verdict provenance. Default is reject;
 an override is accountable, never silent.
 
+## Raw EDF / EDF+ / BDF
+
+Real EEG/BCI signals usually arrive as EDF (or BioSemi's 24-bit BDF).
+`bsff.normalize` reads them in **pure Python, with zero dependencies** — no
+`mne`, no `pyedflib`, nothing to pin or trust — scaling digital samples to
+physical units by each channel's own calibration, dropping the EDF+ annotations
+channel, and setting aside channels that do not share the dominant sampling rate
+(with a recorded reason). A matching `write_edf` makes the reader provable by
+round trip; the recovered signal matches the original to within quantization
+(≈1e-3 of range for 16-bit EDF, ≈1e-5 for 24-bit BDF).
+
+```bash
+# inspect channels and rates without extracting
+bsff normalize --input recording.edf --list
+
+# extract one channel to a canonical .npy (+ a provenance sidecar)
+bsff normalize --input recording.edf --channel Cz --out cz.npy
+
+# or feed the EDF straight to the engine — load_series routes .edf/.bdf through normalize
+bsff adjudicate-data --data recording.edf --test nonlinear_structure
+```
+
+The raw-signal guard still applies after normalization: a physical-units EEG
+trace passes, a degenerate or feature-like array does not.
+
 ## The honest boundary
 
 This module does **not** ship real published datasets, and it does not invent
