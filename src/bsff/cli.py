@@ -6,7 +6,13 @@ import argparse
 import json
 from pathlib import Path
 
-from .adjudication import ProposedClaim, SourceDocument, TruthLedger, adjudicate
+from .adjudication import (
+    ProposedClaim,
+    SourceDocument,
+    TruthLedger,
+    adjudicate,
+    fetch_arxiv,
+)
 from .calibration import calibrate_miaaft_budget, required_rank_order_surrogates
 from .case import run_case
 from .leakage_detector import detect_block_design_leakage
@@ -96,11 +102,29 @@ def _run_falsify(args: argparse.Namespace) -> None:
     print(json.dumps(artifact, ensure_ascii=False, indent=2))
 
 
-def _run_adjudicate(args: argparse.Namespace) -> None:
+def _source_from_args(args: argparse.Namespace) -> SourceDocument:
+    if args.arxiv:
+        return fetch_arxiv(args.arxiv)
+    if not args.source_text:
+        raise SystemExit("adjudicate requires --source-text or --arxiv")
     text = Path(args.source_text).read_text(encoding="utf-8")
-    source = SourceDocument.from_text(
+    return SourceDocument.from_text(
         source_id=args.source_id, kind=args.kind, uri=args.uri, text=text
     )
+
+
+def _run_ingest(args: argparse.Namespace) -> None:
+    source = fetch_arxiv(args.arxiv)
+    payload = {"provenance": source.provenance(), "text": source.text}
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(source.text, encoding="utf-8")
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+
+
+def _run_adjudicate(args: argparse.Namespace) -> None:
+    source = _source_from_args(args)
     raw = json.loads(Path(args.claims).read_text(encoding="utf-8"))
     if not isinstance(raw, list):
         raise ValueError("claims file must decode to a JSON list of claim objects")
@@ -160,9 +184,14 @@ def main(argv: list[str] | None = None) -> None:
         "adjudicate",
         help="Anchor, classify, route, and ledger the claims of an external source.",
     )
-    adj.add_argument("--source-text", required=True, help="Path to the source's extracted text.")
+    adj.add_argument("--source-text", default=None, help="Path to the source's extracted text.")
     adj.add_argument(
-        "--source-id", required=True, help="Source identifier (e.g. arXiv:2401.00001)."
+        "--arxiv",
+        default=None,
+        help="arXiv id to ingest instead of --source-text (e.g. 1706.03762).",
+    )
+    adj.add_argument(
+        "--source-id", default="local:source", help="Source identifier (with --source-text)."
     )
     adj.add_argument(
         "--kind",
@@ -180,10 +209,19 @@ def main(argv: list[str] | None = None) -> None:
     )
     ledger_verify.add_argument("--ledger", required=True, help="Path to the JSONL truth ledger.")
 
+    ingest = sub.add_parser(
+        "ingest", help="Fetch an arXiv abstract as a provenance-stamped source."
+    )
+    ingest.add_argument("--arxiv", required=True, help="arXiv id (e.g. 1706.03762).")
+    ingest.add_argument("--out", default=None, help="Path to write the source text.")
+
     args = parser.parse_args(argv)
 
     if args.command == "falsify":
         _run_falsify(args)
+        return
+    if args.command == "ingest":
+        _run_ingest(args)
         return
     if args.command == "adjudicate":
         _run_adjudicate(args)

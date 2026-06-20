@@ -14,6 +14,7 @@ from __future__ import annotations
 from .argument import ArgumentReport, ArgumentStructure, lint_argument
 from .claim import AnchoredClaim, ProposedClaim
 from .falsifiability import Classification, FalsifiabilityTier, classify
+from .ingest import fetch_arxiv, normalize_arxiv_id, parse_arxiv_atom
 from .kernel import AdjudicationRecord, adjudicate, adjudicate_claim
 from .ledger import GENESIS_HASH, TruthLedger
 from .source import SourceDocument, Span, locate
@@ -33,6 +34,9 @@ __all__ = [
     "adjudicate",
     "adjudicate_claim",
     "classify",
+    "fetch_arxiv",
     "lint_argument",
     "locate",
+    "normalize_arxiv_id",
+    "parse_arxiv_atom",
 ]
