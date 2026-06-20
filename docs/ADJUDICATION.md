@@ -1,4 +1,4 @@
-<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- SPDX-License-Identifier: CC-BY-4.0 -->
 <!-- Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab -->
 
 # BSFF Adjudication Kernel
