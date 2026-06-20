@@ -431,8 +431,9 @@ v0.1.1  Phase 1: convergence monitor · stationarity gate · validation artifact
 v0.1.2  OSS control plane: CI · security · Scorecard · Dependabot · evidence gates
 v0.1.3  IP/provenance: GPL · CC-BY · SPDX · NOTICE · citation · attestations
 v0.2.0  reference covariance validation · benchmark matrix · run() alias ·
-        deterministic UNSUPPORTED · MOABB example · JOSS paper scaffold  [current]
-v0.3.0  Bayesian evidence hardening · upstream leakage benchmark suite
+        deterministic UNSUPPORTED · MOABB example · JOSS paper scaffold
+v0.3.0  frequentist-AND-Bayesian conjunction gate · measured operating
+        characteristic · SLSA release provenance · hash-pinned actions  [current]
 v0.4.0  BIDS-App container · DataLad provenance · real EEG dataset path
 v1.0.0  JOSS submission candidate
 ```

@@ -72,4 +72,4 @@ __all__ = [
     "white_noise_series",
 ]
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
