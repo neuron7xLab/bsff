@@ -19,6 +19,7 @@ from .adjudication import (
 )
 from .calibration import calibrate_miaaft_budget, required_rank_order_surrogates
 from .case import run_case
+from .datasets import DatasetSpec, adjudicate_dataset, load_series
 from .leakage_detector import detect_block_design_leakage
 from .schemas import ClaimSpec
 from .surrogate_engine import miaaft_surrogate, rank_order_surrogate_test
@@ -192,6 +193,37 @@ def _run_render(args: argparse.Namespace) -> None:
     print(rendered)
 
 
+def _run_adjudicate_data(args: argparse.Namespace) -> None:
+    import numpy as np
+
+    data = load_series(args.data)
+    provenance = {
+        "data": str(Path(args.data)),
+        "data_sha256": sha256_bytes(Path(args.data).read_bytes()),
+    }
+    if args.test == "directed_coupling":
+        if args.target:
+            target = load_series(args.target)
+            data = np.vstack([data[0], target[0]])
+            provenance["target"] = str(Path(args.target))
+            provenance["target_sha256"] = sha256_bytes(Path(args.target).read_bytes())
+        elif data.shape[0] < 2:
+            raise SystemExit("directed_coupling needs --target, or a 2-row --data file")
+    spec = DatasetSpec(
+        name=args.name,
+        test_type=args.test,
+        ground_truth={"effect": None, "real_data": True},
+        provenance=provenance,
+    )
+    verdict = adjudicate_dataset(spec, data, seed=args.seed, n_surrogates=args.surrogates)
+    verdict["provenance"] = provenance
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(verdict, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps(verdict, ensure_ascii=False, indent=2))
+
+
 def _run_ledger_verify(args: argparse.Namespace) -> None:
     result = TruthLedger(args.ledger).verify()
     print(json.dumps(result, ensure_ascii=False, indent=2))
@@ -277,6 +309,23 @@ def main(argv: list[str] | None = None) -> None:
     render.add_argument("--format", default="html", choices=("html", "md"), help="Output format.")
     render.add_argument("--out", default=None, help="Path to write the rendered report.")
 
+    adj_data = sub.add_parser(
+        "adjudicate-data",
+        help="Adjudicate a raw series file (bring-your-own-data) to a real verdict.",
+    )
+    adj_data.add_argument("--data", required=True, help="Series file (.npy/.csv); 1 or 2 rows.")
+    adj_data.add_argument(
+        "--test",
+        required=True,
+        choices=("nonlinear_structure", "directed_coupling"),
+        help="Which engine to run.",
+    )
+    adj_data.add_argument("--target", default=None, help="Target series for directed_coupling.")
+    adj_data.add_argument("--name", default="real-data", help="Dataset name for the record.")
+    adj_data.add_argument("--surrogates", type=int, default=99, help="Surrogate count.")
+    adj_data.add_argument("--seed", type=int, default=123, help="Deterministic seed.")
+    adj_data.add_argument("--out", default=None, help="Path to write the verdict JSON.")
+
     ledger_verify = sub.add_parser(
         "ledger-verify", help="Verify the hash-chain integrity of a truth ledger."
     )
@@ -301,6 +350,9 @@ def main(argv: list[str] | None = None) -> None:
         return
     if args.command == "adjudicate-batch":
         _run_adjudicate_batch(args)
+        return
+    if args.command == "adjudicate-data":
+        _run_adjudicate_data(args)
         return
     if args.command == "render":
         _run_render(args)
