@@ -1,0 +1,83 @@
+{
+  "sources": [
+    {
+      "source_id": "astrology:natal-determinism",
+      "kind": "text",
+      "uri": "https://en.wikipedia.org/wiki/Astrology_and_science",
+      "source_text": "sources/astrology.txt",
+      "claims": [
+        {
+          "claim_id": "astrology-1",
+          "quote": "The position of the planets at the moment of a person's birth determines their character and life outcomes",
+          "proposer": "curator:neuron7xLab"
+        }
+      ]
+    },
+    {
+      "source_id": "homeopathy:high-dilution-effect",
+      "kind": "text",
+      "uri": "https://doi.org/10.1038/333816a0",
+      "source_text": "sources/homeopathy.txt",
+      "claims": [
+        {
+          "claim_id": "homeopathy-1",
+          "quote": "A remedy diluted until no molecule of the original substance remains still produces a measurable specific biological effect",
+          "proposer": "curator:neuron7xLab"
+        }
+      ]
+    },
+    {
+      "source_id": "wakefield:lancet-1998-RETRACTED",
+      "kind": "text",
+      "uri": "https://doi.org/10.1016/S0140-6736(97)11096-0",
+      "source_text": "sources/vaccines_autism.txt",
+      "claims": [
+        {
+          "claim_id": "vaccines-autism-1",
+          "quote": "The measles-mumps-rubella vaccine causes autism in previously healthy children",
+          "proposer": "curator:neuron7xLab",
+          "note": "Source publication was retracted by The Lancet in 2010."
+        }
+      ]
+    },
+    {
+      "source_id": "consciousness:non-physical-field",
+      "kind": "text",
+      "uri": "",
+      "source_text": "sources/consciousness_field.txt",
+      "claims": [
+        {
+          "claim_id": "consciousness-1",
+          "quote": "Consciousness is a non-physical field that no instrument can ever detect or measure in principle",
+          "proposer": "curator:neuron7xLab"
+        }
+      ]
+    },
+    {
+      "source_id": "crystal-healing:universal-energy",
+      "kind": "text",
+      "uri": "",
+      "source_text": "sources/crystal_healing.txt",
+      "claims": [
+        {
+          "claim_id": "crystal-1",
+          "quote": "everyone should use them instead of evidence-based medicine",
+          "proposer": "curator:neuron7xLab"
+        }
+      ]
+    },
+    {
+      "source_id": "intelligent-design:definition",
+      "kind": "text",
+      "uri": "",
+      "source_text": "sources/intelligent_design.txt",
+      "claims": [
+        {
+          "claim_id": "intelligent-design-1",
+          "quote": "Intelligent design is defined as the claim that certain features of the universe are best explained by an intelligent cause",
+          "proposer": "curator:neuron7xLab"
+        }
+      ]
+    }
+  ]
+}
