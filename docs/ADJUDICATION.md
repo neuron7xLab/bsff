@@ -66,11 +66,40 @@ the shape of its sentence.
 | `REFUTED` | leakage or null analysis refuted it |
 | `UNSUPPORTED` | the null was mis-specified, or rejection was not corroborated |
 | `PENDING_EVIDENCE` | falsifiable in principle, but no data/operationalization supplied |
+| `DIRECTED_COUPLING_SURVIVED` | causal claim; conditional transfer-entropy test found the claimed direction |
+| `DIRECTED_COUPLING_UNCONDITIONED` | same, but no confounder supplied — provisional (a common drive cannot be excluded) |
 | `LOGICAL_STRUCTURE_PRESENT` / `_INCOMPLETE` / `NOT_AN_ARGUMENT` | argument-structure result |
 | `QUARANTINED_*` | definitional, normative, non-falsifiable, or unanchored |
 
-`SURVIVED_FALSIFICATION` is the *only* disposition that touches empirical data,
-and it still does not mean "true".
+`SURVIVED_FALSIFICATION` and `DIRECTED_COUPLING_SURVIVED` are the only
+dispositions that touch empirical data, and neither means "true".
+
+## The causal route (transfer entropy)
+
+A claim with a causal verb ("drives", "causes", "leads to", "modulates") that
+carries a `transfer_entropy` operationalization is routed to the directed
+transfer-entropy test (see `docs/TRANSFER_ENTROPY.md`):
+
+```json
+{
+  "claim_id": "x-drives-y",
+  "quote": "activity in region X drives the response in region Y",
+  "proposer": "human:yaroslav",
+  "operationalization": {
+    "test": "transfer_entropy",
+    "source": "data/x.npy",
+    "target": "data/y.npy",
+    "conditions": ["data/z.npy"],
+    "k": 2, "cond_lag": 3
+  }
+}
+```
+
+The measured boundary is encoded in the disposition: a survival **without** a
+conditioning series is downgraded to `DIRECTED_COUPLING_UNCONDITIONED`, because
+pairwise transfer entropy cannot tell a direct coupling from a common drive
+(measured false-positive rate ~1.0). A coupling found in the *opposite*
+direction `REFUTED`s the claim; none found leaves it `UNSUPPORTED`.
 
 ## The argument-structure check
 

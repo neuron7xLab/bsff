@@ -14,6 +14,7 @@ Everything else is pending evidence, structural-only, or quarantined.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from .. import __version__
@@ -67,9 +68,95 @@ def _run_empirical_statistical(op: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _load_series(path: str) -> Any:
+    import numpy as np  # local import: heavy numerical stack
+
+    p = Path(path)
+    if not p.is_file():
+        raise FileNotFoundError(f"series file not found: {path}")
+    suffix = p.suffix.lower()
+    if suffix == ".npy":
+        array = np.load(p)
+    elif suffix in (".csv", ".tsv", ".txt"):
+        array = np.loadtxt(p, delimiter="\t" if suffix == ".tsv" else ",")
+    else:
+        raise ValueError(f"unsupported series format '{suffix}'")
+    array = np.asarray(array, dtype=float).squeeze()
+    if array.ndim != 1:
+        raise ValueError(f"series must be 1-D after squeeze, got {array.ndim}-D: {path}")
+    if not np.all(np.isfinite(array)):
+        raise ValueError(f"series contains non-finite values: {path}")
+    return array
+
+
+def _run_causal_te(op: dict[str, Any]) -> dict[str, Any]:
+    from ..transfer_entropy import transfer_entropy_test  # local import: heavy numerical stack
+
+    missing = [k for k in ("source", "target") if not op.get(k)]
+    if missing:
+        return {
+            "disposition": "PENDING_EVIDENCE",
+            "evidence": {
+                "reason": "causal claim lacks the series needed for a transfer-entropy test",
+                "required": [f"operationalization.{k}" for k in missing],
+            },
+        }
+    source = _load_series(op["source"])
+    target = _load_series(op["target"])
+    conditions = [_load_series(c) for c in op.get("conditions", [])]
+    result = transfer_entropy_test(
+        source,
+        target,
+        conditions=conditions or None,
+        k=int(op.get("k", 2)),
+        cond_lag=int(op.get("cond_lag", 3)),
+        n_surrogates=int(op.get("n_surrogates", 199)),
+        alpha=float(op.get("alpha", 0.05)),
+        seed=int(op.get("seed", 123)),
+    )
+    evidence = result.to_dict()
+    caveats: list[str] = []
+    if result.direction == "source->target":
+        # Pairwise TE cannot rule out a common drive (measured FPR ~1.0); an
+        # unconditioned survival is the weaker disposition by design.
+        if conditions:
+            disposition = "DIRECTED_COUPLING_SURVIVED"
+        else:
+            disposition = "DIRECTED_COUPLING_UNCONDITIONED"
+            caveats.append(
+                "No conditioning series supplied: pairwise transfer entropy cannot "
+                "distinguish a direct coupling from a common drive. Treat as provisional."
+            )
+    elif result.direction == "target->source":
+        disposition = "REFUTED"
+        caveats.append(
+            "Directed coupling runs target->source, contradicting the claimed direction."
+        )
+    elif result.direction == "bidirectional":
+        disposition = "UNSUPPORTED"
+        caveats.append(
+            "Coupling significant in both directions; the claimed direction is not isolable."
+        )
+    else:
+        disposition = "UNSUPPORTED"
+        caveats.append(
+            "No directed coupling detected; the causal claim is not supported by the data."
+        )
+    evidence["caveats"] = caveats
+    return {"disposition": disposition, "evidence": evidence}
+
+
 def _route(claim: AnchoredClaim, classification: Classification) -> dict[str, Any]:
     tier = classification.tier
     op = claim.claim.operationalization or {}
+
+    # A transfer-entropy operationalization routes any empirical claim to the
+    # directed-causality test regardless of statistical/qualitative wording.
+    if op.get("test") == "transfer_entropy" and tier in (
+        FalsifiabilityTier.EMPIRICAL_STATISTICAL,
+        FalsifiabilityTier.EMPIRICAL_GENERAL,
+    ):
+        return _run_causal_te(op)
 
     if tier is FalsifiabilityTier.EMPIRICAL_STATISTICAL:
         return _run_empirical_statistical(op)
@@ -78,9 +165,12 @@ def _route(claim: AnchoredClaim, classification: Classification) -> dict[str, An
         return {
             "disposition": "PENDING_EVIDENCE",
             "evidence": {
-                "reason": "empirical claim is qualitative; requires operationalization into a "
-                "ClaimSpec + signal before it can be falsified",
-                "required": ["operationalization.claim_spec", "operationalization.signal"],
+                "reason": "empirical claim is qualitative; supply a ClaimSpec + signal, or a "
+                "transfer_entropy operationalization (source/target series), to falsify it",
+                "required": [
+                    "operationalization.claim_spec + signal",
+                    "or operationalization.test=transfer_entropy",
+                ],
             },
         }
 

@@ -93,8 +93,8 @@ _SIGNATURES: list[tuple[FalsifiabilityTier, str, re.Pattern[str]]] = [
         "empirical_verb",
         re.compile(
             r"\b(observ\w+|measur\w+|found that|results? show|demonstrat\w+|"
-            r"increas\w+|decreas\w+|predict\w+|classif\w+|caus\w+|"
-            r"lead(?:s|ing)? to|associated with|correlat\w+)\b",
+            r"increas\w+|decreas\w+|predict\w+|classif\w+|caus\w+|driv\w+|"
+            r"modulat\w+|lead(?:s|ing)? to|associated with|correlat\w+)\b",
             re.IGNORECASE,
         ),
     ),
