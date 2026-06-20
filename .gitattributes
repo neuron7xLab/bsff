@@ -10,3 +10,4 @@
 *.npy binary
 *.npz binary
 *.zip binary
+*.npz binary
