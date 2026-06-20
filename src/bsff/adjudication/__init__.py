@@ -12,6 +12,7 @@ is ever promoted to "true".
 from __future__ import annotations
 
 from .argument import ArgumentReport, ArgumentStructure, lint_argument
+from .batch import BatchItem, adjudicate_batch
 from .claim import AnchoredClaim, ProposedClaim
 from .falsifiability import Classification, FalsifiabilityTier, classify
 from .ingest import fetch_arxiv, normalize_arxiv_id, parse_arxiv_atom
@@ -25,6 +26,7 @@ __all__ = [
     "AnchoredClaim",
     "ArgumentReport",
     "ArgumentStructure",
+    "BatchItem",
     "Classification",
     "FalsifiabilityTier",
     "ProposedClaim",
@@ -32,6 +34,7 @@ __all__ = [
     "Span",
     "TruthLedger",
     "adjudicate",
+    "adjudicate_batch",
     "adjudicate_claim",
     "classify",
     "fetch_arxiv",
