@@ -93,3 +93,5 @@ jobs:
         env:
           BSFF_N_SURROGATES: "999"
           BSFF_N_PERMUTATIONS: "1000"
+      - name: Full operating-characteristic calibration (drift check)
+        run: python tools/calibrate_operating_characteristic.py

@@ -1,0 +1,106 @@
+{
+  "classes": [
+    {
+      "conjunction_ci95": [
+        0.9591660771331015,
+        1.0
+      ],
+      "conjunction_survive_rate": 1.0,
+      "description": "deterministic Henon-map chaos",
+      "expect_survive": true,
+      "frequentist_ci95": [
+        0.9591660771331015,
+        1.0
+      ],
+      "frequentist_survive_rate": 1.0,
+      "max_bf10_among_rejections": 1.3261845246995544e+50,
+      "min_bf10_among_rejections": 1.2778097831513545e+36,
+      "n_seeds": 60,
+      "name": "henon"
+    },
+    {
+      "conjunction_ci95": [
+        0.9591660771331015,
+        1.0
+      ],
+      "conjunction_survive_rate": 1.0,
+      "description": "deterministic logistic-map chaos",
+      "expect_survive": true,
+      "frequentist_ci95": [
+        0.9591660771331015,
+        1.0
+      ],
+      "frequentist_survive_rate": 1.0,
+      "max_bf10_among_rejections": 9.327728953393607e+47,
+      "min_bf10_among_rejections": 1.0658275510443715e+35,
+      "n_seeds": 60,
+      "name": "logistic"
+    },
+    {
+      "conjunction_ci95": [
+        0.006990385830280762,
+        0.10265087416932912
+      ],
+      "conjunction_survive_rate": 0.03333333333333333,
+      "description": "strongly autocorrelated linear-Gaussian AR(1)",
+      "expect_survive": false,
+      "frequentist_ci95": [
+        0.05372976449545063,
+        0.21544834817994524
+      ],
+      "frequentist_survive_rate": 0.11666666666666667,
+      "max_bf10_among_rejections": 5.052229042244363,
+      "min_bf10_among_rejections": 0.47044398005018484,
+      "n_seeds": 60,
+      "name": "ar1_phi0.75"
+    },
+    {
+      "conjunction_ci95": [
+        0.0018042161883804412,
+        0.07525068954887798
+      ],
+      "conjunction_survive_rate": 0.016666666666666666,
+      "description": "moderately autocorrelated linear-Gaussian AR(1)",
+      "expect_survive": false,
+      "frequentist_ci95": [
+        0.022919404415729844,
+        0.15074094388509027
+      ],
+      "frequentist_survive_rate": 0.06666666666666667,
+      "max_bf10_among_rejections": 515.4218460066643,
+      "min_bf10_among_rejections": 0.7158017847996689,
+      "n_seeds": 60,
+      "name": "ar1_phi0.50"
+    },
+    {
+      "conjunction_ci95": [
+        0.0,
+        0.04083392286689846
+      ],
+      "conjunction_survive_rate": 0.0,
+      "description": "IID Gaussian white noise",
+      "expect_survive": false,
+      "frequentist_ci95": [
+        0.006990385830280762,
+        0.10265087416932912
+      ],
+      "frequentist_survive_rate": 0.03333333333333333,
+      "max_bf10_among_rejections": 1.8978057752794215,
+      "min_bf10_among_rejections": 1.438579313825652,
+      "n_seeds": 60,
+      "name": "white"
+    }
+  ],
+  "config": {
+    "alpha": 0.05,
+    "corroboration_min": 3.0,
+    "max_iter": 200,
+    "n_samples": 1024,
+    "n_seeds": 60,
+    "seed_offset": 1000,
+    "statistic": "lagged_quadratic",
+    "surrogate_count": 99,
+    "test_seed": 123,
+    "tol": 0.001
+  }
+}

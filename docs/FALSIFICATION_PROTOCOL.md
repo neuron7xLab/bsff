@@ -23,6 +23,19 @@ BSFF starts from the hostile assumption that a BCI claim may be inflated by leak
 - `REFUTED`: leakage or null evidence broke the claim.
 - `UNSUPPORTED`: evidence is too weak or ambiguous for a stronger verdict.
 
+### Conjunction gate
+
+When Bayesian evidence is enabled, `SURVIVED` requires a **conjunction**: the
+rank-order surrogate test must reject (`p ≤ α`) *and* an effect-size Bayes factor
+must corroborate it (`BF10 ≥ threshold`, default 3, `strict` 10). A rejection
+that lacks corroboration is demoted to `UNSUPPORTED`. This closes a measured
+false-positive hole: the rank-order p-value is anti-conservative for strongly
+autocorrelated linear-Gaussian nulls (finite-N IAAFT bias; Kugiumtzis 2002), so a
+near-zero effect can clear `α` by chance but cannot also clear `BF10 ≥ 3`. The
+gate is fail-closed — it only ever demotes — and its measured effect (power held
+at 1.000, null false-positive rate restored to ≤ α) is recorded in
+[`OPERATING_CHARACTERISTIC.md`](OPERATING_CHARACTERISTIC.md).
+
 ## Phase 2 additions
 
 - Independent TISEAN/reference comparison.
