@@ -1,7 +1,7 @@
-# Default ownership gate. Replace or extend after organization publication.
-* @neuron7x
+# Default ownership gate. Owner must have write access or code-owner reviews are silently ignored.
+* @neuron7xLab
 
-/src/bsff/surrogate_engine.py @neuron7x
-/src/bsff/verdict_engine.py @neuron7x
-/src/bsff/leakage_detector.py @neuron7x
-/.github/workflows/ @neuron7x
+/src/bsff/surrogate_engine.py @neuron7xLab
+/src/bsff/verdict_engine.py @neuron7xLab
+/src/bsff/leakage_detector.py @neuron7xLab
+/.github/workflows/ @neuron7xLab
