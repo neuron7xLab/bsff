@@ -43,6 +43,32 @@ def henon_series(
     return z.astype(float)
 
 
+def logistic_series(n_samples: int = 1024, r: float = 3.95, seed: int = 11) -> FloatArray:
+    """Generate a deterministic logistic-map series with burn-in.
+
+    A second independent deterministic-chaos fixture (distinct from Hénon) so the
+    operating-characteristic battery does not over-fit instrument power to a single
+    nonlinear generator.
+    """
+    rng = np.random.default_rng(seed)
+    x = np.zeros(n_samples + 256, dtype=float)
+    x[0] = float(rng.uniform(0.1, 0.9))
+    for t in range(1, len(x)):
+        x[t] = r * x[t - 1] * (1.0 - x[t - 1])
+    z = x[256:]
+    z -= z.mean()
+    z /= z.std() + 1e-12
+    return z.astype(float)
+
+
+def white_noise_series(n_samples: int = 1024, seed: int = 11) -> FloatArray:
+    """Generate a standardized IID Gaussian (white-noise) null fixture."""
+    z = np.random.default_rng(seed).normal(size=n_samples)
+    z -= z.mean()
+    z /= z.std() + 1e-12
+    return z.astype(float)
+
+
 def block_design_dataset(
     n_blocks: int = 16, block_len: int = 32, seed: int = 13
 ) -> tuple[FloatArray, NDArray[np.int64], NDArray[np.int64]]:

@@ -11,6 +11,11 @@ from .leakage_deep import (
     phase_locking_value,
 )
 from .leakage_detector import detect_block_design_leakage, detect_feature_selection_leakage
+from .operating_characteristic import (
+    DEFAULT_BATTERY,
+    OperatingCharacteristic,
+    measure_operating_characteristic,
+)
 from .pipeline import FalsificationPipeline, PipelineVerdict, evaluate_claim_pipeline
 from .policy import PolicyProfile, adapt_policy_for_signal, get_policy_profile
 from .schemas import ClaimSpec, VerdictJSON
@@ -22,12 +27,20 @@ from .surrogate_engine import (
     rank_order_surrogate_test,
     var_phase_randomized_surrogate,
 )
-from .synthetic import ar1_multichannel, block_design_dataset, henon_series
+from .synthetic import (
+    ar1_multichannel,
+    block_design_dataset,
+    henon_series,
+    logistic_series,
+    white_noise_series,
+)
 from .verdict_engine import evaluate_claim
 
 __all__ = [
+    "DEFAULT_BATTERY",
     "ClaimSpec",
     "FalsificationPipeline",
+    "OperatingCharacteristic",
     "PipelineVerdict",
     "PolicyProfile",
     "VerdictJSON",
@@ -48,12 +61,15 @@ __all__ = [
     "get_policy_profile",
     "henon_series",
     "jzs_bayes_factor",
+    "logistic_series",
+    "measure_operating_characteristic",
     "miaaft_surrogate",
     "modulation_index",
     "phase_locking_value",
     "rank_order_surrogate_test",
     "var_phase_randomized_surrogate",
     "verdict_json_schema",
+    "white_noise_series",
 ]
 
 __version__ = "0.2.0"

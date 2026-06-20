@@ -452,6 +452,7 @@ The strength of evidence is not in how loudly a claim is made. It is in how hard
 ## Known limits
 
 - MIAAFT is **not externally validated against TISEAN**; this remains the hard pre-JOSS gate.
+- The rank-order p-value is anti-conservative for strongly autocorrelated linear-Gaussian nulls (finite-N IAAFT bias). The shipped frequentist-AND-Bayesian conjunction gate restores nominal specificity (measured FPR ≤ α at full power); see [`docs/OPERATING_CHARACTERISTIC.md`](docs/OPERATING_CHARACTERISTIC.md).
 - CI thresholds are smoke/engineering thresholds, **not regulatory validation**.
 - BSFF does **not** prove BCI claims; it only reports whether they survived the configured falsification attacks.
 - Current validation fixtures are synthetic; real EEG/BIDS validation remains Phase 3.
@@ -469,6 +470,7 @@ The methodology is grounded in:
 - Schreiber & Schmitz (1996). *Improved Surrogate Data for Nonlinearity Tests.* Physical Review Letters, 77:635.
 - Schreiber & Schmitz (2000). *Surrogate time series.* Physica D, 142:346.
 - Theiler et al. (1992). *Testing for nonlinearity in time series.* Physica D, 58:77.
+- Kugiumtzis (2002). *Surrogate data test for nonlinearity including nonmonotonic transforms.* Physical Review E, 62:R25.
 - Li et al. (2021). *The Perils and Pitfalls of Block Design for EEG Classification.* IEEE TPAMI, 43(1):316.
 - Kapoor & Narayanan (2023). *Leakage and the Reproducibility Crisis in Machine-learning-based Science.* Patterns, 4(9):100804.
 

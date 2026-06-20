@@ -14,7 +14,8 @@
     "max_channels_ci": 32,
     "max_samples_ci": 8192,
     "covariance_rmsd_warn": 0.35,
-    "spectrum_error_warn": 0.1
+    "spectrum_error_warn": 0.1,
+    "bayesian_corroboration_min": 3.0
   },
   "evidence_graph": {
     "node_count": 4,
@@ -116,5 +117,5 @@
   "caveats": [
     "Low surrogate count: CI smoke evidence, not publication-grade evidence."
   ],
-  "contract_sha256": "d6a90ac68d5622f9a18a9717b8f2e469d628b17702b2a5572a85a2d80a958b0e"
+  "contract_sha256": "09398f4a0b09a6965fb3719e53ea676a710c432cc89cf7b763f336a01aba375b"
 }

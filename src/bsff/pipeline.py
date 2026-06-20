@@ -152,9 +152,17 @@ class FalsificationPipeline:
         )
         if convergence and not bool(convergence.get("all_converged", True)):
             return "UNSUPPORTED"
-        if surrogate.status == "PASS":
-            return "SURVIVED"
         bayes = context.scratch.get("bayesian_evidence")
+        if surrogate.status == "PASS":
+            # Conjunction gate (mirrors verdict_engine.evaluate_claim): when the
+            # Bayesian stage ran, a frequentist rejection must be corroborated by
+            # BF10 >= policy.bayesian_corroboration_min to earn SURVIVED. This
+            # closes the anti-conservative IAAFT-bias hole on autocorrelated nulls.
+            if isinstance(bayes, dict) and float(bayes.get("BF10", 0.0)) < float(
+                context.policy.bayesian_corroboration_min
+            ):
+                return "UNSUPPORTED"
+            return "SURVIVED"
         if isinstance(bayes, dict) and float(bayes.get("BF01", 0.0)) <= 3.0:
             return "UNSUPPORTED"
         return "REFUTED"

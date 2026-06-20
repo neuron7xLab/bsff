@@ -36,12 +36,22 @@ class PolicyProfile:
     max_samples_ci: int = 8192
     covariance_rmsd_warn: float = 0.35
     spectrum_error_warn: float = 0.10
+    # Minimum BF10 required to corroborate a frequentist rejection into SURVIVED.
+    # The rank-order surrogate p-value is anti-conservative for strongly
+    # autocorrelated linear-Gaussian processes (finite-N IAAFT bias, Kugiumtzis
+    # 2002): a near-zero nonlinear effect can clear alpha by chance. Demanding a
+    # corroborating effect-size Bayes factor restores nominal specificity without
+    # touching power, because genuine nonlinear structure yields BF10 >> 1. The
+    # gate only fires when bayesian_evidence is enabled (standard/strict).
+    bayesian_corroboration_min: float = 3.0
 
     def validate(self) -> None:
         if not self.name:
             raise ValueError("policy name must be non-empty")
         if not (0 < self.alpha < 1):
             raise ValueError("alpha must be in (0, 1)")
+        if self.bayesian_corroboration_min < 1.0:
+            raise ValueError("bayesian_corroboration_min must be >= 1.0 (a gate cannot loosen)")
         minimum = required_rank_order_surrogates(self.alpha)
         if self.surrogate_count < minimum:
             raise ValueError(f"surrogate_count must be >= {minimum} for alpha={self.alpha}")
@@ -83,6 +93,7 @@ def get_policy_profile(name: str = "smoke") -> PolicyProfile:
             miaaft_fallback="raise",
             covariance_rmsd_warn=0.05,
             spectrum_error_warn=0.05,
+            bayesian_corroboration_min=10.0,
         ),
     }
     try:

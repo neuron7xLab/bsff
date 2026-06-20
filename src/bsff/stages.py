@@ -125,4 +125,11 @@ class BayesianEvidenceStage:
         )
         context.scratch[self.stage_id] = bf
         status = "PASS" if float(bf["BF10"]) > 1.0 else "WARN"
-        return StageResult(self.stage_id, status, evidence=bf)
+        caveats: list[str] = []
+        threshold = float(context.policy.bayesian_corroboration_min)
+        if bool(surrogate.get("rejected")) and float(bf["BF10"]) < threshold:
+            caveats.append(
+                f"Frequentist rejection not corroborated: BF10={float(bf['BF10']):.3g} < "
+                f"{threshold:.3g}; SURVIVED is demoted to UNSUPPORTED by the conjunction gate."
+            )
+        return StageResult(self.stage_id, status, evidence=bf, caveats=caveats)
