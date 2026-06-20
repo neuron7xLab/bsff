@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
+from .adjudication import ProposedClaim, SourceDocument, TruthLedger, adjudicate
 from .calibration import calibrate_miaaft_budget, required_rank_order_surrogates
 from .case import run_case
 from .leakage_detector import detect_block_design_leakage
@@ -95,6 +96,31 @@ def _run_falsify(args: argparse.Namespace) -> None:
     print(json.dumps(artifact, ensure_ascii=False, indent=2))
 
 
+def _run_adjudicate(args: argparse.Namespace) -> None:
+    text = Path(args.source_text).read_text(encoding="utf-8")
+    source = SourceDocument.from_text(
+        source_id=args.source_id, kind=args.kind, uri=args.uri, text=text
+    )
+    raw = json.loads(Path(args.claims).read_text(encoding="utf-8"))
+    if not isinstance(raw, list):
+        raise ValueError("claims file must decode to a JSON list of claim objects")
+    claims = [ProposedClaim.from_dict(item) for item in raw]
+    ledger = TruthLedger(args.ledger) if args.ledger else None
+    report = adjudicate(source, claims, ledger=ledger)
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+
+
+def _run_ledger_verify(args: argparse.Namespace) -> None:
+    result = TruthLedger(args.ledger).verify()
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    if not result["ok"]:
+        raise SystemExit(1)
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(
         prog="bsff", description="BSFF — falsification-first verdicts for signal claims."
@@ -130,10 +156,40 @@ def main(argv: list[str] | None = None) -> None:
     falsify.add_argument("--seed", type=int, default=123, help="Deterministic surrogate seed.")
     falsify.add_argument("--out", default=None, help="Path to write the verdict case-file JSON.")
 
+    adj = sub.add_parser(
+        "adjudicate",
+        help="Anchor, classify, route, and ledger the claims of an external source.",
+    )
+    adj.add_argument("--source-text", required=True, help="Path to the source's extracted text.")
+    adj.add_argument(
+        "--source-id", required=True, help="Source identifier (e.g. arXiv:2401.00001)."
+    )
+    adj.add_argument(
+        "--kind",
+        default="text",
+        choices=("arxiv", "doi", "url", "pdf", "text"),
+        help="Source kind (default: text).",
+    )
+    adj.add_argument("--uri", default="", help="Canonical locator for the source.")
+    adj.add_argument("--claims", required=True, help="JSON file: list of proposed-claim objects.")
+    adj.add_argument("--ledger", default=None, help="Path to a JSONL truth ledger to append to.")
+    adj.add_argument("--out", default=None, help="Path to write the adjudication report JSON.")
+
+    ledger_verify = sub.add_parser(
+        "ledger-verify", help="Verify the hash-chain integrity of a truth ledger."
+    )
+    ledger_verify.add_argument("--ledger", required=True, help="Path to the JSONL truth ledger.")
+
     args = parser.parse_args(argv)
 
     if args.command == "falsify":
         _run_falsify(args)
+        return
+    if args.command == "adjudicate":
+        _run_adjudicate(args)
+        return
+    if args.command == "ledger-verify":
+        _run_ledger_verify(args)
         return
     report = validate_kernel(Path(args.output))
     print(json.dumps(report, ensure_ascii=False, indent=2))
