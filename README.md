@@ -18,7 +18,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/ci.yml?branch=main&style=flat-square&label=CI&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/ci.yml)
 [![Security](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/security.yml?branch=main&style=flat-square&label=security&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/security.yml)
 [![Provenance](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/provenance.yml?branch=main&style=flat-square&label=provenance&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/provenance.yml)
-[![Tests](https://img.shields.io/badge/tests-80%2F80%20passing-2d6a2d?style=flat-square)](tests/)
+[![Tests](https://img.shields.io/badge/tests-193%2F193%20passing-2d6a2d?style=flat-square)](tests/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-2d2d2d?style=flat-square)](pyproject.toml)
 [![License](https://img.shields.io/badge/code-GPL--3.0--or--later-2d2d2d?style=flat-square)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-CC--BY--4.0-2d2d2d?style=flat-square)](NOTICE)
@@ -64,6 +64,43 @@ StationarityGate ──► LeakageProbe ──► SurrogateEngine ──► Verd
 4. **Verdict** — is the output reproducible, evidence-backed, and honest about caveats?
 
 BSFF does **not** prove BCI claims. It tries to break them before someone mistakes a leaderboard artifact for neuroscience.
+
+---
+
+## The full pipeline
+
+The four-attack signal verdict above is the core. Around it, BSFF is now a
+complete claim-adjudication engine — from a raw recording or a publication's
+claims through to a tamper-evident verdict ledger and a human-readable report.
+One chain, fail-closed at every link; see [`docs/PIPELINE.md`](docs/PIPELINE.md).
+
+```
+raw signal (.edf/.bdf/.csv/.npy) ─► normalize ─► raw-signal guard ─┐
+publication claim (verbatim quote) ─► anchor ─► classify tier ─────┤
+                                                                   ▼
+        route { empirical → surrogate battery | causal → conditional transfer entropy
+              | logical → argument structure  | else → quarantine }
+                                                                   ▼
+                       verdict ─► hash-chained ledger ─► HTML/Markdown report
+```
+
+| command | what it does |
+|---------|--------------|
+| `bsff falsify` | falsify one signal claim (ClaimSpec + signal) |
+| `bsff normalize` | read raw EDF/EDF+/BDF → canonical array (pure Python, zero deps) |
+| `bsff adjudicate-data` | data-driven verdict on a raw signal you supply |
+| `bsff ingest --arxiv <id>` | fetch a paper's abstract as a provenance-stamped source |
+| `bsff adjudicate` | anchor, classify, route, and ledger a source's claims |
+| `bsff adjudicate-batch` | adjudicate a corpus, with extraction accountability |
+| `bsff render` | render a verdict report as HTML or Markdown |
+| `bsff ledger-verify` | check a truth ledger's hash-chain integrity |
+
+The raw-signal guard refuses feature tables, accuracy matrices, and labels — it
+tests the signal, not someone's preprocessing. No disposition is ever "true":
+the strongest an empirical claim earns is *survived falsification under stated
+conditions*. Details: [`docs/ADJUDICATION.md`](docs/ADJUDICATION.md),
+[`docs/TRANSFER_ENTROPY.md`](docs/TRANSFER_ENTROPY.md),
+[`docs/DATASETS.md`](docs/DATASETS.md).
 
 ---
 
