@@ -18,6 +18,7 @@ from .falsifiability import Classification, FalsifiabilityTier, classify
 from .ingest import fetch_arxiv, normalize_arxiv_id, parse_arxiv_atom
 from .kernel import AdjudicationRecord, adjudicate, adjudicate_claim
 from .ledger import GENESIS_HASH, TruthLedger
+from .report_render import render_html, render_markdown
 from .source import SourceDocument, Span, locate
 
 __all__ = [
@@ -42,4 +43,6 @@ __all__ = [
     "locate",
     "normalize_arxiv_id",
     "parse_arxiv_atom",
+    "render_html",
+    "render_markdown",
 ]

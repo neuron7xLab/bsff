@@ -14,6 +14,8 @@ from .adjudication import (
     adjudicate,
     adjudicate_batch,
     fetch_arxiv,
+    render_html,
+    render_markdown,
 )
 from .calibration import calibrate_miaaft_budget, required_rank_order_surrogates
 from .case import run_case
@@ -180,6 +182,16 @@ def _run_adjudicate_batch(args: argparse.Namespace) -> None:
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 
+def _run_render(args: argparse.Namespace) -> None:
+    report = json.loads(Path(args.report).read_text(encoding="utf-8"))
+    rendered = render_html(report) if args.format == "html" else render_markdown(report)
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(rendered, encoding="utf-8")
+    print(rendered)
+
+
 def _run_ledger_verify(args: argparse.Namespace) -> None:
     result = TruthLedger(args.ledger).verify()
     print(json.dumps(result, ensure_ascii=False, indent=2))
@@ -258,6 +270,13 @@ def main(argv: list[str] | None = None) -> None:
     )
     adj_batch.add_argument("--out", default=None, help="Path to write the batch report JSON.")
 
+    render = sub.add_parser(
+        "render", help="Render an adjudication/batch report as human-readable HTML or Markdown."
+    )
+    render.add_argument("--report", required=True, help="Path to a JSON adjudication/batch report.")
+    render.add_argument("--format", default="html", choices=("html", "md"), help="Output format.")
+    render.add_argument("--out", default=None, help="Path to write the rendered report.")
+
     ledger_verify = sub.add_parser(
         "ledger-verify", help="Verify the hash-chain integrity of a truth ledger."
     )
@@ -282,6 +301,9 @@ def main(argv: list[str] | None = None) -> None:
         return
     if args.command == "adjudicate-batch":
         _run_adjudicate_batch(args)
+        return
+    if args.command == "render":
+        _run_render(args)
         return
     if args.command == "ledger-verify":
         _run_ledger_verify(args)
