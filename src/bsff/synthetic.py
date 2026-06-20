@@ -69,6 +69,66 @@ def white_noise_series(n_samples: int = 1024, seed: int = 11) -> FloatArray:
     return z.astype(float)
 
 
+def _standardize(z: FloatArray) -> FloatArray:
+    z = z - z.mean()
+    return (z / (z.std() + 1e-12)).astype(float)
+
+
+def independent_ar_pair(
+    n_samples: int = 1024, phi: float = 0.6, seed: int = 17
+) -> tuple[FloatArray, FloatArray]:
+    """Two independent AR(1) series — a directed-coupling null (no X->Y, no Y->X)."""
+    rng = np.random.default_rng(seed)
+    x = np.zeros(n_samples)
+    y = np.zeros(n_samples)
+    ex, ey = rng.normal(size=n_samples), rng.normal(size=n_samples)
+    for t in range(1, n_samples):
+        x[t] = phi * x[t - 1] + ex[t]
+        y[t] = phi * y[t - 1] + ey[t]
+    return _standardize(x), _standardize(y)
+
+
+def coupled_ar_unidirectional(
+    n_samples: int = 1024, phi: float = 0.5, coupling: float = 0.5, seed: int = 17
+) -> tuple[FloatArray, FloatArray]:
+    """Linear X->Y coupling: ``y[t] = phi*y[t-1] + coupling*x[t-1] + noise``.
+
+    The causal fixture: a correct instrument should detect X->Y and not Y->X.
+    """
+    rng = np.random.default_rng(seed)
+    x = np.zeros(n_samples)
+    y = np.zeros(n_samples)
+    ex, ey = rng.normal(size=n_samples), rng.normal(size=n_samples)
+    for t in range(1, n_samples):
+        x[t] = phi * x[t - 1] + ex[t]
+        y[t] = phi * y[t - 1] + coupling * x[t - 1] + ey[t]
+    return _standardize(x), _standardize(y)
+
+
+def coupled_ar_common_drive(
+    n_samples: int = 1024, phi: float = 0.5, drive: float = 0.6, seed: int = 17
+) -> tuple[FloatArray, FloatArray, FloatArray]:
+    """Common latent drive Z with no direct X<->Y coupling (a confounded null).
+
+    Z drives X at lag 1 and Y at lag 2, so X leads Y purely through the shared
+    driver. Pairwise transfer entropy should be fooled into flagging X->Y; the
+    conditional form (conditioning on Z) should not. Returns ``(x, y, z)``.
+    """
+    rng = np.random.default_rng(seed)
+    x = np.zeros(n_samples)
+    y = np.zeros(n_samples)
+    z = np.zeros(n_samples)
+    ez, ex, ey = (rng.normal(size=n_samples) for _ in range(3))
+    for t in range(1, n_samples):
+        z[t] = phi * z[t - 1] + ez[t]
+        x[t] = phi * x[t - 1] + drive * z[t - 1] + ex[t]
+        if t >= 2:
+            y[t] = phi * y[t - 1] + drive * z[t - 2] + ey[t]
+        else:
+            y[t] = phi * y[t - 1] + ey[t]
+    return _standardize(x), _standardize(y), _standardize(z)
+
+
 def block_design_dataset(
     n_blocks: int = 16, block_len: int = 32, seed: int = 13
 ) -> tuple[FloatArray, NDArray[np.int64], NDArray[np.int64]]:
