@@ -219,7 +219,15 @@ def _run_adjudicate_data(args: argparse.Namespace) -> None:
         ground_truth={"effect": None, "real_data": True},
         provenance=provenance,
     )
-    verdict = adjudicate_dataset(spec, data, seed=args.seed, n_surrogates=args.surrogates)
+    if args.stability_seeds and args.stability_seeds > 1:
+        from .stability import certify_dataset
+
+        seeds = [args.seed + i for i in range(args.stability_seeds)]
+        verdict = certify_dataset(
+            spec, data, seeds=seeds, n_surrogates=args.surrogates, min_agreement=args.min_agreement
+        )
+    else:
+        verdict = adjudicate_dataset(spec, data, seed=args.seed, n_surrogates=args.surrogates)
     verdict["provenance"] = provenance
     if args.out:
         out = Path(args.out)
@@ -395,6 +403,18 @@ def main(argv: list[str] | None = None) -> None:
     )
     adj_data.add_argument("--surrogates", type=int, default=99, help="Surrogate count.")
     adj_data.add_argument("--seed", type=int, default=123, help="Deterministic seed.")
+    adj_data.add_argument(
+        "--stability-seeds",
+        type=int,
+        default=0,
+        help="Certify the verdict across this many seeds; fail-closed to UNSTABLE if it flips.",
+    )
+    adj_data.add_argument(
+        "--min-agreement",
+        type=float,
+        default=1.0,
+        help="Stability criterion: required modal-verdict fraction (default 1.0 = unanimous).",
+    )
     adj_data.add_argument("--out", default=None, help="Path to write the verdict JSON.")
 
     adj_moabb = sub.add_parser(

@@ -16,11 +16,12 @@ accident is a guarantee; one you can is a slogan.
 | INV-4 | **Anchor** | a quote absent from its source is **always** quarantined, regardless of how empirical, normative, or definitional it reads | adjudicate absent quotes across tiers |
 | INV-5 | **Provenance closure** | every report's `artifact_sha256` recomputes from its own content | recompute `stable_sha256` for `adjudicate` + `adjudicate_batch` |
 | INV-6 | **Raw-signal guard** | a non-signal (labels, features, accuracy matrices) is **refused**, not adjudicated | `load_series` on a label array must raise |
+| INV-7 | **Seed-stability** | a verdict that flips across the random surrogate seed is never certified — it fails closed to `UNSTABLE` | `certify` over seeds: iterate-until-stable, or refuse |
 
 ## Why this is the architecture, not decoration
 
 Frontier systems do not assert their safety properties; they make them
-checkable. These six invariants are the smallest set whose conjunction defines
+checkable. These seven invariants are the smallest set whose conjunction defines
 what BSFF *is*: a deterministic, provenance-bound, fail-closed instrument that
 sorts claims by the scrutiny they admit and never declares truth. Each is a
 first-principle, not a feature:

@@ -192,3 +192,25 @@ def test_inv6_non_signal_is_refused(tmp_path):
 def test_inv1_classify_is_pure():
     q = "the effect was statistically significant (p < 0.01)"
     assert classify(q).to_dict() == classify(q).to_dict()
+
+
+# --------------------------- INV-7 SEED-STABILITY ---------------------------
+
+
+def test_inv7_unstable_verdict_fails_closed():
+    # a verdict that flips across the random seed is never certified.
+    from bsff.stability import UNSTABLE, certify
+
+    flip = {0: "SURVIVED", 1: "REFUTED"}
+    report = certify(lambda s: flip[s % 2], seeds=[0, 1, 2, 3])
+    assert report.stable is False
+    assert report.certified == UNSTABLE
+
+
+def test_inv7_strong_signal_certifies_stable():
+    from bsff.stability import certify_dataset
+
+    spec, data = materialize("nonlinear_effect")
+    out = certify_dataset(spec, data, seeds=[1, 2, 3], n_surrogates=49)
+    assert out["stability"]["stable"] is True
+    assert out["certified_verdict"] == "SURVIVED"
