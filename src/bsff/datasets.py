@@ -123,12 +123,57 @@ def materialize(name: str, *, seed: int = 7) -> tuple[DatasetSpec, FloatArray]:
 # ------------------------------ real-data socket ----------------------------
 
 
-def load_series(path: str | Path) -> FloatArray:
+def check_rawness(array: FloatArray) -> list[str]:
+    """Heuristic reasons ``array`` looks pre-processed rather than a raw signal.
+
+    BSFF must test a raw or near-raw time-domain signal. Fed a feature table, an
+    accuracy/metric matrix, one-hot labels, or a cleaned result matrix, it would
+    be testing someone's preprocessing decisions, not the neural signal — which
+    is lab cosplay, not science. These checks catch the numerically detectable
+    cases; windowed float features that look like signal cannot be caught here
+    and require an on-the-record human assertion instead.
+    """
+    reasons: list[str] = []
+    n_series, n_samples = array.shape
+    finite = array[np.isfinite(array)]
+
+    if n_series >= n_samples:
+        reasons.append(
+            f"more series ({n_series}) than samples ({n_samples}): looks like a transposed "
+            "feature/result matrix, not a time series"
+        )
+    if finite.size and np.allclose(finite, np.round(finite)):
+        reasons.append(
+            "all values are integers: raw analog signal is continuous "
+            "(looks like labels, counts, or one-hot encodings)"
+        )
+    uniq = int(np.unique(array).size)
+    if uniq < min(50, max(10, 0.01 * array.size)):
+        reasons.append(
+            f"only {uniq} distinct values: looks categorical/quantized "
+            "(labels, an accuracy table, or a cleaned result matrix)"
+        )
+    if finite.size and finite.min() >= 0.0 and finite.max() <= 1.0 and uniq < 0.5 * array.size:
+        reasons.append(
+            "values confined to [0,1] with limited variety: looks like "
+            "probabilities/accuracies, not a signal"
+        )
+    return reasons
+
+
+def load_series(path: str | Path, *, require_raw: bool = True) -> FloatArray:
     """Fail-closed loader for a real series file (``.npy``/``.csv``/``.tsv``).
 
     Returns a 2-D ``(n_series, n_samples)`` array: one row for a univariate
     recording, two rows for a source/target pair. A shape that is not 1-D or 2-D,
     or any non-finite value, aborts rather than coercing real data into a verdict.
+
+    With ``require_raw`` (the default), the array is also checked for the
+    signatures of pre-processed data (see :func:`check_rawness`) and rejected if
+    any fire. Pass ``require_raw=False`` only when you have confirmed the input is
+    a genuine raw/near-raw signal that merely trips a heuristic — and record that
+    override, because an unrecorded override is exactly the silent acceptance this
+    guard exists to prevent.
     """
     p = Path(path)
     if not p.is_file():
@@ -149,6 +194,15 @@ def load_series(path: str | Path) -> FloatArray:
         raise ValueError(f"dataset must have >= {_MIN_SAMPLES} samples, got {array.shape[1]}")
     if not np.all(np.isfinite(array)):
         raise ValueError("dataset contains non-finite values; refuse to adjudicate")
+    if require_raw:
+        reasons = check_rawness(array)
+        if reasons:
+            raise ValueError(
+                "input does not look like a raw/near-raw signal — refusing to test someone's "
+                "preprocessing instead of the signal:\n  - "
+                + "\n  - ".join(reasons)
+                + "\nIf this really is raw data, pass require_raw=False and record the override."
+            )
     return array
 
 

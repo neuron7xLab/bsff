@@ -19,7 +19,7 @@ from .adjudication import (
 )
 from .calibration import calibrate_miaaft_budget, required_rank_order_surrogates
 from .case import run_case
-from .datasets import DatasetSpec, adjudicate_dataset, load_series
+from .datasets import DatasetSpec, adjudicate_dataset, check_rawness, load_series
 from .leakage_detector import detect_block_design_leakage
 from .schemas import ClaimSpec
 from .surrogate_engine import miaaft_surrogate, rank_order_surrogate_test
@@ -196,14 +196,18 @@ def _run_render(args: argparse.Namespace) -> None:
 def _run_adjudicate_data(args: argparse.Namespace) -> None:
     import numpy as np
 
-    data = load_series(args.data)
+    require_raw = not args.allow_nonraw
+    data = load_series(args.data, require_raw=require_raw)
     provenance = {
         "data": str(Path(args.data)),
         "data_sha256": sha256_bytes(Path(args.data).read_bytes()),
+        "raw_signal_required": require_raw,
+        "raw_check_reasons": check_rawness(data),
+        "raw_override": bool(args.allow_nonraw),
     }
     if args.test == "directed_coupling":
         if args.target:
-            target = load_series(args.target)
+            target = load_series(args.target, require_raw=require_raw)
             data = np.vstack([data[0], target[0]])
             provenance["target"] = str(Path(args.target))
             provenance["target_sha256"] = sha256_bytes(Path(args.target).read_bytes())
@@ -322,6 +326,12 @@ def main(argv: list[str] | None = None) -> None:
     )
     adj_data.add_argument("--target", default=None, help="Target series for directed_coupling.")
     adj_data.add_argument("--name", default="real-data", help="Dataset name for the record.")
+    adj_data.add_argument(
+        "--allow-nonraw",
+        action="store_true",
+        help="Override the raw-signal guard (records the override in provenance). "
+        "Use only for confirmed raw data that trips a heuristic.",
+    )
     adj_data.add_argument("--surrogates", type=int, default=99, help="Surrogate count.")
     adj_data.add_argument("--seed", type=int, default=123, help="Deterministic seed.")
     adj_data.add_argument("--out", default=None, help="Path to write the verdict JSON.")
