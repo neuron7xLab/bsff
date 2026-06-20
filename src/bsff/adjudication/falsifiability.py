@@ -43,6 +43,22 @@ class FalsifiabilityTier(str, Enum):
 
 # Each entry: (tier, signal_name, compiled_pattern). Order encodes precedence.
 _SIGNATURES: list[tuple[FalsifiabilityTier, str, re.Pattern[str]]] = [
+    # Highest precedence: an explicit statement that the claim cannot be tested is
+    # itself the signature of non-falsifiability, and must win over an empirical
+    # lexeme it happens to contain ("...can never be *measured*"). This is the
+    # Popperian core — a claim that forbids its own test is pseudoscience by form.
+    (
+        FalsifiabilityTier.NON_FALSIFIABLE,
+        "explicit_unfalsifiability",
+        re.compile(
+            r"\bno (?:instrument|experiment|observation|measurement|test|evidence)\b.{0,40}"
+            r"\b(?:can|could|would)\b|"
+            r"\bcannot\b.{0,20}\b(?:be )?(?:detect|measur|test|observ|falsif|disprov)\w*|"
+            r"\bin principle\b.{0,30}\b(?:undetectable|unmeasurable|untestable|unobservable|"
+            r"unfalsifiable)\b|\bunfalsifiable\b|\bno possible (?:observation|experiment|test)\b",
+            re.IGNORECASE,
+        ),
+    ),
     (
         FalsifiabilityTier.DEFINITIONAL,
         "definition_marker",
@@ -94,7 +110,8 @@ _SIGNATURES: list[tuple[FalsifiabilityTier, str, re.Pattern[str]]] = [
         re.compile(
             r"\b(observ\w+|measur\w+|found that|results? show|demonstrat\w+|"
             r"increas\w+|decreas\w+|predict\w+|classif\w+|caus\w+|driv\w+|"
-            r"modulat\w+|lead(?:s|ing)? to|associated with|correlat\w+)\b",
+            r"modulat\w+|determin\w+|influenc\w+|lead(?:s|ing)? to|"
+            r"associated with|correlat\w+)\b",
             re.IGNORECASE,
         ),
     ),
@@ -141,6 +158,7 @@ def classify(quote: str) -> Classification:
             matched.setdefault(tier, []).append(name)
 
     for tier in (
+        FalsifiabilityTier.NON_FALSIFIABLE,  # explicit unfalsifiability wins over all
         FalsifiabilityTier.DEFINITIONAL,
         FalsifiabilityTier.EMPIRICAL_STATISTICAL,
         FalsifiabilityTier.EMPIRICAL_GENERAL,
