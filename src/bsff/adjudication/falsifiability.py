@@ -80,6 +80,14 @@ _SIGNATURES: list[tuple[FalsifiabilityTier, str, re.Pattern[str]]] = [
             re.IGNORECASE,
         ),
     ),
+    # A bare number immediately followed by an UPPERCASE acronym is a reported
+    # benchmark metric (e.g. "28.4 BLEU", "92 AUC"). Case-sensitive on purpose:
+    # the uppercase acronym is the signal, and IGNORECASE would match any word.
+    (
+        FalsifiabilityTier.EMPIRICAL_STATISTICAL,
+        "benchmark_metric",
+        re.compile(r"\b\d+(?:\.\d+)?\s+[A-Z]{2,}\b"),
+    ),
     (
         FalsifiabilityTier.EMPIRICAL_GENERAL,
         "empirical_verb",

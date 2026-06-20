@@ -86,6 +86,24 @@ Records append to a JSONL ledger whose every entry chains
 and reports the first break. The ledger is storage with integrity; it produces
 no verdicts of its own.
 
+## Ingestion
+
+`bsff ingest --arxiv <id>` fetches a paper's title and abstract from the arXiv
+API and returns them as a provenance-stamped source (byte hash over the
+retrieved text). Ingestion supplies text only — it never extracts or judges
+claims. Only the abstract is ingested: the highest-density, reliably retrievable
+claim surface. Claims stated only in the body require supplying that text
+directly; the adapter never fabricates coverage it does not have. Network access
+is injected, so the adapter is deterministic and unit-tested offline.
+
+```bash
+# Fetch a paper's abstract with provenance
+bsff ingest --arxiv 1706.03762 --out source.txt
+
+# Adjudicate claims directly against a freshly ingested arXiv abstract
+bsff adjudicate --arxiv 1706.03762 --claims claims.json --ledger ledger.jsonl
+```
+
 ## Usage
 
 ```bash
