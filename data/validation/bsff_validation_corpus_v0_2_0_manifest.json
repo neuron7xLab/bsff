@@ -1,0 +1,121 @@
+{
+  "arrays": {
+    "ar1_null_bank": [
+      16,
+      32,
+      1024
+    ],
+    "block_design_features": [
+      4096,
+      32
+    ],
+    "block_design_labels": [
+      4096
+    ],
+    "correlated_linear_null_bank": [
+      16,
+      32,
+      1024
+    ],
+    "coupled_ar_causal_pairs": [
+      32,
+      2,
+      1024
+    ],
+    "coupled_ar_common_drive_triples": [
+      16,
+      3,
+      1024
+    ],
+    "coupled_ar_null_pairs": [
+      32,
+      2,
+      1024
+    ],
+    "gaussian_noise_bank": [
+      32,
+      32,
+      1024
+    ],
+    "henon_coupled_unidirectional": [
+      2,
+      4096
+    ],
+    "henon_nonlinear_series": [
+      8192
+    ],
+    "logistic_nonlinear_series": [
+      8192
+    ],
+    "nonstationary_walk_bank": [
+      8,
+      32,
+      1024
+    ],
+    "phase_randomized_surrogates": [
+      19,
+      8192
+    ],
+    "synthetic_eeg_multichannel": [
+      8,
+      64,
+      2048
+    ]
+  },
+  "artifact": "data/validation/bsff_validation_corpus_v0_2_0.npz",
+  "bytes": 14392131,
+  "clinical_data": false,
+  "ground_truth_map": {
+    "ar1_null_bank": {
+      "nonlinear_structure": "ABSENT",
+      "verdict": "FALSIFIED if nonlinear test fires on linear null"
+    },
+    "coupled_ar_causal_pairs": {
+      "te_x_to_y": "CAUSAL",
+      "te_y_to_x": "NULL",
+      "verdict": "SURVIVED if asymmetry detected"
+    },
+    "coupled_ar_common_drive_triples": {
+      "conditional_te_on_z": "NULL",
+      "pairwise_te_x_to_y": "CONFOUNDED",
+      "verdict": "FALSIFIED if conditional TE collapses"
+    },
+    "coupled_ar_null_pairs": {
+      "te_x_to_y": "NULL",
+      "te_y_to_x": "NULL",
+      "verdict": "FALSIFIED if TE detected"
+    },
+    "gaussian_noise_bank": {
+      "nonlinear_structure": "ABSENT",
+      "te": "NULL",
+      "verdict": "FALSIFIED if any test fires on IID null"
+    },
+    "henon_coupled_unidirectional": {
+      "nonlinear_coupling_x_to_y": "PRESENT",
+      "verdict": "SURVIVED if coupling structure detected beyond linear null"
+    },
+    "henon_nonlinear_series": {
+      "nonlinear_structure": "PRESENT",
+      "verdict": "SURVIVED if phase-randomized null rejected"
+    },
+    "logistic_nonlinear_series": {
+      "nonlinear_structure": "PRESENT",
+      "verdict": "SURVIVED if phase-randomized null rejected"
+    },
+    "phase_randomized_surrogates": {
+      "role": "linear_null_reference",
+      "source": "henon_nonlinear_series",
+      "verdict": "Original H\u00e9non must exceed surrogate distribution"
+    },
+    "synthetic_eeg_multichannel": {
+      "role": "eeg_ingest_stress_test",
+      "verdict": "Pipeline must ingest, channel-select, and classify regime"
+    }
+  },
+  "purpose": "BSFF v0.2.0 validation corpus: deterministic ground-truth fixtures for nonlinear structure detection, directed coupling (TE null/causal/confounded), IAAFT surrogate null calibration, and EEG-realistic ingest stress testing.",
+  "schema": "bsff.validation_corpus.v1",
+  "seed": 20260620,
+  "sha256": "54a4831bf738b56de403b062bbbedff7148985164cb194a9e6b16048da9f2d55",
+  "synthetic_only": true,
+  "version": "0.2.0"
+}
