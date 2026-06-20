@@ -2,7 +2,11 @@
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
 """BSFF falsification-first BCI/EEG signal-claim kernel."""
 
+# Defined before submodule imports so `case` can read it during package init.
+__version__ = "0.3.0"
+
 from .bayesian import jzs_bayes_factor
+from .case import CASE_SCHEMA, load_claim, load_signal, run_case
 from .json_schema import claim_spec_schema, dataclass_json_schema, verdict_json_schema
 from .leakage_deep import (
     detect_cross_frequency_leakage,
@@ -37,6 +41,7 @@ from .synthetic import (
 from .verdict_engine import evaluate_claim
 
 __all__ = [
+    "CASE_SCHEMA",
     "DEFAULT_BATTERY",
     "ClaimSpec",
     "FalsificationPipeline",
@@ -61,15 +66,16 @@ __all__ = [
     "get_policy_profile",
     "henon_series",
     "jzs_bayes_factor",
+    "load_claim",
+    "load_signal",
     "logistic_series",
     "measure_operating_characteristic",
     "miaaft_surrogate",
     "modulation_index",
     "phase_locking_value",
     "rank_order_surrogate_test",
+    "run_case",
     "var_phase_randomized_surrogate",
     "verdict_json_schema",
     "white_noise_series",
 ]
-
-__version__ = "0.3.0"

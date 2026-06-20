@@ -1,0 +1,13 @@
+{
+  "claim_id": "demo-nonlinear-structure",
+  "signal_type": "EEG",
+  "task_type": "nonlinear_structure",
+  "sampling_rate_hz": 250.0,
+  "n_channels": 1,
+  "n_samples": 512,
+  "statistic": "lagged_quadratic",
+  "surrogate_count": 99,
+  "metadata": {
+    "source": "example: replace with the paper/dataset you are falsifying"
+  }
+}

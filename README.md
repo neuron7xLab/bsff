@@ -328,6 +328,29 @@ print(verdict.verdict, verdict.p_value)
 
 ---
 
+## Falsify an external claim from the command line
+
+The library above tests an in-memory signal. To aim BSFF at *someone else's*
+published claim and dataset, use the `falsify` subcommand: it loads a `ClaimSpec`
+file and a raw signal file, runs the fail-closed pipeline, and emits a
+provenance-stamped verdict case-file.
+
+```bash
+# verdict to stdout
+bsff falsify --claim claim.json --signal signal.csv --policy strict
+
+# persist a self-verifying dossier (byte-level signal hash + artifact_sha256)
+bsff falsify --claim claim.json --signal signal.npy --policy strict --out case.json
+```
+
+- `--claim` accepts `.json` (or `.yaml` with the `yaml` extra). Unknown fields are
+  rejected fail-closed.
+- `--signal` accepts `.npy`, `.csv`, or `.tsv`; the shape must match the claim's
+  `n_channels × n_samples` exactly or the run aborts.
+- A runnable, reproducible example lives in [`examples/falsify/`](examples/falsify/).
+
+---
+
 ## Verdict schema
 
 ```json

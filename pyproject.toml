@@ -16,13 +16,15 @@ dependencies = [
 ]
 
 [project.scripts]
+bsff = "bsff.cli:main"
 bsff-validate = "bsff.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "pytest-cov", "ruff>=0.8", "build>=1.2", "hypothesis>=6", "jsonschema>=4"]
 stats = ["pingouin>=0.5.5"]
 leakage = ["scikit-learn>=1.4"]
-full = ["pingouin>=0.5.5", "scikit-learn>=1.4"]
+yaml = ["pyyaml>=6"]
+full = ["pingouin>=0.5.5", "scikit-learn>=1.4", "pyyaml>=6"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
