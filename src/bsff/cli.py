@@ -267,6 +267,28 @@ def _run_normalize(args: argparse.Namespace) -> None:
     )
 
 
+def _run_adjudicate_moabb(args: argparse.Namespace) -> None:
+    from .moabb_adapter import adjudicate_raw, load_moabb_raw
+
+    raw = load_moabb_raw(args.dataset, args.subject)
+    verdict = adjudicate_raw(
+        raw,
+        args.channels,
+        test_type=args.test,
+        name=f"moabb:{args.dataset}:sub{args.subject}",
+        n_surrogates=args.surrogates,
+        seed=args.seed,
+        allow_nonraw=args.allow_nonraw,
+    )
+    verdict["dataset"] = args.dataset
+    verdict["subject"] = args.subject
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(verdict, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps(verdict, ensure_ascii=False, indent=2))
+
+
 def _run_ledger_verify(args: argparse.Namespace) -> None:
     result = TruthLedger(args.ledger).verify()
     print(json.dumps(result, ensure_ascii=False, indent=2))
@@ -375,6 +397,28 @@ def main(argv: list[str] | None = None) -> None:
     adj_data.add_argument("--seed", type=int, default=123, help="Deterministic seed.")
     adj_data.add_argument("--out", default=None, help="Path to write the verdict JSON.")
 
+    adj_moabb = sub.add_parser(
+        "adjudicate-moabb",
+        help="Adjudicate a MOABB EEG recording (needs the 'moabb' extra + network).",
+    )
+    adj_moabb.add_argument("--dataset", required=True, help="MOABB dataset class name.")
+    adj_moabb.add_argument("--subject", required=True, type=int, help="Subject id.")
+    adj_moabb.add_argument(
+        "--channels", required=True, nargs="+", help="Channel name(s); 1 nonlinear, 2 coupling."
+    )
+    adj_moabb.add_argument(
+        "--test",
+        default="nonlinear_structure",
+        choices=("nonlinear_structure", "directed_coupling"),
+        help="Which engine to run.",
+    )
+    adj_moabb.add_argument("--surrogates", type=int, default=99, help="Surrogate count.")
+    adj_moabb.add_argument("--seed", type=int, default=123, help="Deterministic seed.")
+    adj_moabb.add_argument(
+        "--allow-nonraw", action="store_true", help="Override the raw-signal guard (recorded)."
+    )
+    adj_moabb.add_argument("--out", default=None, help="Path to write the verdict JSON.")
+
     normalize = sub.add_parser(
         "normalize", help="Read a raw EDF/EDF+/BDF file to a canonical signal array."
     )
@@ -412,6 +456,9 @@ def main(argv: list[str] | None = None) -> None:
         return
     if args.command == "adjudicate-data":
         _run_adjudicate_data(args)
+        return
+    if args.command == "adjudicate-moabb":
+        _run_adjudicate_moabb(args)
         return
     if args.command == "normalize":
         _run_normalize(args)

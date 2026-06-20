@@ -24,6 +24,7 @@ dev = ["pytest>=8", "pytest-cov", "ruff>=0.8", "build>=1.2", "hypothesis>=6", "j
 stats = ["pingouin>=0.5.5"]
 leakage = ["scikit-learn>=1.4"]
 yaml = ["pyyaml>=6"]
+moabb = ["moabb>=1.0", "mne>=1.6"]
 full = ["pingouin>=0.5.5", "scikit-learn>=1.4", "pyyaml>=6"]
 
 [tool.setuptools.packages.find]
