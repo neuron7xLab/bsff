@@ -30,6 +30,26 @@
 
 ---
 
+## The cognitive systemic core
+
+BSFF is one self-proving core, not a pile of scripts. Each layer enforces a
+property the one below cannot fake; the top layer turns the whole stack into a
+single, evidence-derived investment decision. One command proves all of it:
+
+```bash
+python tools/verify_all.py     # cascades every layer → derived GO/CONDITIONAL/NO-GO
+```
+
+- **[`CORE.md`](CORE.md)** — the generated map of the whole stack with live verdicts
+- **[`DECISION.md`](DECISION.md)** — does the idea earn investment? (derived go/no-go)
+- **[`DEMONSTRATION.md`](DEMONSTRATION.md)** — one-command self-proof for a reviewer
+
+Every verdict on those pages is generated from a machine artifact and `--check`'d
+in CI, so the presentation cannot drift from the system. Nothing is asserted that
+an exit code does not already enforce.
+
+---
+
 ## The problem
 
 Every week, a company, paper, demo, or investor deck claims to read intention, decode emotion, restore movement, or extract cognitive state from neural signals.
