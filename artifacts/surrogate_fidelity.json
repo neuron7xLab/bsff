@@ -1,0 +1,37 @@
+{
+  "all_pass": true,
+  "results": [
+    {
+      "converged": true,
+      "covariance_relative_rmsd": 0.0008795124167855009,
+      "fixture": "ar1_4ch_phi0.75",
+      "marginal_max_diff": 0.0,
+      "n_iter": 24,
+      "ok": true,
+      "relative_spectrum_error": 0.011098072923286559
+    },
+    {
+      "converged": true,
+      "covariance_relative_rmsd": 2.218277644909189e-16,
+      "fixture": "henon_1d",
+      "marginal_max_diff": 0.0,
+      "n_iter": 38,
+      "ok": true,
+      "relative_spectrum_error": 0.004175169851949144
+    },
+    {
+      "converged": true,
+      "covariance_relative_rmsd": 0.0,
+      "fixture": "white_1d",
+      "marginal_max_diff": 0.0,
+      "n_iter": 34,
+      "ok": true,
+      "relative_spectrum_error": 0.0032142496051532905
+    }
+  ],
+  "thresholds": {
+    "covariance_relative_rmsd": 0.05,
+    "marginal_max_diff": 1e-09,
+    "relative_spectrum_error": 0.05
+  }
+}
