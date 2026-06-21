@@ -2,7 +2,7 @@
   "schema_version": "bsff.manifest/v1",
   "package": "bsff",
   "version": "0.4.0",
-  "test_count": 376,
+  "test_count": 378,
   "release_gates": [
     "truth_contract",
     "architecture_contract",
