@@ -46,7 +46,7 @@ three coupling defects in the first version of this audit:
 | 9 | Seed-stability certification (INV-7) | `src/bsff/stability.py`, `tests/test_stability.py` | `python -m pytest tests/test_stability.py -q` | 8 tests pass; flipping verdict → `UNSTABLE` | **VERIFIED** |
 | 10 | Canonical manuscript | `docs/MANUSCRIPT.md` | `test -f docs/MANUSCRIPT.md` | present (v0.4.0) | **VERIFIED** |
 | 11a | Surrogate **marginal** preserved exactly (a mathematical invariant) | `tools/validate_surrogate_fidelity.py` | `python tools/validate_surrogate_fidelity.py` | marginal max-diff = 0 | **VERIFIED** |
-| 11b | Surrogate **spectrum/covariance** within tolerance | same | same | spectrum ≤1.1%, covariance ≤0.09% vs **engineering** thresholds (<5%) | **VERIFIED (engineering/smoke-grade per `docs/REPRODUCIBILITY.md`; NOT external/regulatory)** |
+| 11b | Surrogate **spectrum/covariance** within tolerance | `artifacts/surrogate_fidelity.json` | `python tools/validate_surrogate_fidelity.py` | spectrum ≤1.1%, covariance ≤0.09% vs **engineering** thresholds (<5%) | **VERIFIED (engineering/smoke-grade per `docs/REPRODUCIBILITY.md`; NOT external/regulatory)** |
 | 11c | Surrogate math is **externally** validated (TISEAN reference) | — | — | not run | **NEEDS_EXTERNAL_CHECK** — and any verdict from `bsff adjudicate-data` (incl. CASE-001 Stage 7) inherits this open leg |
 | 12 | Externally validated against TISEAN | — | TISEAN reference binary not available in sandbox | not done; intrinsic-property validation only | **NEEDS_EXTERNAL_CHECK** |
 | 13 | A real published EEG dataset is shipped in the repo | — | — | no human EEG data committed; only synthetic + downloaded-at-runtime | **FALSE (not shipped) — intentional** |
