@@ -392,6 +392,34 @@ bsff falsify --claim claim.json --signal signal.npy --policy strict --out case.j
 
 ---
 
+## Case studies
+
+A **case** aims BSFF at a famous, externally-recognizable claim and records a
+hash-bound verdict. Cases live in [`cases/`](cases/); each ships a falsifiable
+reduction of the claim, a pre-registered split/control battery, and a machine-readable
+dossier.
+
+| case | target claim | verdict |
+|---|---|---|
+| [001 — PhysioNet EEGNet generalization](cases/001_physionet_eegnet/) | within/global-validation motor-imagery accuracy reflects *generalizable* decoding | **REFUTED** |
+
+BSFF-CASE-001 attacks the cross-subject generalization that within-subject EEGMMI
+numbers are often read to imply. On real PhysioNet data a decoder that is significantly
+above chance within subjects falls to chance leave-one-subject-out (permutation
+p = 0.98), with the label-shuffle control passing. The same harness is shown to be
+two-sided on labelled ground truth — it returns `SURVIVED` when a genuinely
+subject-shared signal is present and `UNSUPPORTED` on noise — so the `REFUTED` verdict
+is not a one-sided artefact. This is **not** a claim that motor imagery is undecodable;
+it falsifies the *generalization inference*, not the within-subject result. See
+[`cases/001_physionet_eegnet/REPORT.md`](cases/001_physionet_eegnet/REPORT.md).
+
+```bash
+PYTHONPATH=src python cases/001_physionet_eegnet/run_case.py \
+    --source synthetic --config headline --out /tmp/case001   # offline ground-truth
+```
+
+---
+
 ## Verdict schema
 
 ```json
