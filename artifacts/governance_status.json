@@ -1,0 +1,44 @@
+{
+  "commit_sha": "76c43b675bbac26a9812fd8efa6d7d040e60b7d7",
+  "repo": "neuron7xLab/bsff",
+  "required_checks_declared": true,
+  "declared_checks": [
+    "architecture-contract",
+    "build-package",
+    "codeql-python",
+    "dependency-review",
+    "ip-provenance",
+    "local-security-policy",
+    "pip-audit",
+    "release-gate",
+    "slow-tests",
+    "test-py3.10",
+    "test-py3.11",
+    "test-py3.12",
+    "truth-contract",
+    "zizmor-actions-audit"
+  ],
+  "ruleset_enforcement": "active",
+  "actual_required_checks": [
+    "build-package",
+    "codeql-python",
+    "local-security-policy",
+    "pip-audit",
+    "test-py3.10",
+    "test-py3.11",
+    "test-py3.12"
+  ],
+  "missing_required_checks": [
+    "architecture-contract",
+    "dependency-review",
+    "ip-provenance",
+    "release-gate",
+    "slow-tests",
+    "truth-contract",
+    "zizmor-actions-audit"
+  ],
+  "admin_bypass_allowed": true,
+  "required_checks_verified": false,
+  "owner_action_required": true,
+  "score_blocker": true
+}
