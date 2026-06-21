@@ -11,7 +11,9 @@ from pathlib import Path
 
 import pytest
 
-pytest.importorskip("yaml")  # the demonstration runs the YAML-backed honesty gate
+pytest.importorskip("yaml")
+
+pytestmark = pytest.mark.slow  # the demonstration runs the YAML-backed honesty gate
 
 ROOT = Path(__file__).resolve().parents[1]
 

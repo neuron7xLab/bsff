@@ -12,6 +12,8 @@ import pytest
 
 pytest.importorskip("yaml")
 
+pytestmark = pytest.mark.slow
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
