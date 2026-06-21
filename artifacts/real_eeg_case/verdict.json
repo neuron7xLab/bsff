@@ -1,0 +1,109 @@
+{
+  "caveats": [
+    "Low surrogate count: suitable for CI smoke, not final evidence."
+  ],
+  "claim_id": "bids-sub-01-task-rest",
+  "evidence": {
+    "bayesian_evidence": {
+      "BF01": 5.528217425560752e-20,
+      "BF10": 1.8089013564776088e+19,
+      "cohens_d": 44.023248648650394,
+      "interpretation": "strong_evidence_for_claim",
+      "method": "bic_normal_approximation",
+      "power": null
+    },
+    "stationarity_gate": {
+      "all_stationary": true,
+      "alpha": 0.05,
+      "channel_results": [
+        {
+          "channel": 0,
+          "lags": 40,
+          "p_value": 0.07349422823335044,
+          "stationary": true,
+          "statistic": 0.408493390498627
+        },
+        {
+          "channel": 1,
+          "lags": 60,
+          "p_value": 0.1,
+          "stationary": true,
+          "statistic": 0.14998951269946992
+        },
+        {
+          "channel": 2,
+          "lags": 26,
+          "p_value": 0.1,
+          "stationary": true,
+          "statistic": 0.05225035321714654
+        },
+        {
+          "channel": 3,
+          "lags": 36,
+          "p_value": 0.1,
+          "stationary": true,
+          "statistic": 0.033794879011241126
+        }
+      ],
+      "detector": "kpss_stationarity_gate",
+      "n_channels_failed": 0
+    },
+    "surrogate_convergence": {
+      "all_converged": true,
+      "fallback": "warn",
+      "max_covariance_relative_rmsd": 0.35,
+      "max_iter": 200,
+      "max_relative_spectrum_error": 0.1,
+      "n_nonconverged": 0,
+      "n_surrogates": 19,
+      "tol": 0.001,
+      "worst_covariance_relative_rmsd": 0.01365204724205447,
+      "worst_relative_spectrum_error": 0.08987227144898095
+    },
+    "surrogate_test": {
+      "alpha": 0.05,
+      "original_statistic": 0.6476206855423497,
+      "p_value": 0.05,
+      "rejected": true,
+      "surrogate_convergence": {
+        "all_converged": true,
+        "fallback": "warn",
+        "max_covariance_relative_rmsd": 0.35,
+        "max_iter": 200,
+        "max_relative_spectrum_error": 0.1,
+        "n_nonconverged": 0,
+        "n_surrogates": 19,
+        "tol": 0.001,
+        "worst_covariance_relative_rmsd": 0.01365204724205447,
+        "worst_relative_spectrum_error": 0.08987227144898095
+      },
+      "surrogate_statistics": [
+        0.11153214102585127,
+        0.10393755044736046,
+        0.12362333098798903,
+        0.09367923095675819,
+        0.08487469241127908,
+        0.11539722082126502,
+        0.09737400027185636,
+        0.12652559105843506,
+        0.1163516124778081,
+        0.1250689109425425,
+        0.09032099515430564,
+        0.10741486060435942,
+        0.09179541988147723,
+        0.09802176422203905,
+        0.10254091668806121,
+        0.11471231537751654,
+        0.10916275903618285,
+        0.09942826362865409,
+        0.09729059576999483
+      ]
+    }
+  },
+  "leakage_flags": {},
+  "original_statistic": 0.6476206855423497,
+  "p_value": 0.05,
+  "surrogate_max": 0.12652559105843506,
+  "surrogate_min": 0.08487469241127908,
+  "verdict": "SURVIVED"
+}

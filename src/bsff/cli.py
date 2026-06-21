@@ -17,10 +17,18 @@ from .adjudication import (
     render_html,
     render_markdown,
 )
+from .bids import run_bids_case
 from .calibration import calibrate_miaaft_budget, required_rank_order_surrogates
-from .case import run_case
+from .capability import (
+    StrictCapabilityError,
+    capability_report,
+    doctor_report,
+    require_strict_capabilities,
+)
+from .case import reproduce_case, run_case
 from .datasets import DatasetSpec, adjudicate_dataset, check_rawness, load_series
 from .leakage_detector import detect_block_design_leakage
+from .release import run_release_check
 from .schemas import ClaimSpec
 from .surrogate_engine import miaaft_surrogate, rank_order_surrogate_test
 from .synthetic import ar1_multichannel, block_design_dataset, henon_series
@@ -97,6 +105,14 @@ def validate_kernel(output: Path) -> dict[str, object]:
 
 
 def _run_falsify(args: argparse.Namespace) -> None:
+    # Fail-closed: a strict-policy run claims a publication-grade evidence path.
+    # Refuse it up front if the environment cannot actually compute that path,
+    # rather than silently emitting a weaker verdict wearing a strict label.
+    if args.policy == "strict":
+        try:
+            require_strict_capabilities()
+        except StrictCapabilityError as exc:
+            raise SystemExit(str(exc)) from exc
     artifact = run_case(
         args.claim,
         args.signal,
@@ -105,6 +121,76 @@ def _run_falsify(args: argparse.Namespace) -> None:
         out_path=args.out,
     )
     print(json.dumps(artifact, ensure_ascii=False, indent=2))
+
+
+def _run_doctor(args: argparse.Namespace) -> None:
+    report = doctor_report()
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    if args.require_strict and report["status"] != "READY":
+        raise SystemExit(1)
+
+
+def _run_capabilities(args: argparse.Namespace) -> None:
+    report = capability_report()
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+
+
+def _run_validate(args: argparse.Namespace) -> None:
+    report = validate_kernel(Path(args.output))
+    caps = capability_report()
+    summary = {
+        "selftest_status": report["status"],
+        "strict_policy_ready": caps["strict_policy_ready"],
+        "installed_extras": caps["installed_extras"],
+        "missing_extras": caps["missing_extras"],
+        "artifact": str(args.output),
+    }
+    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    if report["status"] != "SURVIVED_PHASE_1_GATES":
+        raise SystemExit(1)
+
+
+def _run_release_check(args: argparse.Namespace) -> None:
+    try:
+        manifest = run_release_check(args.output, strict=args.strict)
+    except StrictCapabilityError as exc:
+        raise SystemExit(str(exc)) from exc
+    print(json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True))
+    if manifest["release_verdict"] != "RELEASE_READY":
+        raise SystemExit(1)
+
+
+def _run_reproduce(args: argparse.Namespace) -> None:
+    report = reproduce_case(args.case, signal_path=args.signal, out_path=args.out)
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    if report["status"] != "REPRODUCIBLE":
+        raise SystemExit(1)
+
+
+def _run_bids_app(args: argparse.Namespace) -> None:
+    out_dir = Path(args.output_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    labels = args.participant_label or [None]
+    results: list[dict[str, object]] = []
+    for label in labels:
+        subject = f"sub-{label}" if label and not str(label).startswith("sub-") else label
+        result = run_bids_case(
+            args.bids_dir,
+            subject=str(subject),
+            task=args.task,
+            seed=args.seed,
+            policy=args.policy,
+        )
+        stem = str(subject) if subject else "participant"
+        (out_dir / f"{stem}_verdict.json").write_text(
+            json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        results.append(result)
+    print(json.dumps({"participants": len(results), "output_dir": str(out_dir)}, indent=2))
 
 
 def _source_from_args(args: argparse.Namespace) -> SourceDocument:
@@ -460,6 +546,72 @@ def main(argv: list[str] | None = None) -> None:
     ingest.add_argument("--arxiv", required=True, help="arXiv id (e.g. 1706.03762).")
     ingest.add_argument("--out", default=None, help="Path to write the source text.")
 
+    doctor = sub.add_parser(
+        "doctor", help="Report environment health + which evidence paths are available."
+    )
+    doctor.add_argument(
+        "--require-strict",
+        action="store_true",
+        help="Exit non-zero if the strict publication-grade evidence path is unavailable.",
+    )
+
+    capabilities = sub.add_parser(
+        "capabilities", help="Emit a machine-readable capability/dependency report."
+    )
+    capabilities.add_argument("--out", default=None, help="Path to write the capability report.")
+
+    validate = sub.add_parser(
+        "validate", help="Run the operational-kernel self-validation + capability check."
+    )
+    validate.add_argument(
+        "--output",
+        default="artifacts/bsff_phase1_validation.json",
+        help="Path for the self-validation artifact.",
+    )
+
+    release_check = sub.add_parser(
+        "release-check", help="Run the gate battery and emit a single release evidence bundle."
+    )
+    release_check.add_argument(
+        "--output", default="artifacts/release", help="Directory for the release bundle."
+    )
+    release_check.add_argument(
+        "--strict",
+        action="store_true",
+        help="Require the full strict evidence path (fail-closed on missing extras).",
+    )
+
+    reproduce = sub.add_parser(
+        "reproduce", help="Re-run a saved verdict case-file and confirm it is reproducible."
+    )
+    reproduce.add_argument("--case", required=True, help="Path to a bsff falsify case-file JSON.")
+    reproduce.add_argument(
+        "--signal", default=None, help="Override the signal path recorded in the case-file."
+    )
+    reproduce.add_argument("--out", default=None, help="Path to write the reproduction report.")
+
+    bids_app = sub.add_parser(
+        "bids-app", help="BIDS-App: falsify EEG recording(s) from a BIDS dataset directory."
+    )
+    bids_app.add_argument("--bids-dir", required=True, help="Path to the BIDS dataset root.")
+    bids_app.add_argument(
+        "--output-dir", required=True, help="Directory for per-participant verdicts."
+    )
+    bids_app.add_argument(
+        "--participant-label",
+        nargs="+",
+        default=None,
+        help="Participant label(s) without the 'sub-' prefix (e.g. 01 02).",
+    )
+    bids_app.add_argument("--task", default=None, help="BIDS task label to select (e.g. rest).")
+    bids_app.add_argument(
+        "--policy",
+        default="standard",
+        choices=("smoke", "standard", "strict"),
+        help="Policy profile recorded in the manifest (default: standard).",
+    )
+    bids_app.add_argument("--seed", type=int, default=123, help="Deterministic seed.")
+
     args = parser.parse_args(argv)
 
     if args.command == "falsify":
@@ -488,6 +640,24 @@ def main(argv: list[str] | None = None) -> None:
         return
     if args.command == "ledger-verify":
         _run_ledger_verify(args)
+        return
+    if args.command == "doctor":
+        _run_doctor(args)
+        return
+    if args.command == "capabilities":
+        _run_capabilities(args)
+        return
+    if args.command == "validate":
+        _run_validate(args)
+        return
+    if args.command == "release-check":
+        _run_release_check(args)
+        return
+    if args.command == "reproduce":
+        _run_reproduce(args)
+        return
+    if args.command == "bids-app":
+        _run_bids_app(args)
         return
     report = validate_kernel(Path(args.output))
     print(json.dumps(report, ensure_ascii=False, indent=2))

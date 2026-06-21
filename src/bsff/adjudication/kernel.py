@@ -177,8 +177,11 @@ def _route(claim: AnchoredClaim, classification: Classification) -> dict[str, An
     if tier is FalsifiabilityTier.LOGICAL:
         report = lint_argument(claim.claim.quote)
         disposition = {
-            ArgumentStructure.STRUCTURE_PRESENT: "LOGICAL_STRUCTURE_PRESENT",
-            ArgumentStructure.STRUCTURE_INCOMPLETE: "LOGICAL_STRUCTURE_INCOMPLETE",
+            # ARGUMENT_STRUCTURE_DETECTED, not LOGICAL_STRUCTURE_PRESENT: this route
+            # detects that a premise→conclusion structure exists, NOT that the
+            # argument is sound. The label must not imply established truth.
+            ArgumentStructure.STRUCTURE_PRESENT: "ARGUMENT_STRUCTURE_DETECTED",
+            ArgumentStructure.STRUCTURE_INCOMPLETE: "ARGUMENT_STRUCTURE_INCOMPLETE",
             ArgumentStructure.NO_ARGUMENT_STRUCTURE: "NOT_AN_ARGUMENT",
         }[report.structure]
         return {"disposition": disposition, "evidence": {"argument": report.to_dict()}}

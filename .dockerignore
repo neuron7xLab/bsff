@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Keep the build context minimal and reproducible.
+.git
+.github
+.gitignore
+.gitattributes
+.mailmap
+artifacts
+dist
+build
+data
+*.egg-info
+.eggs
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+.venv
+venv
+env
+.pytest_cache
+.ruff_cache
+.benchmarks
+.hypothesis
+.mypy_cache
+.coverage
+htmlcov
+*.log

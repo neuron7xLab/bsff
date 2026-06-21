@@ -1,0 +1,21 @@
+{
+  "caveats": [
+    "Leakage falsification short-circuited surrogate testing."
+  ],
+  "claim_id": "bids-sub-01-task-rest",
+  "evidence": {
+    "reason": "leakage_detector_flagged"
+  },
+  "leakage_flags": {
+    "block_design_temporal_autocorrelation": {
+      "detector": "block_design_temporal_autocorrelation",
+      "flagged": true,
+      "reason": "demonstration: leaked block/label structure detected upstream"
+    }
+  },
+  "original_statistic": null,
+  "p_value": null,
+  "surrogate_max": null,
+  "surrogate_min": null,
+  "verdict": "REFUTED"
+}

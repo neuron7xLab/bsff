@@ -208,7 +208,35 @@ def test_logical_claim_routed_to_argument():
     )
     rec = adjudicate_claim(src, claim)
     assert rec.tier == "LOGICAL"
-    assert rec.disposition == "LOGICAL_STRUCTURE_PRESENT"
+    # The label reports detected structure, never established truth/soundness.
+    assert rec.disposition == "ARGUMENT_STRUCTURE_DETECTED"
+
+
+def test_unsound_but_structured_argument_is_not_called_true():
+    """A structurally valid but unsound argument gets the structure label only.
+
+    'All cats are immortal; Socrates is a cat; therefore Socrates is immortal'
+    has premise→conclusion form but false premises. The disposition must report
+    structure, and must never imply the conclusion is true.
+    """
+    quote = "If all cats are immortal and Socrates is a cat, therefore Socrates is immortal"
+    src = SourceDocument.from_text(
+        source_id="local:unsound",
+        kind="text",
+        uri="local://unsound",
+        text=f"Abstract. {quote}. End.",
+    )
+    claim = ProposedClaim(claim_id="c-unsound", quote=quote, proposer="human:y")
+    rec = adjudicate_claim(src, claim)
+    assert rec.tier == "LOGICAL"
+    assert rec.disposition in {
+        "ARGUMENT_STRUCTURE_DETECTED",
+        "ARGUMENT_STRUCTURE_INCOMPLETE",
+        "NOT_AN_ARGUMENT",
+    }
+    assert "true" not in rec.disposition.lower()
+    assert "sound" not in rec.disposition.lower()
+    assert "survived" not in rec.disposition.lower()
 
 
 # ----------------------------- full report ----------------------------------
