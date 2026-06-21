@@ -80,6 +80,7 @@ def test_real_claim_audit_passes():
     assert r.returncode == 0, r.stdout + r.stderr
 
 
+@pytest.mark.slow
 def test_honesty_gate_passes():
     r = subprocess.run(
         [sys.executable, str(ROOT / "tools" / "verify_honesty.py")],
