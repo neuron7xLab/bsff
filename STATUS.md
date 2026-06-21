@@ -14,7 +14,7 @@ facts (version, live test count, CLI surface, extras) by
 | Field | Value |
 |---|---|
 | Package version | `0.4.0` |
-| Live test count | **370** (collected by `pytest tests/`) |
+| Live test count | **373** (collected by `pytest tests/`) |
 | CLI subcommands | 16 (parsed from `src/bsff/cli.py`) |
 | Optional extras | `dev`, `full`, `leakage`, `moabb`, `stats`, `yaml` |
 
