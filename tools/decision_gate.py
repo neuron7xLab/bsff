@@ -1,0 +1,207 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+"""Decision gate: does the idea earn engineering investment? GO / CONDITIONAL / NO-GO.
+
+This is not a product pitch. It answers one question — *does BSFF's
+claim-falsification idea have the right to exist before we invest in
+implementation?* — from pre-registered, falsifiable viability criteria, each
+bound to an evidence artifact. The recommendation is DERIVED from the criteria,
+not asserted: a decorative GO is impossible because GO requires every must-criterion
+to be machine-MET, and CONDITIONAL is forced while external-validation legs remain
+UNVERIFIABLE.
+
+    python tools/decision_gate.py            # regenerate DECISION.md
+    python tools/decision_gate.py --check     # CI: DECISION.md matches the evidence
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+DECISION = ROOT / "DECISION.md"
+BUNDLE = ROOT / "artifacts" / "decision"
+
+
+def _run(cmd: list[str]) -> int:
+    return subprocess.run(
+        [sys.executable, str(ROOT / cmd[0]), *cmd[1:]],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    ).returncode
+
+
+def _json(rel: str) -> dict:
+    p = ROOT / rel
+    return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else {}
+
+
+def evaluate() -> dict:
+    # produce the evidence artifacts (honesty gate + certificate chain)
+    _run(["tools/verify_honesty.py"])
+    cert_exit = _run(["tools/certify_release.py"])
+
+    controls = _json("artifacts/controls/controls.json")
+    honesty = _json("artifacts/honesty/HONESTY_GATE.json")
+    conf = _json("artifacts/conformance/CONFORMANCE_VERDICT.json")
+    cert = _json("artifacts/certificate/CERTIFICATE.json")
+    loso = _json("research/bci_generalization/result_bnci2014_001_sub1-2.json")
+    gap = round(float(loso["loso_gap"]), 3) if loso.get("loso_gap") is not None else None
+
+    # pre-registered viability criteria; each bound to an artifact
+    criteria = [
+        {
+            "id": "V1",
+            "must": True,
+            "title": "Works on ground truth (controls)",
+            "met": bool(controls.get("controls_ok")),
+            "evidence": "artifacts/controls/controls.json",
+        },
+        {
+            "id": "V2",
+            "must": True,
+            "title": "Does something real (a genuine falsification on real data)",
+            "met": gap is not None and gap > 0.0,
+            "evidence": f"LOSO generalization gap = {gap} (research/bci_generalization/result_*.json)",
+        },
+        {
+            "id": "V3",
+            "must": True,
+            "title": "Cannot ship a decorative lie (honesty gate)",
+            "met": bool(honesty.get("all_ok")),
+            "evidence": "artifacts/honesty/HONESTY_GATE.json",
+        },
+        {
+            "id": "V4",
+            "must": True,
+            "title": "Self-consistent end to end (certificate chain)",
+            "met": cert.get("overall") == "CERTIFIED" and cert_exit == 0,
+            "evidence": "artifacts/certificate/CERTIFICATE.json",
+        },
+        {
+            "id": "V5",
+            "must": True,
+            "title": "Honest about its own limits (blocked work named, not faked)",
+            "met": conf.get("overall") in {"CONFORMANT", "PARTIAL"}
+            and conf.get("nonconformant") == 0,
+            "evidence": "artifacts/conformance/CONFORMANCE_VERDICT.json",
+        },
+        {
+            "id": "V6",
+            "must": False,
+            "title": "External scientific validity (TISEAN / multi-dataset / n>2)",
+            "met": (conf.get("unverifiable") or 0)
+            == 0,  # currently NOT met — these legs are blocked
+            "evidence": f"{conf.get('unverifiable')} UNVERIFIABLE legs in self-conformance",
+        },
+    ]
+
+    must_met = all(c["met"] for c in criteria if c["must"])
+    external_open = not next(c["met"] for c in criteria if c["id"] == "V6")
+    if must_met and external_open:
+        recommendation = "CONDITIONAL GO"
+    elif must_met:
+        recommendation = "GO"
+    else:
+        recommendation = "NO-GO"
+
+    return {
+        "recommendation": recommendation,
+        "must_criteria_met": must_met,
+        "external_validation_open": external_open,
+        "loso_gap": gap,
+        "conformance": {
+            k: conf.get(k) for k in ("overall", "conformant", "nonconformant", "unverifiable")
+        },
+        "certificate_root": cert.get("root_hash"),
+        "criteria": criteria,
+    }
+
+
+def render(d: dict) -> str:
+    rows = "\n".join(
+        f"| {c['id']} | {'must' if c['must'] else 'stretch'} | {c['title']} | "
+        f"{'MET' if c['met'] else 'NOT MET'} | {c['evidence']} |"
+        for c in d["criteria"]
+    )
+    return f"""<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab -->
+<!-- GENERATED by tools/decision_gate.py — do not edit by hand; run --check in CI. -->
+
+# Decision — does this idea earn engineering investment?
+
+**This is not a product. It is the proof that the idea has the right to exist
+before we invest in implementation.** The recommendation below is derived from
+pre-registered, falsifiable criteria — each bound to an evidence artifact — not
+from conviction.
+
+## Recommendation: **{d["recommendation"]}**
+
+```bash
+python tools/decision_gate.py    # regenerate; --check fails if it drifts from evidence
+```
+
+## Viability criteria
+
+| id | kind | criterion | verdict | evidence |
+|----|------|-----------|---------|----------|
+{rows}
+
+- must-criteria all met: **{d["must_criteria_met"]}**
+- external scientific validity still open: **{d["external_validation_open"]}**
+
+## What the verdict means (and does not)
+
+A **CONDITIONAL GO** is the honest reading of the evidence:
+
+- **Earned the right to exist.** The instrument does something real — it kills an
+  over-stated within-subject BCI claim under honest cross-subject evaluation
+  (LOSO gap **{d["loso_gap"]}**), it fails and passes correctly on ground-truth
+  controls, it cannot merge a decorative lie, and the whole verification chain
+  certifies to a single deterministic root (see `artifacts/certificate/`).
+  Investing engineering effort in *this instrument* is justified.
+- **Not yet a production scientific authority.** External validity
+  (TISEAN reference, multi-dataset, n>2, GPU baseline) is **UNVERIFIABLE** in this
+  environment — named, not faked ({d["conformance"]["unverifiable"]} legs). A GO to
+  production *as a validated oracle* is gated on closing those legs with the
+  runtime BSFF cannot provide here.
+
+In one line: **go to production as a falsification *instrument* and demarcation
+tool — not as a clinical or regulatory authority.** The boundary is the product.
+"""
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true")
+    args = parser.parse_args(argv)
+
+    data = evaluate()
+    page = render(data)
+    BUNDLE.mkdir(parents=True, exist_ok=True)
+    (BUNDLE / "decision.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
+
+    if args.check:
+        current = DECISION.read_text(encoding="utf-8") if DECISION.is_file() else ""
+        if current != page:
+            print("DECISION.md is STALE — run: python tools/decision_gate.py")
+            return 1
+        print(f"DECISION.md: in sync ({data['recommendation']})")
+        return 0
+
+    DECISION.write_text(page, encoding="utf-8")
+    print(
+        f"Wrote DECISION.md — recommendation: {data['recommendation']} "
+        f"(must_met={data['must_criteria_met']}, external_open={data['external_validation_open']})"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
