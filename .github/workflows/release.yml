@@ -1,0 +1,71 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+name: Release Gate
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-gate:
+    name: release-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      # Locked, reproducible release environment — resolved from the committed
+      # uv.lock, not floating ranges. ci.yml stays floating (catches upstream
+      # breaks); this is the forensic release contour.
+      - run: python -m pip install --upgrade pip uv build
+      - run: uv sync --locked --all-extras --dev
+
+      # Full surface — both fast and slow — must pass before any release artifact.
+      - run: uv run --no-sync python -m ruff check src tests tools
+      - run: uv run --no-sync python -m ruff format --check src tests tools
+      - run: uv run --no-sync python -m pytest tests/ -m "not slow" -v --tb=short
+      - run: uv run --no-sync python -m pytest tests/ -m slow -v --tb=short
+
+      - run: uv run --no-sync bsff doctor --require-strict
+      - run: uv run --no-sync python tools/validate_architecture_contract.py
+      - run: uv run --no-sync python tools/validate_truth_contract.py
+      - run: uv run --no-sync python tools/validate_open_source_readiness.py
+      - run: uv run --no-sync python tools/check_github_actions_policy.py
+      - run: uv run --no-sync python tools/scan_secrets.py
+      - run: uv run --no-sync python tools/generate_provenance_manifest.py
+      - run: uv run --no-sync python tools/validate_ip_provenance.py
+      - run: uv run --no-sync python tools/validate_markdown.py
+      - run: uv run --no-sync python tools/update_status.py --check
+      - run: uv run --no-sync python tools/generate_manifest.py --ci
+      - run: uv run --no-sync bsff release-check --strict --output artifacts/release
+
+      - run: uv run --no-sync python -m build
+      - run: uv run --no-sync python tools/generate_evidence_bundle.py
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: bsff-release-evidence
+          path: |
+            dist/
+            artifacts/MANIFEST.json
+            artifacts/release/MANIFEST.json
+            artifacts/evidence_manifest.json
+            artifacts/provenance_manifest.json
+          if-no-files-found: warn
