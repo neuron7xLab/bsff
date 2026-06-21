@@ -9,6 +9,12 @@
       "tail": "claim audit: every VERIFIED has a command + value; no soft states; coupling rule present."
     },
     {
+      "check": "grounding_numbers_match_artifacts",
+      "exit": 0,
+      "ok": true,
+      "tail": "grounding: every registered number matches its artifact; README badge references STATUS.md."
+    },
+    {
       "check": "null_hypotheses_explicit",
       "exit": 0,
       "ok": true,

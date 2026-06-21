@@ -6,6 +6,10 @@
       "ok": true
     },
     {
+      "check": "grounding_numbers_match_artifacts",
+      "ok": true
+    },
+    {
       "check": "null_hypotheses_explicit",
       "ok": true
     },
@@ -36,5 +40,5 @@
   "loso_within": 0.807,
   "loso_cross": 0.603,
   "loso_gap": 0.204,
-  "test_count": "338"
+  "test_count": "341"
 }

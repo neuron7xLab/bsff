@@ -26,6 +26,7 @@ OUT = ROOT / "artifacts" / "honesty" / "HONESTY_GATE.json"
 # (id, argv) — each must exit 0. Pure-Python, no network/GPU.
 CHECKS: list[tuple[str, list[str]]] = [
     ("claim_audit_no_decorative_verified", ["tools/validate_claim_audit.py"]),
+    ("grounding_numbers_match_artifacts", ["tools/verify_grounding.py"]),
     ("null_hypotheses_explicit", ["tools/validate_null_registry.py"]),
     ("thresholds_have_provenance", ["tools/validate_threshold_registry.py"]),
     ("self_falsification_controls", ["tools/verify_controls.py"]),
