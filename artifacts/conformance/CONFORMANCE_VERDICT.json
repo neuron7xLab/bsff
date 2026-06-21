@@ -1,0 +1,103 @@
+{
+  "contract_id": "bsff_self_conformance_v1",
+  "overall": "PARTIAL",
+  "n_items": 14,
+  "conformant": 10,
+  "nonconformant": 0,
+  "unverifiable": 4,
+  "items": [
+    {
+      "id": "self_falsification_controls",
+      "kind": "command",
+      "status": "CONFORMANT",
+      "detail": "python tools/verify_controls.py",
+      "exit": 0
+    },
+    {
+      "id": "null_registry_complete",
+      "kind": "command",
+      "status": "CONFORMANT",
+      "detail": "python tools/validate_null_registry.py",
+      "exit": 0
+    },
+    {
+      "id": "threshold_registry_provenance",
+      "kind": "command",
+      "status": "CONFORMANT",
+      "detail": "python tools/validate_threshold_registry.py",
+      "exit": 0
+    },
+    {
+      "id": "surrogate_fidelity",
+      "kind": "command",
+      "status": "CONFORMANT",
+      "detail": "python tools/validate_surrogate_fidelity.py --quick",
+      "exit": 0
+    },
+    {
+      "id": "status_in_sync",
+      "kind": "command",
+      "status": "CONFORMANT",
+      "detail": "python tools/update_status.py --check",
+      "exit": 0
+    },
+    {
+      "id": "invariants_suite_present",
+      "kind": "file",
+      "status": "CONFORMANT",
+      "detail": "tests/test_invariants.py"
+    },
+    {
+      "id": "manuscript_present",
+      "kind": "file",
+      "status": "CONFORMANT",
+      "detail": "docs/MANUSCRIPT.md"
+    },
+    {
+      "id": "claim_audit_present",
+      "kind": "file",
+      "status": "CONFORMANT",
+      "detail": "CLAIM_AUDIT.md"
+    },
+    {
+      "id": "real_loso_result_present",
+      "kind": "file",
+      "status": "CONFORMANT",
+      "detail": "research/bci_generalization/result_bnci2014_001_sub1-2.json"
+    },
+    {
+      "id": "validation_corpus_present",
+      "kind": "file",
+      "status": "CONFORMANT",
+      "detail": "data/validation/bsff_validation_corpus_v0_2_0.npz"
+    },
+    {
+      "id": "release_provenance_signature",
+      "kind": "blocked",
+      "status": "UNVERIFIABLE",
+      "blocker": "network",
+      "detail": "verifying the v0.4.0 SLSA signature chain needs Fulcio/Rekor + network"
+    },
+    {
+      "id": "case_001_physionet_eegnet_baseline",
+      "kind": "blocked",
+      "status": "UNVERIFIABLE",
+      "blocker": "network_gpu",
+      "detail": "PhysioNet download + EEGNet (TensorFlow/GPU) baseline"
+    },
+    {
+      "id": "case_001_split_leakage_surrogate_attacks",
+      "kind": "blocked",
+      "status": "UNVERIFIABLE",
+      "blocker": "network_gpu",
+      "detail": "depends on the case-001 baseline"
+    },
+    {
+      "id": "tisean_external_validation",
+      "kind": "blocked",
+      "status": "UNVERIFIABLE",
+      "blocker": "external_binary",
+      "detail": "TISEAN reference C package not available in this environment"
+    }
+  ]
+}
