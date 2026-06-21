@@ -43,6 +43,27 @@ GROUNDED_FACTS = [
         "key": "loso_gap",
         "dp": 3,
     },
+    {
+        "label": "FINDING_N9 within-subject (n=9)",
+        "doc": "docs/FINDING_N9.md",
+        "source": "research/bci_generalization/result_eegbci_loso_n9.json",
+        "key": "within_subject_mean",
+        "dp": 3,
+    },
+    {
+        "label": "FINDING_N9 cross-subject LOSO (n=9)",
+        "doc": "docs/FINDING_N9.md",
+        "source": "research/bci_generalization/result_eegbci_loso_n9.json",
+        "key": "cross_subject_loso_mean",
+        "dp": 3,
+    },
+    {
+        "label": "FINDING_N9 gap (n=9)",
+        "doc": "docs/FINDING_N9.md",
+        "source": "research/bci_generalization/result_eegbci_loso_n9.json",
+        "key": "loso_gap",
+        "dp": 3,
+    },
 ]
 
 
