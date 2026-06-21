@@ -1,0 +1,42 @@
+{
+  "gate": "bsff_honesty_v1",
+  "all_ok": true,
+  "checks": [
+    {
+      "check": "claim_audit_no_decorative_verified",
+      "exit": 0,
+      "ok": true,
+      "tail": "claim audit: every VERIFIED has a command + value; no soft states; coupling rule present."
+    },
+    {
+      "check": "null_hypotheses_explicit",
+      "exit": 0,
+      "ok": true,
+      "tail": "Null registry OK: 3 hypotheses, all complete."
+    },
+    {
+      "check": "thresholds_have_provenance",
+      "exit": 0,
+      "ok": true,
+      "tail": "Threshold registry OK: 5 thresholds, all with provenance."
+    },
+    {
+      "check": "self_falsification_controls",
+      "exit": 0,
+      "ok": true,
+      "tail": "CONTROLS OK \u2014 BSFF fails and passes correctly on ground truth."
+    },
+    {
+      "check": "status_count_is_generated_and_in_sync",
+      "exit": 0,
+      "ok": true,
+      "tail": "STATUS.md: in sync"
+    },
+    {
+      "check": "contract_self_conformance",
+      "exit": 0,
+      "ok": true,
+      "tail": "OVERALL: PARTIAL  (10 conformant, 0 nonconformant, 4 unverifiable)"
+    }
+  ]
+}
