@@ -1,0 +1,28 @@
+{
+  "mutants": 5,
+  "killed": 5,
+  "score": 1.0,
+  "survivors": [],
+  "results": [
+    {
+      "label": "invert verdict assignment",
+      "killed": true
+    },
+    {
+      "label": "flip BF01 null-evidence comparison",
+      "killed": true
+    },
+    {
+      "label": "flip conjunction-gate comparison",
+      "killed": true
+    },
+    {
+      "label": "invert leakage fail-closed gate",
+      "killed": true
+    },
+    {
+      "label": "flip low-surrogate caveat threshold",
+      "killed": true
+    }
+  ]
+}
