@@ -1,10 +1,11 @@
 {
   "schema_version": "bsff.scorecard/v1",
-  "score": 90,
+  "score": 91,
   "p0": "COMPLETE",
   "p1": "COMPLETE",
   "p2": "PARTIAL",
   "agent_completed": [
+    "artifact_hygiene",
     "mutation_probe"
   ],
   "owner_required": [

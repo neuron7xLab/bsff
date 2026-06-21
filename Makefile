@@ -23,6 +23,7 @@ lab-99:
 	python tools/validate_real_eeg_case.py
 	python tools/update_status.py --check
 	python tools/generate_manifest.py --check
+	python tools/validate_artifact_schema.py
 	python tools/regenerate.py --check
 	bsff release-check --strict --output artifacts/release
 	python -m build
