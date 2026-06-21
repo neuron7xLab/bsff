@@ -17,3 +17,6 @@ dist/
 !.env.example
 artifacts/*.tmp
 .hypothesis/
+
+# release certificate is a runtime proof, regenerated (root embeds live counts)
+artifacts/certificate/
