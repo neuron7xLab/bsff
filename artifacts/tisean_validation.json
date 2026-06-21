@@ -1,0 +1,70 @@
+{
+  "all_passed": true,
+  "cases": [
+    {
+      "agrees": true,
+      "amplitude_spectrum_error_bsff": 0.007896958385045562,
+      "amplitude_spectrum_error_reference": 0.007896958385045562,
+      "covariance_rmsd_bsff": 0.006224601149067997,
+      "covariance_rmsd_gap": 0.0,
+      "covariance_rmsd_reference": 0.006224601149067997,
+      "fixture": "ar1_linear_gaussian",
+      "fixture_label": "linear-Gaussian AR(1)",
+      "marginal_ks_bsff": 0.0,
+      "marginal_ks_reference": 0.0,
+      "n_iter": 100,
+      "n_samples": 512,
+      "passed": true,
+      "rank_correlation_p_stability": 0.0,
+      "rank_order_p_bsff": 0.2,
+      "rank_order_p_reference": 0.2,
+      "reference_converged": true,
+      "reference_n_iter_actual": 21,
+      "schema": "bsff.reference_surrogate.v1",
+      "seed": 7,
+      "spectrum_error_gap": 0.0,
+      "tisean_reference": "not_available_on_path",
+      "tisean_was_run": false,
+      "tolerances": {
+        "covariance_gap_tol": 0.1,
+        "marginal_tol": 1e-09,
+        "spectrum_gap_tol": 0.05
+      }
+    },
+    {
+      "agrees": true,
+      "amplitude_spectrum_error_bsff": 0.011510168453645313,
+      "amplitude_spectrum_error_reference": 0.011510168453645313,
+      "covariance_rmsd_bsff": 0.007111063669148327,
+      "covariance_rmsd_gap": 0.0,
+      "covariance_rmsd_reference": 0.007111063669148327,
+      "fixture": "henon_nonlinear",
+      "fixture_label": "deterministic H\u00e9non map",
+      "marginal_ks_bsff": 0.0,
+      "marginal_ks_reference": 0.0,
+      "n_iter": 100,
+      "n_samples": 512,
+      "passed": true,
+      "rank_correlation_p_stability": 0.0,
+      "rank_order_p_bsff": 0.05,
+      "rank_order_p_reference": 0.05,
+      "reference_converged": true,
+      "reference_n_iter_actual": 30,
+      "schema": "bsff.reference_surrogate.v1",
+      "seed": 7,
+      "spectrum_error_gap": 0.0,
+      "tisean_reference": "not_available_on_path",
+      "tisean_was_run": false,
+      "tolerances": {
+        "covariance_gap_tol": 0.1,
+        "marginal_tol": 1e-09,
+        "spectrum_gap_tol": 0.05
+      }
+    }
+  ],
+  "n_iter": 100,
+  "schema": "bsff.tisean_validation.v1",
+  "seed": 7,
+  "tisean_reference": "not_available_on_path",
+  "tisean_was_run": false
+}

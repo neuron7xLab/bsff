@@ -1,0 +1,14 @@
+{
+  "Name": "BSFF synthetic EEG-shaped fixture (NOT a real recording)",
+  "BIDSVersion": "1.9.0",
+  "DatasetType": "raw",
+  "Authors": [
+    "Yaroslav Vasylenko / neuron7xLab"
+  ],
+  "GeneratedBy": [
+    {
+      "Name": "bsff.examples.real_eeg_bids.generate_fixture",
+      "Description": "SYNTHETIC EEG-shaped fixture built from deterministic Henon-map traces. This is NOT real recorded human EEG. Substitute a real public BIDS dataset (e.g. OpenNeuro ds-XXXXXX) to validate on real data; see docs/REAL_EEG_VALIDATION.md."
+    }
+  ]
+}

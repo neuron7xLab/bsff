@@ -68,7 +68,7 @@ the shape of its sentence.
 | `PENDING_EVIDENCE` | falsifiable in principle, but no data/operationalization supplied |
 | `DIRECTED_COUPLING_SURVIVED` | causal claim; conditional transfer-entropy test found the claimed direction |
 | `DIRECTED_COUPLING_UNCONDITIONED` | same, but no confounder supplied — provisional (a common drive cannot be excluded) |
-| `LOGICAL_STRUCTURE_PRESENT` / `_INCOMPLETE` / `NOT_AN_ARGUMENT` | argument-structure result |
+| `ARGUMENT_STRUCTURE_DETECTED` / `ARGUMENT_STRUCTURE_INCOMPLETE` / `NOT_AN_ARGUMENT` | argument-structure result (structure only — soundness/truth not established) |
 | `QUARANTINED_*` | definitional, normative, non-falsifiable, or unanchored |
 
 `SURVIVED_FALSIFICATION` and `DIRECTED_COUPLING_SURVIVED` are the only

@@ -162,3 +162,81 @@ def run_case(
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(artifact, ensure_ascii=False, indent=2), encoding="utf-8")
     return artifact
+
+
+def reproduce_case(
+    case_path: str | Path,
+    *,
+    signal_path: str | Path | None = None,
+    out_path: str | Path | None = None,
+) -> dict[str, Any]:
+    """Re-run a saved verdict case-file and confirm the verdict is reproducible.
+
+    Loads a previously written ``bsff falsify`` dossier, reconstructs the claim
+    and re-runs the identical policy/seed against the original signal (or a
+    ``signal_path`` override), and checks the recomputed ``artifact_sha256``
+    against the recorded one. This is the reviewer's one-command reproduction:
+    same inputs + same code must yield the same verdict digest, or the run is
+    flagged ``NOT_REPRODUCIBLE``.
+    """
+    case = json.loads(Path(case_path).read_text(encoding="utf-8"))
+    if not isinstance(case, dict) or "claim" not in case or "verdict" not in case:
+        raise ValueError(f"{case_path} is not a bsff falsify case-file")
+
+    recorded_sha = case.get("artifact_sha256")
+    claim_dict = case["claim"]
+    allowed = {f.name for f in fields(ClaimSpec)}
+    spec = ClaimSpec(**{k: v for k, v in claim_dict.items() if k in allowed})
+    spec.validate()
+
+    recorded_signal = case.get("signal_provenance", {}).get("path")
+    sig = Path(signal_path) if signal_path is not None else Path(str(recorded_signal))
+    if not sig.is_file():
+        raise FileNotFoundError(
+            f"signal not found for reproduction: {sig}. Pass --signal to point at the "
+            "original signal file recorded in signal_provenance."
+        )
+
+    # Verify signal byte-identity before recomputing, so a moved/edited signal is
+    # reported as the cause rather than silently producing a different verdict.
+    recorded_signal_sha = case.get("signal_provenance", {}).get("sha256")
+    actual_signal_sha = sha256_bytes(sig.read_bytes())
+    signal_matches = recorded_signal_sha is None or actual_signal_sha == recorded_signal_sha
+
+    rerun = run_case(
+        _claim_to_tempfile(spec),
+        sig,
+        policy=case.get("policy", "strict"),
+        seed=int(case.get("seed", 123)),
+    )
+    rerun_sha = rerun.get("artifact_sha256")
+    reproducible = bool(signal_matches and recorded_sha is not None and rerun_sha == recorded_sha)
+
+    report: dict[str, Any] = {
+        "schema": "bsff.reproduce/v1",
+        "tool": "bsff",
+        "tool_version": __version__,
+        "case_path": str(case_path),
+        "recorded_artifact_sha256": recorded_sha,
+        "recomputed_artifact_sha256": rerun_sha,
+        "signal_sha256_recorded": recorded_signal_sha,
+        "signal_sha256_actual": actual_signal_sha,
+        "signal_matches": signal_matches,
+        "verdict_label": rerun["verdict"]["verdict"],
+        "reproducible": reproducible,
+        "status": "REPRODUCIBLE" if reproducible else "NOT_REPRODUCIBLE",
+    }
+    if out_path is not None:
+        out = Path(out_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    return report
+
+
+def _claim_to_tempfile(spec: ClaimSpec) -> Path:
+    """Write a ClaimSpec to a deterministic temp JSON for re-running run_case."""
+    import tempfile
+
+    tmp = Path(tempfile.gettempdir()) / f"bsff_reproduce_{spec.claim_id}.json"
+    tmp.write_text(json.dumps(spec.to_dict(), ensure_ascii=False), encoding="utf-8")
+    return tmp

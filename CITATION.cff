@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use BSFF, cite this software artifact."
-title: "BSFF: BCI Signal Falsification Framework"
+title: "BSFF: A falsification framework for neural signal claims"
 version: "0.4.0"
 date-released: "2026-06-21"
 authors:
@@ -18,4 +18,4 @@ keywords:
   - surrogate testing
   - leakage detection
   - reproducibility
-abstract: "Falsification-first open-source kernel for EEG/BCI claim auditing with machine-readable provenance, security gates, and attribution controls."
+abstract: "A deterministic Python framework for surrogate-based stress testing of EEG/BCI signal claims, with leakage-aware claim adjudication, machine-readable verdicts and provenance, and a documented falsification protocol."

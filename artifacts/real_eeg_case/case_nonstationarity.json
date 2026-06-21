@@ -1,0 +1,89 @@
+{
+  "caveats": [
+    "Stationarity gate: 1 channel(s) failed KPSS. Interpret surrogate verdict as preprocessing-sensitive.",
+    "Low surrogate count: suitable for CI smoke, not final evidence."
+  ],
+  "claim_id": "bids-nonstationary-demo",
+  "evidence": {
+    "bayesian_evidence": {
+      "BF01": 4.444168535887936,
+      "BF10": 0.22501396873784446,
+      "cohens_d": 0.11202954524255895,
+      "interpretation": "moderate_evidence_for_null",
+      "method": "bic_normal_approximation",
+      "power": null
+    },
+    "stationarity_gate": {
+      "all_stationary": false,
+      "alpha": 0.05,
+      "channel_results": [
+        {
+          "channel": 0,
+          "lags": 17,
+          "p_value": 0.01,
+          "stationary": false,
+          "statistic": 4.349825875330342
+        }
+      ],
+      "detector": "kpss_stationarity_gate",
+      "n_channels_failed": 1
+    },
+    "surrogate_convergence": {
+      "all_converged": true,
+      "fallback": "warn",
+      "max_covariance_relative_rmsd": 0.35,
+      "max_iter": 200,
+      "max_relative_spectrum_error": 0.1,
+      "n_nonconverged": 0,
+      "n_surrogates": 19,
+      "tol": 0.001,
+      "worst_covariance_relative_rmsd": 2.263640466511993e-16,
+      "worst_relative_spectrum_error": 0.002739284771778384
+    },
+    "surrogate_test": {
+      "alpha": 0.05,
+      "original_statistic": 0.6110513851889395,
+      "p_value": 0.6,
+      "rejected": false,
+      "surrogate_convergence": {
+        "all_converged": true,
+        "fallback": "warn",
+        "max_covariance_relative_rmsd": 0.35,
+        "max_iter": 200,
+        "max_relative_spectrum_error": 0.1,
+        "n_nonconverged": 0,
+        "n_surrogates": 19,
+        "tol": 0.001,
+        "worst_covariance_relative_rmsd": 2.263640466511993e-16,
+        "worst_relative_spectrum_error": 0.002739284771778384
+      },
+      "surrogate_statistics": [
+        0.5869415880752524,
+        0.5796125086293517,
+        0.5492366534903175,
+        0.597559578654403,
+        0.6220196789792002,
+        0.6229427950634926,
+        0.6205808130078677,
+        0.562768333076824,
+        0.6195478525607779,
+        0.6244149561370276,
+        0.5374097952113874,
+        0.6115605753674316,
+        0.584555764891062,
+        0.6443687011947963,
+        0.6438987325186554,
+        0.6638149485658945,
+        0.63882617387496,
+        0.5695780449427763,
+        0.6533127067006782
+      ]
+    }
+  },
+  "leakage_flags": {},
+  "original_statistic": 0.6110513851889395,
+  "p_value": 0.6,
+  "surrogate_max": 0.6638149485658945,
+  "surrogate_min": 0.5374097952113874,
+  "verdict": "REFUTED"
+}

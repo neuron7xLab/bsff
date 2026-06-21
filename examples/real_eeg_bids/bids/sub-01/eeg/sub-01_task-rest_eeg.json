@@ -1,0 +1,6 @@
+{
+  "SamplingFrequency": 250.0,
+  "EEGReference": "synthetic",
+  "PowerLineFrequency": 50,
+  "Manufacturer": "n/a (synthetic Henon-map fixture)"
+}

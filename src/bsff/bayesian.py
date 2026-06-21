@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import warnings
 
 import numpy as np
 from numpy.typing import NDArray
@@ -51,7 +52,12 @@ def jzs_bayes_factor(
     try:
         import pingouin as pg  # type: ignore
 
-        result = pg.ttest([float(original_stat)], surr.tolist(), correction=False)
+        # pingouin's one-sample-vs-sample t-test emits a benign RuntimeWarning when
+        # the single original statistic gives zero degrees of freedom on that arm;
+        # the BF10 it returns is still well-defined. Silence the noise, not the math.
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+            result = pg.ttest([float(original_stat)], surr.tolist(), correction=False)
         bf10 = float(result["BF10"].values[0])
         cohens_d = float(result["cohen-d"].values[0])
         power = float(result["power"].values[0])

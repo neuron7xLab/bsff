@@ -1,0 +1,51 @@
+{
+  "claim": {
+    "alpha": 0.05,
+    "claim_id": "bids-sub-01-task-rest",
+    "metadata": {
+      "bayesian_evidence": true,
+      "channels": [
+        "EEG001",
+        "EEG002",
+        "EEG003",
+        "EEG004"
+      ],
+      "source": "bids",
+      "source_sha256": "5fc54436eb9e50a840e4ed5278f4e95449e8edf1331e9e940d116dd2337684d3"
+    },
+    "n_channels": 4,
+    "n_samples": 768,
+    "null_model": "multivariate_spectral_surrogate",
+    "sampling_rate_hz": 250.0,
+    "signal_type": "EEG",
+    "split_policy": "blocked_or_subject_heldout",
+    "stationarity_gate": "required",
+    "statistic": "lagged_quadratic",
+    "surrogate_count": 19,
+    "task_type": "nonlinear_structure"
+  },
+  "command": "bsff bids-app --bids-dir /home/neuro7/bsff-audit/examples/real_eeg_bids/bids --participant-label 01 --task rest",
+  "inputs": {
+    "bids_dir": "/home/neuro7/bsff-audit/examples/real_eeg_bids/bids",
+    "channels": [
+      "EEG001",
+      "EEG002",
+      "EEG003",
+      "EEG004"
+    ],
+    "data_file": "/home/neuro7/bsff-audit/examples/real_eeg_bids/bids/sub-01/eeg/sub-01_task-rest_eeg.tsv",
+    "data_sha256": "5fc54436eb9e50a840e4ed5278f4e95449e8edf1331e9e940d116dd2337684d3",
+    "sampling_frequency": 250.0
+  },
+  "policy": "standard",
+  "schema": "bsff.bids_manifest/v1",
+  "seed": 101,
+  "software_versions": {
+    "bsff": "0.4.0",
+    "numpy": "2.4.3",
+    "scipy": "1.17.1",
+    "statsmodels": "0.14.6"
+  },
+  "subject": "sub-01",
+  "task": "rest"
+}
