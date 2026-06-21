@@ -57,6 +57,7 @@ jobs:
       - run: python tools/validate_tisean_reference.py
       - run: python tools/validate_real_eeg_case.py
       - run: python tools/update_status.py --check
+      - run: python tools/generate_manifest.py --check
       - run: bsff release-check --strict --output artifacts/release
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
@@ -90,7 +91,11 @@ jobs:
     name: build-package
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: test
+    # The evidence bundle must not be buildable from a test surface weaker than
+    # the full one: the slow end-to-end cascade must pass before release artifacts.
+    needs:
+      - test
+      - slow-tests
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:

@@ -45,7 +45,7 @@ jobs:
             echo "### CodeQL SARIF triage"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
-          python3 tools/triage_sarif.py "$sarif" --block-at critical \
+          python3 tools/triage_sarif.py "$sarif" --block-at high \
             --json sarif-results/triage.json | tee -a "$GITHUB_STEP_SUMMARY"
           code=${PIPESTATUS[0]}
           echo '```' >> "$GITHUB_STEP_SUMMARY"
