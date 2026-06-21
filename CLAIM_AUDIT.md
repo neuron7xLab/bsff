@@ -41,7 +41,8 @@ three coupling defects in the first version of this audit:
 | 5b | STATUS.md previously said 306 | `STATUS.md` history | see `TEST_COUNT_RECONCILIATION.md` | stale: 306 = pre-#42 (PR #42 added 4 tests); regenerated to 310 | **VERIFIED (was stale)** |
 | 6 | 7 machine-checked invariants | `tests/test_invariants.py` | `grep -oE 'INV-[0-9]+' tests/test_invariants.py \| sort -u` | INV-1…INV-7 | **VERIFIED** |
 | 7 | Real LOSO result (within-subject does not generalize) | `research/bci_generalization/result_bnci2014_001_sub1-2.json` | `cat research/bci_generalization/result_bnci2014_001_sub1-2.json` | within 0.807 → cross-subject 0.603, gap +0.204, sub2 0.518 ≈ chance | **VERIFIED** |
-| 7b | "BCI within-subject accuracy does not generalize" as a *general* claim | one dataset, n=2 subjects | — | true only as the measured BNCI2014_001 n=2 result; not a population claim | **UNPROVEN (n=2, 1 dataset)** |
+| 7b | "BCI within-subject accuracy does not generalize" as a *general* claim | now n=9 on a second dataset, but still single-dataset | — | direction holds (cross ≈ chance); magnitude is dataset-specific; not yet a population claim | **UNPROVEN (single dataset)** |
+| 7c | n=9 PhysioNet EEGMMI LOSO measurement (supersedes the n=2 anecdote) | `research/bci_generalization/result_eegbci_loso_n9.json` | `python research/bci_generalization/run_loso_eegbci.py --subjects 1-9` | within 0.612 → cross 0.531 (≈chance), gap 0.082; 4/9 subjects at chance even within-subject | **VERIFIED (measurement; the 0.807 n=2 was not representative — see `docs/FINDING_N9.md`)** |
 | 8 | MOABB adapter exists, fail-closed, raw-guarded | `src/bsff/moabb_adapter.py`, `tests/test_moabb_adapter.py` | `python -m pytest tests/test_moabb_adapter.py -q` | 6 tests pass (FakeRaw, no moabb dep) | **VERIFIED** |
 | 9 | Seed-stability certification (INV-7) | `src/bsff/stability.py`, `tests/test_stability.py` | `python -m pytest tests/test_stability.py -q` | 8 tests pass; flipping verdict → `UNSTABLE` | **VERIFIED** |
 | 10 | Canonical manuscript | `docs/MANUSCRIPT.md` | `test -f docs/MANUSCRIPT.md` | present (v0.4.0) | **VERIFIED** |
@@ -50,7 +51,7 @@ three coupling defects in the first version of this audit:
 | 11c | Surrogate math is **externally** validated (TISEAN reference) | — | — | not run | **NEEDS_EXTERNAL_CHECK** — and any verdict from `bsff adjudicate-data` (incl. CASE-001 Stage 7) inherits this open leg |
 | 12 | Externally validated against TISEAN | — | TISEAN reference binary not available in sandbox | not done; intrinsic-property validation only | **NEEDS_EXTERNAL_CHECK** |
 | 13 | A real published EEG dataset is shipped in the repo | — | — | no human EEG data committed; only synthetic + downloaded-at-runtime | **FALSE (not shipped) — intentional** |
-| 14 | Second-dataset confirmation of the LOSO gap | — | Zenodo/physionet downloads time out in sandbox | Zhou2016 / PhysionetMI / AlexMI all read-timeout | **NEEDS_EXTERNAL_CHECK** |
+| 14 | Second-dataset confirmation that cross-subject decoding ≈ chance | `research/bci_generalization/result_eegbci_loso_n9.json` | `python research/bci_generalization/run_loso_eegbci.py --subjects 1-9` | PhysioNet EEGMMI n=9: cross-subject LOSO = 0.531 ≈ chance, confirming no cross-subject transfer (a *second* dataset beyond BNCI2014_001) | **VERIFIED (direction only; ≥3rd dataset + n>9 still open)** |
 
 ## How to re-run the whole audit
 
