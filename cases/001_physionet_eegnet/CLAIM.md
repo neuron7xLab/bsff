@@ -30,12 +30,16 @@ directly. We reduce it to a measurable statement:
 
 **Pre-registered falsification criterion:**
 
-- The claim is **REFUTED** if within-subject accuracy is significantly above chance
-  while LOSO accuracy is **not** significantly above chance (permutation null).
+- The claim is **REFUTED** only on *positive* evidence: within-subject accuracy
+  significantly above chance **and** a significantly positive generalization gap
+  `within − LOSO` under a within-subject label-permutation null (Monte-Carlo
+  resolved). A merely non-significant LOSO is **not** sufficient — absence of evidence
+  is not evidence of absence.
 - The claim **SURVIVES** only if LOSO accuracy is significantly above chance.
-- The verdict is **UNSUPPORTED** if the credibility controls fail (e.g. shuffled
-  labels remain decodable within subject → the evaluation itself leaks) or if no
-  signal is admissible.
+- The verdict is **UNSUPPORTED** if the credibility control fails (labels-permuted
+  within-CV still decodes above chance → the evaluation itself leaks), if the within
+  signal is real but the gap is not significant (underpowered — cannot refute), or if
+  no signal is admissible.
 
 Chance = 0.5 (balanced binary). α = 0.05.
 

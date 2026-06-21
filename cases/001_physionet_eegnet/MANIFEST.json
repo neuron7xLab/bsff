@@ -1,7 +1,8 @@
 {
-  "schema": "bsff.case001.manifest/v1",
+  "schema": "bsff.case001.manifest/v2",
   "case_id": "BSFF-CASE-001",
-  "command": "python cases/001_physionet_eegnet/run_case.py --source synthetic --config headline --subjects 1-9 --decoder logvar_lda --permutations 500 --seed 20260621",
+  "command": "PYTHONPATH=src python cases/001_physionet_eegnet/run_case.py --source synthetic --config headline --decoder logvar_lda --permutations 500 --seed 20260621 --stability-seeds 5 --out cases/001_physionet_eegnet",
+  "verify_command": "PYTHONPATH=src python cases/001_physionet_eegnet/run_case.py --verify cases/001_physionet_eegnet/VERDICT.json",
   "environment": {
     "python": "3.12.3",
     "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
@@ -27,8 +28,8 @@
     },
     "preset": "headline",
     "cohort_sha256": "0f3962d2af082ffe23abe8be6dc6daebf246dd757a0da7794b231e5a7e67e045",
-    "note": "Labelled synthetic data; ground truth is fixed by construction. Not real EEG."
+    "note": "Labelled synthetic data; ground truth fixed by construction. Not real EEG."
   },
   "verdict": "REFUTED",
-  "artifact_sha256": "336c2611db5fb98b92cc08863e885ec7fc7027d10e7e13cb7e54271be9419c87"
+  "artifact_sha256": "7b8741f45bc8867414c51c059dccb6d91692c78d9de55552ccf0500b6962d85a"
 }

@@ -1,11 +1,12 @@
 {
-  "schema": "bsff.case001/v1",
+  "schema": "bsff.case001/v2",
   "case_id": "BSFF-CASE-001",
   "tool": "bsff",
   "tool_version": "0.4.0",
   "claim": "Motor-imagery EEG decoders (EEGNet / CSP-style) robustly decode left-vs-right-fist intention on PhysioNet EEGMMI, i.e. the reported within/global-validation accuracy reflects generalizable decoding.",
   "source": "synthetic",
   "decoder": "logvar_lda",
+  "primary_decoder": "logvar_lda",
   "seed": 20260621,
   "n_trials": 540,
   "n_subjects": 9,
@@ -25,48 +26,77 @@
     },
     "preset": "headline",
     "cohort_sha256": "0f3962d2af082ffe23abe8be6dc6daebf246dd757a0da7794b231e5a7e67e045",
-    "note": "Labelled synthetic data; ground truth is fixed by construction. Not real EEG."
+    "note": "Labelled synthetic data; ground truth fixed by construction. Not real EEG."
   },
   "metrics": {
     "within_subject_acc": 1.0,
-    "loso_acc": 0.4666666666666667,
-    "generalization_gap": 0.5333333333333333,
-    "label_shuffle_within_acc": 0.4759259259259259,
-    "loso_permutation_null": {
-      "p_value": 0.9600798403193613,
-      "null_mean": 0.49990000000000007,
-      "null_std": 0.02022045297087906,
+    "loso_acc": 0.466667,
+    "generalization_gap": 0.533333,
+    "block_aware_within": false,
+    "permutation": {
+      "p_within": 0.001996,
+      "p_loso": 0.96008,
+      "p_gap": 0.001996,
+      "null_within_mean": 0.498904,
+      "null_loso_mean": 0.4999,
+      "null_gap_mean": -0.000996,
+      "gap_p_mc_se": 0.001996,
+      "gap_p_resolved": true,
       "n_permutations": 500
     },
     "per_subject_loso_acc": {
-      "0": 0.7833333333333333,
-      "1": 0.016666666666666666,
+      "0": 0.783333,
+      "1": 0.016667,
       "2": 0.3,
       "3": 0.5,
       "4": 0.35,
       "5": 0.5,
-      "6": 0.8666666666666667,
+      "6": 0.866667,
       "7": 0.5,
-      "8": 0.38333333333333336
+      "8": 0.383333
     },
     "normalization_leakage": {
-      "honest_loso_acc": 0.4666666666666667,
-      "global_normalized_loso_acc": 0.4666666666666667,
+      "honest_loso_acc": 0.466667,
+      "global_normalized_loso_acc": 0.466667,
       "inflation": 0.0
     }
   },
+  "seed_stability": {
+    "n_seeds": 5,
+    "seeds": [
+      20260621,
+      20260622,
+      20260623,
+      20260624,
+      20260625
+    ],
+    "verdicts": [
+      "REFUTED",
+      "REFUTED",
+      "REFUTED",
+      "REFUTED",
+      "REFUTED"
+    ],
+    "modal_verdict": "REFUTED",
+    "agreement": 1.0,
+    "stable": true
+  },
   "decision": {
     "verdict": "REFUTED",
-    "reason": "within-subject decodability does NOT generalize leave-one-subject-out: within=1.000 (p=2.78e-163) collapses to LOSO=0.467 (permutation p=0.96, null mean=0.500). The within/global-validation number hides subject-specific structure.",
+    "reason": "within-subject decodability does NOT generalize: within=1.000 (p=0.002) with a significant generalization gap of 0.533 (paired-permutation p=0.002) while LOSO=0.467 sits in its null (mean 0.500). The within/global-validation number hides subject-specific structure.",
     "chance": 0.5,
     "alpha": 0.05,
-    "p_within_subject": 2.778448436856347e-163,
-    "p_loso_permutation": 0.9600798403193613,
-    "p_label_shuffle": 0.8773736150610614,
+    "p_within_subject": 0.001996,
+    "p_loso_permutation": 0.96008,
+    "p_generalization_gap": 0.001996,
+    "gap_p_resolved": true,
+    "gap_p_mc_se": 0.001996,
+    "null_within_mean": 0.498904,
     "within_subject_significant": true,
     "loso_significant": false,
+    "generalization_gap_significant": true,
     "evaluation_leakage_detected": false
   },
   "verdict": "REFUTED",
-  "artifact_sha256": "336c2611db5fb98b92cc08863e885ec7fc7027d10e7e13cb7e54271be9419c87"
+  "artifact_sha256": "7b8741f45bc8867414c51c059dccb6d91692c78d9de55552ccf0500b6962d85a"
 }

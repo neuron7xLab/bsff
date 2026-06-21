@@ -404,13 +404,16 @@ dossier.
 | [001 — PhysioNet EEGNet generalization](cases/001_physionet_eegnet/) | within/global-validation motor-imagery accuracy reflects *generalizable* decoding | **REFUTED** |
 
 BSFF-CASE-001 attacks the cross-subject generalization that within-subject EEGMMI
-numbers are often read to imply. On real PhysioNet data a decoder that is significantly
-above chance within subjects falls to chance leave-one-subject-out (permutation
-p = 0.98), with the label-shuffle control passing. The same harness is shown to be
-two-sided on labelled ground truth — it returns `SURVIVED` when a genuinely
-subject-shared signal is present and `UNSUPPORTED` on noise — so the `REFUTED` verdict
+numbers are often read to imply. On real PhysioNet data a decoder significantly above
+chance within subjects (0.605) shows a **statistically significant generalization gap**
+(within − LOSO = 0.151, paired within-subject permutation p = 0.002) and falls to
+chance leave-one-subject-out, with the leak control passing. REFUTED rests on that
+positive gap evidence — not on the fallacy "LOSO is merely non-significant". The same
+harness is shown to be two-sided on labelled ground truth — it returns `SURVIVED` when
+a genuinely subject-shared signal is present and `UNSUPPORTED` on noise — so the verdict
 is not a one-sided artefact. This is **not** a claim that motor imagery is undecodable;
-it falsifies the *generalization inference*, not the within-subject result. See
+it falsifies the *generalization inference*, not the within-subject result. The dossier
+digest is verifiable (`run_case.py --verify`). See
 [`cases/001_physionet_eegnet/REPORT.md`](cases/001_physionet_eegnet/REPORT.md).
 
 ```bash
