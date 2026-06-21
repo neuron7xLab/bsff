@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+claim_id: bsff_control_000a_negative
+kind: negative_control
+signal: white_noise_series (IID Gaussian, no nonlinear structure)
+asserted_claim: "this signal exhibits nonlinear deterministic structure"
+expected_verdict: "not SURVIVED"
+decision_rule: "conjunction — rank-order p<=alpha AND BF10>=3"
+reproduce: "python tools/verify_controls.py"
+note: >
+  A correct falsifier must REFUSE to certify structure that is not there. Run via
+  the conjunction gate; the bare rank-order test is anti-conservative (~2/10
+  false-SURVIVED on white noise, measured) — see docs/CONTROL_CASES.md.

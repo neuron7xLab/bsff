@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+claim_id: bsff_control_000b_positive
+kind: positive_control
+signal: henon_series (deterministic Hénon map, genuine nonlinearity)
+asserted_claim: "this signal exhibits nonlinear deterministic structure"
+expected_verdict: "SURVIVED"
+decision_rule: "conjunction — rank-order p<=alpha AND BF10>=3"
+reproduce: "python tools/verify_controls.py"
+note: >
+  A correct falsifier must certify genuine structure. Hénon survives the
+  linear-Gaussian surrogate null 10/10 (measured).
