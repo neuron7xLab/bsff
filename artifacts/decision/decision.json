@@ -1,0 +1,57 @@
+{
+  "recommendation": "CONDITIONAL GO",
+  "must_criteria_met": true,
+  "external_validation_open": true,
+  "loso_gap": 0.204,
+  "conformance": {
+    "overall": "PARTIAL",
+    "conformant": 10,
+    "nonconformant": 0,
+    "unverifiable": 4
+  },
+  "certificate_root": "83349bcaf274d4c21a0e51f12c5a3eb73405900b7d188d5ed237c940b39dc241",
+  "criteria": [
+    {
+      "id": "V1",
+      "must": true,
+      "title": "Works on ground truth (controls)",
+      "met": true,
+      "evidence": "artifacts/controls/controls.json"
+    },
+    {
+      "id": "V2",
+      "must": true,
+      "title": "Does something real (a genuine falsification on real data)",
+      "met": true,
+      "evidence": "LOSO generalization gap = 0.204 (research/bci_generalization/result_*.json)"
+    },
+    {
+      "id": "V3",
+      "must": true,
+      "title": "Cannot ship a decorative lie (honesty gate)",
+      "met": true,
+      "evidence": "artifacts/honesty/HONESTY_GATE.json"
+    },
+    {
+      "id": "V4",
+      "must": true,
+      "title": "Self-consistent end to end (certificate chain)",
+      "met": true,
+      "evidence": "artifacts/certificate/CERTIFICATE.json"
+    },
+    {
+      "id": "V5",
+      "must": true,
+      "title": "Honest about its own limits (blocked work named, not faked)",
+      "met": true,
+      "evidence": "artifacts/conformance/CONFORMANCE_VERDICT.json"
+    },
+    {
+      "id": "V6",
+      "must": false,
+      "title": "External scientific validity (TISEAN / multi-dataset / n>2)",
+      "met": false,
+      "evidence": "4 UNVERIFIABLE legs in self-conformance"
+    }
+  ]
+}
