@@ -1,0 +1,12 @@
+{
+  "control": "positive",
+  "expected": "SURVIVED",
+  "verdict": "SURVIVED",
+  "p_value": 0.01,
+  "decision_rule": "conjunction (rank-order p<=alpha AND BF10>=3)",
+  "control_passed": true,
+  "data_sha256": "f58f778d78203756c8595a4cd2bfad6ad58f6b97e666da869fae5b5904dafd82",
+  "seed": 7,
+  "n_surrogates": 99,
+  "artifact_sha256": "fb8c1b7a56df903c8aed160476fdbdc4307a4adc7b8857da0e6ed4babea8b0d2"
+}

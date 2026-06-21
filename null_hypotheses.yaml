@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Explicit null hypotheses. No p-value is used without an H0 here (Axiom: NULL BEFORE P-VALUE).
+nulls:
+  H0_nonlinear_structure:
+    statement: "The signal is a linear-Gaussian process; any apparent nonlinear structure is a finite-sample artifact."
+    tested_by: [rank_order_iaaft_surrogate]
+    reject_if: "rank-order p <= alpha AND effect-size BF10 >= 3 (conjunction gate)"
+    failure_status: "not rejected -> REFUTED or UNSUPPORTED (never SURVIVED)"
+    multiple_testing: "single test per claim; Holm-Bonferroni if a surrogate family is used"
+  H0_directed_coupling:
+    statement: "There is no directed coupling source->target beyond shared marginal/autocorrelation."
+    tested_by: [circular_shift_surrogate_transfer_entropy]
+    reject_if: "p <= alpha AND TE(source->target) > TE(target->source)"
+    failure_status: "not rejected -> direction = none"
+    multiple_testing: "two directions tested; reported per-direction"
+  H0_seed_stability:
+    statement: "The verdict depends on the random surrogate seed (instability)."
+    tested_by: [seed_certification]
+    reject_if: "modal-verdict agreement >= min_agreement across >=2 seeds"
+    failure_status: "not rejected -> UNSTABLE (fail-closed)"
+    multiple_testing: "n/a"

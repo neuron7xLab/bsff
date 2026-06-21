@@ -1,0 +1,12 @@
+{
+  "control": "negative",
+  "expected": "not SURVIVED",
+  "verdict": "UNSUPPORTED",
+  "p_value": 0.05,
+  "decision_rule": "conjunction (rank-order p<=alpha AND BF10>=3)",
+  "control_passed": true,
+  "data_sha256": "e56f54e1cb1342fc77dec41371ff753387aedc4a333f444db51261da4df4867b",
+  "seed": 7,
+  "n_surrogates": 99,
+  "artifact_sha256": "17d47eb411d231f093217fa904b1a177384be382cf9a7df23e4ff316d751c4c0"
+}

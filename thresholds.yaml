@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Every threshold carries provenance: value, reason, source. (Axiom: CALIBRATION BEFORE THRESHOLD.)
+thresholds:
+  alpha:
+    value: 0.05
+    unit: probability
+    reason: "standard frequentist significance level for the surrogate test"
+    source: literature
+  bayes_corroboration_min:
+    value: 3.0
+    unit: BF10
+    reason: "conjunction gate: a frequentist rejection must be corroborated by moderate effect-size evidence; restores nominal FPR (white-noise false-SURVIVED 2/10 -> 0/10, measured)"
+    source: "empirical calibration (operating_characteristic) + Jeffreys BF guidelines"
+  surrogate_spectrum_rel_error_max:
+    value: 0.05
+    unit: relative_error
+    reason: "IAAFT trades a perfect spectrum for an exact marginal; ~1% residual measured, 5% is the engineering tolerance"
+    source: "empirical (validate_surrogate_fidelity)"
+  surrogate_covariance_rel_rmsd_max:
+    value: 0.05
+    unit: relative_rmsd
+    reason: "linear covariance must be preserved by IAAFT; measured <=0.09%"
+    source: "empirical (validate_surrogate_fidelity)"
+  seed_stability_min_agreement:
+    value: 1.0
+    unit: fraction
+    reason: "default unanimity across seeds before a verdict is certified"
+    source: "policy (fail-closed default)"
