@@ -23,14 +23,11 @@ lab-99:
 	python tools/validate_real_eeg_case.py
 	python tools/update_status.py --check
 	python tools/generate_manifest.py --check
+	python tools/regenerate.py --check
 	bsff release-check --strict --output artifacts/release
 	python -m build
 	python tools/generate_evidence_bundle.py
 
 # Regenerate every generated artifact in dependency order (STATUS -> MANIFEST -> pages).
 regen:
-	python tools/update_status.py
-	python tools/generate_manifest.py
-	python tools/build_demonstration.py
-	python tools/decision_gate.py
-	python tools/build_core.py
+	python tools/regenerate.py
