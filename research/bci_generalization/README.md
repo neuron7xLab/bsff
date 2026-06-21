@@ -46,11 +46,22 @@ python research/bci_generalization/run_experiment.py \
 
 ## Result
 
-Run on real open data (`result.json` carries the hash). Expected and observed
-shape: **within-session high, cross-subject markedly lower** — the generalization
-gap. The full multi-subject benchmark is network-bound; a partial subject subset
-already exhibits the gap. Drop your `result.json` here when produced; the verdict
-is the gap and its hash, reproducible by anyone with the same MOABB version.
+### Real result (recorded)
+
+`result_bnci2014_001_sub1-2.json` — run on real open data, BNCI2014_001
+(subjects 1–2), `LeftRightImagery`, `CSP6+LDA`:
+
+| evaluation | accuracy |
+|------------|----------|
+| WithinSession | **0.807** (subject 1 ≈ 0.93–0.96) |
+| CrossSubject (LOSO) | **0.603** — subject 1: 0.701, **subject 2: 0.518 ≈ chance** |
+| **LOSO gap** | **+0.204** (chance 0.500) |
+
+The within-subject accuracy does not survive leave-one-subject-out: it drops by
+~20 points overall, and for subject 2 collapses to chance. This is the
+falsification — reproducible, hash-backed (`sha256` in the file). Two subjects is
+a minimal LOSO; the full 9-subject benchmark (network-bound) tightens the
+estimate via the documented command and the same harness.
 
 ## Honest boundary
 
