@@ -1,0 +1,62 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Machine-readable contract: what BSFF claims to provide, checked against the
+# repository's ACTUAL output. The conformance observer (tools/run_contract_conformance.py)
+# turns each item into CONFORMANT / NONCONFORMANT / UNVERIFIABLE. Honest by design:
+# items that require network or GPU are declared `blocked`, never faked CONFORMANT.
+contract_id: bsff_self_conformance_v1
+items:
+  # --- feasible, checkable here (no network/GPU) ---
+  - id: self_falsification_controls
+    kind: command
+    run: "python tools/verify_controls.py"
+    expect_exit: 0
+    why: "negative control must not SURVIVE; positive must"
+  - id: null_registry_complete
+    kind: command
+    run: "python tools/validate_null_registry.py"
+    expect_exit: 0
+  - id: threshold_registry_provenance
+    kind: command
+    run: "python tools/validate_threshold_registry.py"
+    expect_exit: 0
+  - id: surrogate_fidelity
+    kind: command
+    run: "python tools/validate_surrogate_fidelity.py --quick"
+    expect_exit: 0
+  - id: status_in_sync
+    kind: command
+    run: "python tools/update_status.py --check"
+    expect_exit: 0
+  - id: invariants_suite_present
+    kind: file
+    path: tests/test_invariants.py
+  - id: manuscript_present
+    kind: file
+    path: docs/MANUSCRIPT.md
+  - id: claim_audit_present
+    kind: file
+    path: CLAIM_AUDIT.md
+  - id: real_loso_result_present
+    kind: file
+    path: research/bci_generalization/result_bnci2014_001_sub1-2.json
+  - id: validation_corpus_present
+    kind: file
+    path: data/validation/bsff_validation_corpus_v0_2_0.npz
+
+  # --- declared but NOT verifiable in this environment (honest UNVERIFIABLE) ---
+  - id: release_provenance_signature
+    kind: blocked
+    blocker: network
+    why: "verifying the v0.4.0 SLSA signature chain needs Fulcio/Rekor + network"
+  - id: case_001_physionet_eegnet_baseline
+    kind: blocked
+    blocker: network_gpu
+    why: "PhysioNet download + EEGNet (TensorFlow/GPU) baseline"
+  - id: case_001_split_leakage_surrogate_attacks
+    kind: blocked
+    blocker: network_gpu
+    why: "depends on the case-001 baseline"
+  - id: tisean_external_validation
+    kind: blocked
+    blocker: external_binary
+    why: "TISEAN reference C package not available in this environment"
