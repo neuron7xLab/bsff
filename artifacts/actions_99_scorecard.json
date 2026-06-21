@@ -1,0 +1,21 @@
+{
+  "schema_version": "bsff.scorecard/v1",
+  "score": 91,
+  "p0": "COMPLETE",
+  "p1": "COMPLETE",
+  "p2": "PARTIAL",
+  "agent_completed": [
+    "artifact_hygiene",
+    "mutation_probe"
+  ],
+  "owner_required": [
+    "branch protection ruleset (add missing checks, remove admin bypass)"
+  ],
+  "blocking_items": [
+    "branch protection: required checks not verified",
+    "admin bypass path present (or unknown)"
+  ],
+  "governance_verified": false,
+  "admin_bypass_allowed": true,
+  "can_claim_99": false
+}
