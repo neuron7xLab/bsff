@@ -31,3 +31,22 @@ as verified.
 
 Currently governed: `artifacts/MANIFEST.json` (and, once their PRs land,
 `governance_status.json` and `actions_99_scorecard.json`).
+
+## Full governed-artifact contract (PR-67)
+
+A governed artifact (one that declares `schema_version`) must now also describe
+itself with these **required** fields:
+
+```text
+schema_version   artifact_type   package   generator   verdict
+```
+
+Drift guards remain: `version`/`package_version` must equal pyproject; `test_count`
+must equal STATUS.
+
+**Volatile provenance** (`commit_sha`, `workflow_run_id`, `generated_at_utc`) is
+required **only** when an artifact declares `ci_emitted: true`, so the committed,
+in-repo core stays deterministic and `--check`-able. CI/release runs add these via
+`--ci`. Currently governed: `MANIFEST.json`, `actions_99_scorecard.json`,
+`governance_status.json`. Ungoverned artifacts are listed for coverage, never
+silently accepted.

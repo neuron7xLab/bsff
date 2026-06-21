@@ -1,5 +1,10 @@
 {
-  "commit_sha": "76c43b675bbac26a9812fd8efa6d7d040e60b7d7",
+  "schema_version": "bsff.governance/v1",
+  "artifact_type": "governance_status",
+  "package": "bsff",
+  "generator": "tools/verify_branch_protection.py",
+  "verdict": "NOT_VERIFIED",
+  "commit_sha": "416ab93cd123d56e0d03887c1fa7b66394c0ddbd",
   "repo": "neuron7xLab/bsff",
   "required_checks_declared": true,
   "declared_checks": [

@@ -31,6 +31,12 @@ except ModuleNotFoundError:  # pragma: no cover
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT_DIR = ROOT / "artifacts"
 
+# Full governed-artifact descriptor: a governed artifact must describe itself.
+REQUIRED_GOVERNED_FIELDS = ("schema_version", "artifact_type", "package", "generator", "verdict")
+# Volatile provenance — required only for artifacts that declare ci_emitted=true,
+# so the committed deterministic core stays --check-able.
+CI_PROVENANCE_FIELDS = ("commit_sha", "workflow_run_id", "generated_at_utc")
+
 
 def _pyproject_version() -> str:
     data = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
@@ -62,6 +68,13 @@ def validate() -> dict:
             ungoverned.append(rel)
             continue
         governed.append(rel)
+        for field in REQUIRED_GOVERNED_FIELDS:
+            if not data.get(field):
+                failures.append(f"{rel}: governed artifact missing required field '{field}'")
+        if data.get("ci_emitted"):
+            for field in CI_PROVENANCE_FIELDS:
+                if not data.get(field):
+                    failures.append(f"{rel}: ci_emitted artifact missing provenance '{field}'")
         for vkey in ("version", "package_version"):
             if vkey in data and str(data[vkey]) != version:
                 failures.append(f"{rel}: {vkey}={data[vkey]} != pyproject {version}")
