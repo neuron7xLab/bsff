@@ -28,7 +28,7 @@
 | Artifact | Present | sha256 |
 | --- | --- | --- |
 | `artifacts/bsff_phase1_validation.json` | True | `0710770017bc7278…` |
-| `artifacts/provenance_manifest.json` | True | `5f0bb5ed23e8e490…` |
+| `artifacts/provenance_manifest.json` | True | `27ca373f83647b5e…` |
 | `artifacts/tisean_validation.json` | True | `7b609387dc7bdbca…` |
 | `artifacts/real_eeg_case/verdict.json` | True | `8bc5414765adb3f9…` |
 | `artifacts/real_eeg_case/manifest.json` | True | `3a0c3f94a591ea98…` |

@@ -183,6 +183,20 @@ def generate() -> str:
     return render_status(version, test_count, extras, subcommands)
 
 
+_COUNT_RE = re.compile(r"(Live test count \| )\*\*\d+\*\*")
+
+
+def _mask_count(text: str) -> str:
+    """Replace the rendered test-count value with a placeholder for comparison."""
+    return _COUNT_RE.sub(r"\1**N**", text)
+
+
+def _has_valid_count(text: str) -> bool:
+    """True if STATUS.md carries a present, positive integer live test count."""
+    match = re.search(r"Live test count \| \*\*(\d+)\*\*", text)
+    return bool(match) and int(match.group(1)) > 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Regenerate / verify BSFF STATUS.md.")
     parser.add_argument(
@@ -199,10 +213,27 @@ def main(argv: list[str] | None = None) -> int:
             print("STATUS.md is missing — run: python tools/update_status.py")
             return 1
         on_disk = STATUS.read_text(encoding="utf-8")
-        if on_disk != rendered:
+        # The live test count legitimately varies with which optional test
+        # dependencies are installed (a leaner CI image collects fewer parametrised
+        # cases than a fat developer machine), so gating it byte-exact would make
+        # the contract fail across environments for no real drift. We mask the
+        # count for the equality check — version, CLI surface, and extras (the
+        # facts that MUST NOT silently drift) are still compared exactly — and then
+        # separately assert the on-disk count is a present, positive integer.
+        if _mask_count(on_disk) != _mask_count(rendered):
             print("STATUS.md is STALE — regenerate it:")
             print("    python tools/update_status.py")
-            print("(the version, test count, CLI surface, or extras changed)")
+            print("(the version, CLI surface, or extras changed)")
+            for disk_line, gen_line in zip(
+                on_disk.splitlines(), rendered.splitlines(), strict=False
+            ):
+                if _mask_count(disk_line) != _mask_count(gen_line):
+                    print(f"  on-disk:   {disk_line}")
+                    print(f"  generated: {gen_line}")
+                    break
+            return 1
+        if not _has_valid_count(on_disk):
+            print("STATUS.md is missing a valid live test count — regenerate it.")
             return 1
         print("STATUS.md: in sync")
         return 0

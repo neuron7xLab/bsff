@@ -8,7 +8,7 @@
     {
       "path": "artifacts/provenance_manifest.json",
       "present": true,
-      "sha256": "5f0bb5ed23e8e4908f49da57dfd8f21f37d0173a987158983b77d524d4809a6d"
+      "sha256": "27ca373f83647b5ef9a72e466d14ddce7db7549f0f55b8fa3972212715ab83fd"
     },
     {
       "path": "artifacts/tisean_validation.json",

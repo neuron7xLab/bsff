@@ -1523,8 +1523,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "tools/update_status.py",
-      "sha256": "8efff0a1f5eedbdaa57e7f5434fe16042ce2dee84108ad6003a6eccbb5209d89",
-      "size_bytes": 8866
+      "sha256": "2ed713c6ec638ae835b5a0bcb65595f557a0503505a6670a2563ce9aa9ca4700",
+      "size_bytes": 10394
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -1607,5 +1607,5 @@
       "size_bytes": 1810
     }
   ],
-  "manifest_sha256": "6bbf8adacd1384ee16c42a53bd212f3a44e01101e790121b0bc7ad52c6bceb1d"
+  "manifest_sha256": "b0a0ce77b3dd2a219ba037b0e211ed9854970a6595a1bdf041830df86b1c6788"
 }
