@@ -1,0 +1,34 @@
+{
+  "schema": "bsff.case001.manifest/v1",
+  "case_id": "BSFF-CASE-001",
+  "command": "python cases/001_physionet_eegnet/run_case.py --source synthetic --config headline --subjects 1-9 --decoder logvar_lda --permutations 500 --seed 20260621",
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+    "numpy": "2.4.3",
+    "scipy": "1.17.1",
+    "sklearn": "1.8.0",
+    "torch": "2.5.1+cu121",
+    "mne": "1.11.0"
+  },
+  "data_provenance": {
+    "kind": "synthetic_ground_truth",
+    "config": {
+      "n_subjects": 9,
+      "trials_per_subject": 60,
+      "n_channels": 16,
+      "n_times": 320,
+      "sfreq": 160.0,
+      "subject_effect": 1.8,
+      "shared_effect": 0.0,
+      "noise": 1.0,
+      "carrier_hz": 11.0,
+      "seed": 20260621
+    },
+    "preset": "headline",
+    "cohort_sha256": "0f3962d2af082ffe23abe8be6dc6daebf246dd757a0da7794b231e5a7e67e045",
+    "note": "Labelled synthetic data; ground truth is fixed by construction. Not real EEG."
+  },
+  "verdict": "REFUTED",
+  "artifact_sha256": "336c2611db5fb98b92cc08863e885ec7fc7027d10e7e13cb7e54271be9419c87"
+}

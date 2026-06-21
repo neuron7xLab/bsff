@@ -1,0 +1,72 @@
+{
+  "schema": "bsff.case001/v1",
+  "case_id": "BSFF-CASE-001",
+  "tool": "bsff",
+  "tool_version": "0.4.0",
+  "claim": "Motor-imagery EEG decoders (EEGNet / CSP-style) robustly decode left-vs-right-fist intention on PhysioNet EEGMMI, i.e. the reported within/global-validation accuracy reflects generalizable decoding.",
+  "source": "synthetic",
+  "decoder": "logvar_lda",
+  "seed": 20260621,
+  "n_trials": 540,
+  "n_subjects": 9,
+  "data_provenance": {
+    "kind": "synthetic_ground_truth",
+    "config": {
+      "n_subjects": 9,
+      "trials_per_subject": 60,
+      "n_channels": 16,
+      "n_times": 320,
+      "sfreq": 160.0,
+      "subject_effect": 1.8,
+      "shared_effect": 0.0,
+      "noise": 1.0,
+      "carrier_hz": 11.0,
+      "seed": 20260621
+    },
+    "preset": "headline",
+    "cohort_sha256": "0f3962d2af082ffe23abe8be6dc6daebf246dd757a0da7794b231e5a7e67e045",
+    "note": "Labelled synthetic data; ground truth is fixed by construction. Not real EEG."
+  },
+  "metrics": {
+    "within_subject_acc": 1.0,
+    "loso_acc": 0.4666666666666667,
+    "generalization_gap": 0.5333333333333333,
+    "label_shuffle_within_acc": 0.4759259259259259,
+    "loso_permutation_null": {
+      "p_value": 0.9600798403193613,
+      "null_mean": 0.49990000000000007,
+      "null_std": 0.02022045297087906,
+      "n_permutations": 500
+    },
+    "per_subject_loso_acc": {
+      "0": 0.7833333333333333,
+      "1": 0.016666666666666666,
+      "2": 0.3,
+      "3": 0.5,
+      "4": 0.35,
+      "5": 0.5,
+      "6": 0.8666666666666667,
+      "7": 0.5,
+      "8": 0.38333333333333336
+    },
+    "normalization_leakage": {
+      "honest_loso_acc": 0.4666666666666667,
+      "global_normalized_loso_acc": 0.4666666666666667,
+      "inflation": 0.0
+    }
+  },
+  "decision": {
+    "verdict": "REFUTED",
+    "reason": "within-subject decodability does NOT generalize leave-one-subject-out: within=1.000 (p=2.78e-163) collapses to LOSO=0.467 (permutation p=0.96, null mean=0.500). The within/global-validation number hides subject-specific structure.",
+    "chance": 0.5,
+    "alpha": 0.05,
+    "p_within_subject": 2.778448436856347e-163,
+    "p_loso_permutation": 0.9600798403193613,
+    "p_label_shuffle": 0.8773736150610614,
+    "within_subject_significant": true,
+    "loso_significant": false,
+    "evaluation_leakage_detected": false
+  },
+  "verdict": "REFUTED",
+  "artifact_sha256": "336c2611db5fb98b92cc08863e885ec7fc7027d10e7e13cb7e54271be9419c87"
+}
