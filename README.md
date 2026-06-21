@@ -18,7 +18,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/ci.yml?branch=main&style=flat-square&label=CI&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/ci.yml)
 [![Security](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/security.yml?branch=main&style=flat-square&label=security&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/security.yml)
 [![Provenance](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/provenance.yml?branch=main&style=flat-square&label=provenance&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/provenance.yml)
-[![Tests](https://img.shields.io/badge/tests-193%2F193%20passing-2d6a2d?style=flat-square)](tests/)
+[![Tests](https://img.shields.io/badge/tests-223%2F223%20passing-2d6a2d?style=flat-square)](tests/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-2d2d2d?style=flat-square)](pyproject.toml)
 [![License](https://img.shields.io/badge/code-GPL--3.0--or--later-2d2d2d?style=flat-square)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-CC--BY--4.0-2d2d2d?style=flat-square)](NOTICE)
