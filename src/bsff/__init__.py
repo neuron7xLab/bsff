@@ -3,7 +3,7 @@
 """BSFF falsification-first BCI/EEG signal-claim kernel."""
 
 # Defined before submodule imports so `case` can read it during package init.
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 from .bayesian import jzs_bayes_factor
 from .case import CASE_SCHEMA, load_claim, load_signal, run_case
