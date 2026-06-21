@@ -26,7 +26,7 @@ separate, GPU-bearing effort, not a blocker for the falsification itself.
 | 4 | leave-one-subject-out (LOSO) | cross-subject accuracy + gap | PENDING |
 | 5 | subject-disjoint split | confirm no subject leakage | PENDING |
 | 6 | label shuffle (negative control) | accuracy → chance | PENDING |
-| 7 | MIAAFT surrogate | does structure survive a linear-Gaussian null? | harness ready (`bsff adjudicate-data`) |
+| 7 | MIAAFT surrogate | does structure survive a linear-Gaussian null? | harness ready (`bsff adjudicate-data`) — **caveat ↓** |
 | 8 | leakage probes (channel drop / shuffle) | accuracy sensitivity | PENDING |
 | 9 | global-normalization leak check | accuracy delta with/without leak | PENDING |
 | 10 | verdict contract | `SURVIVED` / `REFUTED` / `UNSUPPORTED` + caveats | PENDING |
@@ -37,6 +37,16 @@ separate, GPU-bearing effort, not a blocker for the falsification itself.
 - plots (within vs LOSO, confusion matrices)
 - `MANIFEST.json` (data version, code commit, command hashes)
 - hash-chained ledger (`bsff ledger-verify`)
+
+## Caveat on Stage 7 (surrogate validation status)
+
+The MIAAFT surrogate test is **intrinsically validated** (marginal exact,
+spectrum/covariance within engineering tolerance — `docs/SURROGATE_VALIDATION.md`)
+and **calibrated** against labelled ground truth (`operating_characteristic`).
+It is **not externally cross-validated against the TISEAN reference**
+(`CLAIM_AUDIT.md` 11c = `NEEDS_EXTERNAL_CHECK`). Therefore any Stage-7 verdict
+inherits that open leg and must be reported as *intrinsically-validated, not
+TISEAN-cross-validated* — never as an unqualified result.
 
 ## Kill criterion
 LOSO accuracy near chance while within-subject is high → the global-validation

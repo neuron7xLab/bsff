@@ -21,17 +21,26 @@ and tied to its exact input.
 - It refuses **lucky seeds**: a verdict that changes when the randomness changes
   is marked `UNSTABLE`, not certified.
 
-## A real result already on the board
+## A real measurement (n=2 — a demonstration, not proof)
 On real open BCI data (BNCI2014_001 motor imagery), a standard pipeline scored
 **0.81 within-subject** but only **0.60 when tested on a held-out subject** — and
 for one subject it dropped to **chance (0.52)**. The gap is **+0.204**.
 
-### What "+0.204 LOSO gap" means
+**Read this honestly:** it is **two subjects of one dataset**, with **no
+confidence interval and no significance test**. It is a real, reproducible,
+hash-backed *measurement* that shows the within-vs-cross gap is real and
+demonstrable — it is **not** statistical proof that "BCI does not generalize."
+That general claim is `UNPROVEN` (see `CLAIM_AUDIT.md`). What is proven is the
+*method*: the harness produces the gap reproducibly; a full multi-subject
+benchmark (network-bound) is what would turn a demonstration into evidence.
+
+### What "+0.204 LOSO gap" means (at n=2)
 A model that looks ~81% accurate when it trains and tests on the *same people*
-falls to ~60% (and to coin-flip for one person) when it must work on *someone it
-has never seen*. The high number was not a working decoder; it was the model
-recognizing the training subjects. Leave-one-subject-out (LOSO) is the honest
-test, and the claim does not survive it.
+fell to ~60% (and to coin-flip for one person) on a held-out subject. At n=2 this
+illustrates the mechanism — within-subject accuracy can reflect recognizing the
+training subjects, not decoding intent — but it does not, by itself, settle the
+published claim. Leave-one-subject-out (LOSO) is the honest test; here it is run,
+recorded, and hashed at minimal n.
 
 ## Why this is demarcation, not "anti-science"
 BSFF does not attack science. It attacks **claims that have not been honestly
