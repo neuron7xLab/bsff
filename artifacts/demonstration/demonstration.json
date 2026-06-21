@@ -1,0 +1,40 @@
+{
+  "honesty_ok": true,
+  "honesty_checks": [
+    {
+      "check": "claim_audit_no_decorative_verified",
+      "ok": true
+    },
+    {
+      "check": "null_hypotheses_explicit",
+      "ok": true
+    },
+    {
+      "check": "thresholds_have_provenance",
+      "ok": true
+    },
+    {
+      "check": "self_falsification_controls",
+      "ok": true
+    },
+    {
+      "check": "status_count_is_generated_and_in_sync",
+      "ok": true
+    },
+    {
+      "check": "contract_self_conformance",
+      "ok": true
+    }
+  ],
+  "control_negative": "UNSUPPORTED",
+  "control_positive": "SURVIVED",
+  "controls_ok": true,
+  "conformance_overall": "PARTIAL",
+  "conformant": 10,
+  "unverifiable": 4,
+  "nonconformant": 0,
+  "loso_within": 0.807,
+  "loso_cross": 0.603,
+  "loso_gap": 0.204,
+  "test_count": "335"
+}
