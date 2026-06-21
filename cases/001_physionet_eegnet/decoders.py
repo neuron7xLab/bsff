@@ -77,6 +77,28 @@ class LogVarLDA:
         return np.asarray(clf.predict(self._features(x_test)), dtype=int)
 
 
+class FeatureLDA:
+    """LDA on already-extracted features (no filtering).
+
+    The split battery filters once up front (``bandpass_logvar``) and hands the
+    feature matrix to this decoder, so the heavy band-pass is not recomputed on every
+    fold and every permutation. Mathematically identical to :class:`LogVarLDA` because
+    band-pass + log-variance is independent per trial, but orders of magnitude faster
+    for the permutation nulls. Fits the scaler on train only (no test-set leak).
+    """
+
+    name = "feature_lda"
+
+    def fit_predict(self, x_train: FloatArray, y_train: IntArray, x_test: FloatArray) -> IntArray:
+        from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+        from sklearn.pipeline import make_pipeline
+        from sklearn.preprocessing import StandardScaler
+
+        clf = make_pipeline(StandardScaler(), LinearDiscriminantAnalysis())
+        clf.fit(np.asarray(x_train, dtype=float), np.asarray(y_train))
+        return np.asarray(clf.predict(np.asarray(x_test, dtype=float)), dtype=int)
+
+
 class EEGNetDecoder:
     """EEGNet (Lawhern et al., 2018) in PyTorch, CPU, deterministic.
 
@@ -97,7 +119,11 @@ class EEGNetDecoder:
         from torch import nn
 
         torch.manual_seed(self.seed)
+        np.random.seed(self.seed)  # any incidental numpy RNG in the path is pinned too
         torch.use_deterministic_algorithms(True, warn_only=True)
+        if hasattr(torch.backends, "cudnn"):
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
 
         n_ch = x_train.shape[1]
         n_t = x_train.shape[2]

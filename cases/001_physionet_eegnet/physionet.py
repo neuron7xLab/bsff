@@ -2,14 +2,21 @@
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
 """Real PhysioNet EEG Motor Movement/Imagery (EEGMMI) loader for BSFF-CASE-001.
 
-Loads imagined left-vs-right fist motor imagery (runs 4, 8, 12) for a set of
-subjects via ``mne.datasets.eegbci`` and epochs them into the same
-``(n_trials, n_channels, n_times)`` shape the synthetic generator emits, so the
-split harness is identical. Every EDF that contributes is byte-hashed for
-provenance — the verdict is bound to the exact bytes it was computed on.
+Loads imagined left-vs-right fist motor imagery (runs 4, 8, 12) for a set of subjects
+via ``mne.datasets.eegbci`` and epochs them into ``(n_trials, n_channels, n_times)``,
+the same shape the synthetic generator emits, so the split harness is identical.
 
-This path is for the user's networked runtime. It is a hard dependency on ``mne``
-(declared optional) and on network/cache availability; it is never exercised in CI.
+Each run is epoched separately and tagged with a ``block`` id (the run number) so the
+within-subject split can be *leave-one-run-out* — temporally-contiguous trials never
+straddle the train/test boundary, removing the run-level temporal leakage that a
+shuffled within-subject split would smuggle into the "within-subject" baseline.
+
+Channels are intersected *by name* across subjects (not sliced positionally), and
+provenance stores a portable relative key plus the per-EDF byte sha256 — the binding
+is the bytes, not an absolute home-dir path.
+
+This path is for the user's networked runtime; a hard dependency on ``mne`` (declared
+optional) and on network/cache; never exercised in CI.
 """
 
 from __future__ import annotations
@@ -32,9 +39,10 @@ class RealCohort:
     x: FloatArray
     y: IntArray
     subject: IntArray
+    block: IntArray  # run id per trial -> leave-one-run-out within-subject split
     sfreq: float
     channels: list[str]
-    provenance: list[dict[str, object]]  # per-EDF sha256 + shape
+    provenance: list[dict[str, object]]  # per-EDF relative key + sha256
 
 
 def _sha256_file(path: str) -> str:
@@ -43,6 +51,12 @@ def _sha256_file(path: str) -> str:
         for chunk in iter(lambda: fh.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def _relkey(path: str) -> str:
+    """Portable provenance key: the dataset-relative tail (e.g. S001/S001R04.edf)."""
+    parts = path.replace("\\", "/").split("/")
+    return "/".join(parts[-2:]) if len(parts) >= 2 else parts[-1]
 
 
 def load_physionet(
@@ -54,23 +68,21 @@ def load_physionet(
 ) -> RealCohort:
     """Load and epoch EEGMMI motor-imagery trials for ``subjects``.
 
-    Returns a :class:`RealCohort` with class 0 = left-fist imagery (T1) and class 1 =
-    right-fist imagery (T2). Subjects with missing runs are skipped (recorded in
-    provenance), never silently zero-filled.
+    Class 0 = left-fist imagery (T1), class 1 = right-fist imagery (T2). Subjects/runs
+    that are missing or lack both events are skipped and recorded in provenance, never
+    silently zero-filled.
     """
     import mne
     from mne.datasets import eegbci
-    from mne.io import concatenate_raws, read_raw_edf
+    from mne.io import read_raw_edf
 
     runs = runs or IMAGERY_RUNS
     mne.set_log_level("ERROR")
 
-    xs: list[FloatArray] = []
-    ys: list[int] = []
-    subs: list[int] = []
+    # (data, labels, ch_names, subject, block) per epoched run.
+    chunks: list[tuple[FloatArray, IntArray, list[str], int, int]] = []
     provenance: list[dict[str, object]] = []
     sfreq_seen: float | None = None
-    channels: list[str] = []
 
     for s in subjects:
         try:
@@ -78,55 +90,70 @@ def load_physionet(
         except Exception as exc:  # pragma: no cover - network/runtime dependent
             provenance.append({"subject": s, "status": "load_failed", "error": str(exc)[:200]})
             continue
-        raws = []
-        for p in paths:
+        for run_no, p in zip(runs, paths, strict=True):
+            provenance.append(
+                {
+                    "subject": s,
+                    "run": run_no,
+                    "key": _relkey(str(p)),
+                    "sha256": _sha256_file(str(p)),
+                }
+            )
             raw = read_raw_edf(p, preload=True)
             eegbci.standardize(raw)
-            raws.append(raw)
-            provenance.append({"subject": s, "path": str(p), "sha256": _sha256_file(str(p))})
-        raw = concatenate_raws(raws)
-        raw.set_montage(mne.channels.make_standard_montage("standard_1005"), on_missing="ignore")
-        raw.pick("eeg")
-        # T1 = left fist imagery, T2 = right fist imagery.
-        events, event_id = mne.events_from_annotations(raw)
-        wanted = {k: v for k, v in event_id.items() if k in ("T1", "T2")}
-        if len(wanted) < 2:
-            provenance.append({"subject": s, "status": "missing_events", "found": list(event_id)})
-            continue
-        epochs = mne.Epochs(
-            raw,
-            events,
-            event_id=wanted,
-            tmin=tmin,
-            tmax=tmax,
-            baseline=None,
-            preload=True,
-            verbose="ERROR",
-        )
-        data = epochs.get_data(copy=True)  # (n_epochs, n_channels, n_times)
-        labels = epochs.events[:, -1]
-        # Map the two T1/T2 codes to {0, 1} deterministically by code order.
-        codes = sorted(set(int(v) for v in wanted.values()))
-        y = np.array([0 if int(lbl) == codes[0] else 1 for lbl in labels], dtype=int)
-        if sfreq_seen is None:
-            sfreq_seen = float(raw.info["sfreq"])
-            channels = list(raw.ch_names)
-        xs.append(np.asarray(data, dtype=float))
+            raw.set_montage(
+                mne.channels.make_standard_montage("standard_1005"), on_missing="ignore"
+            )
+            raw.pick("eeg")
+            events, event_id = mne.events_from_annotations(raw)
+            wanted = {k: v for k, v in event_id.items() if k in ("T1", "T2")}
+            if len(wanted) < 2:
+                provenance.append({"subject": s, "run": run_no, "status": "missing_events"})
+                continue
+            epochs = mne.Epochs(
+                raw,
+                events,
+                event_id=wanted,
+                tmin=tmin,
+                tmax=tmax,
+                baseline=None,
+                preload=True,
+                verbose="ERROR",
+            )
+            data = np.asarray(epochs.get_data(copy=True), dtype=float)
+            labels = epochs.events[:, -1]
+            codes = sorted(int(v) for v in wanted.values())
+            y = np.array([0 if int(lbl) == codes[0] else 1 for lbl in labels], dtype=int)
+            if sfreq_seen is None:
+                sfreq_seen = float(raw.info["sfreq"])
+            chunks.append((data, y, list(raw.ch_names), s, run_no))
+
+    if not chunks:
+        raise RuntimeError("no PhysioNet runs could be loaded; check network/cache")
+
+    # Intersect channels BY NAME across all chunks, then reindex each to that order.
+    common = set(chunks[0][2])
+    for _, _, names, _, _ in chunks[1:]:
+        common &= set(names)
+    if not common:
+        raise RuntimeError("no channels common to all loaded runs")
+    common_order = [c for c in chunks[0][2] if c in common]
+
+    min_t = min(d.shape[2] for d, *_ in chunks)
+    xs, ys, subs, blks = [], [], [], []
+    for data, y, names, s, run_no in chunks:
+        idx = [names.index(c) for c in common_order]
+        xs.append(data[:, idx, :min_t])
         ys.extend(y.tolist())
         subs.extend([s] * data.shape[0])
+        blks.extend([run_no] * data.shape[0])
 
-    if not xs:
-        raise RuntimeError("no PhysioNet subjects could be loaded; check network/cache")
-
-    # Align trial length across subjects (montage/edge effects can differ by a sample).
-    min_t = min(a.shape[2] for a in xs)
-    min_c = min(a.shape[1] for a in xs)
-    x = np.concatenate([a[:, :min_c, :min_t] for a in xs], axis=0)
     return RealCohort(
-        x=x,
+        x=np.concatenate(xs, axis=0),
         y=np.asarray(ys, dtype=int),
         subject=np.asarray(subs, dtype=int),
+        block=np.asarray(blks, dtype=int),
         sfreq=float(sfreq_seen or 160.0),
-        channels=channels[:min_c],
+        channels=common_order,
         provenance=provenance,
     )

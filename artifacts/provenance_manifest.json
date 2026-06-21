@@ -183,8 +183,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "README.md",
-      "sha256": "640a8ea22ed7618eff30ed6c31d9f69635101c5a5d93e60c95622373d29c5a71",
-      "size_bytes": 24914
+      "sha256": "88f8d7b73719131140abd64a52d07294b71f98385cbd5e1e3fe312a5fc0f5e59",
+      "size_bytes": 26572
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -1023,8 +1023,8 @@
       "code_license": "GPL-3.0-or-later",
       "docs_license": "CC-BY-4.0",
       "artifact_path": "tests/test_case_001.py",
-      "sha256": "7422d7253a5d5f592dbaf02a026f32a06a3434d6733e5e3e978dc72833bb814a",
-      "size_bytes": 4931
+      "sha256": "2eb7d92629eb0a06003f40cd3e8cfb9122d4f577f9a98c0035fea231729ee463",
+      "size_bytes": 6190
     },
     {
       "project": "BSFF: BCI Signal Falsification Framework",
@@ -1647,5 +1647,5 @@
       "size_bytes": 1810
     }
   ],
-  "manifest_sha256": "15593691863c821a5132c3e11dc42450d6804f70acd18a66b2221bddfee780bb"
+  "manifest_sha256": "6c4b45097f3925c6c897d6cfdd794b2a40b310d06585fa2f6e35425a72de57fa"
 }
