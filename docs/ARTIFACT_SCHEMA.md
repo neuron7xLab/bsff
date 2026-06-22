@@ -23,7 +23,8 @@ in-repo `--check` stays stable): `commit_sha`, `workflow_run_id`,
 ## Why this shape
 
 The original defect was a hand-edited `MANIFEST.json` claiming version 0.1.4 /
-"80/80 passed" while the truth was 0.4.0 / 373. This validator is the **generic**
+"80/80 passed" while the truth was 0.4.0 / 373. <!-- count-literal-ok: illustrative example of the forbidden pattern -->
+This validator is the **generic**
 guard against that class: any governed artifact whose `version` or `test_count`
 drifts from pyproject/STATUS fails CI. Adoption is opt-in per artifact (declare
 `schema_version`); ungoverned artifacts are listed for coverage, never passed off

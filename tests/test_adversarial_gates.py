@@ -149,3 +149,42 @@ def test_conformance_flags_failing_command():
 def test_conformance_blocked_is_unverifiable_never_silent_pass():
     r = CONF._check_item({"id": "x", "kind": "blocked", "blocker": "network", "why": "w"})
     assert r["status"] == "UNVERIFIABLE"
+
+
+# ------------------------------------------------ markdown count-literal guard
+MD = _load("validate_markdown")
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        "The suite has 310 passed today.",  # bare `<N> passed`
+        "Test suite | 80 / 80 passed | ok",  # `N/N passed`
+        "python -m pytest tests/ | grep collected   # 389 tests collected",  # collect form
+        "full suite — expect 310 passed",  # `expect <N> passed`
+        "the live tree collects and passes **310**.",  # prose `passes <N>`
+    ],
+)
+def test_markdown_gate_rejects_each_count_literal(body, tmp_path):
+    (tmp_path / "DOC.md").write_text(body + "\n", encoding="utf-8")
+    assert MD.find_count_literals(tmp_path), f"gate missed: {body!r}"
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        "See [STATUS.md](STATUS.md) for the live count.",  # the canonical reference
+        "`bsff selftest` runs and 6 tests pass here.",  # single-digit per-file count
+        'example "80/80 passed" <!-- count-literal-ok -->',  # auditable escape hatch
+    ],
+)
+def test_markdown_gate_allows_clean_text(body, tmp_path):
+    (tmp_path / "DOC.md").write_text(body + "\n", encoding="utf-8")
+    assert not MD.find_count_literals(tmp_path), f"false positive on: {body!r}"
+
+
+def test_markdown_gate_exempts_generated_status_file(tmp_path):
+    (tmp_path / "STATUS.md").write_text("| Live test count | **386** |\n", encoding="utf-8")
+    # STATUS.md is the generated single source; even an adjacent form is exempt.
+    (tmp_path / "STATUS.md").write_text("389 tests collected\n", encoding="utf-8")
+    assert not MD.find_count_literals(tmp_path)

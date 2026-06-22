@@ -51,7 +51,7 @@ Where every claim's evidence lives, and the exact command to reproduce it.
 ```bash
 git clone https://github.com/neuron7xLab/bsff && cd bsff
 pip install -e '.[dev]'
-python -m pytest -q                       # 310 passed
+python -m pytest -q                       # full suite green — live count in STATUS.md
 python tools/update_status.py --check     # STATUS.md in sync
 python tools/validate_surrogate_fidelity.py
 ```

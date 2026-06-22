@@ -2,7 +2,14 @@
 
 # BSFF v0.1.3 — Curator Verdict
 
-**Status:** PHASE_1_OPERATIONAL_READY  
+> **HISTORICAL — superseded.** This is the dated Phase-1 sign-off for **v0.1.3**.
+> It is preserved as a timestamped record and is **not** the current state. For
+> the live state see [`STATUS.md`](STATUS.md) (version, generated test count,
+> CLI surface), [`CORE.md`](CORE.md) (the architecture map with live verdicts),
+> and [`DECISION.md`](DECISION.md) (the current go/no-go). The numbers below
+> describe the v0.1.3 tree at the date shown.
+
+**Status:** PHASE_1_OPERATIONAL_READY (v0.1.3, historical)  
 **Document ref:** OS-BSFF-CORE-2026.1  
 **Date:** 2026-06-19
 
@@ -20,7 +27,7 @@
 ## Machine verification
 
 ```text
-pytest: 48/48 passed
+pytest: full suite green at v0.1.3 (48 tests; live count → STATUS.md)
 bsff-validate: SURVIVED_PHASE_1_GATES
 MIAAFT M=32,N=1024: converged=True, n_iter_actual=33/200, delta=0.000506
 AR(1) null: p=0.40, not rejected
