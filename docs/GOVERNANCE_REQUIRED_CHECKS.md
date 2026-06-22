@@ -22,7 +22,7 @@ local-security-policy
 architecture-contract
 truth-contract
 ip-provenance
-release-gate
+release-gate-dry-run
 ```
 
 ## Why bypass matters
@@ -43,7 +43,7 @@ decision. The owner must, in repository **Settings → Rules**:
 
 1. add the missing required checks (currently: `slow-tests`,
    `zizmor-actions-audit`, `dependency-review`, `architecture-contract`,
-   `truth-contract`, `ip-provenance`, `release-gate`);
+   `truth-contract`, `ip-provenance`, `release-gate-dry-run`);
 2. remove the always-on admin bypass actor.
 
 Until then, the system honestly reports `required_checks_verified: false`.
