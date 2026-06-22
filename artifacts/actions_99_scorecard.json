@@ -4,11 +4,12 @@
   "package": "bsff",
   "generator": "tools/compute_scorecard.py",
   "verdict": "BELOW_99",
-  "score": 91,
+  "score": 92,
   "p0": "COMPLETE",
   "p1": "COMPLETE",
   "p2": "PARTIAL",
   "agent_completed": [
+    "truth_surface",
     "artifact_hygiene",
     "mutation_probe"
   ],
