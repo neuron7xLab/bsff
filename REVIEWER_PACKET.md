@@ -14,7 +14,7 @@ pip install -e '.[moabb]'         # optional: real MOABB EEG (heavy, network)
 
 ## Run
 ```bash
-python -m pytest -q                       # full suite — expect 310 passed
+python -m pytest -q                       # full suite green — live count in STATUS.md
 python -m bsff.cli --help                 # CLI surface
 python tools/update_status.py --check     # STATUS.md is generated + in sync
 ```

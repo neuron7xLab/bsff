@@ -207,7 +207,7 @@ Measured in the current package, not emotionally inferred, because the CPU does 
 
 | Gate | Value | Status |
 |---|---:|---|
-| Test suite | 80 / 80 passed | ✓ |
+| Test suite | green — live count in [`STATUS.md`](STATUS.md) | ✓ |
 | CLI validation | `SURVIVED_PHASE_1_GATES` | ✓ |
 | MIAAFT M=32, N=1024 convergence | 33 / 200 iterations | ✓ tol=1e-3 |
 | Verdict-path null convergence | enforced per surrogate | ✓ fail-closed → UNSUPPORTED |
@@ -321,11 +321,9 @@ python -m pip install -e '.[dev,leakage]'
 python -m pytest tests/ -v --tb=short
 ```
 
-Expected current result:
-
-```text
-26 passed
-```
+Expected current result: the full suite passes. The live test count is the
+generated value in [`STATUS.md`](STATUS.md) (never hand-typed here), and
+`python tools/update_status.py --check` fails CI if it drifts.
 
 ---
 
