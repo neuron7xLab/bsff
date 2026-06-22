@@ -76,6 +76,10 @@ def compute() -> dict:
 
     return {
         "schema_version": "bsff.scorecard/v1",
+        "artifact_type": "actions_99_scorecard",
+        "package": "bsff",
+        "generator": "tools/compute_scorecard.py",
+        "verdict": "CAN_CLAIM_99" if (gov_verified and bypass is False) else "BELOW_99",
         "score": score,
         "p0": "COMPLETE" if p0 else "INCOMPLETE",
         "p1": "COMPLETE" if p1 else "INCOMPLETE",

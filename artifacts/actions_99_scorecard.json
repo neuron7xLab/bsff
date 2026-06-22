@@ -1,5 +1,9 @@
 {
   "schema_version": "bsff.scorecard/v1",
+  "artifact_type": "actions_99_scorecard",
+  "package": "bsff",
+  "generator": "tools/compute_scorecard.py",
+  "verdict": "BELOW_99",
   "score": 92,
   "p0": "COMPLETE",
   "p1": "COMPLETE",

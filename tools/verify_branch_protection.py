@@ -65,6 +65,11 @@ def _git_sha() -> str:
 def verify(repo: str) -> dict:
     declared = _declared_checks()
     status: dict = {
+        "schema_version": "bsff.governance/v1",
+        "artifact_type": "governance_status",
+        "package": "bsff",
+        "generator": "tools/verify_branch_protection.py",
+        "verdict": "VERIFIED",  # overwritten below once the ruleset is evaluated
         "commit_sha": _git_sha(),
         "repo": repo,
         "required_checks_declared": bool(declared),
@@ -74,6 +79,7 @@ def verify(repo: str) -> dict:
     if not isinstance(rulesets, list):
         status.update(
             {
+                "verdict": "NOT_VERIFIED",
                 "required_checks_verified": False,
                 "owner_action_required": True,
                 "admin_bypass_allowed": None,
@@ -86,6 +92,7 @@ def verify(repo: str) -> dict:
     if target is None:
         status.update(
             {
+                "verdict": "NOT_VERIFIED",
                 "required_checks_verified": False,
                 "owner_action_required": True,
                 "admin_bypass_allowed": None,
@@ -109,6 +116,7 @@ def verify(repo: str) -> dict:
     verified = bool(declared) and not missing and not bypass_allowed
     status.update(
         {
+            "verdict": "VERIFIED" if verified else "NOT_VERIFIED",
             "ruleset_enforcement": detail.get("enforcement") if isinstance(detail, dict) else None,
             "actual_required_checks": sorted(actual),
             "missing_required_checks": missing,
