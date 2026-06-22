@@ -1,4 +1,9 @@
 {
+  "schema_version": "bsff.governance/v1",
+  "artifact_type": "governance_status",
+  "package": "bsff",
+  "generator": "tools/verify_branch_protection.py",
+  "verdict": "NOT_VERIFIED",
   "commit_sha": "416ab93cd123d56e0d03887c1fa7b66394c0ddbd",
   "repo": "neuron7xLab/bsff",
   "required_checks_declared": true,
@@ -10,7 +15,7 @@
     "ip-provenance",
     "local-security-policy",
     "pip-audit",
-    "release-gate-dry-run",
+    "release-gate",
     "slow-tests",
     "test-py3.10",
     "test-py3.11",
@@ -32,7 +37,7 @@
     "architecture-contract",
     "dependency-review",
     "ip-provenance",
-    "release-gate-dry-run",
+    "release-gate",
     "slow-tests",
     "truth-contract",
     "zizmor-actions-audit"

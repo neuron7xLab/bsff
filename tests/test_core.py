@@ -38,4 +38,4 @@ def test_apex_verify_all_passes():
     )
     assert r.returncode == 0, r.stdout + r.stderr
     assert "RECOMMENDATION:" in r.stdout
-    assert "cognitive systemic core" in r.stdout
+    assert "verification core" in r.stdout

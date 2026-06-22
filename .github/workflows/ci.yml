@@ -48,6 +48,7 @@ jobs:
       - run: bsff doctor --require-strict
       - run: python tools/validate_architecture_contract.py
       - run: python tools/validate_truth_contract.py
+      - run: python tools/validate_release_notes.py
       - run: python tools/validate_open_source_readiness.py
       - run: python tools/check_github_actions_policy.py
       - run: python tools/scan_secrets.py
