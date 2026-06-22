@@ -13,7 +13,7 @@
 
 # BSFF — BCI Signal Falsification Framework
 
-**A mathematical guillotine for neuroscience hype.**
+**Independent, machine-checked falsification of BCI signal claims.**
 
 [![CI](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/ci.yml?branch=main&style=flat-square&label=CI&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/ci.yml)
 [![Security](https://img.shields.io/github/actions/workflow/status/neuron7xLab/bsff/security.yml?branch=main&style=flat-square&label=security&color=2d2d2d)](https://github.com/neuron7xLab/bsff/actions/workflows/security.yml)
@@ -30,9 +30,9 @@
 
 ---
 
-## The cognitive systemic core
+## How it works
 
-BSFF is one self-proving core, not a pile of scripts. Each layer enforces a
+BSFF is a layered system, not a loose collection of scripts. Each layer enforces a
 property the one below cannot fake; the top layer turns the whole stack into a
 single, evidence-derived investment decision. One command proves all of it:
 

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
-"""Apex command: prove the entire cognitive systemic core in one run.
+"""Apex command: run the entire verification core in one pass.
 
 Cascades the full stack via the decision gate (which runs the honesty gate and
 the certificate chain, which in turn run controls, registries, grounding,
@@ -33,7 +33,7 @@ def main() -> int:
         return 1
     d = json.loads(decision_path.read_text(encoding="utf-8"))
 
-    print("BSFF — cognitive systemic core\n")
+    print("BSFF — verification core\n")
     for c in d["criteria"]:
         print(
             f"  [{'ok' if c['met'] else 'X '}] {c['id']} ({'must' if c['must'] else 'stretch'})  {c['title']}"
