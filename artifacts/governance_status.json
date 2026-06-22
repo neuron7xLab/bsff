@@ -1,5 +1,5 @@
 {
-  "commit_sha": "76c43b675bbac26a9812fd8efa6d7d040e60b7d7",
+  "commit_sha": "416ab93cd123d56e0d03887c1fa7b66394c0ddbd",
   "repo": "neuron7xLab/bsff",
   "required_checks_declared": true,
   "declared_checks": [
@@ -10,7 +10,7 @@
     "ip-provenance",
     "local-security-policy",
     "pip-audit",
-    "release-gate",
+    "release-gate-dry-run",
     "slow-tests",
     "test-py3.10",
     "test-py3.11",
@@ -32,7 +32,7 @@
     "architecture-contract",
     "dependency-review",
     "ip-provenance",
-    "release-gate",
+    "release-gate-dry-run",
     "slow-tests",
     "truth-contract",
     "zizmor-actions-audit"
