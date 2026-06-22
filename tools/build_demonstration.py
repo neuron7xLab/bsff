@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
-"""Build (or --check) DEMONSTRATION.md — the one-command, self-proving front door.
+"""Build (or --check) DEMONSTRATION.md — the one-command self-check front door.
 
 A reviewer should be able to run a single command and watch the instrument prove
 itself: the honesty gate passes, the self-falsification controls pass, a real
