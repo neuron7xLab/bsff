@@ -3,7 +3,7 @@
 """Adversarial operating-characteristic oracles for the falsification pipeline.
 
 A green badge is only meaningful if the suite KILLS regressions. This module pins
-the operating characteristic of ``evaluate_claim_pipeline`` against six adversarial
+the operating characteristic of ``evaluate_claim_pipeline`` against adversarial
 fixtures, each of which a broken pipeline would mis-decide:
 
 * A. Linear-Gaussian null specificity  — a linear null must never earn SURVIVED.
@@ -12,10 +12,11 @@ fixtures, each of which a broken pipeline would mis-decide:
 * D. Nonstationary kill gate           — a random walk fails the strict gate fatally.
 * E. Nonconverged-null kill gate       — an invalid null cannot exceed UNSUPPORTED.
 * F. Input-poison kill gate            — NaN/Inf/short/wrong-shape raise, never decide.
+* G. Degenerate-input specificity      — a flat signal is never falsely rejected (ties).
 
 Every test is deterministic: explicit seeds, fixed tolerances, fixed policies, no
 wall-clock assertions. An autouse fixture severs network access so the battery is
-provably offline. These are the tests the mutation-kill gate (MUT-001..004) must
+provably offline. These are the tests the mutation-kill gate (MUT-001..009) must
 not be able to keep green after a one-point regression in the verdict collapse.
 """
 
@@ -249,3 +250,33 @@ def test_poisoned_input_raises_and_emits_no_verdict(label: str, signal: np.ndarr
     spec = _spec(f"poison-{label}", n_samples=max(16, int(np.asarray(signal).size)))
     with pytest.raises(ValueError):
         evaluate_claim_pipeline(spec, signal, policy="standard", seed=101)
+
+
+# --------------------------------------------------------------------------- #
+# G. Degenerate-input specificity (found by falsification).
+# --------------------------------------------------------------------------- #
+# A flat/near-constant signal carries NO structure: its statistic ties with every
+# surrogate's. Correct rank-order semantics (`surrogate >= original`) count those
+# ties as "not exceeded", giving p ~= 1 and rejected=False. The strict-inequality
+# variant would count exceed=0, yield p ~= 1/(n+1), falsely "reject the null", and
+# promote a flat line to SURVIVED at smoke. This oracle pins the tie semantics.
+
+
+@pytest.mark.parametrize(
+    ("label", "signal"),
+    [
+        ("constant", np.zeros(512)),
+        ("near_constant", 1e-12 * np.random.default_rng(1).normal(size=512)),
+    ],
+)
+def test_degenerate_signal_not_falsely_rejected(label: str, signal: np.ndarray) -> None:
+    from bsff.surrogate_engine import rank_order_surrogate_test
+
+    result = rank_order_surrogate_test(signal, n_surrogates=19, alpha=0.05, seed=101)
+    assert result["rejected"] is False, f"{label}: a structureless signal was falsely rejected"
+    assert result["p_value"] > 0.05
+    # End to end, a flat signal must never SURVIVE — not even at smoke (no corroboration).
+    verdict = evaluate_claim_pipeline(
+        _spec(f"degenerate-{label}"), signal, policy="smoke", seed=101
+    )
+    assert verdict.verdict != "SURVIVED"

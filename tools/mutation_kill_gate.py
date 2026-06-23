@@ -140,6 +140,14 @@ MUTANTS: tuple[Mutant, ...] = (
         behaviour="ClaimSpec must reject an underpowered surrogate_count (no silent schema drift)",
         targets=(f"{SCHEMA}::test_claimspec_rejects_too_few_surrogates",),
     ),
+    Mutant(
+        mutant_id="MUT-009",
+        rel_path="src/bsff/surrogate_engine.py",
+        old="    exceed = int(np.sum(surrogate_stats_arr >= original_stat))",
+        new="    exceed = int(np.sum(surrogate_stats_arr > original_stat))  # MUT-009: tie semantics",
+        behaviour="rank-order ties must count as not-exceeded, so a flat signal is never rejected",
+        targets=(f"{OC}::test_degenerate_signal_not_falsely_rejected",),
+    ),
 )
 
 
@@ -191,7 +199,17 @@ def run(output: Path, keep: bool = False) -> int:
                 code, _log = _pytest(sandbox, m.targets)
             finally:
                 target.write_text(original, encoding="utf-8")
-            killed = code != 0
+            # A genuine kill is an ASSERTION firing (pytest exit 1 = tests ran and
+            # failed/errored), NOT the mutant breaking collection (exit 2), a missing
+            # target (4/5), or an internal error (3). Counting a collection-break as
+            # "killed" would let the mutation score LIE about the suite's real teeth.
+            if code not in (0, 1):
+                print(
+                    f"[ERROR] {m.mutant_id}: pytest exit {code} is a non-behavioral failure "
+                    "(broken collection / missing target), not a clean kill"
+                )
+                return 2
+            killed = code == 1
             results.append(
                 {
                     "mutant_id": m.mutant_id,

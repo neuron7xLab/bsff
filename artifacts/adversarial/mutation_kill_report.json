@@ -1,6 +1,6 @@
 {
-  "mutants_total": 8,
-  "mutants_killed": 8,
+  "mutants_total": 9,
+  "mutants_killed": 9,
   "mutation_score": 1.0,
   "survivors": [],
   "verdict": "PASS",
@@ -77,10 +77,19 @@
         "tests/test_claimspec_schema.py::test_claimspec_rejects_too_few_surrogates"
       ],
       "mutant_status": "killed"
+    },
+    {
+      "mutant_id": "MUT-009",
+      "file": "src/bsff/surrogate_engine.py",
+      "behaviour": "rank-order ties must count as not-exceeded, so a flat signal is never rejected",
+      "targets": [
+        "tests/test_adversarial_operating_characteristics.py::test_degenerate_signal_not_falsely_rejected"
+      ],
+      "mutant_status": "killed"
     }
   ],
   "commands": [
-    "pytest tests/test_adversarial_operating_characteristics.py::test_nonconverged_null_cannot_exceed_unsupported tests/test_adversarial_operating_characteristics.py::test_leakage_short_circuits_to_refuted tests/test_adversarial_operating_characteristics.py::test_nonstationary_random_walk_fails_strict_gate_fatally tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence tests/test_adversarial_operating_characteristics.py::test_linear_null_never_survives_under_strict tests/test_adversarial_operating_characteristics.py::test_linear_null_false_positive_rate_within_binomial_guard tests/property/test_signal_validation_properties.py::test_p1_nonfinite_never_reaches_verdict tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence tests/test_claimspec_schema.py::test_claimspec_rejects_too_few_surrogates",
+    "pytest tests/test_adversarial_operating_characteristics.py::test_nonconverged_null_cannot_exceed_unsupported tests/test_adversarial_operating_characteristics.py::test_leakage_short_circuits_to_refuted tests/test_adversarial_operating_characteristics.py::test_nonstationary_random_walk_fails_strict_gate_fatally tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence tests/test_adversarial_operating_characteristics.py::test_linear_null_never_survives_under_strict tests/test_adversarial_operating_characteristics.py::test_linear_null_false_positive_rate_within_binomial_guard tests/property/test_signal_validation_properties.py::test_p1_nonfinite_never_reaches_verdict tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence tests/test_claimspec_schema.py::test_claimspec_rejects_too_few_surrogates tests/test_adversarial_operating_characteristics.py::test_degenerate_signal_not_falsely_rejected",
     "pytest tests/test_adversarial_operating_characteristics.py::test_nonconverged_null_cannot_exceed_unsupported",
     "pytest tests/test_adversarial_operating_characteristics.py::test_leakage_short_circuits_to_refuted",
     "pytest tests/test_adversarial_operating_characteristics.py::test_nonstationary_random_walk_fails_strict_gate_fatally",
@@ -88,7 +97,8 @@
     "pytest tests/test_adversarial_operating_characteristics.py::test_linear_null_never_survives_under_strict tests/test_adversarial_operating_characteristics.py::test_linear_null_false_positive_rate_within_binomial_guard",
     "pytest tests/property/test_signal_validation_properties.py::test_p1_nonfinite_never_reaches_verdict",
     "pytest tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence",
-    "pytest tests/test_claimspec_schema.py::test_claimspec_rejects_too_few_surrogates"
+    "pytest tests/test_claimspec_schema.py::test_claimspec_rejects_too_few_surrogates",
+    "pytest tests/test_adversarial_operating_characteristics.py::test_degenerate_signal_not_falsely_rejected"
   ],
   "timestamp_policy": "no nondeterministic timestamp in hash-critical output"
 }
