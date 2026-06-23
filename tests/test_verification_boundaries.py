@@ -64,11 +64,15 @@ def test_mutation_kill_requires_assertion_exit_code():
     try:
         rc_fail = subprocess.run(
             [sys.executable, "-m", "pytest", str(failing), "-q", "-p", "no:cacheprovider"],
-            cwd=ROOT, capture_output=True, text=True
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
         ).returncode
         rc_broken = subprocess.run(
             [sys.executable, "-m", "pytest", str(broken), "-q", "-p", "no:cacheprovider"],
-            cwd=ROOT, capture_output=True, text=True
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
         ).returncode
     finally:
         failing.unlink(missing_ok=True)
