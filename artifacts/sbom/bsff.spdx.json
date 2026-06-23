@@ -1,0 +1,198 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "creationInfo": {
+    "created": "1970-01-01T00:00:00Z",
+    "creators": [
+      "Tool: tools/generate_sbom.py",
+      "Organization: neuron7xLab"
+    ]
+  },
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "https://github.com/neuron7xLab/bsff/spdx/bsff-0.4.0",
+  "name": "bsff-0.4.0",
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Package-bsff",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:pypi/bsff@0.4.0",
+          "referenceType": "purl"
+        }
+      ],
+      "filesAnalyzed": false,
+      "licenseConcluded": "GPL-3.0-or-later",
+      "name": "bsff",
+      "versionInfo": "0.4.0"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-numpy",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:pypi/numpy@2.4.6",
+          "referenceType": "purl"
+        }
+      ],
+      "filesAnalyzed": false,
+      "licenseConcluded": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+      "name": "numpy",
+      "versionInfo": "2.4.6"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-packaging",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:pypi/packaging@26.2",
+          "referenceType": "purl"
+        }
+      ],
+      "filesAnalyzed": false,
+      "licenseConcluded": "Apache-2.0 OR BSD-2-Clause",
+      "name": "packaging",
+      "versionInfo": "26.2"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-pandas",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:pypi/pandas@3.0.3",
+          "referenceType": "purl"
+        }
+      ],
+      "filesAnalyzed": false,
+      "licenseConcluded": "BSD License",
+      "name": "pandas",
+      "versionInfo": "3.0.3"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-patsy",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:pypi/patsy@1.0.2",
+          "referenceType": "purl"
+        }
+      ],
+      "filesAnalyzed": false,
+      "licenseConcluded": "BSD License",
+      "name": "patsy",
+      "versionInfo": "1.0.2"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-python-dateutil",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:pypi/python-dateutil@2.9.0.post0",
+          "referenceType": "purl"
+        }
+      ],
+      "filesAnalyzed": false,
+      "licenseConcluded": "BSD License",
+      "name": "python-dateutil",
+      "versionInfo": "2.9.0.post0"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-scipy",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:pypi/scipy@1.18.0",
+          "referenceType": "purl"
+        }
+      ],
+      "filesAnalyzed": false,
+      "licenseConcluded": "BSD License",
+      "name": "scipy",
+      "versionInfo": "1.18.0"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-six",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:pypi/six@1.17.0",
+          "referenceType": "purl"
+        }
+      ],
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT License",
+      "name": "six",
+      "versionInfo": "1.17.0"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-statsmodels",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:pypi/statsmodels@0.14.6",
+          "referenceType": "purl"
+        }
+      ],
+      "filesAnalyzed": false,
+      "licenseConcluded": "BSD License",
+      "name": "statsmodels",
+      "versionInfo": "0.14.6"
+    }
+  ],
+  "relationships": [
+    {
+      "relatedSpdxElement": "SPDXRef-Package-bsff",
+      "relationshipType": "DESCRIBES",
+      "spdxElementId": "SPDXRef-DOCUMENT"
+    },
+    {
+      "relatedSpdxElement": "SPDXRef-Package-numpy",
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-Package-bsff"
+    },
+    {
+      "relatedSpdxElement": "SPDXRef-Package-packaging",
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-Package-bsff"
+    },
+    {
+      "relatedSpdxElement": "SPDXRef-Package-pandas",
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-Package-bsff"
+    },
+    {
+      "relatedSpdxElement": "SPDXRef-Package-patsy",
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-Package-bsff"
+    },
+    {
+      "relatedSpdxElement": "SPDXRef-Package-python-dateutil",
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-Package-bsff"
+    },
+    {
+      "relatedSpdxElement": "SPDXRef-Package-scipy",
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-Package-bsff"
+    },
+    {
+      "relatedSpdxElement": "SPDXRef-Package-six",
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-Package-bsff"
+    },
+    {
+      "relatedSpdxElement": "SPDXRef-Package-statsmodels",
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-Package-bsff"
+    }
+  ],
+  "spdxVersion": "SPDX-2.3"
+}
