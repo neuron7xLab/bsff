@@ -76,3 +76,23 @@ specificity. Candidate fixes, to be pre-registered before running:
    demote uncorroborated rejections to UNSUPPORTED.
 3. **Statistic ensemble** (SampEn ∧ time-reversal asymmetry) requiring agreement.
 Acceptance: G1 E-SURVIVED ≥ 0.80 AND G2 combined FPR ≤ 0.05, same predeclared protocol.
+
+## S2 candidate registry (specificity)
+
+After S1 (`sampen_lower_tail_m2_r015_v1`) passed G1 but failed G2 (combined AR-null
+FPR 0.065 > 0.05), the S2 phase registers candidates that target specificity without
+losing G1 power. Frozen protocol: `S2_SPECIFICITY_PROTOCOL.md`. Implementations +
+hypotheses + expected failure modes: `examples/bonn_bright_line/s2_candidate_registry.py`.
+
+| id | statistic + rule | implemented |
+|----|------------------|-------------|
+| S2-C1-sampen-finiteN | SampEn + conservative α/2 threshold | yes |
+| S2-C2-sampen-corroboration | SampEn + effect-size (z≥2) gate | yes |
+| S2-C3-sampen-fdr | SampEn + Benjamini-Hochberg FDR | yes |
+| S2-C4-sampen-strictconv | SampEn + strict MIAAFT convergence | yes |
+| S2-C7-permen | Permutation entropy lower-tail | yes |
+| S2-C5-rqa-det | Recurrence-quantification %DET | deferred |
+| S2-C6-nlpe | Nonlinear prediction error | deferred |
+
+Exploratory: `artifacts/bonn_bright_line/s2_EXPLORATORY_RESULTS.json`. Selection lock +
+confirmatory verdict follow the same fail-closed pattern as S1.
