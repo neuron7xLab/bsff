@@ -176,6 +176,12 @@ def evaluate_claim_pipeline(
     leakage_flags: dict[str, Any] | None = None,
     seed: int = 123,
 ) -> PipelineVerdict:
+    """Run one claim+signal through the default falsification pipeline.
+
+    Returns a :class:`PipelineVerdict` whose ``verdict`` is one of ``REFUTED`` /
+    ``UNSUPPORTED`` / ``SURVIVED`` bound to a ``contract_sha256`` evidence hash.
+    Raises ``ValueError`` on invalid input (non-finite, too short, wrong shape).
+    """
     return FalsificationPipeline().evaluate(
         spec, signal, policy=policy, leakage_flags=leakage_flags, seed=seed
     )

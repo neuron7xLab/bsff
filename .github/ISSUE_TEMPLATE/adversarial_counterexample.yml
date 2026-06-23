@@ -1,0 +1,47 @@
+# SPDX-License-Identifier: CC-BY-4.0
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+name: Adversarial counterexample
+description: A deterministic input that breaks the fail-closed contract.
+title: "[counterexample] "
+labels: ["adversarial-counterexample"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Found a seed/input that makes BSFF emit a `SURVIVED` it should not, crash
+        on input it should refuse, or leak a verdict from invalid evidence? That is
+        a defect and a valued contribution. Provide a deterministic reproducer.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Violation kind
+      options:
+        - Unearned SURVIVED (null/linear input survived)
+        - Verdict emitted from non-finite / malformed input
+        - Uncontrolled crash (non-ValueError exception)
+        - Nonconverged/leaked evidence promoted past UNSUPPORTED
+        - Nondeterminism under a fixed seed
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Deterministic reproducer
+      description: Exact code with explicit seeds; the smaller the better.
+      render: python
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs observed
+      description: What the fail-closed contract requires vs what happened.
+    validations:
+      required: true
+  - type: input
+    id: seed
+    attributes:
+      label: Seed(s)
+      description: The exact seed(s) that reproduce the counterexample.
+    validations:
+      required: true
