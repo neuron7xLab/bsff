@@ -33,7 +33,7 @@ import re
 from collections import deque
 from pathlib import Path
 
-from packaging.requirements import Requirement
+from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,8 +51,11 @@ def _runtime_requirements(dist_name: str) -> list[Requirement]:
     for line in raw:
         try:
             req = Requirement(line)
-        except Exception:
-            continue
+        except InvalidRequirement as exc:
+            # Fail closed: a dependency declaration we cannot parse must not be
+            # silently dropped — that would emit an incomplete SBOM that looks
+            # complete. An unparseable requirement is a supply-chain integrity error.
+            raise SystemExit(f"unparseable requirement in {dist_name!r}: {line!r} ({exc})") from exc
         marker = str(req.marker) if req.marker else ""
         # Skip optional dependencies (anything gated behind an extra); keep core
         # runtime deps and platform/python markers that evaluate true here.
