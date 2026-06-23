@@ -1,0 +1,56 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+
+name: Degradation + Statistics
+
+# Performance must not silently rot and the instrument must stay powered. This runs
+# the benchmark suite (compared to a calibration-normalized baseline) and the
+# statistical power profile (null FP rate, detection, convergence, seed stability).
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "29 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  degradation-statistics:
+    name: degradation-statistics
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      - name: Benchmarks
+        run: >
+          python -m pytest benchmarks -o "python_files=bench_*.py"
+          --benchmark-json=artifacts/benchmarks/current.json -q
+      - name: Degradation gate (calibration-normalized)
+        run: python tools/compare_benchmark_baseline.py artifacts/benchmarks/baseline.json artifacts/benchmarks/current.json
+      - name: Statistical power profile
+        run: python tools/statistical_power_profile.py --output artifacts/statistics/power_profile.json
+      - name: Power-profile gate
+        run: python tools/validate_power_profile.py artifacts/statistics/power_profile.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: degradation-statistics
+          path: |
+            artifacts/benchmarks/current.json
+            artifacts/statistics/power_profile.json
+          if-no-files-found: warn

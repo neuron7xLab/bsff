@@ -1,0 +1,26 @@
+{
+  "measured": {
+    "false_negative_estimate": 0.0,
+    "minimum_detectable_effect": 0.6,
+    "minimum_detectable_effect_curve": {
+      "0.2": 0.1,
+      "0.4": 0.5,
+      "0.6": 1.0,
+      "0.8": 1.0,
+      "1.0": 1.0
+    },
+    "n_null": 40,
+    "n_positive": 30,
+    "null_false_positive_rate": 0.025,
+    "positive_control_detection": 1.0,
+    "seed_stable": true,
+    "surrogate_convergence_rate": 1.0
+  },
+  "thresholds": {
+    "null_false_positive_rate_max": 0.05,
+    "positive_control_detection_min": 0.8,
+    "seed_stability_required": true,
+    "surrogate_convergence_min": 0.95
+  },
+  "verdict": "PASS"
+}

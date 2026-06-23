@@ -1,0 +1,86 @@
+{
+  "benchmarks": [
+    {
+      "extra_info": {
+        "peak_memory_bytes": 0
+      },
+      "name": "test_bench_calibration",
+      "stats": {
+        "mean": 0.0022203739637127484,
+        "median": 0.002013171004364267
+      }
+    },
+    {
+      "extra_info": {
+        "peak_memory_bytes": 37188376
+      },
+      "name": "test_bench_pipeline_standard",
+      "stats": {
+        "mean": 0.23686173900496216,
+        "median": 0.2365543420019094
+      }
+    },
+    {
+      "extra_info": {
+        "peak_memory_bytes": 0
+      },
+      "name": "test_bench_pipeline_large_signal",
+      "stats": {
+        "mean": 0.2243378941901028,
+        "median": 0.22460417498950846
+      }
+    },
+    {
+      "extra_info": {
+        "peak_memory_bytes": 0
+      },
+      "name": "test_bench_claimspec_roundtrip",
+      "stats": {
+        "mean": 6.991918292146161e-06,
+        "median": 6.734015187248588e-06
+      }
+    },
+    {
+      "extra_info": {
+        "peak_memory_bytes": 0
+      },
+      "name": "test_bench_claim_spec_schema",
+      "stats": {
+        "mean": 8.81948840059359e-05,
+        "median": 8.537800749763846e-05
+      }
+    },
+    {
+      "extra_info": {
+        "peak_memory_bytes": 0
+      },
+      "name": "test_bench_evidence_hash",
+      "stats": {
+        "mean": 1.3260834103186106e-05,
+        "median": 1.2745993444696069e-05
+      }
+    },
+    {
+      "extra_info": {
+        "peak_memory_bytes": 66520
+      },
+      "name": "test_bench_miaaft_surrogate",
+      "stats": {
+        "mean": 0.002250280717104117,
+        "median": 0.002217850007582456
+      }
+    },
+    {
+      "extra_info": {
+        "peak_memory_bytes": 0
+      },
+      "name": "test_bench_rank_order_test",
+      "stats": {
+        "mean": 0.04129628875874914,
+        "median": 0.04118177099735476
+      }
+    }
+  ],
+  "machine_independent": true,
+  "note": "calibration-normalized comparison; only name/stats/extra_info are gated"
+}
