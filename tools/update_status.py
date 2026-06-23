@@ -79,10 +79,14 @@ def collect_test_count() -> int:
             "pytest --collect-only failed; cannot compute test count "
             f"(exit {proc.returncode}).\n{proc.stdout}\n{proc.stderr}"
         )
-    match = re.search(r"(\d+)\s+tests?\s+collected", proc.stdout)
-    if not match:
-        raise SystemExit("could not parse '<N> tests collected' from pytest output")
-    return int(match.group(1))
+    # Anchor on the END-OF-RUN summary ("N tests collected in Xs"), not the first
+    # bare "N tests collected" — the latter false-matches a test-id literal in the
+    # markdown count-literal fixtures, freezing the count to a wrong, non-adaptive
+    # value. Take the last summary-anchored match to be robust against future ids.
+    matches = re.findall(r"(\d+)\s+tests?\s+collected\s+in\b", proc.stdout)
+    if not matches:
+        raise SystemExit("could not parse '<N> tests collected in ...' from pytest output")
+    return int(matches[-1])
 
 
 def detect_cli_subcommands() -> list[str]:
