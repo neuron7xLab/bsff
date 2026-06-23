@@ -143,16 +143,18 @@ Open the **S2** specificity-method branch (`docs/validation/NEXT_METHOD_CONTRACT
     }, indent=2))
     (REL / "TESTS.json").write_text(json.dumps(_tests_json(), indent=2))
 
-    # Hashes
-    files = sorted([p for p in REL.glob("*") if p.is_file() and p.name != "HASHES.sha256"])
-    (REL / "HASHES.sha256").write_text("".join(f"{_sha(p)}  {p.relative_to(ROOT)}\n" for p in files))
-    bl_files = sorted([p for p in BL.rglob("*") if p.is_file() and p.suffix in (".json", ".log")])
-    (BL / "HASHES.sha256").write_text("".join(f"{_sha(p)}  {p.relative_to(ROOT/'artifacts')}\n" for p in bl_files))
+    # MANIFEST first, THEN hashes (so HASHES.sha256 covers MANIFEST.json — avoids a stale hash).
+    bundle_files = sorted(p.name for p in REL.glob("*") if p.is_file() and p.name != "HASHES.sha256")
     (REL / "MANIFEST.json").write_text(json.dumps({
         "verdict": verdict, "git_commit": commit,
         "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "release_files": [p.name for p in files] + ["HASHES.sha256", "MANIFEST.json"],
+        "release_files": bundle_files + ["HASHES.sha256"],
     }, indent=2))
+    # Hashes (computed last; cover every bundle file except HASHES.sha256 itself).
+    files = sorted(p for p in REL.glob("*") if p.is_file() and p.name != "HASHES.sha256")
+    (REL / "HASHES.sha256").write_text("".join(f"{_sha(p)}  {p.relative_to(ROOT)}\n" for p in files))
+    bl_files = sorted(p for p in BL.rglob("*") if p.is_file() and p.suffix in (".json", ".log"))
+    (BL / "HASHES.sha256").write_text("".join(f"{_sha(p)}  {p.relative_to(ROOT / 'artifacts')}\n" for p in bl_files))
 
     import check_consistency
     cons_rc = check_consistency.main(["--output", "artifacts/release/CONSISTENCY_CHECK.json"])

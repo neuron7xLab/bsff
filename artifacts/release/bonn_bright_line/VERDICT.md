@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # BSFF — formal verdict (Bonn bright line)
 
-**BRIGHT_LINE_NOT_PASSED** · statistic `sampen_lower_tail_m2_r015_v1` · commit `a867bd4f4d5b` · 2026-06-23T20:00:22Z
+**BRIGHT_LINE_NOT_PASSED** · statistic `sampen_lower_tail_m2_r015_v1` · commit `54942349d1d2` · 2026-06-23T20:42:30Z
 
 | gate | metric | threshold | result |
 |------|--------|-----------|--------|

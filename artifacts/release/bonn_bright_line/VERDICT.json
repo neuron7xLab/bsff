@@ -73,7 +73,7 @@
     "universal BCI benchmark authority"
   ],
   "next_state": "Open S2 specificity-method branch; do not proceed to BNCI2014-001 until G2 passes.",
-  "timestamp_utc": "2026-06-23T20:00:22Z",
-  "git_commit": "a867bd4f4d5b33fa0951b2c2325ec5cd55cab719",
+  "timestamp_utc": "2026-06-23T20:42:30Z",
+  "git_commit": "54942349d1d2dc71938baf0397c4ba7c4210a191",
   "statement": "BRIGHT LINE NOT PASSED: SampEn closes G1 power but fails the G2 specificity guard; BNCI2014-001 chain remains blocked."
 }
