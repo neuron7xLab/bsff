@@ -140,6 +140,14 @@ MUTANTS: tuple[Mutant, ...] = (
         behaviour="ClaimSpec must reject an underpowered surrogate_count (no silent schema drift)",
         targets=(f"{SCHEMA}::test_claimspec_rejects_too_few_surrogates",),
     ),
+    Mutant(
+        mutant_id="MUT-009",
+        rel_path="src/bsff/surrogate_engine.py",
+        old="    exceed = int(np.sum(surrogate_stats_arr >= original_stat))",
+        new="    exceed = int(np.sum(surrogate_stats_arr > original_stat))  # MUT-009: tie semantics",
+        behaviour="rank-order ties must count as not-exceeded, so a flat signal is never rejected",
+        targets=(f"{OC}::test_degenerate_signal_not_falsely_rejected",),
+    ),
 )
 
 
