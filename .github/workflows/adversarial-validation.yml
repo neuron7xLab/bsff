@@ -1,0 +1,122 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+
+name: Adversarial Validation
+
+# Falsification-power gates: a green badge is only meaningful if the suite kills
+# the intended regressions and the wheel runs from a clean install. Each job is a
+# machine gate referenced verbatim by ADVERSARIAL_VALIDATION.md.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "23 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  oracle-adversarial-py312:
+    name: oracle-adversarial-py312
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[dev,leakage,stats,yaml]'
+      - run: python -m ruff check src tests tools
+      - run: python -m ruff format --check src tests tools
+      - run: python -m pytest tests/test_adversarial_operating_characteristics.py -v --tb=short
+      - run: python tools/update_adversarial_validation.py --check
+      - run: bsff-validate --output artifacts/bsff_phase1_validation.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: adversarial-oracle-evidence
+          path: |
+            artifacts/adversarial/*.json
+            artifacts/bsff_phase1_validation.json
+          if-no-files-found: warn
+
+  mutation-kill-py312:
+    name: mutation-kill-py312
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[dev,leakage,stats,yaml]'
+      # Must kill all four behavioural mutants; a survivor exits non-zero.
+      - run: python tools/mutation_kill_gate.py
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: mutation-kill-report
+          path: artifacts/adversarial/mutation_kill_report.json
+          if-no-files-found: warn
+
+  wheel-runtime-py312:
+    name: wheel-runtime-py312
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip build
+      # Builds the wheel, installs it into a pristine venv (no PYTHONPATH, no src),
+      # and exercises the CLI + evidence artifact from the installed package.
+      - run: python tools/validate_wheel_runtime.py
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: wheel-validation
+          path: artifacts/wheel_validation.json
+          if-no-files-found: warn
+
+  future-python-py313:
+    name: future-python-py313
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[dev,leakage,stats,yaml]'
+      # Forward-compatibility proof on the next interpreter: the adversarial oracle
+      # and the fast suite must both pass deterministically on 3.13.
+      - run: python -m pytest tests/test_adversarial_operating_characteristics.py -v --tb=short
+      - run: python -m pytest tests/ -m "not slow" --tb=short
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: future-python-py313-evidence
+          path: artifacts/adversarial/*.json
+          if-no-files-found: warn

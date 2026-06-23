@@ -1,0 +1,132 @@
+{
+  "bomFormat": "CycloneDX",
+  "components": [
+    {
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0"
+          }
+        }
+      ],
+      "name": "numpy",
+      "purl": "pkg:pypi/numpy@2.4.6",
+      "type": "library",
+      "version": "2.4.6"
+    },
+    {
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0 OR BSD-2-Clause"
+          }
+        }
+      ],
+      "name": "packaging",
+      "purl": "pkg:pypi/packaging@26.2",
+      "type": "library",
+      "version": "26.2"
+    },
+    {
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD License"
+          }
+        }
+      ],
+      "name": "pandas",
+      "purl": "pkg:pypi/pandas@3.0.3",
+      "type": "library",
+      "version": "3.0.3"
+    },
+    {
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD License"
+          }
+        }
+      ],
+      "name": "patsy",
+      "purl": "pkg:pypi/patsy@1.0.2",
+      "type": "library",
+      "version": "1.0.2"
+    },
+    {
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD License"
+          }
+        }
+      ],
+      "name": "python-dateutil",
+      "purl": "pkg:pypi/python-dateutil@2.9.0.post0",
+      "type": "library",
+      "version": "2.9.0.post0"
+    },
+    {
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD License"
+          }
+        }
+      ],
+      "name": "scipy",
+      "purl": "pkg:pypi/scipy@1.18.0",
+      "type": "library",
+      "version": "1.18.0"
+    },
+    {
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT License"
+          }
+        }
+      ],
+      "name": "six",
+      "purl": "pkg:pypi/six@1.17.0",
+      "type": "library",
+      "version": "1.17.0"
+    },
+    {
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD License"
+          }
+        }
+      ],
+      "name": "statsmodels",
+      "purl": "pkg:pypi/statsmodels@0.14.6",
+      "type": "library",
+      "version": "0.14.6"
+    }
+  ],
+  "metadata": {
+    "component": {
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "name": "bsff",
+      "purl": "pkg:pypi/bsff@0.4.0",
+      "type": "application",
+      "version": "0.4.0"
+    },
+    "tools": [
+      {
+        "name": "generate_sbom.py",
+        "vendor": "neuron7xLab"
+      }
+    ]
+  },
+  "specVersion": "1.5",
+  "version": 1
+}

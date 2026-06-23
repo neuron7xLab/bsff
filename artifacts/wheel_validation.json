@@ -1,0 +1,217 @@
+{
+  "document_ref": "OS-BSFF-CORE-2026.1",
+  "pipeline_status": "EXECUTION_COMPLETE",
+  "phase": "PHASE_1_OPERATIONAL_KERNEL",
+  "gates": {
+    "miaaft_convergence": {
+      "engine": "miaaft_common_phase",
+      "covariance_rmsd": 0.0009326820393120047,
+      "covariance_relative_rmsd": 0.0013074054436388017,
+      "mean_abs_spectrum_error": 0.3748889649141437,
+      "relative_spectrum_error": 0.01496180145184023,
+      "convergence_delta": 0.0005063805079669192,
+      "n_iter_actual": 33,
+      "max_iter": 200,
+      "tol": 0.001,
+      "converged": true,
+      "warning": ""
+    },
+    "ar1_null_not_rejected": {
+      "original_statistic": 0.02516474386644175,
+      "surrogate_statistics": [
+        0.021285744575104733,
+        0.003452826108083998,
+        0.009418336262689958,
+        0.04376801695546345,
+        0.0630004037529717,
+        0.02514717760223251,
+        0.039295558969860186,
+        0.044998220572745155,
+        0.009666981474029234,
+        0.0332412353989644,
+        0.09287080033852242,
+        0.011887642215538388,
+        0.03638045562422762,
+        0.005522134046396594,
+        0.0034621847877136457,
+        0.018716576150146973,
+        0.002132892916730538,
+        0.007460246219615493,
+        0.014830514316948035
+      ],
+      "p_value": 0.4,
+      "alpha": 0.05,
+      "rejected": false,
+      "surrogate_convergence": {
+        "all_converged": true,
+        "n_nonconverged": 0,
+        "n_surrogates": 19,
+        "max_iter": 200,
+        "tol": 0.001,
+        "fallback": "warn",
+        "max_relative_spectrum_error": 0.1,
+        "max_covariance_relative_rmsd": 0.35,
+        "worst_relative_spectrum_error": 0.008793041067620173,
+        "worst_covariance_relative_rmsd": 2.2161092405594853e-16
+      }
+    },
+    "henon_power_smoke": {
+      "original_statistic": 0.6704736455669389,
+      "surrogate_statistics": [
+        0.08357691865564784,
+        0.04044064260547794,
+        0.07930022691788087,
+        0.08016489494650256,
+        0.11123062962318983,
+        0.14420960443804315,
+        0.11136594396947272,
+        0.06715160415005429,
+        0.0949627258718953,
+        0.06888235279444249,
+        0.08943084077634506,
+        0.07360917449335919,
+        0.08913786805786422,
+        0.060459058835411965,
+        0.06191634917496918,
+        0.10238507524762726,
+        0.08757323087846468,
+        0.1152265879280612,
+        0.04434619109961923
+      ],
+      "p_value": 0.05,
+      "alpha": 0.05,
+      "rejected": true,
+      "surrogate_convergence": {
+        "all_converged": true,
+        "n_nonconverged": 0,
+        "n_surrogates": 19,
+        "max_iter": 200,
+        "tol": 0.001,
+        "fallback": "warn",
+        "max_relative_spectrum_error": 0.1,
+        "max_covariance_relative_rmsd": 0.35,
+        "worst_relative_spectrum_error": 0.007955230582756155,
+        "worst_covariance_relative_rmsd": 4.435109686921772e-16
+      }
+    },
+    "block_design_leakage": {
+      "detector": "block_design_temporal_autocorrelation",
+      "flagged": true,
+      "mean_block_label_purity": 1.0,
+      "label_transition_rate": 0.05759162303664921,
+      "n_blocks": 12
+    },
+    "verdict_json": {
+      "claim_id": "bsff-cli-smoke",
+      "verdict": "SURVIVED",
+      "p_value": 0.05,
+      "original_statistic": 0.6704736455669389,
+      "surrogate_min": 0.04044064260547794,
+      "surrogate_max": 0.14420960443804315,
+      "leakage_flags": {},
+      "evidence": {
+        "stationarity_gate": {
+          "detector": "kpss_stationarity_gate",
+          "alpha": 0.05,
+          "all_stationary": true,
+          "n_channels_failed": 0,
+          "channel_results": [
+            {
+              "channel": 0,
+              "statistic": 0.40849338702850035,
+              "p_value": 0.07349422972909468,
+              "lags": 40,
+              "stationary": true
+            }
+          ]
+        },
+        "surrogate_convergence": {
+          "all_converged": true,
+          "n_nonconverged": 0,
+          "n_surrogates": 19,
+          "max_iter": 200,
+          "tol": 0.001,
+          "fallback": "warn",
+          "max_relative_spectrum_error": 0.1,
+          "max_covariance_relative_rmsd": 0.35,
+          "worst_relative_spectrum_error": 0.007955230582756155,
+          "worst_covariance_relative_rmsd": 4.435109686921772e-16
+        },
+        "surrogate_test": {
+          "original_statistic": 0.6704736455669389,
+          "surrogate_statistics": [
+            0.08357691865564784,
+            0.04044064260547794,
+            0.07930022691788087,
+            0.08016489494650256,
+            0.11123062962318983,
+            0.14420960443804315,
+            0.11136594396947272,
+            0.06715160415005429,
+            0.0949627258718953,
+            0.06888235279444249,
+            0.08943084077634506,
+            0.07360917449335919,
+            0.08913786805786422,
+            0.060459058835411965,
+            0.06191634917496918,
+            0.10238507524762726,
+            0.08757323087846468,
+            0.1152265879280612,
+            0.04434619109961923
+          ],
+          "p_value": 0.05,
+          "alpha": 0.05,
+          "rejected": true,
+          "surrogate_convergence": {
+            "all_converged": true,
+            "n_nonconverged": 0,
+            "n_surrogates": 19,
+            "max_iter": 200,
+            "tol": 0.001,
+            "fallback": "warn",
+            "max_relative_spectrum_error": 0.1,
+            "max_covariance_relative_rmsd": 0.35,
+            "worst_relative_spectrum_error": 0.007955230582756155,
+            "worst_covariance_relative_rmsd": 4.435109686921772e-16
+          }
+        }
+      },
+      "caveats": [
+        "Low surrogate count: suitable for CI smoke, not final evidence."
+      ]
+    },
+    "surrogate_budget_calibration": {
+      "selected_max_iter": 40,
+      "accepted": true,
+      "criteria": {
+        "tol": 0.001,
+        "max_relative_spectrum_error": 0.05,
+        "max_covariance_relative_rmsd": 0.01
+      },
+      "candidates": [
+        {
+          "max_iter": 20,
+          "converged": false,
+          "n_iter_actual": 20,
+          "convergence_delta": 0.005709401351555565,
+          "relative_spectrum_error": 0.017369042025025407,
+          "covariance_relative_rmsd": 0.0014642792049872869,
+          "accepted": false
+        },
+        {
+          "max_iter": 40,
+          "converged": true,
+          "n_iter_actual": 33,
+          "convergence_delta": 0.0005063805079669192,
+          "relative_spectrum_error": 0.01496180145184023,
+          "covariance_relative_rmsd": 0.0013074054436388017,
+          "accepted": true
+        }
+      ]
+    },
+    "rank_order_min_surrogates_alpha_0_05": 19
+  },
+  "status": "SURVIVED_PHASE_1_GATES",
+  "artifact_sha256": "da83108cbf3488b6edc5df61ac0b7c6177d4f9b184c537d59bd60e904b36a1e1"
+}

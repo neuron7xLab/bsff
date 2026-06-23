@@ -28,6 +28,11 @@ def check_stationarity(signal: FloatArray, alpha: float = 0.05) -> dict[str, obj
         raise ValueError("signal must be shaped (channels, samples) or (samples,)")
     if x.shape[1] < 16:
         raise ValueError("signal must contain at least 16 samples")
+    # Fail closed on non-finite input before any statistic is computed: a NaN/Inf
+    # signal must be refused with a clear, version-independent error instead of
+    # leaking through the KPSS internals as an opaque downstream exception.
+    if not np.all(np.isfinite(x)):
+        raise ValueError("signal must be finite; got NaN or Inf")
 
     results: list[dict[str, object]] = []
     for idx, channel in enumerate(x):
