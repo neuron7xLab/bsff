@@ -171,7 +171,11 @@ def main(argv: list[str] | None = None) -> int:
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(sbom, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(f"Wrote {args.output.relative_to(ROOT)} ({len(sbom['components'])} runtime components)")
+    try:
+        display = args.output.resolve().relative_to(ROOT)
+    except ValueError:
+        display = args.output
+    print(f"Wrote {display} ({len(sbom['components'])} runtime components)")
     return 0
 
 
