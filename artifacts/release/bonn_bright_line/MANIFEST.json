@@ -1,11 +1,12 @@
 {
   "verdict": "BRIGHT_LINE_NOT_PASSED",
-  "git_commit": "647aa8b9af2480294db7d270e4f856245ef2b551",
-  "timestamp_utc": "2026-06-23T18:23:35Z",
+  "git_commit": "8149f124adff57f67b81f4d0c647ce6b802c687b",
+  "timestamp_utc": "2026-06-23T19:23:01Z",
   "release_files": [
     "CAPABILITIES.json",
     "DEPENDENCIES.json",
     "ENVIRONMENT.txt",
+    "MANIFEST.json",
     "TESTS.json",
     "VERDICT.json",
     "VERDICT.md",

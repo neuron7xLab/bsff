@@ -1,7 +1,7 @@
 {
   "schema": "bsff.bright_line_summary/v2",
-  "timestamp_utc": "2026-06-23T18:23:30Z",
-  "git_commit": "647aa8b9af2480294db7d270e4f856245ef2b551",
+  "timestamp_utc": "2026-06-23T19:22:55Z",
+  "git_commit": "8149f124adff57f67b81f4d0c647ce6b802c687b",
   "statistic_id": "sampen_lower_tail_m2_r015_v1",
   "thresholds": {
     "min_frac": 0.8,

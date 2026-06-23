@@ -3,7 +3,7 @@
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
 """Finalize the Bonn bright-line evidence artifact (Phases 7-10).
 
-Runs the aggregator, writes FORMAL_VERDICT.md / STATUS.md, assembles the
+Runs the aggregator, writes FORMAL_VERDICT.md / docs/validation/BONN_STATUS.md, assembles the
 artifacts/release/ bundle, regenerates HASHES, and runs release_check.
 Idempotent; verdict comes only from executed confirmatory bundles.
 """
@@ -76,9 +76,9 @@ def main() -> int:
 - **forbidden (never claimed):** no clinical diagnosis, no medical use, no regulatory validation, no final proof of brain nonlinear dynamics, no universal BCI benchmark authority.
 """, encoding="utf-8")
 
-    # STATUS.md
-    (ROOT / "STATUS.md").write_text(f"""<!-- SPDX-License-Identifier: CC-BY-4.0 -->
-# STATUS
+    # Bonn status -> dedicated file (do NOT clobber the repo's generated STATUS.md).
+    (ROOT / "docs" / "validation" / "BONN_STATUS.md").write_text(f"""<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+# Bonn bright-line STATUS
 
 - Bonn bright line: **{verdict}** (commit `{commit[:12]}`).
 - G1: E={g1.get('frac_survived_E')}, A_not={g1.get('frac_A_not_survived')}, B_not={g1.get('frac_B_not_survived')} (≥0.80).
