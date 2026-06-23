@@ -18,6 +18,7 @@ No hand-written verdict: the output JSON is computed here. No network.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import subprocess
 import sys
@@ -25,6 +26,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 A = ROOT / "artifacts"
+
+# The public API surface the contract must expose (mirror of bsff.api.__all__).
+_EXPECTED_API = {
+    "evaluate_claim_pipeline",
+    "generate_evidence_manifest",
+    "load_policy_profile",
+    "miaaft_surrogate",
+    "rank_order_surrogate_test",
+    "validate_verdict_json",
+}
+_MIN_CORPUS_CLASSES = 14
+_MIN_BENCHMARKS = 4
 
 
 def _read_json(path: Path) -> dict | None:
@@ -53,17 +66,34 @@ def _signed_provenance() -> tuple[str, list[str]]:
     return ("PASS", []) if _tool_ok(["tools/validate_provenance.py"]) else ("FAIL", ["provenance"])
 
 
+def _live_mutant_ids() -> set[str]:
+    """Load the CURRENT mutant set so a stale report cannot pass for fresh code."""
+    spec = importlib.util.spec_from_file_location(
+        "mutation_kill_gate", ROOT / "tools" / "mutation_kill_gate.py"
+    )
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = mod
+    spec.loader.exec_module(mod)
+    return {m.mutant_id for m in mod.MUTANTS}
+
+
 def _mutation() -> tuple[float, list[str]]:
     report = _read_json(A / "adversarial" / "mutation_kill_report.json")
     if not report:
         return 0.0, ["mutation report missing"]
     score = float(report.get("mutation_score", 0.0))
-    ok = (
-        report.get("verdict") == "PASS"
-        and not report.get("survivors")
-        and int(report.get("mutants_total", 0)) >= 8
-    )
-    return score, ([] if ok else ["mutation survivors/score"])
+    fails: list[str] = []
+    if report.get("verdict") != "PASS" or report.get("survivors"):
+        fails.append("mutation survivors/score")
+    if int(report.get("mutants_total", 0)) < 8:
+        fails.append("fewer than 8 mutants")
+    # Freshness: the committed report must cover EXACTLY the live mutant set, so a
+    # stale report cannot certify code whose mutant set changed.
+    reported = {r.get("mutant_id") for r in report.get("results", [])}
+    if reported != _live_mutant_ids():
+        fails.append("mutation report is stale vs live mutant set")
+    return score, fails
 
 
 def _fuzz_property_chaos() -> tuple[str, list[str]]:
@@ -71,8 +101,12 @@ def _fuzz_property_chaos() -> tuple[str, list[str]]:
     fails: list[str] = []
     if not matrix:
         fails.append("corpus_matrix missing")
-    elif int(matrix.get("passed", 0)) != int(matrix.get("total", -1)):
-        fails.append("chaos corpus violations")
+    else:
+        total = int(matrix.get("total", -1))
+        if int(matrix.get("passed", 0)) != total:
+            fails.append("chaos corpus violations")
+        if total < _MIN_CORPUS_CLASSES:
+            fails.append(f"corpus truncated: {total} < {_MIN_CORPUS_CLASSES} classes")
     for needed in (
         ROOT / "tests" / "property",
         ROOT / "fuzz" / "fuzz_signal_inputs.py",
@@ -97,26 +131,42 @@ def _statistical_power() -> tuple[str, list[str]]:
 def _degradation() -> tuple[str, list[str]]:
     baseline = A / "benchmarks" / "baseline.json"
     current = A / "benchmarks" / "current.json"
-    if not baseline.is_file():
+    data = _read_json(baseline)
+    if not data:
         return "FAIL", ["benchmark baseline missing"]
+    # The baseline must be structurally usable — a stub cannot certify degradation.
+    benches = data.get("benchmarks", [])
+    if len(benches) < _MIN_BENCHMARKS or any(not b.get("stats") for b in benches):
+        return "FAIL", ["benchmark baseline malformed/insufficient"]
     if current.is_file():
         ok = _tool_ok(["tools/compare_benchmark_baseline.py", str(baseline), str(current)])
         return ("PASS", []) if ok else ("FAIL", ["performance regression"])
-    return "PASS", []  # baseline present; no current run to compare in this context
+    return "PASS", []  # valid baseline; the live comparison gate is the degradation job
 
 
 def _api_cli_contract() -> tuple[str, list[str]]:
-    fails = [
-        p.name
-        for p in (
-            ROOT / "src" / "bsff" / "api.py",
-            ROOT / "docs" / "API_CONTRACT.md",
-            ROOT / "tests" / "test_public_api_contract.py",
-            ROOT / "tests" / "test_cli_contract.py",
-        )
-        if not p.exists()
-    ]
-    return ("PASS", []) if not fails else ("FAIL", [f"missing {f}" for f in fails])
+    fails: list[str] = []
+    for p in (
+        ROOT / "src" / "bsff" / "api.py",
+        ROOT / "docs" / "API_CONTRACT.md",
+        ROOT / "tests" / "test_public_api_contract.py",
+        ROOT / "tests" / "test_cli_contract.py",
+    ):
+        if not p.exists():
+            fails.append(f"missing {p.name}")
+    # Mechanically verify the API actually imports and exposes the frozen surface,
+    # not merely that a file exists.
+    try:
+        from bsff import api
+
+        if set(api.__all__) != _EXPECTED_API:
+            fails.append("bsff.api.__all__ drifted from the frozen surface")
+        for name in _EXPECTED_API:
+            if not callable(getattr(api, name, None)):
+                fails.append(f"bsff.api.{name} is not callable")
+    except Exception as exc:  # import/attribute failure is a contract break
+        fails.append(f"bsff.api import failed: {exc!r}")
+    return ("PASS", []) if not fails else ("FAIL", fails)
 
 
 def _bus_factor() -> tuple[str, list[str]]:
