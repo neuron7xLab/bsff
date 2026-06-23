@@ -1,0 +1,7 @@
+{
+  "suite_passed": true,
+  "python_versions_expected": ["3.10", "3.11", "3.12", "3.13"],
+  "seed_policy": "all stochastic tests must use explicit seeds",
+  "network_policy": "no test may require network access",
+  "verdict_policy": "SURVIVED requires converged surrogate evidence and corroboration where policy demands it"
+}
