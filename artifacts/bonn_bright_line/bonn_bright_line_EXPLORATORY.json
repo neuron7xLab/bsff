@@ -1,0 +1,677 @@
+{
+  "schema": "bsff.bonn_bright_line/v2",
+  "timestamp_utc": "2026-06-23T16:58:40Z",
+  "bsff_version": "0.4.0",
+  "dataset": {
+    "name": "Bonn EEG",
+    "doi": "10.1103/PhysRevE.64.061907",
+    "citation": "Andrzejak RG et al., Phys. Rev. E 64, 061907 (2001)",
+    "source": "UPF NTSA (canonical; epileptologie-bonn.de offline)",
+    "format": "ASCII/TXT, 4096|4097 samples/segment, 173.61 Hz",
+    "sets_used": {
+      "E": "ictal (positive)",
+      "A": "healthy open",
+      "B": "healthy closed"
+    }
+  },
+  "protocol": {
+    "alpha": 0.05,
+    "seed_base": 20260623,
+    "n_surrogates": 99,
+    "n_segments_per_set": 10,
+    "policy": "standard",
+    "statistic": "lagged_quadratic",
+    "verdict_via": "evaluate_claim_pipeline (BSFF instrument)",
+    "null": "MIAAFT (convergence-gated)",
+    "corroboration": "JZS Bayes factor (policy-gated)"
+  },
+  "results_E": [
+    {
+      "segment_id": "S001",
+      "set": "E",
+      "sha256": "503a8a4aa9538c50a2b7b1ebb9e800ee3ecc7b690311ec9c9dc2b0bad4a7f075",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 1.0,
+      "raw_rank_order_rejected": false,
+      "verdict": "UNSUPPORTED",
+      "contract_sha256": "6f7ee9ff8eeb4363c2180a86f41b0e73720f8b8d4deb260d9e5a182843e761d5",
+      "seed": 20260623,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "0939092fb3009f8bb2b25de5a472a3c34e48cd5dc9776ef5b568ac693daeb777"
+    },
+    {
+      "segment_id": "S002",
+      "set": "E",
+      "sha256": "13efaad6f262d76258db7d4c18575b33397478e813ccd27e67d1ae29d96cd1cf",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 1.0,
+      "raw_rank_order_rejected": false,
+      "verdict": "UNSUPPORTED",
+      "contract_sha256": "e14ad3df9b58ecb2c58b8e69703379c420c9619d66e31bb3e3bfb55ba789854c",
+      "seed": 20260624,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "1f0b1d0af37f9e9bd0f222e7eaeee1e30e991f683d6b63d7bc45c71c18d00e96"
+    },
+    {
+      "segment_id": "S003",
+      "set": "E",
+      "sha256": "49186389342de9a905e6c164e09c135908af8e9f488f12fb5e68ec3255149659",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.01,
+      "raw_rank_order_rejected": true,
+      "verdict": "SURVIVED",
+      "contract_sha256": "a1fe43195c6e7d4647ac678d6a8b566212df2560c3a193b2f67d23aea3b905d2",
+      "seed": 20260625,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "548e873fd8f6f2f7b8bd10b27874df4ad6d846200a5ca8ddde1ee9735be6327f"
+    },
+    {
+      "segment_id": "S004",
+      "set": "E",
+      "sha256": "97089ae1373e1107289ce337964a607f56fa592eba518deb77a9040e36fbcc15",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 1.0,
+      "raw_rank_order_rejected": false,
+      "verdict": "UNSUPPORTED",
+      "contract_sha256": "ba9737693987bc8ccfa06c54bda35648456552d3e356fc07a14acef50568fc1d",
+      "seed": 20260626,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "a58a651153f0121920f0a5475d2a1b74767b0aecd4818cbe2094eceb691e888e"
+    },
+    {
+      "segment_id": "S005",
+      "set": "E",
+      "sha256": "d57e712d741316f34c8cee1367e5c312ead0052026098fa32866180ac5b6c8ca",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 1.0,
+      "raw_rank_order_rejected": false,
+      "verdict": "UNSUPPORTED",
+      "contract_sha256": "be87e7dc1d36c3b7a3ddf9b6b86c94fc9cd57739a922563b98cbc2cee94dc69f",
+      "seed": 20260627,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "4df63da8edd66363b40471131e7d97631993b729162f0bbbc68a64388051e431"
+    },
+    {
+      "segment_id": "S006",
+      "set": "E",
+      "sha256": "b00c76527942ac58d4f728fe3458b29ec72adadcdbb1439cf0515c919d3909b0",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 1.0,
+      "raw_rank_order_rejected": false,
+      "verdict": "UNSUPPORTED",
+      "contract_sha256": "6b3670ec026e21d2b467a97b14612bdf95922fc54f82d53d6e7fc32d0bda43a0",
+      "seed": 20260628,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "e4e34380bfa6deb1a79ac03769cef6227847def1bc10977ae6ff640677ae7a40"
+    },
+    {
+      "segment_id": "S007",
+      "set": "E",
+      "sha256": "f6ea0b371a04fae13c50cfb8f159e7721e080fd304de352ae17ba0b530bf96aa",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.83,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "9de8a398f29fbad73b08f71c5ba7cdfda33fa3e35661cca1b9b84968ac1f0913",
+      "seed": 20260629,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "ac712f1f10d3a8103e27f5ac96a2a9780ddf6139760f8aa36de2f0a3e3724910"
+    },
+    {
+      "segment_id": "S008",
+      "set": "E",
+      "sha256": "d528c5be038de003682763f20979b47532ee3d055b9bbd997834790311f91783",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.07,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "0d8076adc9b3f3e0e40ce04368626a4435c2d7ae307b2b2ebe8d7461832e6090",
+      "seed": 20260630,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "8de5f9b199ee04799fb92d81566e2044d665db40d18ee44a9dc9e21662200833"
+    },
+    {
+      "segment_id": "S009",
+      "set": "E",
+      "sha256": "dea73b7d462e2b074792bb9062e3f32cb3f8188ad1058f65aae99fddb0dba85f",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.01,
+      "raw_rank_order_rejected": true,
+      "verdict": "SURVIVED",
+      "contract_sha256": "b10ead8ed23b07197a2f09380574cb108b2897129924e0d2c03bc8b1ceb9f41d",
+      "seed": 20260631,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "7d101001a19ac1c0b86fe9ec5d6a6414e77b2123447fc50a5bd2348dc5217e05"
+    },
+    {
+      "segment_id": "S010",
+      "set": "E",
+      "sha256": "d5e14215f2bba7e258ad03fa92659fa286bbaf9eb08bf0426d18b8f8c7cfe7fe",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.24,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "bcec23306e5666d7b05be8c4762c738d1b07dd02bda2a941a5304d32b00575fe",
+      "seed": 20260632,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "b85711daeedacc91748ae837e693b1d26d0ad647241f7aae499bbbbd351e2a33"
+    }
+  ],
+  "results_AB": [
+    {
+      "segment_id": "Z001",
+      "set": "A",
+      "sha256": "f99fb87e8d5017d2294cb54a38ad4249462536dfffbbef72ed92aaa621bf9679",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.05,
+      "raw_rank_order_rejected": true,
+      "verdict": "UNSUPPORTED",
+      "contract_sha256": "7cf5e38be9051d7f4e5e313a29c432ba19d401e3d4d8b9c9dafc5845a0864ee7",
+      "seed": 20260623,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "774d870f1b34cd8be7d7947df873e4e904e99872be498141ddcbecc092df3e34"
+    },
+    {
+      "segment_id": "Z002",
+      "set": "A",
+      "sha256": "88499427722559cc80fec0bae0bd9ebf28d608ac34ad62e733b147a53280355e",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.23,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "9f8eaa0934f1b687d7ea269f7d9b72196b5d952957332b3245e2738090761211",
+      "seed": 20260624,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "9bad658fbe152d61748f2a2c4fdab1c330e56cddaac83ebf74969f51f08fc42b"
+    },
+    {
+      "segment_id": "Z003",
+      "set": "A",
+      "sha256": "43bea1227ea1f85e0827e2caccff48192c17832e02169cb87933e1da7a08dfcd",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.85,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "aa52e9c69dc99e0bb06a583edfad7c3c66de5f1e6066e3f1d33bfc2f8cf26bf8",
+      "seed": 20260625,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "1134a80ef776377006f0118a949d4ad3d16620d13d626c3970d6acd70182e4a3"
+    },
+    {
+      "segment_id": "Z004",
+      "set": "A",
+      "sha256": "69e2c2c68e054546364cffcabcf2ebdf9bb7da084375f0b392568fe7b753f756",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.52,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "60edd459040ab03e136ae2080139afc39ab4bf2873c150ab9676cabd2406a35a",
+      "seed": 20260626,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "5fb4911a8ba6f132d79f8a1eb4f88f14b93df93479989f5c366a64de7e08a6d9"
+    },
+    {
+      "segment_id": "Z005",
+      "set": "A",
+      "sha256": "ca6b5f32faf47ed138b8d3f2e5f1abfb7d068c9467adc4b769d806c04ef03037",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.07,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "929da2e1541244f7ffa2655281101fc63ffd3613da2f262479f1ff5df861f68f",
+      "seed": 20260627,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "de08d0448b8a0379e8bfe46dd6b229bf0b96444949ec957d8af11e67dc9b1261"
+    },
+    {
+      "segment_id": "Z006",
+      "set": "A",
+      "sha256": "b9798292192e8bab3faed8ed4d74e916b8e7756e1f450a26857465d9db35e32e",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.28,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "32b33b4c69acf9f7c9430db43c7156273947741f200e7afbb56e5d1efbac60d6",
+      "seed": 20260628,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "a7c1a1d06dc674f2eaf3c7f02a17fd1cd7151d119c34485b9edc57326105011f"
+    },
+    {
+      "segment_id": "Z007",
+      "set": "A",
+      "sha256": "50daccd0dd4dc2d8a3462752645f77e327ae82954dfed965c32edb2aa8be1a96",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.56,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "bea142800ba09601d02e6dbebca2b7345eebbdd732f8ab1f26ba62767b795b9c",
+      "seed": 20260629,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "6b08782ca3ab4863f5a487b89b8258569665ede74ba5bb6284b4b78e91ab740d"
+    },
+    {
+      "segment_id": "Z008",
+      "set": "A",
+      "sha256": "3c81958eb05b3bf1980b3579ae92fe30ff78d9bd5b4a7f89324e4ab8035b75da",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.74,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "a7488d9e4456f0c33e3bf553dee58a2a8d1451c8cacf6bd915a11b2bd912abcf",
+      "seed": 20260630,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "3b712d3f25880aab6fc8a870fd1aea954e84d0f1119f92ed72308aeaf42964c5"
+    },
+    {
+      "segment_id": "Z009",
+      "set": "A",
+      "sha256": "1cde3cee014122c388d627cb46a71b278e3e3d4cffecde3dd38593f52379b4ef",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.83,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "b97a6912e5a6a9378bc2142bc092279ac00dc24d7823555cedfb575aaae01d43",
+      "seed": 20260631,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "b5d16580d2fa7a27861f727bbdd78e8d52a16a6b5e1a93b56274caf53c3f6825"
+    },
+    {
+      "segment_id": "Z010",
+      "set": "A",
+      "sha256": "1975ddeb4877a14b91735fd60f83217cca83699b36b376d6d69fd9d7d983510e",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.01,
+      "raw_rank_order_rejected": true,
+      "verdict": "UNSUPPORTED",
+      "contract_sha256": "0beeadc5605bc062df93d89af1334d7e63f1a23cbbc8b79c050c19df7493c47f",
+      "seed": 20260632,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "3ff341b6b17763f6d23f6e78aa13c9fc652a7e4ea88cc561e154b899d4e73e73"
+    },
+    {
+      "segment_id": "O001",
+      "set": "B",
+      "sha256": "1f7fc39ab00644756fe8c516455b860a102c772130456b5be6076c27f624bd84",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.01,
+      "raw_rank_order_rejected": true,
+      "verdict": "SURVIVED",
+      "contract_sha256": "6f6045e7c8713627a5d643a2b61c811c90e823f65e85d1c51aab16a8f0a35256",
+      "seed": 20260623,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "fcdcb9d88c731798d5594aa68826bb0083627ad06886eb421c1c05d50a39179d"
+    },
+    {
+      "segment_id": "O002",
+      "set": "B",
+      "sha256": "42405090d482c81818b6e6bb5228fb504a862c70f5c47f86ffdb55fe0e184906",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.25,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "2012a608d7857dc91d9a620b0a43b8a4b3bb764d12772525c73638075163ba62",
+      "seed": 20260624,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "a5d1c0c010818233a3f6e578d3e4a4782c0281ecf5f17a98331c1e6910a96f84"
+    },
+    {
+      "segment_id": "O003",
+      "set": "B",
+      "sha256": "6c6032ea0955d3b611d291494e8842a0f3f5b81df0996415e2500977251095d8",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.01,
+      "raw_rank_order_rejected": true,
+      "verdict": "SURVIVED",
+      "contract_sha256": "53874d1fd002dcbff9f98b22b3325853eca79e218215710b2b34463e536af969",
+      "seed": 20260625,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "a2ce86e6e51fb13f7612fe353de94afa8a445279a134688cfd9afe34e853430c"
+    },
+    {
+      "segment_id": "O004",
+      "set": "B",
+      "sha256": "7ce0ba3faefeac55e318ef4b0c27a36a47ee45002e4fe3ae0baa564e6d584f4f",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.38,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "5e55345c6af23db22225030ac1ca27c8ed07d35fe74718245d1df62efd52e0e0",
+      "seed": 20260626,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "28296ebb3c376a8978a60e172ca683821ba0d9a6bb328218f68dbd820d99fcd0"
+    },
+    {
+      "segment_id": "O005",
+      "set": "B",
+      "sha256": "aada34841ee40308bcd9fad27559c7774b6301748193cc16bc211339aef358ec",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.02,
+      "raw_rank_order_rejected": true,
+      "verdict": "UNSUPPORTED",
+      "contract_sha256": "5640a2ff839c0053706384392c79417e4715520a97585bd2714c72ff4889d796",
+      "seed": 20260627,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "825b3781e34e40b855c2d4be31867927e5866b59a80cd001f0c4ff935b737bc4"
+    },
+    {
+      "segment_id": "O006",
+      "set": "B",
+      "sha256": "e2b99e106a36e025444f5223a0eccd740d6819c93850350f5a6dc972e11c7e0f",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.02,
+      "raw_rank_order_rejected": true,
+      "verdict": "UNSUPPORTED",
+      "contract_sha256": "d591078496e71d81d2e8f03608146dd6b7eae211909fa09e9576b9ecd8a2f068",
+      "seed": 20260628,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "6f66ce38c88497d256f5472b361368d5609b55bfa9ef6dd4cec89768eb01b532"
+    },
+    {
+      "segment_id": "O007",
+      "set": "B",
+      "sha256": "ddb4088df38c23de98191e6ee76b443b6bb5f1d6aba10cbcf0b859c3c3ff3b26",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.04,
+      "raw_rank_order_rejected": true,
+      "verdict": "UNSUPPORTED",
+      "contract_sha256": "45c49329dae132be499b2c0f305a0272a5f30ca4f6dfb6e83116a3f6cfa084e1",
+      "seed": 20260629,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "680ae8840ad2fd391587686de58dc2afc976a589f2e05c445520326931e20c97"
+    },
+    {
+      "segment_id": "O008",
+      "set": "B",
+      "sha256": "8f49431819815015da4a5a2b06aab6d0a1be1714d0baa795e56ede9cbd6cfdae",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.17,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "2141b8de9019b48e28b416a750b50eab0d4c6b5a77e301b06117a3876320f842",
+      "seed": 20260630,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "4aff83437a3013b6aa77aecbec050199dffd738cadf364d8d93140a0fa9522d8"
+    },
+    {
+      "segment_id": "O009",
+      "set": "B",
+      "sha256": "4c90c8c293e33917c67bde3226459b801ed7a172ab0e473794e52994ef7ee995",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.13,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "28828da876366e2f3fdba6a6705a9cafbcbe7c161b07f6a38dc819928eedcce0",
+      "seed": 20260631,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "3ccc5b7e5fbef8c2b7906626739b780bf6c250031c4b40a9a165ebb7f33b585f"
+    },
+    {
+      "segment_id": "O010",
+      "set": "B",
+      "sha256": "caa9094b44e6ac9f4040065917f811166133c3dd3fcb62465bca5619e1f48a1d",
+      "n_samples": 4097,
+      "fs_hz": 173.61,
+      "rawness_flags": [
+        "all values are integers: raw analog signal is continuous (looks like labels, counts, or one-hot encodings)"
+      ],
+      "kpss_stationary": true,
+      "kpss_n_failed": 0,
+      "surrogate_converged": true,
+      "p_value": 0.67,
+      "raw_rank_order_rejected": false,
+      "verdict": "REFUTED",
+      "contract_sha256": "1e4f6891a71546a2c0d1554d5b2710fea5cedbd16c378c1eb5a8fc37fc3f4eb2",
+      "seed": 20260632,
+      "n_surrogates": 99,
+      "policy": "standard",
+      "file_sha256": "ff32a6690b9557ebbb50b96e38c0b7dde277fd624c5b3c11b29af307427130d8"
+    }
+  ],
+  "bright_line": {
+    "n_E": 10,
+    "n_AB": 20,
+    "survived_E": 2,
+    "frac_survived_E": 0.2,
+    "survived_AB": 2,
+    "frac_survived_AB": 0.1,
+    "min_survived_frac_E": 0.8,
+    "max_survived_frac_AB": 0.05,
+    "positive_control_pass": false,
+    "negative_control_pass": false,
+    "bright_line_passed": false,
+    "interpretation": "BRIGHT LINE NOT MET: BSFF's operating characteristic on real neural data is unproven with this statistic (insufficient power and/or specificity). DO NOT proceed to claim adjudication."
+  },
+  "elapsed_sec": 29.4
+}

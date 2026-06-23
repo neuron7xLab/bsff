@@ -1,0 +1,1543 @@
+{
+  "dataset": "Andrzejak2001 Bonn EEG",
+  "doi": "10.1103/PhysRevE.64.061907",
+  "citation": "Andrzejak RG, Lehnertz K, Mormann F, Rieke C, David P, Elger CE. Phys. Rev. E 64, 061907 (2001).",
+  "source": "UPF NTSA (canonical; epileptologie-bonn.de offline). Cloudflare-gated -> fetched via authenticated browser session.",
+  "source_urls": {
+    "E_seizure": "https://www.upf.edu/documents/229517819/234490509/S.zip/7647d3f7-c6bb-6d72-57f7-8f12972896a6",
+    "A_healthy_open": "https://www.upf.edu/documents/229517819/234490509/Z.zip/9c4a0084-c0d6-3cf6-fe48-8a8767713e67",
+    "B_healthy_closed": "https://www.upf.edu/documents/229517819/234490509/O.zip/f324f98f-1ade-e912-b89d-e313ac362b6a"
+  },
+  "download_method": "browser fetch (fetch() in page context with Cloudflare clearance); curl/wget blocked by Cloudflare challenge",
+  "not_used": "UCI Epileptic Seizure Recognition 178-sample variant (explicitly excluded)",
+  "zip_sha256": {
+    "S(E)": "6d3880381b687529e2c0651e07368bb32fc1efc84cf69f52c0d6ffd85f86f92b",
+    "Z(A)": "584c7d81a783ef337619574da29fd13f1eecf4ccfdbf18899c8fcde58cd7a0b2",
+    "O(B)": "ac9b3ea66b0d1343c28c6979aed23c17e42e52eb55a967d93b6208a43cfb4428"
+  },
+  "samples_per_segment_convention": "4097 (UPF canonical export; 4096 also documented in literature)",
+  "license": "research/education only, non-commercial, citation required (RRID:SCR_001579)",
+  "sets": {
+    "E": {
+      "n_files": 100,
+      "samples_per_segment": 4097,
+      "files": [
+        {
+          "path": "bonn_data/E/S001.txt",
+          "sha256": "0939092fb3009f8bb2b25de5a472a3c34e48cd5dc9776ef5b568ac693daeb777",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S002.txt",
+          "sha256": "1f0b1d0af37f9e9bd0f222e7eaeee1e30e991f683d6b63d7bc45c71c18d00e96",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S003.txt",
+          "sha256": "548e873fd8f6f2f7b8bd10b27874df4ad6d846200a5ca8ddde1ee9735be6327f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S004.txt",
+          "sha256": "a58a651153f0121920f0a5475d2a1b74767b0aecd4818cbe2094eceb691e888e",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S005.txt",
+          "sha256": "4df63da8edd66363b40471131e7d97631993b729162f0bbbc68a64388051e431",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S006.txt",
+          "sha256": "e4e34380bfa6deb1a79ac03769cef6227847def1bc10977ae6ff640677ae7a40",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S007.txt",
+          "sha256": "ac712f1f10d3a8103e27f5ac96a2a9780ddf6139760f8aa36de2f0a3e3724910",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S008.txt",
+          "sha256": "8de5f9b199ee04799fb92d81566e2044d665db40d18ee44a9dc9e21662200833",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S009.txt",
+          "sha256": "7d101001a19ac1c0b86fe9ec5d6a6414e77b2123447fc50a5bd2348dc5217e05",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S010.txt",
+          "sha256": "b85711daeedacc91748ae837e693b1d26d0ad647241f7aae499bbbbd351e2a33",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S011.txt",
+          "sha256": "ddb2e621fbfef77f3d64d8fe477a39ae0f18acc7cf93708c86bef09d00601dfa",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S012.txt",
+          "sha256": "cf3eebba4103a4906a8b02ed0fcd0d16630169e8ef95ad7fde5784dca4d45891",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S013.txt",
+          "sha256": "466231434d2d3053fbeaa512c2983f8177c054f4fdce5e30951526d3d3910ffe",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S014.txt",
+          "sha256": "9f99ea89c9c1743c30dffc2df65ef3d13a7f8a059abeb81fb1286b50cc4bc35f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S015.txt",
+          "sha256": "5ce209129c4182f094e61094090c28709f06b7644125a928ccba1190cd8ef688",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S016.txt",
+          "sha256": "f4eddfe14987b2436c7b1ef9ccfb5dec78ad80647afe8926424a279320f74e68",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S017.txt",
+          "sha256": "9f95d3b5e3714f5ee7e2eb88d37196c49d75cdd64f28ab22f3916b21433d9da2",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S018.txt",
+          "sha256": "3799e34c43828eb18c266f5ec6ae7f53a53e2f481b5ab4aa77d9a3773a01a453",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S019.txt",
+          "sha256": "edf4f7b975b9a69c02d6f123fb1914b889f05d090930632f20dc6610f131691f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S020.txt",
+          "sha256": "98713c8c29122d9151a0eff7a57af250964dca33104b67d9b9524e1dc0304e8c",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S021.txt",
+          "sha256": "b4efce3d7c82409a307ed95cb5746e5f859398e416c3d78ea296bdd1b4776abc",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S022.txt",
+          "sha256": "6bd8fc5dc3033ab46fb56d22e6bfc1ff20d3a3b591811c73146c8da00d71c3a1",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S023.txt",
+          "sha256": "24f087b5e675c8cf8b04370ef06f1118efcd1efe4126221cb2061f389742f3a8",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S024.txt",
+          "sha256": "1407f312052bd4c675fcbee2d15c526002994cccab7efdb9b09f4ae3b152172a",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S025.txt",
+          "sha256": "17e332d7e20e0b11867f7894b75b51516a3af8c779b8f1dec9b8a5508292e3d1",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S026.txt",
+          "sha256": "687c1ab55125533d5b5f20fffccb5849e9dfcbca7d817900ede9d21c95d792a7",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S027.txt",
+          "sha256": "409156167483a621097e8450a9c2308fc1665292e9b57654b3b2d5836b5f81aa",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S028.txt",
+          "sha256": "f52a913846146f85de3874a68ddd24cac4f7c680236798413bec57ed23a63286",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S029.txt",
+          "sha256": "c456aaa83c7d30829ac57aa42c7979c954d6ae366c0e2b848a468016af23b0c1",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S030.txt",
+          "sha256": "5f0eb9416dfa0789d2ca4de698b8ece8127f6450a9835b6b6992f023b62a96d0",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S031.txt",
+          "sha256": "f0eca978c0ed13232b18fdf359640c8a47f053cc4f880aedb7920dcbdca589eb",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S032.txt",
+          "sha256": "7ea967c67a129dc91044813f2ac6e7eae21ab430d36c4d0b783d3dc9570f0ba9",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S033.txt",
+          "sha256": "7e872ba7b7e3f4ded43b1114193ef53aaa42b8905178b51b24790e62e9bd9139",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S034.txt",
+          "sha256": "ce69bb3686b524e9dacfef67107a93a97864f03defb1bc232e72c61620d1f670",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S035.txt",
+          "sha256": "3a11f81aea994e59f5cd2cc5f9274dfea8ea17046a7b67b6e730fbeab7d1a916",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S036.txt",
+          "sha256": "ec88d2b7ead3d1ca22d15aeefeba62a766c84eb0b5f649c06cd26713265f2666",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S037.txt",
+          "sha256": "f2e5c289b702cedca0ab7f25e87bfd8294a3c4ef2c5fb4d180da359232870b82",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S038.txt",
+          "sha256": "9de806d03700c095f40d3b5ddc76fc63a5d2933cc02aedbc12e7f59f55fa08a6",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S039.txt",
+          "sha256": "559285a14bc52d20d5b34bebd2daee7d68476c5812df3ef6e61d09035bb08bb6",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S040.txt",
+          "sha256": "5aea4e69d345194a0a88b055bce56226dd8427ccb1a05a7f2d5e64f8bd02d0f5",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S041.txt",
+          "sha256": "75a590fd08ab23ebdf51358d9eeb71d235303ed0c594f2e8a2602f995744ed12",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S042.txt",
+          "sha256": "bd21ac8fcdc31e52e7bd92403fea0f76040e908121fdfa56da9d43866506473e",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S043.txt",
+          "sha256": "55441205a61192ba7e721fc0c49f01660ccefc0d2b8ae10f412053d3ef4e1ed5",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S044.txt",
+          "sha256": "828a30edf65efed3511e8022a3b2ee1ee6b070a60ddb3c4dc9eb9e0d13f34b7a",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S045.txt",
+          "sha256": "d241e21430f9f80b3de50decbf5590ddfe0be69142c7156ae3d947dd43ff3446",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S046.txt",
+          "sha256": "58f74f7b55c19d9b31a37d1028f84db9bb49cccf2063c6081c265a6ff2e360d9",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S047.txt",
+          "sha256": "57762fe8184db4399075041b0ed6e6cc38ed83948a201c7f74b9ffc775ecd548",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S048.txt",
+          "sha256": "2beaefc7f58f96367cb2a148d542b085ea6328d5ebc564cc1cd11f7a33563e21",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S049.txt",
+          "sha256": "6894bc4ba6bcbb4f7f1f69655e775b75d59748807605a3c312fd248b5c1f9ef3",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S050.txt",
+          "sha256": "cc9ff58c9cac05f6bf6ccf85074b4d734d7206c7f12446c79542e9fea8d5815d",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S051.txt",
+          "sha256": "99dd4138fe3ebf1f89150b0c7e57dd8bedf6ada2fd61ea935eb19af899b01704",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S052.txt",
+          "sha256": "e457da581e36eed6e65b0bf82f2d33a421ec84e4e8be854869b114878fa4f18f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S053.txt",
+          "sha256": "5ff4e2758ddb74a78b04e47df03c2057e44d0d04aab510a90c1ee4a882682f42",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S054.txt",
+          "sha256": "fb78dfa0d54487b26defa4a9dc144376efce8960306e28c98b0b35baab3d4b53",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S055.txt",
+          "sha256": "2d8fb3d8a666a12415d7989d7a51388ed2f5a4fc2e8bc4aa55696f2768466109",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S056.txt",
+          "sha256": "d019b6ee3a151cfcdc6929c3913123af84fe5b18f2fb4dc72eb816c63d082b10",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S057.txt",
+          "sha256": "3fa62f260d15b29e6e420c356245734af09fa655c4741da47deb104abda7bff2",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S058.txt",
+          "sha256": "463cd58551b6fc5b3c956b7f1f710b711f95939c23a7db77a9e900ebb71db743",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S059.txt",
+          "sha256": "50ac6417620e82ecfb677f9649b030084c4c6b84682224ea8de9301695a42158",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S060.txt",
+          "sha256": "a4ee2c9a93ba1f1b8602fd2b8bbd2061a784e8f7e2ea733c55b51ef14c08c9bb",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S061.txt",
+          "sha256": "4dded28d3ce404a32948e9474f1c1d1872a424c69b022b87c573c03701a7b9c8",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S062.txt",
+          "sha256": "5ca8c7ee311abc264d551cebf83e35463730e5cc24c4cdefadff896b6cfb1842",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S063.txt",
+          "sha256": "287b25ac2de001157065371df824402885544beac9b5e307ada0baf2509b06ac",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S064.txt",
+          "sha256": "18a3668883de2fce4623a6a21f0185909661dd156f0453a5b706ebe8b8c9cc6c",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S065.txt",
+          "sha256": "f5569ecb03ee77780444b1b10093c02766483adb1f78a167a55d156f39373a17",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S066.txt",
+          "sha256": "93e7e708292df3a9cb568ed433762a3d8276ef6dedeb3f31efded111db5f34e0",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S067.txt",
+          "sha256": "9a9562d72afad4bb355270004134d9cda6172a6b908aab4d8ebf0a30f7643f9f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S068.txt",
+          "sha256": "6ffec117e79dd8c7b5ff3751761355c7a166e4bd197323c59857833231708d11",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S069.txt",
+          "sha256": "be8e417c1c0e0597812481d37a9af4c3473894fa7c794bb1fac4b937e5eb5889",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S070.txt",
+          "sha256": "a5bbdcb69d94fa45d92f9d76f0be08a5e59be40214b5e4a321868c3b99195428",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S071.txt",
+          "sha256": "3f3119c607201bd00ad8ff3149c9cd4e0e270c59a37320eb3b5aed4c642050a5",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S072.txt",
+          "sha256": "8d4762dc13ba3078fb525750dc8edd3a627cec6e8cf49c3d156a7ede56e0692a",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S073.txt",
+          "sha256": "ec3c12be2728e506632836c8d3328c9c42b831fba9b3537865d0fa95721e7f92",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S074.txt",
+          "sha256": "07de09811fd6498fdf2a905c077e991d5ef6edf96569000b92dbc678a3468d46",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S075.txt",
+          "sha256": "52db25e4f97a378762e88f52b7c5ef010c20e8531e1d0d604e7ddc571095d12d",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S076.txt",
+          "sha256": "31a17a6ddabd768f8cf03bf5150f3d52306a1ee636b4ac5efe9f98a05d723324",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S077.txt",
+          "sha256": "9fb59750506fcda3f058be866856560a9c23a9ba5d422635fddb048fa229a552",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S078.txt",
+          "sha256": "8e09fd9e1392027f675cf1beb9086cfe8ffbfc8f1d029724be23f6c6646a48bb",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S079.txt",
+          "sha256": "c6c4fe87cae9158977e77ba540b1b154da89aff7e51b5b8ae95433774eb68a13",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S080.txt",
+          "sha256": "03e45f604bdbd6d7c80ae9b0b46bc5ba1b63f8ff2587f117f32183896859ddfb",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S081.txt",
+          "sha256": "ce132afb70766e85c12c7c0f0565e15e97fcfcfe23ae19cd1bfe8397dd07f985",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S082.txt",
+          "sha256": "098f05610fc2bcc7fda018381b214cec22b28ba5b159694694b1e4ccbe6e0190",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S083.txt",
+          "sha256": "2aefbc2ec8cfae8493e76280da87ad6a597a8f8506a7943eead219bbf03052e9",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S084.txt",
+          "sha256": "8081d58a3f343efbfe7bfb3f5c1607833ceeb68c160c82820c463ff5cb644870",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S085.txt",
+          "sha256": "2f06ca9786fa2b1b21d78faab692fa1c540b775181b4595ce28b8177333a73f5",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S086.txt",
+          "sha256": "970f03e9691ad025796fcabe8e016999d7fac5806ddcee1ef91dbdc726c2e290",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S087.txt",
+          "sha256": "b078fda7393ae5594ace84d2799a97fa4d3424a7d2611e42f042debfb6ea9dd0",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S088.txt",
+          "sha256": "97c47ef6a627f990e826243f1a6cb213ca104613c8ff67e90bfffcd4a8c02358",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S089.txt",
+          "sha256": "dbeff4a4710a2b7a905f7519b442a1d752eb89876c87b17e8ec23c28f8dd3086",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S090.txt",
+          "sha256": "9b54d723a08e822a2eb2f46feeb03e2a1c218e4b4e080d82d151a3ad534ce448",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S091.txt",
+          "sha256": "681f5b8b55271d724a63d2c2010c57289b3d12ad9aa406e43602722624378636",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S092.txt",
+          "sha256": "67e01dfdbe83a782f6ecbf27ac3aefc19fcea75115428ac6d0e0219c7df47183",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S093.txt",
+          "sha256": "4d5b388e9f137576dade549269e3c71ae94cf1a91a1b8f09d8d482205906c64d",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S094.txt",
+          "sha256": "001eaa83a5a88819157f01047e5b0220887797d4325bd6cd04bf38a3ed216eee",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S095.txt",
+          "sha256": "305e11f93c62b4e5d0a90cb7c3817c7d5846037fc86ab99c1feee0b21dae696a",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S096.txt",
+          "sha256": "10602bbfd83dd3fef20f261fb3c6e21193a6ada8deab61bf8d77657ca0a2435e",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S097.txt",
+          "sha256": "6a9396bc1924cc639f3d8fec385bec334f44ab2306ce4fd6e7794a0df957d77b",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S098.txt",
+          "sha256": "48f93a7c6856967224bb1003b3476ad9551f3344feeecde4554eb85f858095c6",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S099.txt",
+          "sha256": "5d127b78368457474cc0ea3c5892531a55d646b5934285919cd9f4a00bd50824",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/E/S100.txt",
+          "sha256": "0691d9357ff5676fdf795bd2806780af7ddeb36fbad5772f53ad5ee0e6227780",
+          "n_samples": 4097
+        }
+      ]
+    },
+    "A": {
+      "n_files": 100,
+      "samples_per_segment": 4097,
+      "files": [
+        {
+          "path": "bonn_data/A/Z001.txt",
+          "sha256": "774d870f1b34cd8be7d7947df873e4e904e99872be498141ddcbecc092df3e34",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z002.txt",
+          "sha256": "9bad658fbe152d61748f2a2c4fdab1c330e56cddaac83ebf74969f51f08fc42b",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z003.txt",
+          "sha256": "1134a80ef776377006f0118a949d4ad3d16620d13d626c3970d6acd70182e4a3",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z004.txt",
+          "sha256": "5fb4911a8ba6f132d79f8a1eb4f88f14b93df93479989f5c366a64de7e08a6d9",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z005.txt",
+          "sha256": "de08d0448b8a0379e8bfe46dd6b229bf0b96444949ec957d8af11e67dc9b1261",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z006.txt",
+          "sha256": "a7c1a1d06dc674f2eaf3c7f02a17fd1cd7151d119c34485b9edc57326105011f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z007.txt",
+          "sha256": "6b08782ca3ab4863f5a487b89b8258569665ede74ba5bb6284b4b78e91ab740d",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z008.txt",
+          "sha256": "3b712d3f25880aab6fc8a870fd1aea954e84d0f1119f92ed72308aeaf42964c5",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z009.txt",
+          "sha256": "b5d16580d2fa7a27861f727bbdd78e8d52a16a6b5e1a93b56274caf53c3f6825",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z010.txt",
+          "sha256": "3ff341b6b17763f6d23f6e78aa13c9fc652a7e4ea88cc561e154b899d4e73e73",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z011.txt",
+          "sha256": "acfa410977a1e0d9653c439344c7f0a56b5ac3ff59191b11f818694918f9c643",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z012.txt",
+          "sha256": "fd11f41003e51cb5ee224b88db0da40695e7fb118af8699962cfa77764268608",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z013.txt",
+          "sha256": "a529dd895aa6b69927274d16e53b09cc6b6e769fe9c12f04f92bbe889fea35c4",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z014.txt",
+          "sha256": "e4d2345c28ed526c801206377adca0d259b9d2c109464358099e6683f6e642af",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z015.txt",
+          "sha256": "e53395c9a2c559ab583e0aac24d7ccbe18df51246dd3ae463a4fc699e064a1b0",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z016.txt",
+          "sha256": "8aa86bb855cdbc72c5b273c6d887554afeca18b7679d433328059fb6bf47dcee",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z017.txt",
+          "sha256": "78fff10a8bb650c3c7ba34693532de81e6d28628634ee5d3ba0870f2a10b1a82",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z018.txt",
+          "sha256": "1603c04048020f79b8f6cd151e54aa95b93d0255fc035e0dbb9c1f239fc508ed",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z019.txt",
+          "sha256": "9f7f77ee7cbfcbc88606b5848d6ad59fb3a0237c9705156143845976e2c22bfd",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z020.txt",
+          "sha256": "ec65c063cd99be863a759cdf48fcdb3f09dae8aa2ea27fd4647d955b4ebd9d8e",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z021.txt",
+          "sha256": "5390e9065c070bcef16aa78674b9b2d3949ee8e065dfd02208f0c7be5b641c54",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z022.txt",
+          "sha256": "3b445ef5b14c45400525670eb514a14499946d4afe5c8bc59a40789c796f456d",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z023.txt",
+          "sha256": "c5f3c9760901c9498809cb9d7359214fbf1d9317ba8ca0acc55b4e2966d7750f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z024.txt",
+          "sha256": "f8fdf0a879e6ae716caf01a0e4591e3eb335220705c833824ab2de1e2af0850b",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z025.txt",
+          "sha256": "7c68ba99779a09e52253a72d04a6e2cca9201e5976dd9db07debdd7a711cda25",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z026.txt",
+          "sha256": "c6afe9242a876267b8141f2cbe46d5a3e33215f28757ca0980185b5fed2b354b",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z027.txt",
+          "sha256": "03d6e8b7d0ad62e7ddd2f4aa9b9e61bcdab3340a3a986ef6a350a71e785f1388",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z028.txt",
+          "sha256": "9d6af9dd2f10b07837fbd90d25cbdc6305a832ba90af53ecc917165936607083",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z029.txt",
+          "sha256": "f97e7d1844d6ac91c4a905ccb241410339036df494d6b4288cbe62d52eda6776",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z030.txt",
+          "sha256": "3aae2ccace399b1a9fde2d5e4e6dee6cc9820c787cec7f9ebb154748501ec2e8",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z031.txt",
+          "sha256": "c91814cbfb2e343858336f60f11fcbaff3a373f1a93ed2d8b3fab9aa84a2a9d7",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z032.txt",
+          "sha256": "bc58be69dde708e25edf9be4e6fc63d98fb5328c1e10e3e7d9d80c7c06a920fe",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z033.txt",
+          "sha256": "b8331ffd9395b89ceaa0c406626daebce722a2b27e2f948236b569ff946670d5",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z034.txt",
+          "sha256": "cac38f7d402f1274df85b7580ffd2ce82e7d20e991a03223c0f40aea263c5fd3",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z035.txt",
+          "sha256": "113ebe27937fdfc8537d49f7cdc6fc0a2ee4f8b9b8cfda2ea2b2e1ea2849981f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z036.txt",
+          "sha256": "1acf43bd46c9d8cf6474d5ced39e7e8cea8deb8de26733f3f39c0b3cfc9c6478",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z037.txt",
+          "sha256": "d05825cb3584703e6521a5fe46219ab20e280add598cac15bbd4ac7a35d25f16",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z038.txt",
+          "sha256": "686efcb9aa432568e07d644932a70344519ddc9da73369a61eddf9fe16b551ba",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z039.txt",
+          "sha256": "155912037481ae9821044b4fcc426cf9cff510eaeb1c72abe0c07d48d8b42af0",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z040.txt",
+          "sha256": "03121bdcf479a5685e0f3b48000da487fdb37951c2fae2d78766e5d15b459646",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z041.txt",
+          "sha256": "c27493af0dc0645fbe6b6b1e18a7b5f8db4cd05d97acdca12db9e6ba5c2f8004",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z042.txt",
+          "sha256": "8d2121319f97d6d2fe0d3d6f8f47dab9363365f4c31b973217c4bf2d003f2422",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z043.txt",
+          "sha256": "5e1a07a7c6c9836a4c2529ac0198d749ad230b116d911e9d7585f361f7b08a0c",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z044.txt",
+          "sha256": "62895f2d3e6e6d50efd0d8e9957f1a6fead599fba8a833f8bfb3c008bf438027",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z045.txt",
+          "sha256": "7c706118429e6c1454a35745fb1a6ea79563b865f242b7859f5114ab5fa768b7",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z046.txt",
+          "sha256": "6737a3a51aa6d268d12e9d6fc9fcdac5ec762743a08566bec9f94f697897a4e4",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z047.txt",
+          "sha256": "b1afaa2544dc9549f49f451fa7e69fee2eade1ba0f8a36197b28941ef6f3a89f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z048.txt",
+          "sha256": "f6863c8cd6a20c0095108e6c71d613ba3baf9f7e66d34cf2f040a5621d660f20",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z049.txt",
+          "sha256": "b3d1c4424abb87dae02a1e1248cd3231145f704c0fbd54e21144d81e391dfd7a",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z050.txt",
+          "sha256": "fd613650fbd4d041e63a29bf9cd91efa33d52b4c79d0dc870376877e0cc81034",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z051.txt",
+          "sha256": "d443cf032a8eaa31b1b3f6cc89f5510307000b560505ca15f549821a1bdeda38",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z052.txt",
+          "sha256": "8d737fe8d0bbaba3dc7482e4ea8efa33e064fa32fcd8554e2c8bbe4ea02046a5",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z053.txt",
+          "sha256": "b05ea378dc0d5a6e6201e2bcecd5a565a9ee2a73f8e2dc3637c7d1826f1071c8",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z054.txt",
+          "sha256": "68b45e33ebf862207c419036c317010ddb430d7ff6a684e61b0db507692bdfd4",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z055.txt",
+          "sha256": "7e653d148c343fbe8b4809ca0e65203f7374431b3906b9cc5060d6e13ee00aaf",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z056.txt",
+          "sha256": "00f4a5016a30decc786df53fb0e1e4fa158a242596ebb4566f3614e2e1589314",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z057.txt",
+          "sha256": "997a21365799c8d6ed856e2a301d9123b9f545d3115cd00bb8893043c588dfca",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z058.txt",
+          "sha256": "e538db711396b183092ca3be9b0d049a41583c69ca257370096f4f0835251c7b",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z059.txt",
+          "sha256": "353395a1cd983e5aba75913cc6a9192aba2174bf8abec5bfe98d665c5b0a06b5",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z060.txt",
+          "sha256": "e2d52d144cfca9a54b6b7182b6013d0c06fb658fe0eb4d0a47344e5e629282ee",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z061.txt",
+          "sha256": "bfddde47c5ee5f8de0ef7d163061b9860db6d24f811376adabc81d7517b25c9f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z062.txt",
+          "sha256": "1ac897732d26c6a72d1aee6c11c21c0eb0604ca64fd83fe9eef3da2f036078f8",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z063.txt",
+          "sha256": "d6fa658bb43acd6c99fa130f8ae6db726916978f9efb04b1418b2e2acbbb4479",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z064.txt",
+          "sha256": "dd131feb259dc83af10f6af5a2b890700568542ad84d0c9bd0aee9c2cc58b8b8",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z065.txt",
+          "sha256": "d3ea821f89cec0d1e3271c7ceafacc1c1937c42a922cafca581b2dd3ab376a9d",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z066.txt",
+          "sha256": "6d7593c5c759af1a8701e17e9153f34014f11482371ee9f8c71636cef7a4d67a",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z067.txt",
+          "sha256": "0fce16dd7e15c5a93edb5fcea7ae41590066a4d4290dc7375d222240b25b9506",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z068.txt",
+          "sha256": "a9cf1da66c762fab2f17bff7ffab793751492aaa727e8011957a1213ba9190db",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z069.txt",
+          "sha256": "7806255eee127b49bfb2777333de1b60f118df108f2204f36d115b5da25957de",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z070.txt",
+          "sha256": "68e2aca3c7e6be698677de480cdbaf55051a72150e811dca5656694a807da7bd",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z071.txt",
+          "sha256": "122fb37325dc825287b839d14b1a06bbb57063a7b3d725be6ff7e77daff7adc8",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z072.txt",
+          "sha256": "57c1b7f53f49fc90667b66fac2b8b1e5c998acb204dd9b8777d934c20b150bc4",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z073.txt",
+          "sha256": "91940947e8eab0f0146d82db1392142f5cb77de782c08b659de87d07b1ca0237",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z074.txt",
+          "sha256": "b7393b4c7f6d9cf15e56a20042c98cccc8c3cb1ebf2f5a888d793195e89de8d4",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z075.txt",
+          "sha256": "523c60c32cc9ddba72cded4c93261755a02041080edd0e4a1c0d977f316151d1",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z076.txt",
+          "sha256": "68f3fd4d9183224e6f0f6ee7f7092e7bd7c5acb837054ed329e966f84a9c8698",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z077.txt",
+          "sha256": "d393cbd759c5af3a2f1b58981cc8bac19994abc0d5a9e9b6ecb3101873e6c26d",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z078.txt",
+          "sha256": "abf1ca618ab50254d026e93a88714a54e84ca4d14a6b656b00a97403f4a9d876",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z079.txt",
+          "sha256": "159de3a4d71e2c12220828fc9c5e39f35239607c2270e490333caf2a3ce01cb7",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z080.txt",
+          "sha256": "3217923a2a61e8451ed52e2bb593368ac69ff1907bb1f81e43d152e9fde74e67",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z081.txt",
+          "sha256": "24702dac336d7880c932918d5773d5f7219ae54789a86bd2349a39f1d9899aea",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z082.txt",
+          "sha256": "dbe926902a53a15403ab6337cc990be0331b4bacb8de4a89d92e9116c9da48ee",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z083.txt",
+          "sha256": "3e3a13ebd35f5386f06cdd5c3d6f7e4e65cdb15e8a3d4bb9c3b338a9492ae924",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z084.txt",
+          "sha256": "4b8e64eaff8e7606a3d9d70e663b59d8115878f4a0eee8348f47a79b19471acb",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z085.txt",
+          "sha256": "dc8a08ed615bae7e698646502381bd6438008cee95cbef99a8f162f5e3851456",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z086.txt",
+          "sha256": "95ac484922347b3e13fbb9df9ec9e9271fdeb13af3213a2ba6e5b3dd7d5c652f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z087.txt",
+          "sha256": "a2c8914d38dff5240746da673cd9f8987e2c12d8b22b97ad8fbe4c621205bf39",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z088.txt",
+          "sha256": "77f5b6125d917b8e088c5698953318c4e546315ef569cc3d7807f9bb08eccd94",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z089.txt",
+          "sha256": "f9775a634c2340292975cad03875a745726d4eb1930a0ef963917229e788432d",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z090.txt",
+          "sha256": "1a3f9cea45595ac3b5102bb60ca83c7cec117868244cfd17194e8f4861f7e908",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z091.txt",
+          "sha256": "f8e913845a2564e3203c71d81a2cd243945347e1fbfa530ef5aa79b9baecb26d",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z092.txt",
+          "sha256": "576fe9153916212de01bd49fc5eaf7517c92a3d29bf2dc217abbf4c50be2d0b2",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z093.txt",
+          "sha256": "a91600c6499b99b549e4dd84c6b7394db68710bbaf1f0179e57652711b4c9bd4",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z094.txt",
+          "sha256": "6e27a1aebaf47d5102028158a7498e455b5db12d3fa7b18d46b1b6987657c740",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z095.txt",
+          "sha256": "7fb321757f5d84ee0a2d57d6bd80ca565e5a5ee3647a758829c9693d6c6e4374",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z096.txt",
+          "sha256": "cc576bcc55a98f32d7b7cb0d02da5feb722092e5beb1f2fd8932024d9934f646",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z097.txt",
+          "sha256": "cfe7121c9f7535b808ce65b4300b62d227f10ce89e178015e72e3636a2969655",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z098.txt",
+          "sha256": "e08de6e3485d9dd9b14651c40702fe7ebde0600457f788984c2728f772ec7d9e",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z099.txt",
+          "sha256": "c94487644361f861bc9150b9ab653a4f232a0100d0a14951f949e2cb8e1cdf2f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/A/Z100.txt",
+          "sha256": "553a0bb90c83493674db22eb47820b54096ca4c0847f24e14cec822e7c5999ef",
+          "n_samples": 4097
+        }
+      ]
+    },
+    "B": {
+      "n_files": 100,
+      "samples_per_segment": 4097,
+      "files": [
+        {
+          "path": "bonn_data/B/O001.txt",
+          "sha256": "fcdcb9d88c731798d5594aa68826bb0083627ad06886eb421c1c05d50a39179d",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O002.txt",
+          "sha256": "a5d1c0c010818233a3f6e578d3e4a4782c0281ecf5f17a98331c1e6910a96f84",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O003.txt",
+          "sha256": "a2ce86e6e51fb13f7612fe353de94afa8a445279a134688cfd9afe34e853430c",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O004.txt",
+          "sha256": "28296ebb3c376a8978a60e172ca683821ba0d9a6bb328218f68dbd820d99fcd0",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O005.txt",
+          "sha256": "825b3781e34e40b855c2d4be31867927e5866b59a80cd001f0c4ff935b737bc4",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O006.txt",
+          "sha256": "6f66ce38c88497d256f5472b361368d5609b55bfa9ef6dd4cec89768eb01b532",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O007.txt",
+          "sha256": "680ae8840ad2fd391587686de58dc2afc976a589f2e05c445520326931e20c97",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O008.txt",
+          "sha256": "4aff83437a3013b6aa77aecbec050199dffd738cadf364d8d93140a0fa9522d8",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O009.txt",
+          "sha256": "3ccc5b7e5fbef8c2b7906626739b780bf6c250031c4b40a9a165ebb7f33b585f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O010.txt",
+          "sha256": "ff32a6690b9557ebbb50b96e38c0b7dde277fd624c5b3c11b29af307427130d8",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O011.txt",
+          "sha256": "45b5015a421f6459d08cf9a0ea8acd0dc253ad1e6c53cfe76ae5bdd7469594b3",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O012.txt",
+          "sha256": "4b4c43d9e9b4ed1c4b0e4273cda883d2390abbdc619e498a3fddb1bb91ae841e",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O013.txt",
+          "sha256": "f45257da5f2fc2fd997a127dd4e7a8ead13b4f6cfa530aedc0cd1e85f1a5f74f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O014.txt",
+          "sha256": "a0b6d7903df27c06a1568e0628d8d7414e9bbcb3e9d70a0ba117efffde61568e",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O015.txt",
+          "sha256": "9908d997a1fc82702b433e9b4a8d40d30527a011af12856735d8092e5d279975",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O016.txt",
+          "sha256": "154a0b4a30ab4d49f8e76627c034cb46446f326405c0497961e563ae31e503f6",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O017.txt",
+          "sha256": "9d0b7c47e7180ed7436032534c8175000c623368e8632cd4113e11c5ead28133",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O018.txt",
+          "sha256": "767878f7102eb161fd66d1bb257be582bd08b2903db819e4a8407463854a8806",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O019.txt",
+          "sha256": "7559693bc190698a7fbfea8b62a11f3a3d9e98d7d6bf6ed43f18e26dff273679",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O020.txt",
+          "sha256": "4b88af5189d30918ca1889e5f2d3aa6f2186444babf99dc5d4a4f0d39bdcd78c",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O021.txt",
+          "sha256": "7ee5753c7ee6621c3324b5aaa7baf84a7ea49675119b194dbbdaed16ab962ac5",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O022.txt",
+          "sha256": "0db8332a555531b603a6a5714fc1c509ff7c8455d4558f6e0b3247dc097214d6",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O023.txt",
+          "sha256": "0f3ee75c282dc9d31d8b931a6beb427092ee93760f1fdd48c71f0a79e16e4181",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O024.txt",
+          "sha256": "815d222128408c62ff5cd970861e3a6b36cf5ed073d2c01189ee0d6175de565e",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O025.txt",
+          "sha256": "fe44b2e03bec56cd82dd15a2190eeadf21983196f63c95359c926194e84d80a0",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O026.txt",
+          "sha256": "45ef2af4d7cac0a4c23f3c8244b7b52f772bebd211798f225a944adb9dfd7af6",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O027.txt",
+          "sha256": "f54e3f946a48b100fd580baac9fac559c696133a3903c37cbd463fa2a95f4147",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O028.txt",
+          "sha256": "9deae42b452f803fa38bcd1cf83ccd8ddb7e9831e3451a558894e120fd125e9a",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O029.txt",
+          "sha256": "8600bf3552d2128b0053788a3f8f74a2dbb7103bbb8c51ac33b0a253de8d375a",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O030.txt",
+          "sha256": "8256d7f3e1ee6a75c97334e3ef3518211a18217e7c0b5b4d55c7c2a235da4912",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O031.txt",
+          "sha256": "dcd21791a7b6d00042b09e651f23c000812b73f11b78ff6443fa08b4cd36d6bb",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O032.txt",
+          "sha256": "82591941e245c61e6c81d2fb37d7e76b217182ac4a3936732fa729a9c15ee258",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O033.txt",
+          "sha256": "15c1e7cba7b599e4b43ddd8b461f66ab4894b13d28d836544b4018e5274562e6",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O034.txt",
+          "sha256": "a616c53943d9bd5495397c638a0705bf7ecaecfb4f815680e2b90e049a21ec07",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O035.txt",
+          "sha256": "1225b743f35957a96213985de9d41272b75a8c6a25d4d931ac63b1fc42125e59",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O036.txt",
+          "sha256": "48bf6d52707acffd3eeaf200f6e96d610fe1fcfeedf7a3b3872db3fbc9888957",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O037.txt",
+          "sha256": "509c6eb62b4b19b3054c93cb16a2e1134f995c9fa81869e4e579eb52ad2d989b",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O038.txt",
+          "sha256": "0203999605e364137da8e6f4c8cee18feac52816f7a973982601aad80aaf24e5",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O039.txt",
+          "sha256": "3aaa50a209f10580935438079f2ddaddca6656c55657b35345511b669ce21715",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O040.txt",
+          "sha256": "d690d7530e091bb30b93a4af50c245b97e370dcce04b9c8eab3af114cf387332",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O041.txt",
+          "sha256": "76a73eb67ba6496a873186cf3cbc0f63f85676ba3fa3664cd4fd9836d98343a3",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O042.txt",
+          "sha256": "2c8306ebbda2f8e37155f0fbe6eda27799a01c85bd9387489464ce8f4569ea3b",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O043.txt",
+          "sha256": "315f961cf37b96aa0ea7684ba36af81b105ab93030e94b8b19ac0e56453a270c",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O044.txt",
+          "sha256": "f8f0c01d98dc4ba6f82df701ce912659e0b0860deccf368fcb188b45316b96c3",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O045.txt",
+          "sha256": "6cc2780e169e0cdb96742d6449b007cbf9c7b55aed3e84cf5d3d9d0fb3a66d9e",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O046.txt",
+          "sha256": "cf56bd9697b55648d78f0d195247fa10c751f006f9a2029217e6c695da78cff7",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O047.txt",
+          "sha256": "99d7b2c4a0e6b535b76a2ee1e0ac0106f7f7f7ca22884153899fb011ff0f6131",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O048.txt",
+          "sha256": "8ab4b6623132ce6882b2da797f973213b932ca4d5e03cb8840aefc64ab894336",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O049.txt",
+          "sha256": "abba6524c1c30d69cada3458469e999275a01603609ee2df221d928e86983ac1",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O050.txt",
+          "sha256": "e7633636181f83feabacfd5f86a361df6ba06fe49cfc7ae740b80a0e58fe302f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O051.txt",
+          "sha256": "46a921546e035e6251175891d00f3714225507992edf5dc7fcecfdc03caa5480",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O052.txt",
+          "sha256": "9e7d4e4e581bde025f630e7e6a17406b4252cfd3f7fb503f5d0aebb078a30e35",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O053.txt",
+          "sha256": "929caded65f49ccade099fe436dff039c84420457046b0da0aeacdf9f1a33f6b",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O054.txt",
+          "sha256": "ccf7ac67c86330483d3b7de43ba8ca8e2a5750debd2b042b7b94b96ac007aef2",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O055.txt",
+          "sha256": "693c427e1d6e0c1ff35422a2463d186c4934ec7508cb0eb514896b90dc100a3c",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O056.txt",
+          "sha256": "e40de8a799eee262401eb3c8f7ae762f009d9c72ef65e7f7212a2fb8e76b98fa",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O057.txt",
+          "sha256": "03a8ef6ade3d998b3630528a9eb30a387d0fc248f676188c720d77af6d1684d0",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O058.txt",
+          "sha256": "dafe382814e6858b8d7e750fc91e845572d06e707876adf687ae4632505f82cd",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O059.txt",
+          "sha256": "169e7212b3ade460c18b2619969ae9454dd9807c91d872cb0528c8df7117214e",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O060.txt",
+          "sha256": "85a5704c6f4e747e92ef92db9cc1138dd3e993754dd7cb93d33d17bde7c8f8ec",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O061.txt",
+          "sha256": "fcabd4c7978c0723088f7d3cdb5a85aa39ff38560c6b96e63580564b8be8fc21",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O062.txt",
+          "sha256": "9f549989f30b003497ce3ee47f9467d3717fce258bc2c1280b9c1accb76df69e",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O063.txt",
+          "sha256": "bb66fbbb232479d94c75d09e30a1266143cdab516d1451fdab07112c8ca7210e",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O064.txt",
+          "sha256": "01969ec1fee2e3aa40e76de206e75a367a538c6ca6a5218458284cc198b9c1ef",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O065.txt",
+          "sha256": "1119aeb0cbf50c6ec5aefcb368bac37c2a5e456b6a1e802961234a3fff2c17d7",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O066.txt",
+          "sha256": "4beacc62db103f1712d9ea26a381089fa6163cbfcc36bbdb496139f194f0fc28",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O067.txt",
+          "sha256": "6ed30acc76a686d895f6797067cdd973efdb132eb060b1cd219669c7de496bc3",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O068.txt",
+          "sha256": "bba96d82c66da08fc7ecdc4320aa41aa03e393cf3bc4805709ab989ff23fb88c",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O069.txt",
+          "sha256": "896331d7193d13a8652d80c84f5a038f8457d72fa89836055e1f5081c41ab65c",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O070.txt",
+          "sha256": "b3b7b4b4e7b0de38b7438acca27f358647c4bc6bcbe8e7d5f8223caed11f6644",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O071.txt",
+          "sha256": "f808148879f411e3a3884c9328e534d4e1494d0af73f35fc2a74f2f73137da16",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O072.txt",
+          "sha256": "492b3b803d8fefe69378e31cefd22806e227999a8c859a8f2b1d38cd19030132",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O073.txt",
+          "sha256": "6e08ad47a7d23b41ed2d2cf0ca50a970f8bfd086bc83592c44373ffbd8bb1691",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O074.txt",
+          "sha256": "c81b834b98fe898b959cccdbcb27cd56264caca05f81caf3a24057ebca36e8fc",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O075.txt",
+          "sha256": "3dcf93b4237f88a1c847bf47115c5a6492ef1f62a9b9df57097cd49ce0d52c62",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O076.txt",
+          "sha256": "0c780b91ae1c56bcb0e55dbb70429252ee89761ea30d9f2f106ea5f33b9c475f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O077.txt",
+          "sha256": "d46a68e5daac5a687ffe09b3f0270cb04ecbfa51a23ef6226896a05d0570d76d",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O078.txt",
+          "sha256": "721f1b8cc4e1a983e3d9325ba411b46235fe297948201d67fd98cdb213f9885f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O079.txt",
+          "sha256": "ec0755652e0e0330f6f49ec674183a6db18c68dd716e0f6f4694b146c0b0f7dc",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O080.txt",
+          "sha256": "bc86b0bcd1073273028f4f3113fda236e48beeb1f47e7ecea963f5638a9690ec",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O081.txt",
+          "sha256": "ce4d0460a1011504a37d00ca6ab0c35ca98e951866e791ce5ab3968bfc2fd1e9",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O082.txt",
+          "sha256": "9ea2165c5abd2fd0407befe622edc2550d9a87372bc9271561113afc862bfb6f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O083.txt",
+          "sha256": "96d860c581723cb7d3332f6f4bcc32eafba92d0a2882e5bfd0860974dbb2d5b7",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O084.txt",
+          "sha256": "53a3b7aeae314cdc5f5c158ee1d7e841a441310b79f803ca69a0c0b2455bf9a4",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O085.txt",
+          "sha256": "e7a540162b335ef38895cf4706d8ddabcbfe5ca1f9444f07f48ce71c3770b353",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O086.txt",
+          "sha256": "2e1f751c3e0445496b4fd08ba60543dfba994eb46bb3244fb70112c24081411c",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O087.txt",
+          "sha256": "bc76c64b4c90d324971784b23e4e5238cf52048c6b92a0b431b2828f9b0f75c4",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O088.txt",
+          "sha256": "e54f6f4c8e07d22c9a79728ab344f17cb0b89c67f89d8ccd3ea748a68ff9ef5c",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O089.txt",
+          "sha256": "861e314dbe13b0df0de5171ecdb65f77f2a313d7d2fdbad90130c493a754b69f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O090.txt",
+          "sha256": "4ca7975dafaaf87a7e71ca964b04dcb398cc9f3799f9366cb4ecd2a5b8cf2b7c",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O091.txt",
+          "sha256": "309ab20504b298e1b28c1a29a9d2ad39b5d685cb8c8a7425eb3d90728369f9b4",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O092.txt",
+          "sha256": "c91140e751fe210b0ad6e4f345631107122eaeaa5df621cf371a25ffeb191068",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O093.txt",
+          "sha256": "f0a84215cfef85ef64adfd4c55c326101a1c4edc2aa0340bcd14d1d604095632",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O094.txt",
+          "sha256": "9b7db447b3ba945314faf9852a39a3e31a24753c253cf56b1432911499739c8f",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O095.txt",
+          "sha256": "1333be6a17375aed0723904152c3a3f0f71bf729765660e0c114333465605635",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O096.txt",
+          "sha256": "3a6bb8ed0222fe19de1a6e49277e17a4aca89be63e7b5071e381aea8278634a2",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O097.txt",
+          "sha256": "1d5eb41d05e6192a9f33901f575d09b03edaeb5ae2035b1800e93f19f9d30c75",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O098.txt",
+          "sha256": "9ee41d14e6eb4b0ef8ab5cfe3ef11b1a2c0a5f26ab99473d539ea329e341b4eb",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O099.txt",
+          "sha256": "6d35eb6c84097b5e65faffd034480cab99f1760bdda8c18958f6bac4040fd792",
+          "n_samples": 4097
+        },
+        {
+          "path": "bonn_data/B/O100.txt",
+          "sha256": "b5a85be5ff2ffe2997e21226a9f25728305d7402c92178f17dd4780e6ab02aba",
+          "n_samples": 4097
+        }
+      ]
+    }
+  },
+  "format_verified": true,
+  "created_utc": "2026-06-23T16:52:02Z",
+  "git_commit": "f975ea4694df36b7f331ca8b4f6e7af3e0e543b7"
+}

@@ -20,3 +20,4 @@ artifacts/*.tmp
 
 # release certificate is a runtime proof, regenerated (root embeds live counts)
 artifacts/certificate/
+examples/bonn_bright_line/bonn_data/

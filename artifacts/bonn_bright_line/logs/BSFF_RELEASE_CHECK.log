@@ -1,0 +1,200 @@
+{
+  "artifacts": [
+    {
+      "path": "artifacts/bsff_phase1_validation.json",
+      "present": true,
+      "sha256": "0710770017bc7278e66aa1ce1cba1f85bacff11cda745d466aee6083faba4e6a"
+    },
+    {
+      "path": "artifacts/provenance_manifest.json",
+      "present": true,
+      "sha256": "6d5a4db4114ac980d4c5666b83960367b59178657b093770e6309f35af761192"
+    },
+    {
+      "path": "artifacts/tisean_validation.json",
+      "present": true,
+      "sha256": "7b609387dc7bdbca2d74ba5e7c56356ff0438b6f1aa10557eaa1aa0c012bba4c"
+    },
+    {
+      "path": "artifacts/real_eeg_case/verdict.json",
+      "present": true,
+      "sha256": "8bc5414765adb3f9bcf33aec86ddbdb07321dd13c9fb0f515db6b3ccdeef6e1a"
+    },
+    {
+      "path": "artifacts/real_eeg_case/manifest.json",
+      "present": true,
+      "sha256": "d7b27771cac5f998aa78879402b465d74e7b18f41ae160b334b21a1e750ffd30"
+    },
+    {
+      "path": "STATUS.md",
+      "present": true,
+      "sha256": "906c5c12247a4fbd8426a87fe1695c266bd775768aaed58af21ff43c6d56687e"
+    }
+  ],
+  "capabilities": {
+    "capabilities": [
+      {
+        "degraded_without": "Bayes factor falls back to a BIC normal approximation",
+        "enables": "JZS Cauchy Bayes factor for the SURVIVED corroboration gate",
+        "extra": "stats",
+        "installed": true,
+        "module": "pingouin",
+        "name": "bayesian-jzs",
+        "required_for_strict": true,
+        "version": "0.6.1"
+      },
+      {
+        "degraded_without": "MI-based feature-selection leakage detection is unavailable",
+        "enables": "mutual-information label-permutation leakage detection",
+        "extra": "leakage",
+        "installed": true,
+        "module": "sklearn",
+        "name": "deep-leakage",
+        "required_for_strict": true,
+        "version": "1.9.0"
+      },
+      {
+        "degraded_without": "claims must be supplied as JSON instead of YAML",
+        "enables": "ClaimSpec loading from YAML files",
+        "extra": "yaml",
+        "installed": true,
+        "module": "yaml",
+        "name": "yaml-claims",
+        "required_for_strict": false,
+        "version": null
+      },
+      {
+        "degraded_without": "raw EDF/BDF files cannot be read (use .npy/.csv inputs)",
+        "enables": "raw EDF/BDF normalization to canonical signal arrays",
+        "extra": "moabb",
+        "installed": false,
+        "module": "mne",
+        "name": "edf-ingest",
+        "required_for_strict": false,
+        "version": null
+      },
+      {
+        "degraded_without": "MOABB datasets cannot be adjudicated directly",
+        "enables": "MOABB external EEG benchmark ingestion",
+        "extra": "moabb",
+        "installed": false,
+        "module": "moabb",
+        "name": "moabb-benchmark",
+        "required_for_strict": false,
+        "version": null
+      }
+    ],
+    "executable": "/home/neuro7/bsff-audit/.venv/bin/python",
+    "installed_extras": [
+      "leakage",
+      "stats",
+      "yaml"
+    ],
+    "joss_ready": true,
+    "missing_extras": [
+      "moabb"
+    ],
+    "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+    "python_version": "3.12.3",
+    "schema": "bsff.capabilities/v1",
+    "strict_missing_extras": [],
+    "strict_policy_ready": true
+  },
+  "command": "bsff release-check",
+  "gates": [
+    {
+      "label": "operational-kernel-selftest",
+      "passed": true,
+      "required": true,
+      "returncode": 0,
+      "summary": "}"
+    },
+    {
+      "label": "architecture-contract",
+      "passed": true,
+      "required": true,
+      "returncode": 0,
+      "summary": "Architecture contract: PASS"
+    },
+    {
+      "label": "truth-contract",
+      "passed": true,
+      "required": true,
+      "returncode": 0,
+      "summary": "Truth contract: PASS"
+    },
+    {
+      "label": "open-source-readiness",
+      "passed": true,
+      "required": true,
+      "returncode": 0,
+      "summary": "Open-source readiness: PASS"
+    },
+    {
+      "label": "ip-provenance",
+      "passed": true,
+      "required": true,
+      "returncode": 0,
+      "summary": "IP/provenance validation: PASS"
+    },
+    {
+      "label": "markdown",
+      "passed": true,
+      "required": true,
+      "returncode": 0,
+      "summary": "Markdown validation: PASS"
+    },
+    {
+      "label": "github-actions-policy",
+      "passed": true,
+      "required": true,
+      "returncode": 0,
+      "summary": "GitHub Actions policy: PASS"
+    },
+    {
+      "label": "secret-scan",
+      "passed": true,
+      "required": true,
+      "returncode": 0,
+      "summary": "Secret scan: PASS"
+    },
+    {
+      "label": "provenance-manifest",
+      "passed": true,
+      "required": true,
+      "returncode": 0,
+      "summary": "}"
+    },
+    {
+      "label": "tisean-reference",
+      "passed": true,
+      "required": true,
+      "returncode": 0,
+      "summary": "TISEAN reference validation: PASS"
+    },
+    {
+      "label": "real-eeg-case",
+      "passed": true,
+      "required": true,
+      "returncode": 0,
+      "summary": "  label-leakage   : REFUTED (real engine)"
+    },
+    {
+      "label": "status-sync",
+      "passed": false,
+      "required": true,
+      "returncode": 1,
+      "summary": "  generated: <!-- Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab -->"
+    }
+  ],
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "python_version": "3.12.3",
+  "release_verdict": "RELEASE_BLOCKED",
+  "required_gate_failures": [
+    "status-sync"
+  ],
+  "schema": "bsff.release/v1",
+  "strict": false,
+  "tool": "bsff",
+  "tool_version": "0.4.0"
+}

@@ -1,0 +1,30 @@
+============================================================
+BSFF — Spectrum-Matched AR Negative Control (G2, instrument verdict)
+  input=bonn_data/A n_segments=20 ar_order=10 n_surrogates=99 policy=standard alpha=0.05
+============================================================
+  Z001: REFUTED  (raw_rej=False)
+  Z002: UNSUPPORTED  (raw_rej=True)
+  Z003: REFUTED  (raw_rej=False)
+  Z004: REFUTED  (raw_rej=False)
+  Z005: REFUTED  (raw_rej=False)
+  Z006: REFUTED  (raw_rej=False)
+  Z007: REFUTED  (raw_rej=False)
+  Z008: REFUTED  (raw_rej=False)
+  Z009: REFUTED  (raw_rej=False)
+  Z010: REFUTED  (raw_rej=False)
+  Z011: SURVIVED ← FALSE POSITIVE  (raw_rej=True)
+  Z012: REFUTED  (raw_rej=False)
+  Z013: REFUTED  (raw_rej=False)
+  Z014: REFUTED  (raw_rej=False)
+  Z015: REFUTED  (raw_rej=False)
+  Z016: REFUTED  (raw_rej=False)
+  Z017: REFUTED  (raw_rej=False)
+  Z018: REFUTED  (raw_rej=False)
+  Z019: REFUTED  (raw_rej=False)
+  Z020: REFUTED  (raw_rej=False)
+
+  instrument FPR: 1/20 = 0.050  (raw-rank FPR = 0.100) | threshold 0.05
+  FPR <= alpha: True
+
+  NEGATIVE CONTROL PASS: real-spectrum AR null -> instrument FPR=0.050 <= 0.05. (raw rank-order FPR=0.100 is anti-conservative; the corroboration gate restores specificity.)
+Evidence bundle -> ../../artifacts/controls/ar_negative_control_EXPLORATORY.json

@@ -1,0 +1,11 @@
+{
+  "command": "pytest -q tests/bonn_bright_line",
+  "exit_code": 0,
+  "duration_sec": 5.1,
+  "passed": 0,
+  "failed": 0,
+  "skipped": 0,
+  "log_tail": [
+    "................                                                         [100%]"
+  ]
+}

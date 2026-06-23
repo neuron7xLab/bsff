@@ -1,0 +1,4 @@
+python=3.12.3
+platform=Linux-6.8.0-124-generic-x86_64-with-glibc2.39
+git_commit=8149f124adff57f67b81f4d0c647ce6b802c687b
+timestamp_utc=2026-06-23T19:22:55Z
