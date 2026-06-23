@@ -12,7 +12,7 @@ is regenerated from machine facts by
 
 **Final validation verdict: PASS — adversarial gates killed the intended regressions and the deterministic gates hold.**
 
-Mutation score: **4/4** (1.0). Surrogate seed policy: _all stochastic tests must use explicit seeds_. Network policy: _no test may require network access_.
+Mutation score: **8/8** (1.0). Surrogate seed policy: _all stochastic tests must use explicit seeds_. Network policy: _no test may require network access_.
 
 ## Baseline command matrix
 
@@ -44,8 +44,12 @@ the targeted oracle test to FAIL. A survivor is a hole in the suite.
 |---|---|---|---|
 | `MUT-001` | `src/bsff/pipeline.py` | a nonconverged surrogate null must demote the verdict to UNSUPPORTED | ✅ killed |
 | `MUT-002` | `src/bsff/stages.py` | flagged leakage must short-circuit claim promotion to REFUTED | ✅ killed |
-| `MUT-003` | `src/bsff/pipeline.py` | an uncorroborated frequentist rejection (BF10 < threshold) must not promote | ✅ killed |
+| `MUT-003` | `src/bsff/stages.py` | a nonstationary signal under fail_closed must REFUTE before surrogates | ✅ killed |
 | `MUT-004` | `src/bsff/surrogate_engine.py` | rank-order rejection requires p_value <= alpha (correct one-sided semantics) | ✅ killed |
+| `MUT-005` | `src/bsff/pipeline.py` | an uncorroborated frequentist rejection (BF10 < threshold) must not promote | ✅ killed |
+| `MUT-006` | `src/bsff/surrogate_engine.py` | NaN/Inf input must be refused before any statistic is computed | ✅ killed |
+| `MUT-007` | `src/bsff/pipeline.py` | every verdict must carry a 64-hex evidence contract hash | ✅ killed |
+| `MUT-008` | `src/bsff/schemas.py` | ClaimSpec must reject an underpowered surrogate_count (no silent schema drift) | ✅ killed |
 
 ## Oracle fixtures
 

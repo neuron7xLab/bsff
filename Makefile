@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
-.PHONY: lab-99 regen
+.PHONY: lab-99 regen lock verify verify-offline build-proof openai-2026
 
 # Full local lab run — mirrors the CI test + slow-tests + build surface.
 lab-99:
@@ -32,3 +32,43 @@ lab-99:
 # Regenerate every generated artifact in dependency order (STATUS -> MANIFEST -> pages).
 regen:
 	python tools/regenerate.py
+
+# --- OpenAI-2026 research-grade validation grid -----------------------------
+
+# Regenerate the hash-pinned dependency locks from pyproject.
+lock:
+	python -m pip install pip-tools
+	pip-compile pyproject.toml --extra dev --extra leakage --extra stats --extra yaml --generate-hashes -o requirements/ci.lock
+	pip-compile pyproject.toml --extra dev --generate-hashes -o requirements/dev.lock
+	pip-compile pyproject.toml --extra dev --extra fuzz --generate-hashes -o requirements/fuzz.lock
+	pip-compile pyproject.toml --extra dev --extra security --generate-hashes -o requirements/security.lock
+	python tools/validate_lockfiles.py
+
+# Full research-grade verification, ending on the machine-derived verdict.
+verify:
+	python -m ruff check src tests tools benchmarks fuzz
+	python -m ruff format --check src tests tools benchmarks fuzz
+	python -m pytest tests/ -m "not slow" --tb=short
+	python -m pytest tests/property tests/adversarial --tb=short
+	python tools/mutation_kill_gate.py --strict
+	python tools/validate_mutation_report.py artifacts/adversarial/mutation_kill_report.json
+	python tools/statistical_power_profile.py --output artifacts/statistics/power_profile.json
+	python tools/validate_power_profile.py artifacts/statistics/power_profile.json
+	python tools/final_validation_verdict.py
+
+# Same correctness surface, with external network denied.
+verify-offline:
+	python -m pytest tests/ -m "not slow" --tb=short --disable-network
+	python -m pytest tests/property tests/adversarial --tb=short --disable-network
+
+# Build proof: wheel runs offline, SBOM + manifest are reproducible.
+build-proof:
+	python -m build
+	python tools/validate_wheel_runtime.py --offline
+	python tools/generate_sbom.py --outdir artifacts/sbom
+	python tools/validate_provenance.py
+	python tools/generate_manifest.py --check
+
+# The whole grid, locally.
+openai-2026: lock verify-offline build-proof verify
+	@echo "OpenAI-2026 validation grid complete."

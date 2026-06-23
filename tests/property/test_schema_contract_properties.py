@@ -29,7 +29,11 @@ def _valid_spec(draw: st.DrawFn) -> ClaimSpec:
     alpha = draw(st.sampled_from([0.05, 0.01, 0.1, 0.025]))
     minimum = int(1 / alpha) - 1
     return ClaimSpec(
-        claim_id=draw(st.text(min_size=1, max_size=24, alphabet=st.characters(min_codepoint=48, max_codepoint=122))),
+        claim_id=draw(
+            st.text(
+                min_size=1, max_size=24, alphabet=st.characters(min_codepoint=48, max_codepoint=122)
+            )
+        ),
         signal_type=draw(st.sampled_from(_SIGNALS)),
         task_type=draw(st.sampled_from(_TASKS)),
         sampling_rate_hz=draw(st.floats(1.0, 5000.0, allow_nan=False, allow_infinity=False)),
