@@ -191,7 +191,17 @@ def run(output: Path, keep: bool = False) -> int:
                 code, _log = _pytest(sandbox, m.targets)
             finally:
                 target.write_text(original, encoding="utf-8")
-            killed = code != 0
+            # A genuine kill is an ASSERTION firing (pytest exit 1 = tests ran and
+            # failed/errored), NOT the mutant breaking collection (exit 2), a missing
+            # target (4/5), or an internal error (3). Counting a collection-break as
+            # "killed" would let the mutation score LIE about the suite's real teeth.
+            if code not in (0, 1):
+                print(
+                    f"[ERROR] {m.mutant_id}: pytest exit {code} is a non-behavioral failure "
+                    "(broken collection / missing target), not a clean kill"
+                )
+                return 2
+            killed = code == 1
             results.append(
                 {
                     "mutant_id": m.mutant_id,

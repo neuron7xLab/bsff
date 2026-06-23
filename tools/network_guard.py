@@ -25,6 +25,7 @@ _LOOPBACK_PREFIXES = ("127.",)
 _real_connect = socket.socket.connect
 _real_connect_ex = socket.socket.connect_ex
 _real_create_connection = socket.create_connection
+_real_sendto = socket.socket.sendto
 _installed = False
 
 
@@ -61,6 +62,15 @@ def _guarded_create_connection(address: object, *args: object, **kwargs: object)
     return _real_create_connection(address, *args, **kwargs)  # type: ignore[arg-type]
 
 
+def _guarded_sendto(self: socket.socket, *args: object) -> object:  # type: ignore[override]
+    # sendto(data, address) or sendto(data, flags, address): the address is last.
+    # Closes the connectionless (UDP) exfiltration path that `connect` guards miss.
+    address = args[-1] if args else None
+    if self.family in (socket.AF_INET, socket.AF_INET6) and not _is_local(address):
+        raise NetworkAccessError(f"offline mode: external sendto {address!r} is forbidden")
+    return _real_sendto(self, *args)
+
+
 def install() -> None:
     """Activate the offline guard process-wide (idempotent)."""
     global _installed
@@ -68,6 +78,7 @@ def install() -> None:
         return
     socket.socket.connect = _guarded_connect  # type: ignore[method-assign,assignment]
     socket.socket.connect_ex = _guarded_connect_ex  # type: ignore[method-assign,assignment]
+    socket.socket.sendto = _guarded_sendto  # type: ignore[method-assign,assignment]
     socket.create_connection = _guarded_create_connection  # type: ignore[assignment]
     _installed = True
 
@@ -77,6 +88,7 @@ def uninstall() -> None:
     global _installed
     socket.socket.connect = _real_connect  # type: ignore[method-assign]
     socket.socket.connect_ex = _real_connect_ex  # type: ignore[method-assign]
+    socket.socket.sendto = _real_sendto  # type: ignore[method-assign]
     socket.create_connection = _real_create_connection  # type: ignore[assignment]
     _installed = False
 
@@ -92,7 +104,7 @@ def offline() -> Iterator[None]:
 
 
 if __name__ == "__main__":
-    # Self-check: external connect blocked, loopback allowed.
+    # Self-check: both connection-oriented and connectionless external egress blocked.
     install()
     try:
         socket.create_connection(("8.8.8.8", 53), timeout=1)
@@ -100,4 +112,13 @@ if __name__ == "__main__":
         raise SystemExit(1)
     except NetworkAccessError:
         print("offline guard: external connection blocked (OK)")
+    udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        udp.sendto(b"x", ("8.8.8.8", 53))
+        print("FAIL: external UDP sendto was not blocked")
+        raise SystemExit(1)
+    except NetworkAccessError:
+        print("offline guard: external UDP sendto blocked (OK)")
+    finally:
+        udp.close()
     raise SystemExit(0)
