@@ -29,6 +29,10 @@ from pathlib import Path
 CALIBRATION = "test_bench_calibration"
 # Wall-time: catch algorithmic regressions across machines, not micro-jitter.
 TIME_THRESHOLD = 1.0
+# Below this baseline median (seconds) a benchmark is faster than the measurement
+# noise floor; its normalized time ratio swings wildly from jitter alone, so the
+# wall-time gate is not applied (memory, which is allocation-counted, still is).
+TIME_NOISE_FLOOR_S = 5e-4
 # Peak memory is allocation-counted (machine-independent) → tight bound.
 MEMORY_THRESHOLD = 0.15
 
@@ -63,12 +67,16 @@ def compare(baseline: dict, current: dict) -> list[str]:
         if name == CALIBRATION or name not in cur:
             continue
         cur_entry = cur[name]
-        base_ratio = _normalized_time(base_entry, base_calib)
-        cur_ratio = _normalized_time(cur_entry, cur_calib)
-        if base_ratio > 0:
-            drift = (cur_ratio - base_ratio) / base_ratio
-            if drift > TIME_THRESHOLD:
-                regressions.append(f"{name}: normalized time +{drift:.0%} (> {TIME_THRESHOLD:.0%})")
+        # Only gate wall-time on benchmarks slower than the noise floor.
+        if base_entry["median"] >= TIME_NOISE_FLOOR_S:
+            base_ratio = _normalized_time(base_entry, base_calib)
+            cur_ratio = _normalized_time(cur_entry, cur_calib)
+            if base_ratio > 0:
+                drift = (cur_ratio - base_ratio) / base_ratio
+                if drift > TIME_THRESHOLD:
+                    regressions.append(
+                        f"{name}: normalized time +{drift:.0%} (> {TIME_THRESHOLD:.0%})"
+                    )
         base_mem = base_entry["peak_memory_bytes"]
         cur_mem = cur_entry["peak_memory_bytes"]
         if base_mem > 0:
