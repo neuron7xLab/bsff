@@ -52,6 +52,11 @@ DAG: tuple[Generator, ...] = (
     ),
     Generator("decision", "decision_gate", ("DECISION.md", "artifacts/decision/decision.json")),
     Generator("core", "build_core", ("CORE.md",)),
+    Generator(
+        "adversarial_validation",
+        "update_adversarial_validation",
+        ("ADVERSARIAL_VALIDATION.md",),
+    ),
 )
 
 

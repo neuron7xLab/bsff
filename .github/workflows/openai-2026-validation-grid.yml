@@ -1,0 +1,271 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+
+name: OpenAI-2026 Validation Grid
+
+# The consolidated research-grade gate. Twelve parallel per-dimension jobs give fast
+# feedback; the final job machine-derives the verdict over the committed evidence
+# and the cheap static gates. Every install is hash-pinned; tests run offline.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "11 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  lock-integrity:
+    name: 01-lock-integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python tools/validate_lockfiles.py
+      - run: python -m pip install --require-hashes --dry-run -r requirements/ci.lock
+
+  hermetic-offline-tests:
+    name: 02-hermetic-offline-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python -m pytest tests/ -m "not slow" --tb=short --disable-network
+
+  adversarial-oracles:
+    name: 03-adversarial-oracles
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python -m pytest tests/test_adversarial_operating_characteristics.py tests/adversarial -v --tb=short
+      - run: python tools/update_adversarial_validation.py --check
+
+  property-tests:
+    name: 04-property-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python -m pytest tests/property -v --tb=short
+
+  fuzz-smoke:
+    name: 05-fuzz-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python fuzz/fuzz_signal_inputs.py --max-runs 1000 --seed 2026
+      - run: python fuzz/fuzz_verdict_json.py --max-runs 5000 --seed 2026
+      - run: python fuzz/fuzz_policy_profiles.py --max-runs 5000 --seed 2026
+
+  mutation-kill:
+    name: 06-mutation-kill
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python tools/mutation_kill_gate.py --strict
+      - run: python tools/validate_mutation_report.py artifacts/adversarial/mutation_kill_report.json
+
+  wheel-runtime:
+    name: 07-wheel-runtime
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python tools/validate_wheel_runtime.py --offline
+
+  sbom-provenance:
+    name: 08-sbom-provenance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python tools/generate_sbom.py --outdir artifacts/sbom
+      - run: python tools/validate_provenance.py
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: grid-sbom
+          path: artifacts/sbom/*
+          if-no-files-found: warn
+
+  security:
+    name: 09-security
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/security.lock
+      - run: python tools/scan_secrets.py
+      - run: python tools/check_github_actions_policy.py
+      - run: python -m pip_audit --strict --progress-spinner off
+
+  statistical-power:
+    name: 10-statistical-power
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python tools/statistical_power_profile.py --output artifacts/statistics/power_profile.json
+      - run: python tools/validate_power_profile.py artifacts/statistics/power_profile.json
+
+  degradation:
+    name: 11-degradation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python -m pytest benchmarks -o "python_files=bench_*.py" --benchmark-json=artifacts/benchmarks/current.json -q
+      - run: python tools/compare_benchmark_baseline.py artifacts/benchmarks/baseline.json artifacts/benchmarks/current.json
+
+  api-cli-contract:
+    name: 12-api-cli-contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python -m pytest tests/test_public_api_contract.py tests/test_cli_contract.py -v --tb=short
+
+  final-verdict:
+    name: 13-final-verdict
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs:
+      - lock-integrity
+      - hermetic-offline-tests
+      - adversarial-oracles
+      - property-tests
+      - fuzz-smoke
+      - mutation-kill
+      - wheel-runtime
+      - sbom-provenance
+      - security
+      - statistical-power
+      - degradation
+      - api-cli-contract
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      # Machine-derive the consolidated verdict over the committed evidence + the
+      # cheap static gates (locks, SBOM, provenance). The per-dimension jobs above
+      # are the live gates; this is the single PASS/FAIL roll-up.
+      - run: python tools/generate_sbom.py --outdir artifacts/sbom
+      - run: python tools/final_validation_verdict.py --output artifacts/final/openai_2026_validation_verdict.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: openai-2026-final-verdict
+          path: artifacts/final/openai_2026_validation_verdict.json
+          if-no-files-found: warn

@@ -69,6 +69,9 @@ class Mutant:
     targets: tuple[str, ...]
 
 
+PROP_SIGNAL = "tests/property/test_signal_validation_properties.py"
+SCHEMA = "tests/test_claimspec_schema.py"
+
 MUTANTS: tuple[Mutant, ...] = (
     Mutant(
         mutant_id="MUT-001",
@@ -88,14 +91,11 @@ MUTANTS: tuple[Mutant, ...] = (
     ),
     Mutant(
         mutant_id="MUT-003",
-        rel_path="src/bsff/pipeline.py",
-        old="                context.policy.bayesian_corroboration_min",
-        new="                0.0  # MUT-003: corroboration threshold neutralised",
-        behaviour="an uncorroborated frequentist rejection (BF10 < threshold) must not promote",
-        targets=(
-            f"{OC}::test_linear_null_never_survives_under_strict",
-            f"{OC}::test_linear_null_false_positive_rate_within_binomial_guard",
-        ),
+        rel_path="src/bsff/stages.py",
+        old='        fatal = context.policy.stationarity_mode == "fail_closed"',
+        new="        fatal = False  # MUT-003: stationarity fatality disabled",
+        behaviour="a nonstationary signal under fail_closed must REFUTE before surrogates",
+        targets=(f"{OC}::test_nonstationary_random_walk_fails_strict_gate_fatally",),
     ),
     Mutant(
         mutant_id="MUT-004",
@@ -104,6 +104,41 @@ MUTANTS: tuple[Mutant, ...] = (
         new="    rejected = bool(p_value >= alpha)  # MUT-004: inverted p-value inequality",
         behaviour="rank-order rejection requires p_value <= alpha (correct one-sided semantics)",
         targets=(f"{OC}::test_nonlinear_positive_control_survives_with_exposed_evidence",),
+    ),
+    Mutant(
+        mutant_id="MUT-005",
+        rel_path="src/bsff/pipeline.py",
+        old="                context.policy.bayesian_corroboration_min",
+        new="                0.0  # MUT-005: corroboration threshold neutralised",
+        behaviour="an uncorroborated frequentist rejection (BF10 < threshold) must not promote",
+        targets=(
+            f"{OC}::test_linear_null_never_survives_under_strict",
+            f"{OC}::test_linear_null_false_positive_rate_within_binomial_guard",
+        ),
+    ),
+    Mutant(
+        mutant_id="MUT-006",
+        rel_path="src/bsff/surrogate_engine.py",
+        old="    if not np.all(np.isfinite(arr)):",
+        new="    if False and not np.all(np.isfinite(arr)):  # MUT-006: NaN/Inf gate disabled",
+        behaviour="NaN/Inf input must be refused before any statistic is computed",
+        targets=(f"{PROP_SIGNAL}::test_p1_nonfinite_never_reaches_verdict",),
+    ),
+    Mutant(
+        mutant_id="MUT-007",
+        rel_path="src/bsff/pipeline.py",
+        old="            contract_sha256=stable_sha256(contract),",
+        new='            contract_sha256="",  # MUT-007: evidence contract hash removed',
+        behaviour="every verdict must carry a 64-hex evidence contract hash",
+        targets=(f"{OC}::test_nonlinear_positive_control_survives_with_exposed_evidence",),
+    ),
+    Mutant(
+        mutant_id="MUT-008",
+        rel_path="src/bsff/schemas.py",
+        old="        if self.surrogate_count < minimum:",
+        new="        if False and self.surrogate_count < minimum:  # MUT-008: schema drift accepted",
+        behaviour="ClaimSpec must reject an underpowered surrogate_count (no silent schema drift)",
+        targets=(f"{SCHEMA}::test_claimspec_rejects_too_few_surrogates",),
     ),
 )
 
@@ -175,6 +210,7 @@ def run(output: Path, keep: bool = False) -> int:
             "mutants_killed": killed,
             "mutation_score": round(killed / len(results), 3),
             "survivors": survivors,
+            "verdict": "PASS" if not survivors else "FAIL",
             "results": results,
             "commands": commands,
             "timestamp_policy": "no nondeterministic timestamp in hash-critical output",
@@ -198,8 +234,15 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--output",
+        "--report",
+        dest="output",
         type=Path,
         default=ROOT / "artifacts" / "adversarial" / "mutation_kill_report.json",
+    )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="explicit affirmation of the default: any survivor exits non-zero",
     )
     parser.add_argument(
         "--keep", action="store_true", help="keep the mutation sandbox for debugging"

@@ -1,0 +1,14 @@
+{
+  "api_contract": "PASS",
+  "blocking_failures": [],
+  "bus_factor_reduction": "PASS",
+  "degradation": "PASS",
+  "fuzz_property_chaos": "PASS",
+  "hermetic_ci": "PASS",
+  "mutation_score": 1.0,
+  "project": "bsff",
+  "sbom": "PASS",
+  "signed_provenance": "PASS",
+  "statistical_power": "PASS",
+  "verdict": "PASS"
+}

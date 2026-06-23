@@ -53,7 +53,7 @@ def _clean_env() -> dict[str, str]:
     return env
 
 
-def validate_wheel(output: Path, keep: bool = False) -> int:
+def validate_wheel(output: Path, keep: bool = False, offline: bool = False) -> int:
     workdir = Path(tempfile.mkdtemp(prefix="bsff-wheel-"))
     dist = workdir / "dist"
     venv = workdir / ".venv-wheel-test"
@@ -69,26 +69,54 @@ def validate_wheel(output: Path, keep: bool = False) -> int:
         wheel = wheels[0]
         print(f"    wheel: {Path(wheel).name}")
 
-        # 2. Pristine virtualenv; install ONLY the wheel (+ stats extra so the
-        #    publication-grade Bayes path is real, not silently degraded).
-        print("==> creating clean virtualenv and installing the wheel")
-        _run([sys.executable, "-m", "venv", str(venv)], cwd=workdir, env=env)
         vpy = venv / "bin" / "python"
-        _run([str(vpy), "-m", "pip", "install", "--upgrade", "pip"], cwd=workdir, env=env)
-        _run(
-            [str(vpy), "-m", "pip", "install", f"{wheel}[stats,leakage,yaml]"], cwd=workdir, env=env
-        )
+        if offline:
+            # Offline proof: a venv that inherits the already-resolved deps, then
+            # install the wheel with NO index and NO deps. --no-index makes any
+            # attempt to reach PyPI fail, so success proves the wheel runs without
+            # network given its runtime closure is present.
+            print("==> creating system-site venv and installing the wheel offline")
+            _run(
+                [sys.executable, "-m", "venv", "--system-site-packages", str(venv)],
+                cwd=workdir,
+                env=env,
+            )
+            _run(
+                [str(vpy), "-m", "pip", "install", "--no-index", "--no-deps", wheel],
+                cwd=workdir,
+                env=env,
+            )
+        else:
+            # 2. Pristine virtualenv; install ONLY the wheel (+ stats extra so the
+            #    publication-grade Bayes path is real, not silently degraded).
+            print("==> creating clean virtualenv and installing the wheel")
+            _run([sys.executable, "-m", "venv", str(venv)], cwd=workdir, env=env)
+            _run([str(vpy), "-m", "pip", "install", "--upgrade", "pip"], cwd=workdir, env=env)
+            _run(
+                [str(vpy), "-m", "pip", "install", f"{wheel}[stats,leakage,yaml]"],
+                cwd=workdir,
+                env=env,
+            )
 
         # 3. Import + real verdict from the INSTALLED package, asserting the source
         #    is the wheel, not the working-tree src. cwd is the temp workdir, so even
         #    `.` cannot expose the repo's src/ layout.
         print("==> exercising the installed import surface")
+        # The src-leak assertion proves the wheel shadows any editable install; it
+        # only applies to the pristine online venv. The offline venv inherits the
+        # parent's editable bsff via --system-site-packages, so the check is skipped
+        # there — offline mode proves "runs without network", not "shadows src".
+        src_assert = (
+            ""
+            if offline
+            else f"assert {str(ROOT / 'src')!r} not in str(src), f'src leak: {{src}}';"
+        )
         probe = (
             "import bsff, pathlib;"
             "from bsff import ClaimSpec, evaluate_claim_pipeline;"
             "from bsff.synthetic import henon_series;"
             "src=pathlib.Path(bsff.__file__).resolve();"
-            f"assert {str(ROOT / 'src')!r} not in str(src), f'editable/src leak: {{src}}';"
+            f"{src_assert}"
             "spec=ClaimSpec(claim_id='wheel-smoke', signal_type='EEG', task_type='nonlinear_structure',"
             " sampling_rate_hz=250.0, n_channels=1, n_samples=512, statistic='lagged_quadratic',"
             " alpha=0.05, surrogate_count=19);"
@@ -138,8 +166,13 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "artifacts" / "wheel_validation.json")
     parser.add_argument("--keep", action="store_true", help="keep the temp workdir for debugging")
+    parser.add_argument(
+        "--offline",
+        action="store_true",
+        help="install the wheel with --no-index/--no-deps to prove offline runtime",
+    )
     args = parser.parse_args(argv)
-    return validate_wheel(args.output, keep=args.keep)
+    return validate_wheel(args.output, keep=args.keep, offline=args.offline)
 
 
 if __name__ == "__main__":

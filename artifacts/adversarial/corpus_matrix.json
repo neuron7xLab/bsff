@@ -1,0 +1,98 @@
+{
+  "passed": 14,
+  "results": [
+    {
+      "class": "constant",
+      "converged": true,
+      "expectation": "never_survived",
+      "pass": true,
+      "verdict": "REFUTED"
+    },
+    {
+      "class": "near_constant",
+      "converged": false,
+      "expectation": "never_survived",
+      "pass": true,
+      "verdict": "REFUTED"
+    },
+    {
+      "class": "white_noise",
+      "converged": true,
+      "expectation": "never_survived",
+      "pass": true,
+      "verdict": "REFUTED"
+    },
+    {
+      "class": "ar1",
+      "converged": true,
+      "expectation": "never_survived",
+      "pass": true,
+      "verdict": "REFUTED"
+    },
+    {
+      "class": "random_walk",
+      "converged": true,
+      "expectation": "never_survived",
+      "pass": true,
+      "verdict": "REFUTED"
+    },
+    {
+      "class": "step_regime",
+      "converged": false,
+      "expectation": "never_survived",
+      "pass": true,
+      "verdict": "REFUTED"
+    },
+    {
+      "class": "henon_positive",
+      "converged": true,
+      "expectation": "survives_if_converged",
+      "pass": true,
+      "verdict": "SURVIVED"
+    },
+    {
+      "class": "short",
+      "expectation": "raises",
+      "pass": true,
+      "raised_valueerror": true
+    },
+    {
+      "class": "large_amplitude",
+      "converged": true,
+      "expectation": "never_survived",
+      "pass": true,
+      "verdict": "REFUTED"
+    },
+    {
+      "class": "nan_payload",
+      "expectation": "raises",
+      "pass": true,
+      "raised_valueerror": true
+    },
+    {
+      "class": "inf_payload",
+      "expectation": "raises",
+      "pass": true,
+      "raised_valueerror": true
+    },
+    {
+      "class": "dimension_poison",
+      "expectation": "raises",
+      "pass": true,
+      "raised_valueerror": true
+    },
+    {
+      "class": "leakage_flagged",
+      "expectation": "refuted",
+      "pass": true,
+      "verdict": "REFUTED"
+    },
+    {
+      "class": "nonconverged_budget",
+      "expectation": "unsupported",
+      "pass": true,
+      "verdict": "UNSUPPORTED"
+    }
+  ],
+  "total": 14
+}

@@ -1,0 +1,74 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+
+name: Provenance + SBOM
+
+# Bind every build artifact to a signed, Sigstore-backed provenance attestation and
+# a dual-format SBOM (SPDX + CycloneDX). On pull requests the build + SBOM + subject
+# hashing run (verifiable); the keyless attestation is emitted on push/release where
+# the OIDC identity is trustworthy.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  provenance-sbom:
+    name: provenance-sbom
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write # OIDC for keyless Sigstore attestation
+      attestations: write # write the build-provenance attestation
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      - name: Build wheel + sdist
+        run: python -m build
+      - name: Generate dual-format SBOM (SPDX + CycloneDX + sha256)
+        run: python tools/generate_sbom.py --outdir artifacts/sbom
+      - name: Hash build + SBOM subjects
+        run: |
+          mkdir -p artifacts/provenance
+          ( cd dist && sha256sum * ) > artifacts/provenance/subjects.sha256
+          sha256sum artifacts/sbom/* >> artifacts/provenance/subjects.sha256
+          cat artifacts/provenance/subjects.sha256
+      - name: Verify SBOM/provenance binding
+        run: python tools/validate_provenance.py
+      - name: Sign build provenance (keyless Sigstore)
+        if: github.event_name != 'pull_request'
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
+        with:
+          subject-path: "dist/*"
+      - name: Attest the SBOM
+        if: github.event_name != 'pull_request'
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
+        with:
+          subject-path: "artifacts/sbom/bsff.cyclonedx.json"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: bsff-provenance-sbom-${{ github.sha }}
+          path: |
+            dist/*
+            artifacts/sbom/*
+            artifacts/provenance/*
+          if-no-files-found: warn

@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
-"""Generate / verify a CycloneDX SBOM for the BSFF runtime closure.
+"""Generate / verify a dual-format SBOM (SPDX 2.3 + CycloneDX 1.5) for BSFF.
 
 Supply-chain trust needs a machine-readable inventory of exactly what code runs,
 not a hand-waved "we use numpy". This tool resolves BSFF's *runtime* dependency
-closure from installed distribution metadata (extras excluded), and emits a
-deterministic CycloneDX 1.5 SBOM: components sorted, no wall-clock timestamp and
-no random serial number, so the document is hash-stable and diffable.
+closure from installed distribution metadata (extras excluded), and emits two
+deterministic SBOMs — components sorted, no wall-clock timestamp and no random
+serial/namespace — so the documents are hash-stable and diffable.
 
-    python tools/generate_sbom.py --output artifacts/sbom.cdx.json
-    python tools/generate_sbom.py --check    # structural gate, exit 1 on a gap
+    python tools/generate_sbom.py                       # artifacts/sbom/{spdx,cyclonedx,sha256}
+    python tools/generate_sbom.py --output sbom.cdx.json # legacy single CycloneDX file
+    python tools/generate_sbom.py --check               # structural gate, exit 1 on a gap
 
-``--check`` regenerates the SBOM in memory and asserts the supply-chain invariants
+``--check`` regenerates both SBOMs in memory and asserts the supply-chain invariants
 that MUST hold regardless of exact pinned versions (so a routine dependency bump
-does not turn it red): valid CycloneDX envelope, BSFF as the root component, every
+does not turn it red): valid SPDX + CycloneDX envelopes, BSFF as the root, every
 component carrying name+version+purl, and the runtime essentials (numpy, scipy,
 statsmodels) present in the closure. It is fail-closed — any missing field aborts.
 
@@ -25,12 +26,14 @@ No network.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.metadata as im
 import json
+import re
 from collections import deque
 from pathlib import Path
 
-from packaging.requirements import Requirement
+from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -48,8 +51,11 @@ def _runtime_requirements(dist_name: str) -> list[Requirement]:
     for line in raw:
         try:
             req = Requirement(line)
-        except Exception:
-            continue
+        except InvalidRequirement as exc:
+            # Fail closed: a dependency declaration we cannot parse must not be
+            # silently dropped — that would emit an incomplete SBOM that looks
+            # complete. An unparseable requirement is a supply-chain integrity error.
+            raise SystemExit(f"unparseable requirement in {dist_name!r}: {line!r} ({exc})") from exc
         marker = str(req.marker) if req.marker else ""
         # Skip optional dependencies (anything gated behind an extra); keep core
         # runtime deps and platform/python markers that evaluate true here.
@@ -111,7 +117,7 @@ def _component(name: str, *, comp_type: str) -> dict:
     return comp
 
 
-def generate() -> dict:
+def generate_cyclonedx() -> dict:
     root_version = im.version(ROOT_PACKAGE)
     components = [_component(name, comp_type="library") for name in _resolve_closure(ROOT_PACKAGE)]
     return {
@@ -132,50 +138,184 @@ def generate() -> dict:
     }
 
 
-def _validate(sbom: dict) -> list[str]:
+def _spdx_id(name: str) -> str:
+    """SPDX identifiers allow only letters, digits, '.', and '-'."""
+    return "SPDXRef-Package-" + re.sub(r"[^A-Za-z0-9.-]", "-", name)
+
+
+def generate_spdx() -> dict:
+    """Deterministic SPDX 2.3 JSON SBOM of the same runtime closure.
+
+    A fixed creation timestamp and a version-derived namespace keep the document
+    hash-stable; uniqueness is traded for reproducibility on purpose.
+    """
+    root_version = im.version(ROOT_PACKAGE)
+    closure = _resolve_closure(ROOT_PACKAGE)
+    root_spdx_id = _spdx_id(ROOT_PACKAGE)
+
+    packages = [
+        {
+            "SPDXID": root_spdx_id,
+            "name": ROOT_PACKAGE,
+            "versionInfo": root_version,
+            "downloadLocation": "NOASSERTION",
+            "filesAnalyzed": False,
+            "licenseConcluded": "GPL-3.0-or-later",
+            "externalRefs": [
+                {
+                    "referenceCategory": "PACKAGE-MANAGER",
+                    "referenceType": "purl",
+                    "referenceLocator": f"pkg:pypi/{ROOT_PACKAGE}@{root_version}",
+                }
+            ],
+        }
+    ]
+    relationships = [
+        {
+            "spdxElementId": "SPDXRef-DOCUMENT",
+            "relationshipType": "DESCRIBES",
+            "relatedSpdxElement": root_spdx_id,
+        }
+    ]
+    for name in closure:
+        version = im.version(name)
+        pkg_id = _spdx_id(name)
+        license_id = _license_id(name) or "NOASSERTION"
+        packages.append(
+            {
+                "SPDXID": pkg_id,
+                "name": name,
+                "versionInfo": version,
+                "downloadLocation": "NOASSERTION",
+                "filesAnalyzed": False,
+                "licenseConcluded": license_id,
+                "externalRefs": [
+                    {
+                        "referenceCategory": "PACKAGE-MANAGER",
+                        "referenceType": "purl",
+                        "referenceLocator": f"pkg:pypi/{name}@{version}",
+                    }
+                ],
+            }
+        )
+        relationships.append(
+            {
+                "spdxElementId": root_spdx_id,
+                "relationshipType": "DEPENDS_ON",
+                "relatedSpdxElement": pkg_id,
+            }
+        )
+    return {
+        "spdxVersion": "SPDX-2.3",
+        "dataLicense": "CC0-1.0",
+        "SPDXID": "SPDXRef-DOCUMENT",
+        "name": f"{ROOT_PACKAGE}-{root_version}",
+        "documentNamespace": f"https://github.com/neuron7xLab/bsff/spdx/{ROOT_PACKAGE}-{root_version}",
+        "creationInfo": {
+            "created": "1970-01-01T00:00:00Z",
+            "creators": ["Tool: tools/generate_sbom.py", "Organization: neuron7xLab"],
+        },
+        "packages": packages,
+        "relationships": relationships,
+    }
+
+
+def _validate_cyclonedx(sbom: dict) -> list[str]:
     failures: list[str] = []
     if sbom.get("bomFormat") != "CycloneDX":
-        failures.append("bomFormat is not CycloneDX")
+        failures.append("cyclonedx: bomFormat is not CycloneDX")
     if not sbom.get("specVersion"):
-        failures.append("specVersion is missing")
+        failures.append("cyclonedx: specVersion is missing")
     root = sbom.get("metadata", {}).get("component", {})
     if root.get("name") != ROOT_PACKAGE or not root.get("purl"):
-        failures.append("root component is not a purl-bearing bsff")
+        failures.append("cyclonedx: root component is not a purl-bearing bsff")
     names = {c.get("name") for c in sbom.get("components", [])}
     for field in ("name", "version", "purl"):
         if any(not c.get(field) for c in sbom.get("components", [])):
-            failures.append(f"a component is missing required field: {field}")
+            failures.append(f"cyclonedx: a component is missing required field: {field}")
     for essential in RUNTIME_ESSENTIALS:
         if canonicalize_name(essential) not in {canonicalize_name(n) for n in names if n}:
-            failures.append(f"runtime essential absent from SBOM closure: {essential}")
+            failures.append(f"cyclonedx: runtime essential absent from closure: {essential}")
     return failures
 
 
+def _validate_spdx(sbom: dict) -> list[str]:
+    failures: list[str] = []
+    if sbom.get("spdxVersion") != "SPDX-2.3":
+        failures.append("spdx: spdxVersion is not SPDX-2.3")
+    if sbom.get("SPDXID") != "SPDXRef-DOCUMENT":
+        failures.append("spdx: document SPDXID missing")
+    pkgs = sbom.get("packages", [])
+    names = {p.get("name") for p in pkgs}
+    if ROOT_PACKAGE not in names:
+        failures.append("spdx: root package bsff missing")
+    for field in ("SPDXID", "name", "versionInfo", "externalRefs"):
+        if any(not p.get(field) for p in pkgs):
+            failures.append(f"spdx: a package is missing required field: {field}")
+    for essential in RUNTIME_ESSENTIALS:
+        if canonicalize_name(essential) not in {canonicalize_name(n) for n in names if n}:
+            failures.append(f"spdx: runtime essential absent from closure: {essential}")
+    return failures
+
+
+def _dump(obj: dict) -> str:
+    return json.dumps(obj, indent=2, sort_keys=True) + "\n"
+
+
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Generate / verify the BSFF CycloneDX SBOM.")
-    parser.add_argument("--output", type=Path, default=ROOT / "artifacts" / "sbom.cdx.json")
-    parser.add_argument("--check", action="store_true", help="Validate structure; exit 1 on a gap.")
+    parser = argparse.ArgumentParser(
+        description="Generate / verify the BSFF SBOM (SPDX + CycloneDX)."
+    )
+    parser.add_argument(
+        "--outdir",
+        type=Path,
+        default=ROOT / "artifacts" / "sbom",
+        help="dual-format output directory",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="legacy single-file CycloneDX output path (back-compat)",
+    )
+    parser.add_argument(
+        "--check", action="store_true", help="Validate both formats; exit 1 on a gap."
+    )
     args = parser.parse_args(argv)
 
-    sbom = generate()
-    failures = _validate(sbom)
+    cdx = generate_cyclonedx()
+    spdx = generate_spdx()
+    failures = _validate_cyclonedx(cdx) + _validate_spdx(spdx)
     if failures:
         print("SBOM validation FAILED:")
         for item in failures:
             print(f"- {item}")
         return 1
+    n = len(cdx["components"])
 
     if args.check:
-        print(f"SBOM: PASS ({len(sbom['components'])} runtime components, root {ROOT_PACKAGE})")
+        print(f"SBOM: PASS (SPDX + CycloneDX, {n} runtime components, root {ROOT_PACKAGE})")
         return 0
 
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(sbom, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    try:
-        display = args.output.resolve().relative_to(ROOT)
-    except ValueError:
-        display = args.output
-    print(f"Wrote {display} ({len(sbom['components'])} runtime components)")
+    if args.output is not None:
+        # Back-compat: write only the CycloneDX document to the given path.
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(_dump(cdx), encoding="utf-8")
+        print(f"Wrote {args.output} ({n} runtime components, CycloneDX)")
+        return 0
+
+    args.outdir.mkdir(parents=True, exist_ok=True)
+    cdx_path = args.outdir / "bsff.cyclonedx.json"
+    spdx_path = args.outdir / "bsff.spdx.json"
+    cdx_path.write_text(_dump(cdx), encoding="utf-8")
+    spdx_path.write_text(_dump(spdx), encoding="utf-8")
+    # Deterministic sha256 manifest binding both documents.
+    lines = []
+    for path in (cdx_path, spdx_path):
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        lines.append(f"{digest}  {path.name}")
+    (args.outdir / "bsff.sbom.sha256").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"Wrote {args.outdir}/ (SPDX + CycloneDX + sha256, {n} runtime components)")
     return 0
 
 
