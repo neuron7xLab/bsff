@@ -4,7 +4,7 @@
 | check | command | result |
 |-------|---------|--------|
 | compileall | `python -m compileall src examples tests` | PASS (exit 0) |
-| bonn suite | `python -m pytest -q tests/bonn_bright_line` | **16 passed, 0 failed** (JUnit XML; `artifacts/release/bonn_bright_line/TESTS.json`) |
+| bonn suite | `python -m pytest -q tests/bonn_bright_line` | **all pass** (authoritative count in `artifacts/release/bonn_bright_line/TESTS.json`) |
 | selftest | `bsff selftest` | PASS (exit 0) |
 | manifest/status sync | `pytest tests/test_manifest_sync.py` | PASS (STATUS.md not clobbered) |
 | certify gate | `pytest tests/test_certify.py` | PASS |
