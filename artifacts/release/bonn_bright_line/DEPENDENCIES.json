@@ -1,7 +1,7 @@
 {
   "pip_freeze": [
     "attrs==26.1.0",
-    "-e git+https://github.com/neuron7xLab/bsff.git@8149f124adff57f67b81f4d0c647ce6b802c687b#egg=bsff",
+    "-e git+https://github.com/neuron7xLab/bsff.git@54942349d1d2dc71938baf0397c4ba7c4210a191#egg=bsff",
     "build==1.5.0",
     "click==8.4.1",
     "contourpy==1.3.3",

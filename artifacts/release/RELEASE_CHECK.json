@@ -1,0 +1,145 @@
+{
+  "status": "PASS",
+  "final_state": "BRIGHT_LINE_NOT_PASSED",
+  "checks": [
+    {
+      "name": "exists:artifacts/bonn_bright_line/BRIGHT_LINE_SUMMARY.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:artifacts/bonn_bright_line/bonn_CONFIRMATORY_VERDICT.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:artifacts/bonn_bright_line/DATASET_MANIFEST.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:artifacts/controls/ar_negative_CONFIRMATORY_A.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:artifacts/controls/ar_negative_CONFIRMATORY_B.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:artifacts/release/bonn_bright_line/HASHES.sha256",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:artifacts/release/bonn_bright_line/VERDICT.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:artifacts/release/bonn_bright_line/TESTS.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:artifacts/release/bonn_bright_line/ENVIRONMENT.txt",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:docs/validation/BONN_BRIGHT_LINE_PROTOCOL.md",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:docs/validation/STATISTIC_REGISTRY.md",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:docs/validation/CLAIM_AUDIT.md",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:docs/validation/DATASET_PROVENANCE_AUDIT.md",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:docs/validation/NEXT_METHOD_CONTRACT_S2.md",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:docs/validation/BRIGHT_LINE_VERDICT.md",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:docs/reviewer_packet/REVIEWER_PACKET.md",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:FORMAL_VERDICT.md",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:REPRODUCE.md",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "final_state_allowed",
+      "ok": true,
+      "detail": "BRIGHT_LINE_NOT_PASSED"
+    },
+    {
+      "name": "git_commit_present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "G1_values_present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "G2_values_present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "bright_line_logic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tests_recorded",
+      "ok": true,
+      "detail": "passed=16 failed=0"
+    },
+    {
+      "name": "raw_data_not_tracked",
+      "ok": true,
+      "detail": "0 raw files tracked"
+    },
+    {
+      "name": "final_state_in:FORMAL_VERDICT.md",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "final_state_in:docs/validation/BONN_STATUS.md",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "failures": [],
+  "warnings": [],
+  "timestamp_utc": "2026-06-23T20:42:35Z",
+  "git_commit": "54942349d1d2dc71938baf0397c4ba7c4210a191"
+}

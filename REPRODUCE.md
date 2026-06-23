@@ -42,7 +42,22 @@ python run_ar_negative.py --input-dir ./bonn_data/B --n-segments 100 --n-surroga
   --output ../../artifacts/controls/ar_negative_CONFIRMATORY_B.json
 # Aggregate -> machine-readable verdict
 python aggregate_verdict.py
+
+# Verify cross-artifact numeric consistency + release gate (fail-closed)
+python check_consistency.py --output ../../artifacts/release/CONSISTENCY_CHECK.json
+python release_check.py --root ../.. --output artifacts/release/RELEASE_CHECK.json
 ```
+
+Verify hashes:
+
+```bash
+cd "$(git rev-parse --show-toplevel)"
+sha256sum -c artifacts/release/bonn_bright_line/HASHES.sha256
+```
+
+Expected final state: `BRIGHT_LINE_NOT_PASSED` (G1 pass, G2 fail). Runtime: confirmatory
+≈ 100 min (199 surrogates × 500 segments). A non-zero `aggregate_verdict.py`/`release_check.py`
+exit means the gate is unmet — read `artifacts/bonn_bright_line/BRIGHT_LINE_SUMMARY.json`.
 
 Result: `artifacts/bonn_bright_line/BRIGHT_LINE_SUMMARY.json` and
 `docs/validation/BRIGHT_LINE_VERDICT.md`. Verdict ∈

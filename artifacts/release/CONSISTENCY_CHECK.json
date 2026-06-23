@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "truth_from_verdict_json": {
+    "E_survived_fraction": 0.96,
+    "A_not_survived_fraction": 0.86,
+    "B_not_survived_fraction": 0.91,
+    "FPR_A": 0.08,
+    "FPR_B": 0.05,
+    "combined_FPR": 0.065,
+    "G1_PASS": true,
+    "G2_PASS": false,
+    "BRIGHT_LINE_PASSED": false,
+    "final_state": "BRIGHT_LINE_NOT_PASSED"
+  },
+  "mismatches": []
+}

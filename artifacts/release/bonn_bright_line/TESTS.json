@@ -1,11 +1,14 @@
 {
-  "command": "pytest -q tests/bonn_bright_line",
+  "command": "python -m pytest -q tests/bonn_bright_line",
   "exit_code": 0,
-  "duration_sec": 5.1,
-  "passed": 0,
+  "status": "PASS",
+  "passed": 16,
   "failed": 0,
+  "errors": 0,
   "skipped": 0,
-  "log_tail": [
-    "................                                                         [100%]"
-  ]
+  "total": 16,
+  "duration_seconds": 5.0,
+  "log_path": "artifacts/bonn_bright_line/logs/pytest_bonn_bright_line.log",
+  "timestamp_utc": "2026-06-23T20:42:35Z",
+  "git_commit": "54942349d1d2dc71938baf0397c4ba7c4210a191"
 }

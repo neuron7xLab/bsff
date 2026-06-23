@@ -1,27 +1,44 @@
 {
-  "schema": "bsff.bright_line_summary/v2",
-  "timestamp_utc": "2026-06-23T19:22:55Z",
-  "git_commit": "8149f124adff57f67b81f4d0c647ce6b802c687b",
+  "schema": "bsff.bright_line_summary/v3",
+  "final_state": "BRIGHT_LINE_NOT_PASSED",
+  "verdict": "BRIGHT_LINE_NOT_PASSED",
+  "BRIGHT_LINE_PASSED": false,
+  "G1_PASS": true,
+  "G2_PASS": false,
+  "chain_to_bnci2014_001": "BLOCKED",
   "statistic_id": "sampen_lower_tail_m2_r015_v1",
+  "alpha": 0.05,
+  "n_segments": 100,
+  "n_surrogates": 199,
+  "dataset": "Andrzejak2001 Bonn EEG (UPF NTSA; DOI 10.1103/PhysRevE.64.061907)",
   "thresholds": {
     "min_frac": 0.8,
     "max_fpr": 0.05,
     "alpha": 0.05
   },
   "G1": {
+    "E_survived_fraction": 0.96,
+    "A_not_survived_fraction": 0.86,
+    "B_not_survived_fraction": 0.91,
+    "threshold": 0.8,
+    "G1_PASS": true,
+    "n_surrogates": 199,
+    "n_segments": 100,
     "frac_survived_E": 0.96,
     "frac_A_not_survived": 0.86,
     "frac_B_not_survived": 0.91,
-    "G1_PASS": true,
-    "n_surrogates": 199,
     "artifact": "artifacts/bonn_bright_line/bonn_CONFIRMATORY_VERDICT.json",
     "sha256": "9487229ae66f9c3d1b55dd2f763bac91b2f5ef85227547a2b121dc533c435084"
   },
   "G2": {
+    "FPR_A": 0.08,
+    "FPR_B": 0.05,
+    "combined_FPR": 0.065,
+    "threshold": 0.05,
+    "G2_PASS": false,
     "fpr_A": 0.08,
     "fpr_B": 0.05,
     "combined_fpr": 0.065,
-    "G2_PASS": false,
     "artifacts": {
       "A": "artifacts/controls/ar_negative_CONFIRMATORY_A.json",
       "B": "artifacts/controls/ar_negative_CONFIRMATORY_B.json"
@@ -31,8 +48,32 @@
       "B": "f29801c2847687f55ff0f33985e0773379dc1d0cb0fc32c8f92abc4489f962bb"
     }
   },
-  "BRIGHT_LINE_PASSED": false,
-  "verdict": "BRIGHT_LINE_NOT_PASSED",
-  "chain_to_bnci2014_001": "BLOCKED",
-  "statement": "BRIGHT LINE NOT PASSED: operating characteristic on real neural data remains unproven."
+  "commands": {
+    "G1": "python run.py --data-dir ./bonn_data --sets A B E --n-segments 100 --n-surrogates 199",
+    "G2": "python run_ar_negative.py --input-dir ./bonn_data/A --n-segments 100 --n-surrogates 199",
+    "aggregate": "python aggregate_verdict.py"
+  },
+  "artifacts": {
+    "G1": "artifacts/bonn_bright_line/bonn_CONFIRMATORY_VERDICT.json",
+    "G2_A": "artifacts/controls/ar_negative_CONFIRMATORY_A.json",
+    "G2_B": "artifacts/controls/ar_negative_CONFIRMATORY_B.json",
+    "hashes": "artifacts/release/bonn_bright_line/HASHES.sha256"
+  },
+  "limitations": [
+    "Single benchmark (Bonn), single statistic (SampEn lower-tail).",
+    "SampEn measures regularity, not nonlinearity directly; G2 is the specificity guard.",
+    "n_surrogates=199 (not 999) for compute feasibility; p-resolution 0.005.",
+    "Not externally replicated; not paper-grade complete."
+  ],
+  "forbidden_claims": [
+    "clinical diagnosis",
+    "medical or therapeutic use",
+    "regulatory or device-grade status",
+    "final proof of brain nonlinear dynamics",
+    "universal BCI benchmark authority"
+  ],
+  "next_state": "Open S2 specificity-method branch; do not proceed to BNCI2014-001 until G2 passes.",
+  "timestamp_utc": "2026-06-23T20:42:30Z",
+  "git_commit": "54942349d1d2dc71938baf0397c4ba7c4210a191",
+  "statement": "BRIGHT LINE NOT PASSED: SampEn closes G1 power but fails the G2 specificity guard; BNCI2014-001 chain remains blocked."
 }
