@@ -60,24 +60,64 @@ def main() -> int:
     commit = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=ROOT).stdout.strip()
     verdict = "BRIGHT_LINE_PASSED" if passed else "BRIGHT_LINE_NOT_PASSED"
 
+    proto = g1["protocol"]
+    n_seg = proto.get("n_segments_per_set")
+    n_sur = proto.get("n_surrogates")
     summary = {
-        "schema": "bsff.bright_line_summary/v2",
+        "schema": "bsff.bright_line_summary/v3",
+        "final_state": verdict,
+        "verdict": verdict,
+        "BRIGHT_LINE_PASSED": passed,
+        "G1_PASS": g1_pass,
+        "G2_PASS": g2_pass,
+        "chain_to_bnci2014_001": "UNLOCKED" if passed else "BLOCKED",
+        "statistic_id": proto["statistic_id"],
+        "alpha": 0.05,
+        "n_segments": n_seg,
+        "n_surrogates": n_sur,
+        "dataset": "Andrzejak2001 Bonn EEG (UPF NTSA; DOI 10.1103/PhysRevE.64.061907)",
+        "thresholds": {"min_frac": THRESH, "max_fpr": MAX_FPR, "alpha": 0.05},
+        "G1": {
+            "E_survived_fraction": frac_E, "A_not_survived_fraction": frac_A_not,
+            "B_not_survived_fraction": frac_B_not, "threshold": THRESH, "G1_PASS": g1_pass,
+            "n_surrogates": n_sur, "n_segments": n_seg,
+            "frac_survived_E": frac_E, "frac_A_not_survived": frac_A_not, "frac_B_not_survived": frac_B_not,
+            "artifact": str(G1.relative_to(ROOT)), "sha256": _sha(G1),
+        },
+        "G2": {
+            "FPR_A": a["fpr"], "FPR_B": b["fpr"], "combined_FPR": round(comb_fpr, 4),
+            "threshold": MAX_FPR, "G2_PASS": g2_pass,
+            "fpr_A": a["fpr"], "fpr_B": b["fpr"], "combined_fpr": round(comb_fpr, 4),
+            "artifacts": {"A": str(G2A.relative_to(ROOT)), "B": str(G2B.relative_to(ROOT))},
+            "sha256": {"A": _sha(G2A), "B": _sha(G2B)},
+        },
+        "commands": {
+            "G1": f"python run.py --data-dir ./bonn_data --sets A B E --n-segments {n_seg} --n-surrogates {n_sur}",
+            "G2": f"python run_ar_negative.py --input-dir ./bonn_data/A --n-segments {n_seg} --n-surrogates {n_sur}",
+            "aggregate": "python aggregate_verdict.py",
+        },
+        "artifacts": {
+            "G1": str(G1.relative_to(ROOT)),
+            "G2_A": str(G2A.relative_to(ROOT)), "G2_B": str(G2B.relative_to(ROOT)),
+            "hashes": "artifacts/release/bonn_bright_line/HASHES.sha256",
+        },
+        "limitations": [
+            "Single benchmark (Bonn), single statistic (SampEn lower-tail).",
+            "SampEn measures regularity, not nonlinearity directly; G2 is the specificity guard.",
+            "n_surrogates=199 (not 999) for compute feasibility; p-resolution 0.005.",
+            "Not externally replicated; not paper-grade complete.",
+        ],
+        "forbidden_claims": [
+            "clinical diagnosis", "medical or therapeutic use", "regulatory or device-grade status",
+            "final proof of brain nonlinear dynamics", "universal BCI benchmark authority",
+        ],
+        "next_state": "Open S2 specificity-method branch; do not proceed to BNCI2014-001 until G2 passes.",
         "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "git_commit": commit,
-        "statistic_id": g1["protocol"]["statistic_id"],
-        "thresholds": {"min_frac": THRESH, "max_fpr": MAX_FPR, "alpha": 0.05},
-        "G1": {"frac_survived_E": frac_E, "frac_A_not_survived": frac_A_not,
-               "frac_B_not_survived": frac_B_not, "G1_PASS": g1_pass,
-               "n_surrogates": g1["protocol"]["n_surrogates"],
-               "artifact": str(G1.relative_to(ROOT)), "sha256": _sha(G1)},
-        "G2": {"fpr_A": a["fpr"], "fpr_B": b["fpr"], "combined_fpr": round(comb_fpr, 4),
-               "G2_PASS": g2_pass, "artifacts": {"A": str(G2A.relative_to(ROOT)), "B": str(G2B.relative_to(ROOT))},
-               "sha256": {"A": _sha(G2A), "B": _sha(G2B)}},
-        "BRIGHT_LINE_PASSED": passed, "verdict": verdict,
-        "chain_to_bnci2014_001": "UNLOCKED" if passed else "BLOCKED",
         "statement": ("BRIGHT LINE PASSED: real positive control and real-spectrum negative controls passed."
                       if passed else
-                      "BRIGHT LINE NOT PASSED: operating characteristic on real neural data remains unproven."),
+                      "BRIGHT LINE NOT PASSED: SampEn closes G1 power but fails the G2 specificity guard; "
+                      "BNCI2014-001 chain remains blocked."),
     }
     (BL / "BRIGHT_LINE_SUMMARY.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
 

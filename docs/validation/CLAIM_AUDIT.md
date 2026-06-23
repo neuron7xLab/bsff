@@ -1,21 +1,36 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Claim audit
 
-Every claim maps to evidence and a status. Statuses: **proven** (executed artifact),
-**refuted** (executed artifact shows false), **unsupported** (no evidence either way),
-**forbidden** (out of scope; never asserted).
+Every claim is classified into exactly one status:
+**PROVEN_BY_ARTIFACT** · **REFUTED_BY_ARTIFACT** · **UNSUPPORTED** · **UNVERIFIED** · **FORBIDDEN**.
 
-| # | claim | status | evidence |
-|---|-------|--------|----------|
-| 1 | `lagged_quadratic` detects Bonn ictal nonlinearity | **refuted** | ~20% Set-E power; `artifacts/bonn_bright_line/bonn_bright_line_EXPLORATORY.json`, STATISTIC_REGISTRY.md (S0) |
-| 2 | SampEn(chaos) < SampEn(noise) | **proven** | `tests/bonn_bright_line/test_statistics_sampen.py` |
-| 3 | SampEn lower-tail SURVIVES henon, REFUTES white noise | **proven** | same test file |
-| 4 | Non-converged MIAAFT → UNSUPPORTED (fail-closed) | **proven** | same test file |
-| 5 | Canonical Bonn data (UPF NTSA, not UCI 178) with per-file SHA256 | **proven** | `DATASET_MANIFEST.json` |
-| 6 | G1 Set-E power ≥ 0.80 (SampEn) | see `BRIGHT_LINE_SUMMARY.json` | confirmatory bundle |
-| 7 | G1 Set-A/B not-survived ≥ 0.80 | see `BRIGHT_LINE_SUMMARY.json` | confirmatory bundle |
-| 8 | G2 real-spectrum AR FPR ≤ 0.05 | see `BRIGHT_LINE_SUMMARY.json` | confirmatory bundles A/B |
-| 9 | BRIGHT_LINE_PASSED | see `BRIGHT_LINE_SUMMARY.json` | aggregator over 6–8 |
-| — | clinical / medical / regulatory / final brain-dynamics proof / universal BCI authority | **forbidden** | never asserted; see release_check FORBIDDEN list |
+## PROVEN_BY_ARTIFACT
+| claim | evidence |
+|-------|----------|
+| Bonn dataset acquired and hashed (UPF NTSA, not UCI 178) | `artifacts/bonn_bright_line/DATASET_MANIFEST.json` |
+| `lagged_quadratic` had insufficient Set-E power (~20%) | `STATISTIC_REGISTRY.md` S0; `bonn_bright_line_EXPLORATORY.json` |
+| SampEn improved G1 positive-control power on Set E (0.96) | `bonn_CONFIRMATORY_VERDICT.json`; `BRIGHT_LINE_SUMMARY.json` |
+| SampEn passed G1 thresholds on A (0.86), B (0.91), E (0.96) | `bonn_CONFIRMATORY_VERDICT.json` |
+| G2 AR-null specificity guard FAILED (combined FPR 0.065 > 0.05) | `ar_negative_CONFIRMATORY_{A,B}.json` |
+| The bright line did NOT pass | `BRIGHT_LINE_SUMMARY.json` (`final_state=BRIGHT_LINE_NOT_PASSED`) |
+| BNCI2014-001 chain remains BLOCKED | `BRIGHT_LINE_SUMMARY.json` (`chain_to_bnci2014_001=BLOCKED`) |
+| SampEn(chaos) < SampEn(noise); lower-tail SURVIVES henon, REFUTES white | `tests/bonn_bright_line/test_statistics_sampen.py` |
+| Non-converged MIAAFT → UNSUPPORTED (fail-closed) | same test file |
 
-Claims 6–9 resolve to the executed confirmatory verdict; this table does not pre-judge them.
+## REFUTED_BY_ARTIFACT
+| claim | evidence |
+|-------|----------|
+| The current SampEn config is sufficient to pass the full G1+G2 bright line | combined FPR 0.065 > 0.05 |
+| Bright-line validation is complete | `final_state=BRIGHT_LINE_NOT_PASSED` |
+
+## UNSUPPORTED
+- BSFF is generally validated across all BCI datasets.
+- BSFF is externally replicated / has independent third-party confirmation.
+- BSFF is paper-grade complete.
+
+## UNVERIFIED
+- Any prior agent summary not backed by a Tier-1 artifact or Tier-2 document.
+
+## FORBIDDEN (never asserted; enforced by `release_check.py`)
+clinical diagnosis · medical/therapeutic use · regulatory or device-grade status ·
+seizure-detection product · final proof of brain nonlinear dynamics · universal BCI truth oracle.

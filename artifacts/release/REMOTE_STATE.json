@@ -1,0 +1,11 @@
+{
+  "repository": "neuron7xLab/bsff",
+  "branch": "harden/bonn-evidence-artifact-2026-06-23",
+  "head_sha": "a867bd4f4d5b33fa0951b2c2325ec5cd55cab719",
+  "base_branch": "main",
+  "base_sha": "a867bd4f4d5b33fa0951b2c2325ec5cd55cab719",
+  "pr_number_predecessor": 75,
+  "pr75_state": "MERGED",
+  "timestamp_utc": "2026-06-23T19:53:06Z",
+  "working_tree_clean": false
+}

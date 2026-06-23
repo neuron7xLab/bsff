@@ -35,3 +35,18 @@ the decisive guard that this is not a linear-regularity confound. See STATISTIC_
 Not clinical diagnosis · not medical use · not regulatory validation · not final proof of
 brain nonlinear dynamics · not a universal BCI benchmark authority. This is a **seed for
 BNCI preregistration / replication**, nothing more.
+
+## Reviewer decision table
+
+| Reviewer question | Answer |
+|-------------------|--------|
+| Can BSFF now proceed to BNCI2014-001? | **No.** G2 failed (combined AR-null FPR 0.065 > 0.05). |
+| Did BSFF detect Bonn Set E? | **Yes.** G1 passed (Set E SURVIVED 0.96). |
+| Is the statistic specific enough? | **No.** Combined AR-null FPR = 0.065 > alpha 0.05. |
+| Is this a failed project? | **No.** It is a successful fail-closed negative validation result. |
+
+**Inspect first:** `artifacts/bonn_bright_line/BRIGHT_LINE_SUMMARY.json`.
+**Run first:** `python examples/bonn_bright_line/check_consistency.py`.
+**What would change the verdict:** an S2 statistic (see `docs/validation/NEXT_METHOD_CONTRACT_S2.md`)
+that holds G1 power **and** drives combined AR-null FPR ≤ 0.05 under the same pre-declared protocol.
+**Must not be claimed:** clinical/medical/regulatory status, final brain-dynamics proof, universal BCI authority.
