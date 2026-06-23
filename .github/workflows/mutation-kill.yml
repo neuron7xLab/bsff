@@ -1,0 +1,46 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+
+name: Mutation Kill
+
+# A green suite is only meaningful if it kills regressions. This applies eight
+# single-point behavioural mutants to the verdict-collapse path and requires every
+# one to be killed by a targeted test. A survivor blocks the PR.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "53 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mutation-kill:
+    name: mutation-kill
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install --require-hashes -r requirements/ci.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python tools/mutation_kill_gate.py --strict --report artifacts/adversarial/mutation_kill_report.json
+      - run: python tools/validate_mutation_report.py artifacts/adversarial/mutation_kill_report.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: mutation-kill-report
+          path: artifacts/adversarial/mutation_kill_report.json
+          if-no-files-found: warn

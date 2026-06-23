@@ -1,8 +1,9 @@
 {
-  "mutants_total": 4,
-  "mutants_killed": 4,
+  "mutants_total": 8,
+  "mutants_killed": 8,
   "mutation_score": 1.0,
   "survivors": [],
+  "verdict": "PASS",
   "results": [
     {
       "mutant_id": "MUT-001",
@@ -24,11 +25,10 @@
     },
     {
       "mutant_id": "MUT-003",
-      "file": "src/bsff/pipeline.py",
-      "behaviour": "an uncorroborated frequentist rejection (BF10 < threshold) must not promote",
+      "file": "src/bsff/stages.py",
+      "behaviour": "a nonstationary signal under fail_closed must REFUTE before surrogates",
       "targets": [
-        "tests/test_adversarial_operating_characteristics.py::test_linear_null_never_survives_under_strict",
-        "tests/test_adversarial_operating_characteristics.py::test_linear_null_false_positive_rate_within_binomial_guard"
+        "tests/test_adversarial_operating_characteristics.py::test_nonstationary_random_walk_fails_strict_gate_fatally"
       ],
       "mutant_status": "killed"
     },
@@ -40,14 +40,55 @@
         "tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence"
       ],
       "mutant_status": "killed"
+    },
+    {
+      "mutant_id": "MUT-005",
+      "file": "src/bsff/pipeline.py",
+      "behaviour": "an uncorroborated frequentist rejection (BF10 < threshold) must not promote",
+      "targets": [
+        "tests/test_adversarial_operating_characteristics.py::test_linear_null_never_survives_under_strict",
+        "tests/test_adversarial_operating_characteristics.py::test_linear_null_false_positive_rate_within_binomial_guard"
+      ],
+      "mutant_status": "killed"
+    },
+    {
+      "mutant_id": "MUT-006",
+      "file": "src/bsff/surrogate_engine.py",
+      "behaviour": "NaN/Inf input must be refused before any statistic is computed",
+      "targets": [
+        "tests/property/test_signal_validation_properties.py::test_p1_nonfinite_never_reaches_verdict"
+      ],
+      "mutant_status": "killed"
+    },
+    {
+      "mutant_id": "MUT-007",
+      "file": "src/bsff/pipeline.py",
+      "behaviour": "every verdict must carry a 64-hex evidence contract hash",
+      "targets": [
+        "tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence"
+      ],
+      "mutant_status": "killed"
+    },
+    {
+      "mutant_id": "MUT-008",
+      "file": "src/bsff/schemas.py",
+      "behaviour": "ClaimSpec must reject an underpowered surrogate_count (no silent schema drift)",
+      "targets": [
+        "tests/test_claimspec_schema.py::test_claimspec_rejects_too_few_surrogates"
+      ],
+      "mutant_status": "killed"
     }
   ],
   "commands": [
-    "pytest tests/test_adversarial_operating_characteristics.py::test_nonconverged_null_cannot_exceed_unsupported tests/test_adversarial_operating_characteristics.py::test_leakage_short_circuits_to_refuted tests/test_adversarial_operating_characteristics.py::test_linear_null_never_survives_under_strict tests/test_adversarial_operating_characteristics.py::test_linear_null_false_positive_rate_within_binomial_guard tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence",
+    "pytest tests/test_adversarial_operating_characteristics.py::test_nonconverged_null_cannot_exceed_unsupported tests/test_adversarial_operating_characteristics.py::test_leakage_short_circuits_to_refuted tests/test_adversarial_operating_characteristics.py::test_nonstationary_random_walk_fails_strict_gate_fatally tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence tests/test_adversarial_operating_characteristics.py::test_linear_null_never_survives_under_strict tests/test_adversarial_operating_characteristics.py::test_linear_null_false_positive_rate_within_binomial_guard tests/property/test_signal_validation_properties.py::test_p1_nonfinite_never_reaches_verdict tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence tests/test_claimspec_schema.py::test_claimspec_rejects_too_few_surrogates",
     "pytest tests/test_adversarial_operating_characteristics.py::test_nonconverged_null_cannot_exceed_unsupported",
     "pytest tests/test_adversarial_operating_characteristics.py::test_leakage_short_circuits_to_refuted",
+    "pytest tests/test_adversarial_operating_characteristics.py::test_nonstationary_random_walk_fails_strict_gate_fatally",
+    "pytest tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence",
     "pytest tests/test_adversarial_operating_characteristics.py::test_linear_null_never_survives_under_strict tests/test_adversarial_operating_characteristics.py::test_linear_null_false_positive_rate_within_binomial_guard",
-    "pytest tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence"
+    "pytest tests/property/test_signal_validation_properties.py::test_p1_nonfinite_never_reaches_verdict",
+    "pytest tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence",
+    "pytest tests/test_claimspec_schema.py::test_claimspec_rejects_too_few_surrogates"
   ],
   "timestamp_policy": "no nondeterministic timestamp in hash-critical output"
 }
