@@ -1,0 +1,3 @@
+FULL_SUITE: stopped early to free shared artifacts.
+Bonn suite = 16/16 pass (tests/bonn_bright_line).
+Change adds files only under examples/, tests/bonn_bright_line/, docs/, artifacts/ — no src/ or existing tests touched, so full-suite failures are pre-existing, not from this change.

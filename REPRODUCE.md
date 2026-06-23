@@ -11,7 +11,7 @@ scientific proof.
 python -m venv .venv && . .venv/bin/activate
 python -m pip install -U pip
 python -m pip install -e ".[dev,stats]"   # scipy KDTree is used by SampEn
-python -m bsff selftest
+bsff selftest
 ```
 
 ## 2. Acquire canonical Bonn data (do NOT use the UCI 178 variant)

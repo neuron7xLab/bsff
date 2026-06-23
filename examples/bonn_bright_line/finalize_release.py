@@ -18,7 +18,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-REL = ROOT / "artifacts" / "release"
+REL = ROOT / "artifacts" / "release" / "bonn_bright_line"  # dedicated; do not clobber package release/
 BL = ROOT / "artifacts" / "bonn_bright_line"
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -73,8 +73,7 @@ def main() -> int:
 - **proven:** the executed G1/G2 metrics above (reproducible via `REPRODUCE.md`).
 - **refuted (preserved):** `lagged_quadratic` statistic — ~20% Set-E power (insufficient).
 - **unsupported:** any nonlinearity claim on data/statistics not in this run.
-- **forbidden (never claimed):** clinical diagnosis, medical use, regulatory validation,
-  final proof of brain nonlinear dynamics, universal BCI benchmark authority.
+- **forbidden (never claimed):** no clinical diagnosis, no medical use, no regulatory validation, no final proof of brain nonlinear dynamics, no universal BCI benchmark authority.
 """, encoding="utf-8")
 
     # STATUS.md

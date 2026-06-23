@@ -1,0 +1,38 @@
+{
+  "schema": "bsff.bright_line_summary/v2",
+  "timestamp_utc": "2026-06-23T18:23:30Z",
+  "git_commit": "647aa8b9af2480294db7d270e4f856245ef2b551",
+  "statistic_id": "sampen_lower_tail_m2_r015_v1",
+  "thresholds": {
+    "min_frac": 0.8,
+    "max_fpr": 0.05,
+    "alpha": 0.05
+  },
+  "G1": {
+    "frac_survived_E": 0.96,
+    "frac_A_not_survived": 0.86,
+    "frac_B_not_survived": 0.91,
+    "G1_PASS": true,
+    "n_surrogates": 199,
+    "artifact": "artifacts/bonn_bright_line/bonn_CONFIRMATORY_VERDICT.json",
+    "sha256": "9487229ae66f9c3d1b55dd2f763bac91b2f5ef85227547a2b121dc533c435084"
+  },
+  "G2": {
+    "fpr_A": 0.08,
+    "fpr_B": 0.05,
+    "combined_fpr": 0.065,
+    "G2_PASS": false,
+    "artifacts": {
+      "A": "artifacts/controls/ar_negative_CONFIRMATORY_A.json",
+      "B": "artifacts/controls/ar_negative_CONFIRMATORY_B.json"
+    },
+    "sha256": {
+      "A": "ac2bc3db416258e0ada27b4ce01bfa5667512873a756e710410561142d6fff07",
+      "B": "f29801c2847687f55ff0f33985e0773379dc1d0cb0fc32c8f92abc4489f962bb"
+    }
+  },
+  "BRIGHT_LINE_PASSED": false,
+  "verdict": "BRIGHT_LINE_NOT_PASSED",
+  "chain_to_bnci2014_001": "BLOCKED",
+  "statement": "BRIGHT LINE NOT PASSED: operating characteristic on real neural data remains unproven."
+}

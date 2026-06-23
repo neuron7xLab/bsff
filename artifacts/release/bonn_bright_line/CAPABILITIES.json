@@ -1,0 +1,19 @@
+{
+  "statistic_ids": [
+    "sampen_lower_tail_m2_r015_v1",
+    "lagged_quadratic (refuted, preserved)"
+  ],
+  "null": "MIAAFT (convergence-gated)",
+  "verdict_states": [
+    "BRIGHT_LINE_PASSED",
+    "BRIGHT_LINE_NOT_PASSED",
+    "BLOCKED_DATA"
+  ],
+  "not_capable_of": [
+    "clinical diagnosis",
+    "medical use",
+    "regulatory validation",
+    "final proof of brain nonlinear dynamics",
+    "universal BCI benchmark"
+  ]
+}

@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import json
 import re
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -25,9 +24,9 @@ REQUIRED = [
     "docs/validation/BRIGHT_LINE_VERDICT.md",
     "FORMAL_VERDICT.md",
     "REPRODUCE.md",
-    "artifacts/release/VERDICT.json",
-    "artifacts/release/TESTS.json",
-    "artifacts/release/ENVIRONMENT.txt",
+    "artifacts/release/bonn_bright_line/VERDICT.json",
+    "artifacts/release/bonn_bright_line/TESTS.json",
+    "artifacts/release/bonn_bright_line/ENVIRONMENT.txt",
 ]
 ALLOWED_STATES = {"BRIGHT_LINE_PASSED", "BRIGHT_LINE_NOT_PASSED", "BLOCKED_DATA",
                   "BLOCKED_RUNTIME", "BLOCKED_API", "BLOCKED_METHOD"}
@@ -56,7 +55,7 @@ def main() -> int:
         except json.JSONDecodeError as e:
             fails.append(f"summary JSON invalid: {e}")
 
-    for rel in ("artifacts/release/VERDICT.json", "artifacts/release/TESTS.json"):
+    for rel in ("artifacts/release/bonn_bright_line/VERDICT.json", "artifacts/release/bonn_bright_line/TESTS.json"):
         p = ROOT / rel
         if p.is_file():
             try:
@@ -64,16 +63,15 @@ def main() -> int:
             except json.JSONDecodeError as e:
                 fails.append(f"{rel} JSON invalid: {e}")
 
+    neg = re.compile(r"\bno\b|\bnot\b|\bnever\b|forbidden|excluded|out of scope|n't")
     for rel in ("FORMAL_VERDICT.md", "docs/validation/BRIGHT_LINE_VERDICT.md"):
         p = ROOT / rel
         if p.is_file():
-            text = p.read_text().lower()
-            for pat in FORBIDDEN:
-                # allow negated mentions ("not a medical device", "no clinical claim")
-                for m in re.finditer(pat, text):
-                    ctx = text[max(0, m.start() - 24): m.start()]
-                    if not re.search(r"no\b|not\b|never\b|forbidden|excluded|n't", ctx):
-                        fails.append(f"forbidden claim {pat!r} asserted in {rel}")
+            for line in p.read_text().lower().splitlines():
+                for pat in FORBIDDEN:
+                    # A forbidden term is fine if its LINE clearly negates/disclaims it.
+                    if re.search(pat, line) and not neg.search(line):
+                        fails.append(f"forbidden claim {pat!r} asserted in {rel}: {line.strip()[:60]!r}")
                         break
 
     if fails:

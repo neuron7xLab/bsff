@@ -1,0 +1,825 @@
+{
+  "schema": "bsff.ar_negative_control/v3",
+  "timestamp_utc": "2026-06-23T18:06:47Z",
+  "git_commit": "647aa8b9af2480294db7d270e4f856245ef2b551",
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39"
+  },
+  "control": {
+    "statistic_id": "sampen_lower_tail_m2_r015_v1",
+    "source_dir": "bonn_data/B",
+    "n_segments": 100,
+    "ar_order": 10,
+    "n_surrogates": 199,
+    "alpha": 0.05,
+    "n_false_positives": 5,
+    "fpr": 0.05,
+    "fpr_threshold": 0.05,
+    "fpr_ok": true,
+    "results": [
+      {
+        "segment_id": "O001",
+        "ar_order": 10,
+        "p_value": 0.615,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260624
+      },
+      {
+        "segment_id": "O002",
+        "ar_order": 10,
+        "p_value": 0.59,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260625
+      },
+      {
+        "segment_id": "O003",
+        "ar_order": 10,
+        "p_value": 0.925,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260626
+      },
+      {
+        "segment_id": "O004",
+        "ar_order": 10,
+        "p_value": 0.51,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260627
+      },
+      {
+        "segment_id": "O005",
+        "ar_order": 10,
+        "p_value": 0.705,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260628
+      },
+      {
+        "segment_id": "O006",
+        "ar_order": 10,
+        "p_value": 0.385,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260629
+      },
+      {
+        "segment_id": "O007",
+        "ar_order": 10,
+        "p_value": 0.785,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260630
+      },
+      {
+        "segment_id": "O008",
+        "ar_order": 10,
+        "p_value": 0.9,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260631
+      },
+      {
+        "segment_id": "O009",
+        "ar_order": 10,
+        "p_value": 0.895,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260632
+      },
+      {
+        "segment_id": "O010",
+        "ar_order": 10,
+        "p_value": 0.45,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260633
+      },
+      {
+        "segment_id": "O011",
+        "ar_order": 10,
+        "p_value": 0.31,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260634
+      },
+      {
+        "segment_id": "O012",
+        "ar_order": 10,
+        "p_value": 0.85,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260635
+      },
+      {
+        "segment_id": "O013",
+        "ar_order": 10,
+        "p_value": 0.82,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260636
+      },
+      {
+        "segment_id": "O014",
+        "ar_order": 10,
+        "p_value": 0.885,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260637
+      },
+      {
+        "segment_id": "O015",
+        "ar_order": 10,
+        "p_value": 0.885,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260638
+      },
+      {
+        "segment_id": "O016",
+        "ar_order": 10,
+        "p_value": 0.645,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260639
+      },
+      {
+        "segment_id": "O017",
+        "ar_order": 10,
+        "p_value": 0.235,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260640
+      },
+      {
+        "segment_id": "O018",
+        "ar_order": 10,
+        "p_value": 0.75,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260641
+      },
+      {
+        "segment_id": "O019",
+        "ar_order": 10,
+        "p_value": 0.99,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260642
+      },
+      {
+        "segment_id": "O020",
+        "ar_order": 10,
+        "p_value": 0.255,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260643
+      },
+      {
+        "segment_id": "O021",
+        "ar_order": 10,
+        "p_value": 0.83,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260644
+      },
+      {
+        "segment_id": "O022",
+        "ar_order": 10,
+        "p_value": 0.01,
+        "verdict": "SURVIVED",
+        "is_false_positive": true,
+        "seed": 20260645
+      },
+      {
+        "segment_id": "O023",
+        "ar_order": 10,
+        "p_value": 0.395,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260646
+      },
+      {
+        "segment_id": "O024",
+        "ar_order": 10,
+        "p_value": 0.35,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260647
+      },
+      {
+        "segment_id": "O025",
+        "ar_order": 10,
+        "p_value": 0.65,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260648
+      },
+      {
+        "segment_id": "O026",
+        "ar_order": 10,
+        "p_value": 0.405,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260649
+      },
+      {
+        "segment_id": "O027",
+        "ar_order": 10,
+        "p_value": 0.82,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260650
+      },
+      {
+        "segment_id": "O028",
+        "ar_order": 10,
+        "p_value": 0.06,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260651
+      },
+      {
+        "segment_id": "O029",
+        "ar_order": 10,
+        "p_value": 0.4,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260652
+      },
+      {
+        "segment_id": "O030",
+        "ar_order": 10,
+        "p_value": 0.29,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260653
+      },
+      {
+        "segment_id": "O031",
+        "ar_order": 10,
+        "p_value": 0.855,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260654
+      },
+      {
+        "segment_id": "O032",
+        "ar_order": 10,
+        "p_value": 0.33,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260655
+      },
+      {
+        "segment_id": "O033",
+        "ar_order": 10,
+        "p_value": 0.905,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260656
+      },
+      {
+        "segment_id": "O034",
+        "ar_order": 10,
+        "p_value": 0.865,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260657
+      },
+      {
+        "segment_id": "O035",
+        "ar_order": 10,
+        "p_value": 0.055,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260658
+      },
+      {
+        "segment_id": "O036",
+        "ar_order": 10,
+        "p_value": 0.33,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260659
+      },
+      {
+        "segment_id": "O037",
+        "ar_order": 10,
+        "p_value": 0.84,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260660
+      },
+      {
+        "segment_id": "O038",
+        "ar_order": 10,
+        "p_value": 0.97,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260661
+      },
+      {
+        "segment_id": "O039",
+        "ar_order": 10,
+        "p_value": 0.01,
+        "verdict": "SURVIVED",
+        "is_false_positive": true,
+        "seed": 20260662
+      },
+      {
+        "segment_id": "O040",
+        "ar_order": 10,
+        "p_value": 0.09,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260663
+      },
+      {
+        "segment_id": "O041",
+        "ar_order": 10,
+        "p_value": 0.855,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260664
+      },
+      {
+        "segment_id": "O042",
+        "ar_order": 10,
+        "p_value": 0.365,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260665
+      },
+      {
+        "segment_id": "O043",
+        "ar_order": 10,
+        "p_value": 0.34,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260666
+      },
+      {
+        "segment_id": "O044",
+        "ar_order": 10,
+        "p_value": 0.145,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260667
+      },
+      {
+        "segment_id": "O045",
+        "ar_order": 10,
+        "p_value": 0.61,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260668
+      },
+      {
+        "segment_id": "O046",
+        "ar_order": 10,
+        "p_value": 0.775,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260669
+      },
+      {
+        "segment_id": "O047",
+        "ar_order": 10,
+        "p_value": 0.165,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260670
+      },
+      {
+        "segment_id": "O048",
+        "ar_order": 10,
+        "p_value": 0.7,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260671
+      },
+      {
+        "segment_id": "O049",
+        "ar_order": 10,
+        "p_value": 0.145,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260672
+      },
+      {
+        "segment_id": "O050",
+        "ar_order": 10,
+        "p_value": 0.16,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260673
+      },
+      {
+        "segment_id": "O051",
+        "ar_order": 10,
+        "p_value": 0.17,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260674
+      },
+      {
+        "segment_id": "O052",
+        "ar_order": 10,
+        "p_value": 0.46,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260675
+      },
+      {
+        "segment_id": "O053",
+        "ar_order": 10,
+        "p_value": 0.6,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260676
+      },
+      {
+        "segment_id": "O054",
+        "ar_order": 10,
+        "p_value": 0.76,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260677
+      },
+      {
+        "segment_id": "O055",
+        "ar_order": 10,
+        "p_value": 0.05,
+        "verdict": "SURVIVED",
+        "is_false_positive": true,
+        "seed": 20260678
+      },
+      {
+        "segment_id": "O056",
+        "ar_order": 10,
+        "p_value": 0.1,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260679
+      },
+      {
+        "segment_id": "O057",
+        "ar_order": 10,
+        "p_value": 0.07,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260680
+      },
+      {
+        "segment_id": "O058",
+        "ar_order": 10,
+        "p_value": 0.405,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260681
+      },
+      {
+        "segment_id": "O059",
+        "ar_order": 10,
+        "p_value": 0.19,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260682
+      },
+      {
+        "segment_id": "O060",
+        "ar_order": 10,
+        "p_value": 0.08,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260683
+      },
+      {
+        "segment_id": "O061",
+        "ar_order": 10,
+        "p_value": 0.26,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260684
+      },
+      {
+        "segment_id": "O062",
+        "ar_order": 10,
+        "p_value": 0.22,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260685
+      },
+      {
+        "segment_id": "O063",
+        "ar_order": 10,
+        "p_value": 0.09,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260686
+      },
+      {
+        "segment_id": "O064",
+        "ar_order": 10,
+        "p_value": 0.68,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260687
+      },
+      {
+        "segment_id": "O065",
+        "ar_order": 10,
+        "p_value": 0.22,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260688
+      },
+      {
+        "segment_id": "O066",
+        "ar_order": 10,
+        "p_value": 0.3,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260689
+      },
+      {
+        "segment_id": "O067",
+        "ar_order": 10,
+        "p_value": 0.55,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260690
+      },
+      {
+        "segment_id": "O068",
+        "ar_order": 10,
+        "p_value": 0.685,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260691
+      },
+      {
+        "segment_id": "O069",
+        "ar_order": 10,
+        "p_value": 0.725,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260692
+      },
+      {
+        "segment_id": "O070",
+        "ar_order": 10,
+        "p_value": 0.995,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260693
+      },
+      {
+        "segment_id": "O071",
+        "ar_order": 10,
+        "p_value": 0.045,
+        "verdict": "SURVIVED",
+        "is_false_positive": true,
+        "seed": 20260694
+      },
+      {
+        "segment_id": "O072",
+        "ar_order": 10,
+        "p_value": 0.165,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260695
+      },
+      {
+        "segment_id": "O073",
+        "ar_order": 10,
+        "p_value": 0.555,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260696
+      },
+      {
+        "segment_id": "O074",
+        "ar_order": 10,
+        "p_value": 0.48,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260697
+      },
+      {
+        "segment_id": "O075",
+        "ar_order": 10,
+        "p_value": 0.55,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260698
+      },
+      {
+        "segment_id": "O076",
+        "ar_order": 10,
+        "p_value": 0.66,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260699
+      },
+      {
+        "segment_id": "O077",
+        "ar_order": 10,
+        "p_value": 0.78,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260700
+      },
+      {
+        "segment_id": "O078",
+        "ar_order": 10,
+        "p_value": 0.26,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260701
+      },
+      {
+        "segment_id": "O079",
+        "ar_order": 10,
+        "p_value": 0.57,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260702
+      },
+      {
+        "segment_id": "O080",
+        "ar_order": 10,
+        "p_value": 0.855,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260703
+      },
+      {
+        "segment_id": "O081",
+        "ar_order": 10,
+        "p_value": 0.605,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260704
+      },
+      {
+        "segment_id": "O082",
+        "ar_order": 10,
+        "p_value": 0.72,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260705
+      },
+      {
+        "segment_id": "O083",
+        "ar_order": 10,
+        "p_value": 0.005,
+        "verdict": "SURVIVED",
+        "is_false_positive": true,
+        "seed": 20260706
+      },
+      {
+        "segment_id": "O084",
+        "ar_order": 10,
+        "p_value": 0.48,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260707
+      },
+      {
+        "segment_id": "O085",
+        "ar_order": 10,
+        "p_value": 0.735,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260708
+      },
+      {
+        "segment_id": "O086",
+        "ar_order": 10,
+        "p_value": 0.335,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260709
+      },
+      {
+        "segment_id": "O087",
+        "ar_order": 10,
+        "p_value": 0.12,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260710
+      },
+      {
+        "segment_id": "O088",
+        "ar_order": 10,
+        "p_value": 0.685,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260711
+      },
+      {
+        "segment_id": "O089",
+        "ar_order": 10,
+        "p_value": 0.92,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260712
+      },
+      {
+        "segment_id": "O090",
+        "ar_order": 10,
+        "p_value": 0.98,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260713
+      },
+      {
+        "segment_id": "O091",
+        "ar_order": 10,
+        "p_value": 0.58,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260714
+      },
+      {
+        "segment_id": "O092",
+        "ar_order": 10,
+        "p_value": 0.255,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260715
+      },
+      {
+        "segment_id": "O093",
+        "ar_order": 10,
+        "p_value": 0.42,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260716
+      },
+      {
+        "segment_id": "O094",
+        "ar_order": 10,
+        "p_value": 0.495,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260717
+      },
+      {
+        "segment_id": "O095",
+        "ar_order": 10,
+        "p_value": 0.355,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260718
+      },
+      {
+        "segment_id": "O096",
+        "ar_order": 10,
+        "p_value": 0.675,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260719
+      },
+      {
+        "segment_id": "O097",
+        "ar_order": 10,
+        "p_value": 0.595,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260720
+      },
+      {
+        "segment_id": "O098",
+        "ar_order": 10,
+        "p_value": 0.62,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260721
+      },
+      {
+        "segment_id": "O099",
+        "ar_order": 10,
+        "p_value": 0.54,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260722
+      },
+      {
+        "segment_id": "O100",
+        "ar_order": 10,
+        "p_value": 0.075,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260723
+      }
+    ],
+    "interpretation": "NEGATIVE CONTROL PASS: real-spectrum AR null -> FPR=0.050 <= 0.05."
+  },
+  "elapsed_sec": 453.85
+}

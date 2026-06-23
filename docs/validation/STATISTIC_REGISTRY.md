@@ -54,3 +54,25 @@ line does not pass.
 This is also why the residual **Set A** survival (~25% at n=20) matters: healthy EEG
 carries weak genuine structure plus finite-N MIAAFT bias, so the negative-sanity
 threshold (≥ 0.80 not-survived) is the honest gate, fixed before the confirmatory.
+
+### Confirmatory (n=100, 199 surrogates) — VERDICT
+
+- **G1 PASS:** Set E SURVIVED **0.96** (≥0.80), Set A not-SURVIVED **0.86**, Set B **0.91**.
+  SampEn solves the power gap that sank `lagged_quadratic` (20% → 96%).
+- **G2 FAIL:** real-spectrum AR null FPR — Set **A = 0.08** (> 0.05), Set B = 0.05,
+  combined = 0.065. The instrument is **anti-conservative on Set-A-like linear spectra**.
+- **BRIGHT_LINE_NOT_PASSED** — power is sufficient, **specificity is not**. This is the
+  regularity-confound the ⊛ caveat predicted: on some linear spectra the AR null is more
+  regular than its own MIAAFT surrogates, so the lower-tail test fires. G2 caught it.
+- status: **S1 power-validated, specificity-refuted.** Chain to BNCI2014-001 stays BLOCKED.
+
+### Next statistic contract (S2, proposed — not yet run)
+
+To pass G2 without losing G1 power, the lower-tail SampEn test needs calibrated
+specificity. Candidate fixes, to be pre-registered before running:
+1. **Two-sided / FDR-controlled** rank-order p with finite-N AAFT bias correction
+   (Kugiumtzis 1999) — removes the lower-tail finite-N inflation that drives Set-A FPR.
+2. **Corroboration gate** (JZS Bayes factor, as in the BSFF pipeline) on top of SampEn —
+   demote uncorroborated rejections to UNSUPPORTED.
+3. **Statistic ensemble** (SampEn ∧ time-reversal asymmetry) requiring agreement.
+Acceptance: G1 E-SURVIVED ≥ 0.80 AND G2 combined FPR ≤ 0.05, same predeclared protocol.
