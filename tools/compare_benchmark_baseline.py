@@ -11,9 +11,13 @@ tracemalloc, counted in bytes) is machine-independent and compared directly.
 
     python tools/compare_benchmark_baseline.py baseline.json current.json
 
-Thresholds: time ratio +15%, large-signal time ratio +15%, peak memory +15%. A
-regression beyond threshold exits non-zero unless the baseline is intentionally
-updated. Standard library only; no network.
+Peak memory (tracemalloc bytes) is machine-independent and gated tightly (+15%).
+Wall-time is gated to catch ALGORITHMIC regressions (>=2x), not micro-noise: even
+calibration-normalized, an FFT-heavy calibration and a Python-loop-heavy pipeline
+scale differently across CPU microarchitectures, so a same-machine baseline run on
+a different CI runner legitimately drifts tens of percent without any code change.
+A 2x normalized-time blow-up is a real complexity regression and fails the gate.
+Standard library only; no network.
 """
 
 from __future__ import annotations
@@ -23,7 +27,9 @@ import sys
 from pathlib import Path
 
 CALIBRATION = "test_bench_calibration"
-TIME_THRESHOLD = 0.15
+# Wall-time: catch algorithmic regressions across machines, not micro-jitter.
+TIME_THRESHOLD = 1.0
+# Peak memory is allocation-counted (machine-independent) → tight bound.
 MEMORY_THRESHOLD = 0.15
 
 
