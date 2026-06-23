@@ -1,0 +1,12 @@
+========================================================
+Bonn EEG — acquire/verify | target=./bonn_data
+  source: UPF NTSA (canonical, Cloudflare-gated)
+========================================================
+  Set E: 100 segments | samples/segment=4097
+  Set A: 100 segments | samples/segment=4097
+  Set B: 100 segments | samples/segment=4097
+Data already staged and format-verified (4096|4097 samples).
+  Set E first-file sha256: 0939092fb3009f8b…
+  Set A first-file sha256: 774d870f1b34cd8b…
+  Set B first-file sha256: fcdcb9d88c731798…
+OK

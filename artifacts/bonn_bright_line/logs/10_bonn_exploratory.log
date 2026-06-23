@@ -1,0 +1,78 @@
+================================================================
+BSFF Bonn Bright Line (G1) | bsff 0.4.0 | statistic=sampen_lower_tail_m2_r015_v1
+n_segments=20 n_surrogates=99 alpha=0.05 seed_base=20260623 threshold=0.8
+================================================================
+
+Set A
+  [A] Z001 ✗ REFUTED     p=0.630 SampEn=2.318 surr=2.295 conv=ok
+  [A] Z002 ✓ SURVIVED    p=0.010 SampEn=2.244 surr=2.363 conv=ok
+  [A] Z003 ✓ SURVIVED    p=0.010 SampEn=2.195 surr=2.295 conv=ok
+  [A] Z004 ✓ SURVIVED    p=0.030 SampEn=2.293 surr=2.407 conv=ok
+  [A] Z005 ✗ REFUTED     p=0.210 SampEn=2.344 surr=2.389 conv=ok
+  [A] Z006 ✓ SURVIVED    p=0.010 SampEn=2.258 surr=2.398 conv=ok
+  [A] Z007 ✗ REFUTED     p=0.850 SampEn=2.528 surr=2.467 conv=ok
+  [A] Z008 ✗ REFUTED     p=0.240 SampEn=2.457 surr=2.493 conv=ok
+  [A] Z009 ✗ REFUTED     p=0.470 SampEn=2.252 surr=2.259 conv=ok
+  [A] Z010 ✗ REFUTED     p=0.170 SampEn=2.072 surr=2.117 conv=ok
+  [A] Z011 ✗ REFUTED     p=0.760 SampEn=2.322 surr=2.286 conv=ok
+  [A] Z012 ✗ REFUTED     p=0.300 SampEn=2.220 surr=2.249 conv=ok
+  [A] Z013 ✗ REFUTED     p=0.380 SampEn=2.299 surr=2.306 conv=ok
+  [A] Z014 ✓ SURVIVED    p=0.020 SampEn=2.032 surr=2.118 conv=ok
+  [A] Z015 ✗ REFUTED     p=0.290 SampEn=2.121 surr=2.148 conv=ok
+  [A] Z016 ✗ REFUTED     p=0.340 SampEn=2.177 surr=2.195 conv=ok
+  [A] Z017 ✗ REFUTED     p=0.090 SampEn=2.186 surr=2.245 conv=ok
+  [A] Z018 ✗ REFUTED     p=0.860 SampEn=2.255 surr=2.195 conv=ok
+  [A] Z019 ✗ REFUTED     p=0.140 SampEn=2.195 surr=2.243 conv=ok
+  [A] Z020 ✗ REFUTED     p=0.600 SampEn=2.467 surr=2.429 conv=ok
+
+Set B
+  [B] O001 ✗ REFUTED     p=0.820 SampEn=2.384 surr=2.335 conv=ok
+  [B] O002 ✗ REFUTED     p=0.650 SampEn=2.330 surr=2.309 conv=ok
+  [B] O003 ✗ REFUTED     p=0.590 SampEn=2.369 surr=2.352 conv=ok
+  [B] O004 ✗ REFUTED     p=0.260 SampEn=2.351 surr=2.395 conv=ok
+  [B] O005 ✗ REFUTED     p=0.090 SampEn=2.262 surr=2.331 conv=ok
+  [B] O006 ✗ REFUTED     p=0.350 SampEn=2.375 surr=2.397 conv=ok
+  [B] O007 ✗ REFUTED     p=0.070 SampEn=2.129 surr=2.215 conv=ok
+  [B] O008 ✗ REFUTED     p=0.160 SampEn=2.313 surr=2.367 conv=ok
+  [B] O009 ✗ REFUTED     p=0.730 SampEn=2.324 surr=2.296 conv=ok
+  [B] O010 ✗ REFUTED     p=0.180 SampEn=2.212 surr=2.270 conv=ok
+  [B] O011 ✗ REFUTED     p=0.480 SampEn=2.185 surr=2.191 conv=ok
+  [B] O012 ✗ REFUTED     p=0.180 SampEn=2.387 surr=2.442 conv=ok
+  [B] O013 ✗ REFUTED     p=0.640 SampEn=2.354 surr=2.331 conv=ok
+  [B] O014 ✗ REFUTED     p=0.580 SampEn=2.193 surr=2.180 conv=ok
+  [B] O015 ✗ REFUTED     p=0.400 SampEn=2.156 surr=2.168 conv=ok
+  [B] O016 ✗ REFUTED     p=0.420 SampEn=2.362 surr=2.372 conv=ok
+  [B] O017 ✗ REFUTED     p=0.100 SampEn=2.063 surr=2.139 conv=ok
+  [B] O018 ✗ REFUTED     p=0.560 SampEn=2.495 surr=2.489 conv=ok
+  [B] O019 ✗ REFUTED     p=0.100 SampEn=2.077 surr=2.138 conv=ok
+  [B] O020 ✗ REFUTED     p=0.210 SampEn=2.160 surr=2.206 conv=ok
+
+Set E
+  [E] S001 ✓ SURVIVED    p=0.010 SampEn=1.446 surr=1.982 conv=ok
+  [E] S002 ✓ SURVIVED    p=0.010 SampEn=2.066 surr=2.376 conv=ok
+  [E] S003 ✓ SURVIVED    p=0.010 SampEn=1.754 surr=2.271 conv=ok
+  [E] S004 ✓ SURVIVED    p=0.010 SampEn=1.608 surr=2.275 conv=ok
+  [E] S005 ✓ SURVIVED    p=0.010 SampEn=1.618 surr=2.056 conv=ok
+  [E] S006 ✓ SURVIVED    p=0.010 SampEn=1.999 surr=2.197 conv=ok
+  [E] S007 ✓ SURVIVED    p=0.010 SampEn=0.515 surr=2.067 conv=ok
+  [E] S008 ✓ SURVIVED    p=0.010 SampEn=1.152 surr=1.950 conv=ok
+  [E] S009 ✓ SURVIVED    p=0.020 SampEn=1.927 surr=2.047 conv=ok
+  [E] S010 ✓ SURVIVED    p=0.010 SampEn=1.697 surr=2.065 conv=ok
+  [E] S011 ✓ SURVIVED    p=0.010 SampEn=1.750 surr=2.073 conv=ok
+  [E] S012 ✓ SURVIVED    p=0.010 SampEn=1.033 surr=1.706 conv=ok
+  [E] S013 ✓ SURVIVED    p=0.010 SampEn=1.385 surr=1.967 conv=ok
+  [E] S014 ✓ SURVIVED    p=0.010 SampEn=1.725 surr=2.065 conv=ok
+  [E] S015 ✓ SURVIVED    p=0.010 SampEn=0.931 surr=2.021 conv=ok
+  [E] S016 ✓ SURVIVED    p=0.010 SampEn=1.067 surr=1.473 conv=ok
+  [E] S017 ✓ SURVIVED    p=0.010 SampEn=1.955 surr=2.345 conv=ok
+  [E] S018 ✓ SURVIVED    p=0.010 SampEn=1.048 surr=2.101 conv=ok
+  [E] S019 ✓ SURVIVED    p=0.010 SampEn=1.489 surr=1.961 conv=ok
+  [E] S020 ✓ SURVIVED    p=0.010 SampEn=1.482 surr=2.217 conv=ok
+
+================================================================
+  G1 Set E SURVIVED: 20/20 (100%)
+  Set A not-SURVIVED: 15/20 (75%)
+  Set B not-SURVIVED: 20/20 (100%)
+  G1_PASS: False
+================================================================
+Evidence bundle -> ../../artifacts/bonn_bright_line/bonn_EXPLORATORY_VERDICT.json

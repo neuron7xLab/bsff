@@ -1,0 +1,24 @@
+G2 AR negative control | input=bonn_data/A n=20 ar_order=10 n_surrogates=99 alpha=0.05 statistic=sampen_lower_tail_m2_r015_v1
+  Z001: REFUTED p=0.690
+  Z002: REFUTED p=0.700
+  Z003: REFUTED p=0.270
+  Z004: REFUTED p=0.500
+  Z005: REFUTED p=0.390
+  Z006: REFUTED p=0.120
+  Z007: REFUTED p=0.360
+  Z008: REFUTED p=0.800
+  Z009: SURVIVED ← FP p=0.020
+  Z010: REFUTED p=0.620
+  Z011: REFUTED p=0.710
+  Z012: REFUTED p=0.260
+  Z013: REFUTED p=0.200
+  Z014: REFUTED p=0.290
+  Z015: REFUTED p=0.090
+  Z016: REFUTED p=0.980
+  Z017: REFUTED p=0.410
+  Z018: REFUTED p=0.280
+  Z019: REFUTED p=0.860
+  Z020: REFUTED p=0.470
+
+  FPR=0.050 (n_fp=1/20) | fpr_ok=True
+Evidence bundle -> ../../artifacts/controls/ar_negative_EXPLORATORY_A.json

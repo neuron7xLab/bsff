@@ -1,0 +1,53 @@
+================================================================
+BSFF — Bonn Bright Line (instrument verdict)
+data_dir=bonn_data n_segments=10 n_surrogates=99 policy=standard alpha=0.05 seed_base=20260623
+================================================================
+
+Set E (ictal — positive control)
+  [E] S001  ? UNSUPPORTED  p=1.0    raw_rej=False conv=ok
+  [E] S002  ? UNSUPPORTED  p=1.0    raw_rej=False conv=ok
+  [E] S003  ✓ SURVIVED     p=0.01   raw_rej=True conv=ok
+  [E] S004  ? UNSUPPORTED  p=1.0    raw_rej=False conv=ok
+  [E] S005  ? UNSUPPORTED  p=1.0    raw_rej=False conv=ok
+  [E] S006  ? UNSUPPORTED  p=1.0    raw_rej=False conv=ok
+  [E] S007  ✗ REFUTED      p=0.83   raw_rej=False conv=ok
+  [E] S008  ✗ REFUTED      p=0.07   raw_rej=False conv=ok
+  [E] S009  ✓ SURVIVED     p=0.01   raw_rej=True conv=ok
+  [E] S010  ✗ REFUTED      p=0.24   raw_rej=False conv=ok
+
+Set A (healthy — negative control)
+  [A] Z001  ? UNSUPPORTED  p=0.05   raw_rej=True conv=ok
+  [A] Z002  ✗ REFUTED      p=0.23   raw_rej=False conv=ok
+  [A] Z003  ✗ REFUTED      p=0.85   raw_rej=False conv=ok
+  [A] Z004  ✗ REFUTED      p=0.52   raw_rej=False conv=ok
+  [A] Z005  ✗ REFUTED      p=0.07   raw_rej=False conv=ok
+  [A] Z006  ✗ REFUTED      p=0.28   raw_rej=False conv=ok
+  [A] Z007  ✗ REFUTED      p=0.56   raw_rej=False conv=ok
+  [A] Z008  ✗ REFUTED      p=0.74   raw_rej=False conv=ok
+  [A] Z009  ✗ REFUTED      p=0.83   raw_rej=False conv=ok
+  [A] Z010  ? UNSUPPORTED  p=0.01   raw_rej=True conv=ok
+
+Set B (healthy — negative control)
+  [B] O001  ✓ SURVIVED     p=0.01   raw_rej=True conv=ok
+  [B] O002  ✗ REFUTED      p=0.25   raw_rej=False conv=ok
+  [B] O003  ✓ SURVIVED     p=0.01   raw_rej=True conv=ok
+  [B] O004  ✗ REFUTED      p=0.38   raw_rej=False conv=ok
+  [B] O005  ? UNSUPPORTED  p=0.02   raw_rej=True conv=ok
+  [B] O006  ? UNSUPPORTED  p=0.02   raw_rej=True conv=ok
+  [B] O007  ? UNSUPPORTED  p=0.04   raw_rej=True conv=ok
+  [B] O008  ✗ REFUTED      p=0.17   raw_rej=False conv=ok
+  [B] O009  ✗ REFUTED      p=0.13   raw_rej=False conv=ok
+  [B] O010  ✗ REFUTED      p=0.67   raw_rej=False conv=ok
+
+================================================================
+  Set E SURVIVED:      2/10 (20%)
+  Set A/B SURVIVED:    2/20 (10%)
+  positive_control_pass: False
+  negative_control_pass: False
+  BRIGHT LINE PASSED:    False
+
+  BRIGHT LINE NOT MET: BSFF's operating characteristic on real neural data is unproven with this statistic (insufficient power and/or specificity). DO NOT proceed to claim adjudication.
+  elapsed=29.4s
+================================================================
+
+Evidence bundle -> ../../artifacts/bonn_bright_line/bonn_bright_line_EXPLORATORY.json

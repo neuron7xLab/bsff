@@ -1,0 +1,185 @@
+{
+  "schema": "bsff.ar_negative_control/v3",
+  "timestamp_utc": "2026-06-23T17:31:04Z",
+  "git_commit": "f975ea4694df36b7f331ca8b4f6e7af3e0e543b7",
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39"
+  },
+  "control": {
+    "statistic_id": "sampen_lower_tail_m2_r015_v1",
+    "source_dir": "bonn_data/A",
+    "n_segments": 20,
+    "ar_order": 10,
+    "n_surrogates": 99,
+    "alpha": 0.05,
+    "n_false_positives": 1,
+    "fpr": 0.05,
+    "fpr_threshold": 0.05,
+    "fpr_ok": true,
+    "results": [
+      {
+        "segment_id": "Z001",
+        "ar_order": 10,
+        "p_value": 0.69,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260624
+      },
+      {
+        "segment_id": "Z002",
+        "ar_order": 10,
+        "p_value": 0.7,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260625
+      },
+      {
+        "segment_id": "Z003",
+        "ar_order": 10,
+        "p_value": 0.27,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260626
+      },
+      {
+        "segment_id": "Z004",
+        "ar_order": 10,
+        "p_value": 0.5,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260627
+      },
+      {
+        "segment_id": "Z005",
+        "ar_order": 10,
+        "p_value": 0.39,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260628
+      },
+      {
+        "segment_id": "Z006",
+        "ar_order": 10,
+        "p_value": 0.12,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260629
+      },
+      {
+        "segment_id": "Z007",
+        "ar_order": 10,
+        "p_value": 0.36,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260630
+      },
+      {
+        "segment_id": "Z008",
+        "ar_order": 10,
+        "p_value": 0.8,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260631
+      },
+      {
+        "segment_id": "Z009",
+        "ar_order": 10,
+        "p_value": 0.02,
+        "verdict": "SURVIVED",
+        "is_false_positive": true,
+        "seed": 20260632
+      },
+      {
+        "segment_id": "Z010",
+        "ar_order": 10,
+        "p_value": 0.62,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260633
+      },
+      {
+        "segment_id": "Z011",
+        "ar_order": 10,
+        "p_value": 0.71,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260634
+      },
+      {
+        "segment_id": "Z012",
+        "ar_order": 10,
+        "p_value": 0.26,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260635
+      },
+      {
+        "segment_id": "Z013",
+        "ar_order": 10,
+        "p_value": 0.2,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260636
+      },
+      {
+        "segment_id": "Z014",
+        "ar_order": 10,
+        "p_value": 0.29,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260637
+      },
+      {
+        "segment_id": "Z015",
+        "ar_order": 10,
+        "p_value": 0.09,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260638
+      },
+      {
+        "segment_id": "Z016",
+        "ar_order": 10,
+        "p_value": 0.98,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260639
+      },
+      {
+        "segment_id": "Z017",
+        "ar_order": 10,
+        "p_value": 0.41,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260640
+      },
+      {
+        "segment_id": "Z018",
+        "ar_order": 10,
+        "p_value": 0.28,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260641
+      },
+      {
+        "segment_id": "Z019",
+        "ar_order": 10,
+        "p_value": 0.86,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260642
+      },
+      {
+        "segment_id": "Z020",
+        "ar_order": 10,
+        "p_value": 0.47,
+        "verdict": "REFUTED",
+        "is_false_positive": false,
+        "seed": 20260643
+      }
+    ],
+    "interpretation": "NEGATIVE CONTROL PASS: real-spectrum AR null -> FPR=0.050 <= 0.05."
+  },
+  "elapsed_sec": 45.18
+}
