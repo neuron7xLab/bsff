@@ -29,7 +29,7 @@ authoritative status:
 
 ## Validation level
 
-Synthetic-ground-truth calibration PLUS a Bonn external benchmark that is a NOMINAL single-seed pass with G2 specificity NOT robust: BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST. Falsification + seed-averaged calibration show the AR-null FPR Wilson-95-CI upper bound (0.056) exceeds the 0.05 gate (robust_gate_passed=false). G1 power is robust. BNCI2014-001 is preregistration-only (BLOCKED_METHOD). NOT clinical, regulatory, multi-dataset replicated, or robustly validated. Canonical state: artifacts/release/CURRENT_TRUTH.json.
+Synthetic-ground-truth calibration PLUS a Bonn external benchmark whose pre-registered, reproduced seed-averaged AR-null specificity gate PASSES: BONN_S2_SEED_ROBUST_PASS_MULTINULL_PENDING. S3 (N=1000, 10 seeds, frozen-before-run, re-run reproduced byte-for-byte): G1 power 0.94, G2 AR-null FPR 0.028, Wilson 95% CI [0.019, 0.040], upper <= 0.05. Specificity is robust to seed under the AR null; multi-null robustness (IAAFT/phase-randomized) is NOT_DONE, so the full robust claim is withheld (robust_gate_passed=null). BNCI2014-001 preregistration-only (BLOCKED_METHOD). NOT clinical, regulatory, multi-dataset replicated, or multi-null robust. Canonical state: artifacts/release/CURRENT_TRUTH.json.
 
 See [`docs/VALIDATION.md`](docs/VALIDATION.md) for the full evidence tier
 table and [`docs/OPERATING_CHARACTERISTIC.md`](docs/OPERATING_CHARACTERISTIC.md)

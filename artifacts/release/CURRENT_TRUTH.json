@@ -1,14 +1,16 @@
 {
   "schema": "bsff.current_truth/v2",
   "package_version": "0.4.0",
-  "main_commit": "87466768dfac819bde0f36d8fdbed25c0aceb995",
-  "latest_validation_state": "BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST",
+  "main_commit": "4bd046407948f34daed565eb585e49b0dc1ec9ff",
+  "latest_validation_state": "BONN_S2_SEED_ROBUST_PASS_MULTINULL_PENDING",
   "bonn_s2_nominal_state": "PASSED_SINGLE_SEED",
-  "bonn_s2_robustness_state": "NOT_ROBUST_G2_SPECIFICITY_seed_avg_FPR_0.0354_CI_[0.0222, 0.056]_crosses_0.05",
-  "s2_seed_averaged_fpr": 0.0354,
-  "s2_wilson_ci_upper": 0.056,
+  "bonn_s2_robustness_state": "SEED_ROBUST_AR_NULL_PASS_CI_[0.0194, 0.0402]_MULTINULL_PENDING",
+  "s2_seed_averaged_fpr": 0.028,
+  "s2_wilson_ci_upper": 0.0402,
   "robust_gate": "G1_power>=0.80 AND G2_AR-null_FPR_Wilson95_CI_upper<=0.05",
-  "robust_gate_passed": false,
+  "seed_robust_gate_passed": true,
+  "multi_null_robustness_state": "NOT_DONE",
+  "robust_gate_passed": null,
   "bonn_s1_state": "BRIGHT_LINE_NOT_PASSED",
   "bonn_s2_state": "S2_BRIGHT_LINE_PASSED",
   "G1_metrics": {
@@ -25,7 +27,7 @@
   },
   "BNCI_chain_state": "UNLOCKED_FOR_PREREGISTRATION_ONLY",
   "bnci_execution_state": "BNCI_BLOCKED_METHOD",
-  "s2_robustness": "NOT_ROBUST_G2_SPECIFICITY_seed_avg_FPR_0.0354_CI_[0.0222, 0.056]_crosses_0.05",
+  "s2_robustness": "SEED_ROBUST_AR_NULL_PASS_CI_[0.0194, 0.0402]_MULTINULL_PENDING",
   "multi_dataset_replication_state": "NOT_DONE",
   "pypi_deployment_state": "TESTPYPI_READY_PYPI_READY",
   "supported_claims": [
@@ -55,5 +57,5 @@
   },
   "hash_manifest_path": "artifacts/release/bonn_bright_line/HASHES.sha256",
   "reproduction_entrypoint": "REPRODUCE.md",
-  "timestamp_utc": "2026-06-24T19:25:30Z"
+  "timestamp_utc": "2026-06-24T23:10:01Z"
 }

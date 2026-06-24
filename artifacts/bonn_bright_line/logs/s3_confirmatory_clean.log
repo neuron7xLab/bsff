@@ -1,0 +1,12 @@
+  seed 20260623: E=0.94 fpr=0.010
+  seed 7: E=0.94 fpr=0.050
+  seed 999: E=0.94 fpr=0.000
+  seed 314159: E=0.94 fpr=0.010
+  seed 2718: E=0.94 fpr=0.020
+  seed 42: E=0.94 fpr=0.040
+  seed 161803: E=0.94 fpr=0.040
+  seed 27182: E=0.94 fpr=0.040
+  seed 31337: E=0.94 fpr=0.040
+  seed 123456: E=0.94 fpr=0.030
+
+S3_BRIGHT_LINE_ROBUSTLY_PASSED | G1 E=0.940(>=0.80) G2 FPR=0.0280 CI=[0.0194,0.0402] (upper<=0.05?True)

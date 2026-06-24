@@ -82,3 +82,11 @@ Still **FORBIDDEN**: clinical/medical/regulatory/device claims; final proof of b
 | Bonn S2 robust bright-line passed | REFUTED_BY_ARTIFACT | robust_gate_passed=false; CI upper 0.056 > 0.05 (`CURRENT_TRUTH.json`) |
 | Bonn S2 nominal single-seed pass exists | PROVEN_BY_ARTIFACT | predeclared confirmatory (FPR 0.02), `bonn_s2_nominal_state=PASSED_SINGLE_SEED` |
 | "Bonn validated" without a robustness qualifier | FORBIDDEN | enforced by `tools/validate_statistical_claims.py` (CI) |
+
+## S3 seed-averaged confirmatory (reproduced fact)
+| claim | status | evidence |
+|-------|--------|----------|
+| Seed-averaged AR-null specificity is robust (FPR 0.028, Wilson CI [0.019,0.040] upper ≤ 0.05) | PROVEN_BY_ARTIFACT | `S3_CONFIRMATORY_VERDICT.json` (N=1000, 10 seeds, frozen lock, re-run reproduced per-seed counts byte-for-byte) |
+| The S2 not-robust calibration is superseded by the larger pre-registered S3 | PROVEN_BY_ARTIFACT | N=480 (0.0354) vs N=1000 (0.028); seed-set/N sensitive near boundary; larger test passes |
+| Bonn S2 is robust across null models | UNSUPPORTED (not yet) | multi-null (IAAFT/phase-randomized) NOT_DONE; `multi_null_robustness_state=NOT_DONE` |
+| Bonn S2 bright line is fully robustly passed | UNVERIFIED | requires multi-null; `robust_gate_passed=null` |

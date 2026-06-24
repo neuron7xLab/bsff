@@ -39,7 +39,16 @@ def _bnci_execution_state() -> str:
 
 
 def _s2_robustness() -> str:
-    # Calibrated by the falsification battery + seed-averaged specificity calibration.
+    # Authoritative: S3 seed-averaged AR-null confirmatory (reproduced) > calibration > falsification.
+    s3 = ROOT / "artifacts" / "bonn_bright_line" / "S3_CONFIRMATORY_VERDICT.json"
+    if s3.is_file():
+        d = json.loads(s3.read_text())
+        ci = d.get("G2", {}).get("wilson_95ci")
+        if d.get("S3_PASS"):
+            mn = _multi_null_passed()
+            tag = {True: "_MULTINULL_CONFIRMED", False: "_MULTINULL_FAILED", None: "_MULTINULL_PENDING"}[mn]
+            return f"SEED_ROBUST_AR_NULL_PASS_CI_{ci}{tag}"
+        return f"S3_SEED_AVERAGED_NOT_ROBUST_CI_{ci}"
     cal = ROOT / "artifacts" / "bonn_bright_line" / "S2_SPECIFICITY_CALIBRATION.json"
     if cal.is_file():
         c = json.loads(cal.read_text())
@@ -66,25 +75,38 @@ def _pypi_state() -> str:
     return "TESTPYPI_READY_PYPI_READY" if (has_test and has_pypi) else "INCOMPLETE"
 
 
+def _multi_null_passed():
+    """True/False if the multi-null robustness artifact exists; None if not yet run."""
+    p = ROOT / "artifacts" / "bonn_bright_line" / "MULTI_NULL_ROBUSTNESS.json"
+    if not p.is_file():
+        return None
+    return bool(json.loads(p.read_text()).get("all_nulls_pass", False))
+
+
 def _bonn_robustness() -> dict:
-    """Resolve the robust specificity state from the strongest available evidence:
-    S3 seed-averaged confirmatory > seed-averaged calibration > nominal-only."""
+    """seed_robust = S3 seed-averaged AR-null gate passed (authoritative, reproduced);
+    full_robust additionally requires multi-null robustness (AR/IAAFT/phase-randomized)."""
     cal_p = ROOT / "artifacts" / "bonn_bright_line" / "S2_SPECIFICITY_CALIBRATION.json"
     s3_p = ROOT / "artifacts" / "bonn_bright_line" / "S3_CONFIRMATORY_VERDICT.json"
     fpr = ci_upper = None
-    robust = None
+    seed_robust = None
     if cal_p.is_file():
         c = json.loads(cal_p.read_text())
         fpr = c.get("pooled_fpr")
         ci_upper = (c.get("wilson_95ci") or [None, None])[1]
-        robust = bool(c.get("fpr_ci_upper_below_threshold", False))
-    if s3_p.is_file():  # S3 is the authoritative, larger-N evidence
+        seed_robust = bool(c.get("fpr_ci_upper_below_threshold", False))
+    if s3_p.is_file():  # authoritative, larger-N, reproduced
         s3 = json.loads(s3_p.read_text())
         g2 = s3.get("G2", {})
         fpr = g2.get("ar_null_fpr", fpr)
         ci_upper = (g2.get("wilson_95ci") or [None, ci_upper])[1]
-        robust = bool(s3.get("S3_PASS", False))
-    return {"robust": robust, "seed_avg_fpr": fpr, "wilson_ci_upper": ci_upper}
+        seed_robust = bool(s3.get("S3_PASS", False))
+    multi_null = _multi_null_passed()
+    full_robust = (seed_robust is True and multi_null is True) if multi_null is not None else None
+    return {
+        "seed_robust": seed_robust, "multi_null": multi_null, "full_robust": full_robust,
+        "seed_avg_fpr": fpr, "wilson_ci_upper": ci_upper,
+    }
 
 
 def build() -> dict:
@@ -96,9 +118,16 @@ def build() -> dict:
     ).stdout.strip()
     g1, g2 = s2["G1"], s2["G2"]
     rob = _bonn_robustness()
-    if rob["robust"] is True:
+    if rob["full_robust"] is True:
         latest = "BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED"
-    elif rob["robust"] is False:
+    elif rob["seed_robust"] is True:
+        # seed-averaged AR-null gate passed (reproduced); multi-null robustness pending/failed.
+        latest = (
+            "BONN_S2_SEED_ROBUST_PASS_MULTINULL_FAILED"
+            if rob["multi_null"] is False
+            else "BONN_S2_SEED_ROBUST_PASS_MULTINULL_PENDING"
+        )
+    elif rob["seed_robust"] is False:
         latest = "BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST"
     else:
         latest = "BONN_S2_BRIGHT_LINE_PASSED" if s2_pass else s2["final_state"]
@@ -112,7 +141,13 @@ def build() -> dict:
         "s2_seed_averaged_fpr": rob["seed_avg_fpr"],
         "s2_wilson_ci_upper": rob["wilson_ci_upper"],
         "robust_gate": "G1_power>=0.80 AND G2_AR-null_FPR_Wilson95_CI_upper<=0.05",
-        "robust_gate_passed": bool(rob["robust"]) if rob["robust"] is not None else None,
+        "seed_robust_gate_passed": rob["seed_robust"],  # S3 seed-averaged AR-null (reproduced)
+        "multi_null_robustness_state": (
+            "PASSED" if rob["multi_null"] is True
+            else "FAILED" if rob["multi_null"] is False else "NOT_DONE"
+        ),
+        # robust_gate_passed requires BOTH seed-averaged AND multi-null robustness.
+        "robust_gate_passed": rob["full_robust"],
         "bonn_s1_state": s1["final_state"],  # BRIGHT_LINE_NOT_PASSED (historical)
         "bonn_s2_state": s2["final_state"],  # nominal single-seed confirmatory
         "G1_metrics": {

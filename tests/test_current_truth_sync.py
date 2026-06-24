@@ -32,14 +32,18 @@ def test_canonical_state_is_honest_about_robustness():
     import json
 
     truth = json.loads((ROOT / "artifacts" / "release" / "CURRENT_TRUTH.json").read_text())
-    # Nominal single-seed pass, but the falsification downgraded G2 specificity to NOT robust.
+    # The state tracks the strongest reproduced evidence; it must be one of the honest tokens.
     assert truth["latest_validation_state"] in {
         "BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST",
-        "BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED",  # only if S3 proves robust
+        "BONN_S2_SEED_ROBUST_PASS_MULTINULL_PENDING",
+        "BONN_S2_SEED_ROBUST_PASS_MULTINULL_FAILED",
+        "BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED",  # only with seed-robust AND multi-null
     }
     assert truth["bonn_s2_nominal_state"] == "PASSED_SINGLE_SEED"
-    # The robust gate must not be silently claimed passed unless an artifact proves it.
-    if truth["latest_validation_state"] == "BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST":
-        assert truth["robust_gate_passed"] is False
+    # Full robust must not be claimed unless multi-null robustness also passed.
+    if truth["latest_validation_state"] != "BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED":
+        assert truth["robust_gate_passed"] is not True
+    else:
+        assert truth["multi_null_robustness_state"] == "PASSED"
     assert truth["BNCI_chain_state"] == "UNLOCKED_FOR_PREREGISTRATION_ONLY"
     assert truth["bonn_s1_state"] == "BRIGHT_LINE_NOT_PASSED"  # preserved

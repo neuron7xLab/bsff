@@ -1,10 +1,10 @@
 {
   "schema": "bsff.statistical_claims/v1",
   "status": "PASS",
-  "latest_validation_state": "BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST",
-  "s2_wilson_ci_upper": 0.056,
-  "robust_gate_passed": false,
+  "latest_validation_state": "BONN_S2_SEED_ROBUST_PASS_MULTINULL_PENDING",
+  "s2_wilson_ci_upper": 0.0402,
+  "robust_gate_passed": null,
   "violations": [],
-  "git_commit": "a173ca7f1abd1e52e672fad1bf792d334b842f5c",
-  "timestamp_utc": "2026-06-24T19:38:12Z"
+  "git_commit": "4bd046407948f34daed565eb585e49b0dc1ec9ff",
+  "timestamp_utc": "2026-06-24T23:17:37Z"
 }
