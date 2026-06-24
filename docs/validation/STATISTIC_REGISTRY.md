@@ -107,3 +107,15 @@ confirmatory verdict follow the same fail-closed pattern as S1.
   0.05 gave real FPR 0.08); strong ictal rejections (p≈0.005) survive the stricter threshold,
   so G1 power is preserved. A conservative-threshold variant, not a new statistic.
 - Evidence: `s2_CONFIRMATORY_VERDICT.json`, `S2_BRIGHT_LINE_SUMMARY.json`, `docs/validation/S2_VERDICT.md`.
+
+### S2 robustness — falsification (calibrated)
+
+An adversarial battery (`artifacts/bonn_bright_line/S2_FALSIFICATION_REPORT.json`) attacked the S2
+verdict with 4 seed perturbations + 3 AR-order misspecifications (N=30, 199 surrogates):
+- **G1 power ROBUST:** Set E SURVIVED = 0.967 under every seed and AR order.
+- **G2 specificity BOUNDARY/FRAGILE:** AR-null FPR ranged 0.0–0.067; `seed_base=7` gave **0.067 > 0.05**.
+
+**Calibrated claim:** `BONN_S2_BRIGHT_LINE_PASSED` is a **boundary/marginal pass** — it passed the
+predeclared N=100 confirmatory (FPR 0.02) but the specificity margin is thin (Wilson 95% CI of
+0.02 reaches ~0.05) and **seed-sensitive**. The bright line is not claimed as robustly crossed; a
+seed-averaged or larger-N specificity confirmatory is the honest next step.

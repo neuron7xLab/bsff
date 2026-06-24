@@ -1,7 +1,7 @@
 {
   "schema": "bsff.current_truth/v1",
   "package_version": "0.4.0",
-  "main_commit": "f3fcd3697ed56a4bc642fe7146058b66628f0b28",
+  "main_commit": "394f5b33547591b4d074e9e1224735ba0947291d",
   "latest_validation_state": "BONN_S2_BRIGHT_LINE_PASSED",
   "bonn_s1_state": "BRIGHT_LINE_NOT_PASSED",
   "bonn_s2_state": "S2_BRIGHT_LINE_PASSED",
@@ -19,6 +19,7 @@
   },
   "BNCI_chain_state": "UNLOCKED_FOR_PREREGISTRATION_ONLY",
   "bnci_execution_state": "BNCI_BLOCKED_METHOD",
+  "s2_robustness": "BOUNDARY_PASS_G1_POWER_ROBUST_G2_SPECIFICITY_SEED_SENSITIVE",
   "multi_dataset_replication_state": "NOT_DONE",
   "pypi_deployment_state": "TESTPYPI_READY_PYPI_READY",
   "supported_claims": [
@@ -48,5 +49,5 @@
   },
   "hash_manifest_path": "artifacts/release/bonn_bright_line/HASHES.sha256",
   "reproduction_entrypoint": "REPRODUCE.md",
-  "timestamp_utc": "2026-06-24T16:18:36Z"
+  "timestamp_utc": "2026-06-24T17:29:52Z"
 }

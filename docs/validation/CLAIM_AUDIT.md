@@ -61,3 +61,10 @@ Still **FORBIDDEN**: clinical/medical/regulatory/device claims; final proof of b
 | Multi-dataset replication (Cho2017/Lee2019) is done | REFUTED_BY_ARTIFACT | NOT_DONE — only preregistration scaffolds (`artifacts/replication/*/LOCK.json`) |
 | BNCI method repair has passed its short-epoch check | UNSUPPORTED (not yet) | `METHOD_REPAIR_LOCK.json` = PREDECLARED_NOT_VALIDATED; short-epoch validation INCONCLUSIVE for narrowband |
 | Forbidden claims are enforced in CI | PROVEN_BY_ARTIFACT | `tools/validate_forbidden_claims.py` (CI) + `CLAIM_SAFETY_REPORT.json` |
+
+## S2 falsification (calibrated)
+| claim | status | evidence |
+|-------|--------|----------|
+| S2 G1 power is robust to seed | PROVEN_BY_ARTIFACT | Set E SURVIVED 0.967 all seeds (`S2_FALSIFICATION_REPORT.json`) |
+| S2 G2 specificity is robustly below 0.05 | REFUTED_BY_ARTIFACT | seed_base=7 -> AR-null FPR 0.067 > 0.05; margin thin/seed-sensitive |
+| S2 bright line is a boundary/marginal pass (not robustly crossed) | PROVEN_BY_ARTIFACT | falsification battery; calibrated claim |

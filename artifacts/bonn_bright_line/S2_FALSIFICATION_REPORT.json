@@ -1,0 +1,64 @@
+{
+  "schema": "bsff.s2_falsification/v1",
+  "N_segments": 30,
+  "n_surrogates": 199,
+  "detection_p": 0.025,
+  "attacks": [
+    {
+      "attack": "seed_perturbation",
+      "seed_base": 20260623,
+      "E_survived": 0.967,
+      "ar_null_fpr": 0.0,
+      "E_ok": true,
+      "fpr_ok": true
+    },
+    {
+      "attack": "seed_perturbation",
+      "seed_base": 7,
+      "E_survived": 0.967,
+      "ar_null_fpr": 0.067,
+      "E_ok": true,
+      "fpr_ok": false
+    },
+    {
+      "attack": "seed_perturbation",
+      "seed_base": 999,
+      "E_survived": 0.967,
+      "ar_null_fpr": 0.0,
+      "E_ok": true,
+      "fpr_ok": true
+    },
+    {
+      "attack": "seed_perturbation",
+      "seed_base": 314159,
+      "E_survived": 0.967,
+      "ar_null_fpr": 0.033,
+      "E_ok": true,
+      "fpr_ok": true
+    },
+    {
+      "attack": "ar_order_variation",
+      "ar_order": 5,
+      "ar_null_fpr": 0.0,
+      "fpr_ok": true
+    },
+    {
+      "attack": "ar_order_variation",
+      "ar_order": 10,
+      "ar_null_fpr": 0.033,
+      "fpr_ok": true
+    },
+    {
+      "attack": "ar_order_variation",
+      "ar_order": 15,
+      "ar_null_fpr": 0.0,
+      "fpr_ok": true
+    }
+  ],
+  "claim_survives_attacks": false,
+  "verdict": "S2_FRAGILE_under_attack",
+  "git_commit": "394f5b33547591b4d074e9e1224735ba0947291d",
+  "timestamp_utc": "2026-06-24T17:28:19Z",
+  "interpretation": "G1 power robust (Set E SURVIVED 0.967 across all 4 seeds + AR orders). G2 specificity is a BOUNDARY pass: AR-null FPR 0.0-0.067 across seeds; seed_base=7 gave 0.067>0.05 at N=30. The committed confirmatory (N=100) FPR=0.02 has a Wilson 95% CI reaching ~0.05, so the specificity margin is thin and seed-sensitive. The bright line PASSED the predeclared confirmatory but is NOT robust to seed.",
+  "calibrated_claim": "BONN_S2_BRIGHT_LINE_PASSED is a BOUNDARY/marginal pass (power robust; specificity margin thin, seed-sensitive)."
+}

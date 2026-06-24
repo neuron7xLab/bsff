@@ -56,3 +56,12 @@ adjudicated on its own executed evidence.
 S2_BRIGHT_LINE_SUMMARY, s2_CONFIRMATORY_VERDICT, S2_SELECTION_LOCK, DATASET_MANIFEST}.json` ·
 `docs/validation/{S2_VERDICT, STATISTIC_REGISTRY, CLAIM_AUDIT}.md` · hashes
 `artifacts/release/bonn_bright_line/HASHES.sha256` · reproduce `REPRODUCE.md`.
+
+## Robustness (falsification-calibrated)
+An adversarial battery (`artifacts/bonn_bright_line/S2_FALSIFICATION_REPORT.json`) found:
+**G1 power is robust** (Set E SURVIVED 0.967 under all seeds/AR-orders), but **G2 specificity is a
+boundary pass** — AR-null FPR reached **0.067 > 0.05** under one perturbation seed (N=30). So
+`BONN_S2_BRIGHT_LINE_PASSED` is a **marginal/boundary** pass: it cleared the predeclared N=100
+confirmatory (FPR 0.02) but the specificity margin is thin and seed-sensitive. Not claimed as
+robustly crossed; a seed-averaged / larger-N specificity confirmatory is the honest next step.
+`CURRENT_TRUTH.s2_robustness = BOUNDARY_PASS_G1_POWER_ROBUST_G2_SPECIFICITY_SEED_SENSITIVE`.

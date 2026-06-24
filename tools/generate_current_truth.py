@@ -38,6 +38,17 @@ def _bnci_execution_state() -> str:
     return "NOT_ATTEMPTED"
 
 
+def _s2_robustness() -> str:
+    # Calibrated by the falsification battery: power robust, specificity margin thin/seed-sensitive.
+    p = ROOT / "artifacts" / "bonn_bright_line" / "S2_FALSIFICATION_REPORT.json"
+    if p.is_file():
+        r = json.loads(p.read_text())
+        if not r.get("claim_survives_attacks", True):
+            return "BOUNDARY_PASS_G1_POWER_ROBUST_G2_SPECIFICITY_SEED_SENSITIVE"
+        return "ROBUST"
+    return "NOT_TESTED"
+
+
 def _replication_state() -> str:
     rep = ROOT / "artifacts" / "replication"
     done = rep.is_dir() and any(rep.glob("**/CONFIRMATORY_VERDICT.json"))
@@ -81,6 +92,7 @@ def build() -> dict:
         },
         "BNCI_chain_state": "UNLOCKED_FOR_PREREGISTRATION_ONLY" if s2_pass else "BLOCKED",
         "bnci_execution_state": _bnci_execution_state(),
+        "s2_robustness": _s2_robustness(),
         "multi_dataset_replication_state": _replication_state(),
         "pypi_deployment_state": _pypi_state(),
         "supported_claims": [
