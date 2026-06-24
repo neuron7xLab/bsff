@@ -1,0 +1,73 @@
+{
+  "schema": "bsff.bnci_lock_audit/v1",
+  "state": "BNCI_BLOCKED_LOCK_INCOMPLETE",
+  "git_commit": "09c6fb0d44fd72ee093939f12d6b5cbba2139691",
+  "timestamp_utc": "2026-06-24T09:56:50Z",
+  "checks": [
+    {
+      "check": "lock_exists",
+      "ok": true,
+      "detail": "BNCI2014_001_LOCK.json present"
+    },
+    {
+      "check": "lock_status_locked",
+      "ok": true,
+      "detail": "PREREGISTRATION_LOCKED_NOT_EXECUTED"
+    },
+    {
+      "check": "dataset_bnci2014_001",
+      "ok": true,
+      "detail": "BNCI2014-001 (BCI Competition IV-2a)"
+    },
+    {
+      "check": "subjects_1_9",
+      "ok": true,
+      "detail": "[1, 2, 3, 4, 5, 6, 7, 8, 9]"
+    },
+    {
+      "check": "sfreq_250_verified",
+      "ok": true,
+      "detail": "subject 1 probe: sfreq=250.0, 22 EEG channels (acquisition GREEN)"
+    },
+    {
+      "check": "n_surrogates_199",
+      "ok": true,
+      "detail": "199"
+    },
+    {
+      "check": "stop_rules_defined",
+      "ok": true,
+      "detail": "present"
+    },
+    {
+      "check": "claim_scope_bounded",
+      "ok": true,
+      "detail": "present"
+    },
+    {
+      "check": "forbidden_claims_present",
+      "ok": true,
+      "detail": "7 entries"
+    },
+    {
+      "check": "command_implements_locked_method",
+      "ok": false,
+      "detail": "exact_commands[0] -> research/bci_generalization/run_experiment.py implements CSP cross-session DECODING (loso_gap), NOT the locked statistic sampen_lower_tail + MIAAFT null + AR-null FPR. No runner implementing the locked method exists."
+    },
+    {
+      "check": "no_unresolved_command_placeholder",
+      "ok": false,
+      "detail": "exact_commands[1] = 'python tools/... aggregate' contains literal '...' placeholder"
+    },
+    {
+      "check": "channel_aggregation_specified",
+      "ok": false,
+      "detail": "positive_control 'epochs SURVIVED fraction per class' does not specify how 22 channels reduce to a per-epoch verdict (per-channel / averaged / majority). Execution-critical; affects result and feasibility."
+    }
+  ],
+  "execution_critical_failures": [
+    "command_implements_locked_method",
+    "no_unresolved_command_placeholder",
+    "channel_aggregation_specified"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "schema": "bsff.bnci_summary/v1",
+  "final_state": "BNCI_BLOCKED_LOCK_INCOMPLETE",
+  "dataset": "BNCI2014-001",
+  "subjects_requested": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "subjects_executed": [],
+  "subjects_failed": [],
+  "n_surrogates": 199,
+  "statistic_id": "sampen_lower_tail_m2_r015_v1",
+  "null_model": "MIAAFT",
+  "alpha": 0.05,
+  "correction": "Benjamini-Hochberg FDR",
+  "data_acquisition": "GREEN (subject 1 verified: 250 Hz, 22 EEG)",
+  "blocker": "LOCK_INCOMPLETE",
+  "execution_critical_gaps": [
+    "exact_commands[0] -> run_experiment.py implements CSP cross-session DECODING (loso_gap), not the locked sampen_lower_tail + MIAAFT + AR-null FPR method; no runner for the locked method exists.",
+    "exact_commands[1] = 'python tools/... aggregate' contains a literal '...' placeholder.",
+    "per-class SURVIVED-fraction leaves 22-channel -> per-epoch verdict aggregation unspecified (execution-critical)."
+  ],
+  "why_not_forced": "PRIMARY LAW forbids inventing the missing specification post-hoc to force a run (would be rewriting the preregistration). Completing the lock is a separate authorized preregistration step.",
+  "command_attempted": "audit only; locked confirmatory NOT executed",
+  "artifact_paths": {
+    "lock_audit": "artifacts/bnci2014_001/LOCK_AUDIT.json",
+    "data_smoke": "artifacts/bnci2014_001/DATA_SMOKE_SUBJECT1.json"
+  },
+  "forbidden_claims": [
+    "clinical",
+    "medical",
+    "regulatory",
+    "device",
+    "seizure-product",
+    "universal BCI authority",
+    "BNCI validated"
+  ],
+  "limitations": [
+    "BNCI not executed",
+    "not clinical/regulatory",
+    "not independent replication"
+  ],
+  "git_commit": "09c6fb0d44fd72ee093939f12d6b5cbba2139691",
+  "timestamp_utc": "2026-06-24T09:57:40Z",
+  "next_state": "Re-preregister a COMPLETE executable lock (implement locked-method runner + specify channel/epoch aggregation deterministically), then execute under fresh authorization. BONN_S2_BRIGHT_LINE_PASSED unchanged; BNCI_chain stays UNLOCKED_FOR_PREREGISTRATION_ONLY."
+}

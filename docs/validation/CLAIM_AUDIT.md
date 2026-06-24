@@ -44,3 +44,13 @@ seizure-detection product · final proof of brain nonlinear dynamics · universa
 
 Still **UNSUPPORTED**: external replication, multi-dataset generalization, paper-grade completeness.
 Still **FORBIDDEN**: clinical/medical/regulatory/device claims; final proof of brain dynamics; universal BCI authority.
+
+## BNCI execution (recorded)
+**No BNCI claim exists — BNCI is preregistration-only and was not executed.**
+
+| claim | status | evidence |
+|-------|--------|----------|
+| BNCI2014-001 confirmatory was attempted under granted authorization | PROVEN_BY_ARTIFACT | `artifacts/bnci2014_001/LOCK_AUDIT.json` |
+| BNCI data is acquirable (subject 1, 250 Hz, 22 EEG) — not the blocker | PROVEN_BY_ARTIFACT | `artifacts/bnci2014_001/DATA_SMOKE_SUBJECT1.json` |
+| BNCI confirmatory completed / passed | REFUTED_BY_ARTIFACT | not executed — `BNCI_BLOCKED_LOCK_INCOMPLETE` (`BNCI_SUMMARY.json`) |
+| The locked command implements the locked method | REFUTED_BY_ARTIFACT | run_experiment.py = CSP decoding, not sampen/MIAAFT/AR-null (`LOCK_AUDIT.json`) |

@@ -1,7 +1,7 @@
 {
   "schema": "bsff.current_truth/v1",
   "package_version": "0.4.0",
-  "main_commit": "ef3a2e05df937d82256b2851eaa79d7d16235164",
+  "main_commit": "09c6fb0d44fd72ee093939f12d6b5cbba2139691",
   "latest_validation_state": "BONN_S2_BRIGHT_LINE_PASSED",
   "bonn_s1_state": "BRIGHT_LINE_NOT_PASSED",
   "bonn_s2_state": "S2_BRIGHT_LINE_PASSED",
@@ -18,6 +18,7 @@
     "threshold": 0.05
   },
   "BNCI_chain_state": "UNLOCKED_FOR_PREREGISTRATION_ONLY",
+  "bnci_execution_state": "BNCI_BLOCKED_LOCK_INCOMPLETE",
   "supported_claims": [
     "Bonn S2 bright-line passed (real Andrzejak-2001 EEG): G1 power + G2 specificity.",
     "Reproducible, artifact-backed operating characteristic for the frozen S2 instrument.",
@@ -45,5 +46,5 @@
   },
   "hash_manifest_path": "artifacts/release/bonn_bright_line/HASHES.sha256",
   "reproduction_entrypoint": "REPRODUCE.md",
-  "timestamp_utc": "2026-06-24T06:19:44Z"
+  "timestamp_utc": "2026-06-24T09:58:18Z"
 }
