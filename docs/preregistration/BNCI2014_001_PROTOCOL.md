@@ -29,3 +29,8 @@ convergence-gated. Same code path as the Bonn confirmatory; no per-dataset retun
 
 This protocol is intentionally incomplete on numeric thresholds until the analysis plan and
 stop rules are frozen (see sibling files). No claim is made here.
+
+## Preregistration lock
+The confirmatory plan is frozen in [`BNCI2014_001_LOCK.json`](BNCI2014_001_LOCK.json)
+(`status: PREREGISTRATION_LOCKED_NOT_EXECUTED`). No BNCI run has occurred; no BNCI claim exists
+until the locked `artifact_paths` are produced under explicit authorization.
