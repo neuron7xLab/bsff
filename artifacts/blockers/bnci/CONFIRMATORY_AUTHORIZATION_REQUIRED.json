@@ -1,0 +1,28 @@
+{
+  "schema": "bsff.bnci_confirmatory_authorization/v1",
+  "lock_sha256": "1ea3ab955e6b3c1f9351f45264a3904b1a8058cfc02eb0e2d5446bb44eb92317",
+  "branch": "resolve/blockers-bnci-pypi-release-integrity",
+  "commit": "0e2d836f74dc30898d6e9c8486499382fe97556f",
+  "estimated_runtime": "~3h (9 subjects x 576 epochs x 199 surrogates x2)",
+  "subjects": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "n_surrogates": 199,
+  "expected_outputs": [
+    "CONFIRMATORY_VERDICT.json",
+    "BNCI_SUMMARY.json",
+    "BNCI_VERDICT.md"
+  ],
+  "authorization_status": "WITHHELD_BLOCKED_METHOD",
+  "reason": "Lock is EXECUTABLE (B1 resolved) but method is not predeclared-valid on 501-sample epochs (B2 -> BNCI_BLOCKED_METHOD). Full confirmatory NOT executed.",
+  "git_commit": "0e2d836f74dc30898d6e9c8486499382fe97556f",
+  "timestamp_utc": "2026-06-24T10:49:45Z"
+}

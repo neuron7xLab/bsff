@@ -1,0 +1,24 @@
+{
+  "schema": "bsff.bnci_method_validity/v1",
+  "blocker": "B2_BNCI_SHORT_EPOCH_SPECIFICITY_RISK",
+  "instrument": "sampen_lower_tail_m2_r015_v1 + finite-N rule (S2-C1, p<=alpha/2=0.025)",
+  "calibrated_on": "Bonn segments, 4097 samples (S2 confirmatory: combined AR-null FPR 0.020)",
+  "bnci_epoch_length_samples": 501,
+  "epoch_length_specificity_guard": {
+    "predeclared_min_samples_for_S2C1": 4096,
+    "bnci_epochs_below_min": true,
+    "rationale": "SampEn lower-tail finite-N anti-conservative bias is length-dependent; the alpha/2 correction was calibrated for ~4097-sample segments and is NOT predeclared valid below that length."
+  },
+  "evidence": {
+    "probe_ar_null_fpr_8epochs": 0.375,
+    "probe_alpha": 0.05,
+    "probe_threshold": 0.025,
+    "note": "AR-null (linear) epochs SURVIVED ~37.5% at p<=0.025 on 501-sample BNCI epochs -> specificity broken; far above the 0.05 gate. Raw probe, not the verdict, but consistent with finite-N theory."
+  },
+  "decision": "BNCI_BLOCKED_METHOD",
+  "why_not_run": "Running the full 9-subject confirmatory would produce a foreknown specificity failure; calling it NOT_PASSED would misattribute a method-transfer limitation to the dataset. Re-tuning the finite-N rule to pass on short epochs after seeing the probe is FORBIDDEN (post-hoc tuning).",
+  "why_not_passed": "No BNCI claim; instrument not validated for 501-sample epochs.",
+  "next_method": "Pre-register an epoch-length-calibrated finite-N rule (e.g. length-scaled threshold or FDR-on-AR-null specificity), validate it on a held-out short-epoch null BEFORE any BNCI confirmatory.",
+  "git_commit": "0e2d836f74dc30898d6e9c8486499382fe97556f",
+  "timestamp_utc": "2026-06-24T10:49:45Z"
+}

@@ -1,6 +1,6 @@
 {
   "schema": "bsff.bnci_summary/v1",
-  "final_state": "BNCI_BLOCKED_LOCK_INCOMPLETE",
+  "final_state": "BNCI_BLOCKED_METHOD",
   "dataset": "BNCI2014-001",
   "subjects_requested": [
     1,
@@ -21,7 +21,7 @@
   "alpha": 0.05,
   "correction": "Benjamini-Hochberg FDR",
   "data_acquisition": "GREEN (subject 1 verified: 250 Hz, 22 EEG)",
-  "blocker": "LOCK_INCOMPLETE",
+  "blocker": "METHOD_VALIDITY (B2): S2-C1 finite-N rule not predeclared-valid on 501-sample epochs (probe AR-null FPR 0.375)",
   "execution_critical_gaps": [
     "exact_commands[0] -> run_experiment.py implements CSP cross-session DECODING (loso_gap), not the locked sampen_lower_tail + MIAAFT + AR-null FPR method; no runner for the locked method exists.",
     "exact_commands[1] = 'python tools/... aggregate' contains a literal '...' placeholder.",
@@ -47,7 +47,9 @@
     "not clinical/regulatory",
     "not independent replication"
   ],
-  "git_commit": "09c6fb0d44fd72ee093939f12d6b5cbba2139691",
-  "timestamp_utc": "2026-06-24T09:57:40Z",
-  "next_state": "Re-preregister a COMPLETE executable lock (implement locked-method runner + specify channel/epoch aggregation deterministically), then execute under fresh authorization. BONN_S2_BRIGHT_LINE_PASSED unchanged; BNCI_chain stays UNLOCKED_FOR_PREREGISTRATION_ONLY."
+  "git_commit": "0e2d836f74dc30898d6e9c8486499382fe97556f",
+  "timestamp_utc": "2026-06-24T10:50:07Z",
+  "next_state": "Pre-register an epoch-length-calibrated specificity rule, validate on short-epoch null, then execute. No BNCI claim.",
+  "lock_audit": "BNCI_LOCK_EXECUTABLE (artifacts/blockers/bnci/LOCK_AUDIT_REPAIRED.json)",
+  "method_validity": "artifacts/blockers/bnci/METHOD_VALIDITY.json"
 }

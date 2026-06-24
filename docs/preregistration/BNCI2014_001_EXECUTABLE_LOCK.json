@@ -65,5 +65,13 @@
   "runner": "research/bci_generalization/run_bnci_confirmatory.py",
   "channel_aggregation": "spatial mean across the 22 EEG channels (common-average), one signal per epoch (FROZEN, deterministic)",
   "epoch_policy": "all trials per class, both sessions (train+test), trial-order deterministic",
-  "positive_control_unit": "per epoch (channel-mean signal); SURVIVED if BH-FDR-adjusted lower-tail p <= 0.025"
+  "positive_control_unit": "per epoch (channel-mean signal); SURVIVED if BH-FDR-adjusted lower-tail p <= 0.025",
+  "m": 2,
+  "r_factor": 0.15,
+  "epoch_length_samples": 501,
+  "expected_sampling_rate_hz": 250,
+  "expected_channels": "22 EEG (non-EEG ignored via MOABB MotorImagery paradigm)",
+  "missing_channel_policy": "MotorImagery paradigm returns EEG only; no manual drop",
+  "failed_epoch_policy": "non-converged MIAAFT -> UNSUPPORTED (fail-closed)",
+  "failed_subject_policy": "record in subjects_failed; never silently skipped; no removal from denominator intent"
 }
