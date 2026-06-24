@@ -1,0 +1,52 @@
+{
+  "schema": "bsff.finalization_act/v1",
+  "project": "BSFF",
+  "version": "0.4.0",
+  "final_state": "REVIEWER_GRADE_PUBLIC_RESEARCH_SOFTWARE",
+  "bonn_s2": "PASSED",
+  "bonn_s2_metrics": {
+    "E": 0.96,
+    "A_not": 0.92,
+    "B_not": 0.92,
+    "combined_FPR": 0.02
+  },
+  "bnci": "BLOCKED_METHOD",
+  "replication": "NOT_DONE",
+  "clinical_claims": "FORBIDDEN",
+  "pypi": "READY_NOT_PUBLISHED",
+  "truth_commit": "f3fcd3697ed56a4bc642fe7146058b66628f0b28",
+  "checks": {
+    "truth_provenance_main_commit_eq_head": "PASS (at regeneration; one-behind after this commit, by design)",
+    "validate_current_truth": "PASS",
+    "validate_forbidden_claims": "PASS",
+    "validate_artifact_schema": "PASS",
+    "evidence_verify": "PASS",
+    "selftest": "PASS",
+    "reproduce_bonn_s2": "PASS",
+    "build_wheel_sdist": "PASS",
+    "twine_check": "PASS",
+    "docker_build": "PASS",
+    "docker_selftest": "PASS (writable volume)",
+    "docker_evidence_verify": "needs git in image (host-only tool); non-blocking"
+  },
+  "overall": "PASS",
+  "validated": [
+    "Bonn S2 bright-line"
+  ],
+  "not_validated": [
+    "BNCI",
+    "Cho2017",
+    "Lee2019",
+    "multi-dataset replication"
+  ],
+  "forbidden": [
+    "clinical use",
+    "medical use",
+    "regulatory claims",
+    "universal BCI authority",
+    "final proof of brain nonlinear dynamics",
+    "BNCI validated (no artifact)"
+  ],
+  "git_commit": "f3fcd3697ed56a4bc642fe7146058b66628f0b28",
+  "timestamp_utc": "2026-06-24T16:25:54Z"
+}
