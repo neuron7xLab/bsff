@@ -31,6 +31,13 @@ def _ver() -> str:
     return tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
 
 
+def _bnci_execution_state() -> str:
+    p = ROOT / "artifacts" / "bnci2014_001" / "BNCI_SUMMARY.json"
+    if p.is_file():
+        return str(json.loads(p.read_text()).get("final_state", "NOT_ATTEMPTED"))
+    return "NOT_ATTEMPTED"
+
+
 def build() -> dict:
     s1 = json.loads(S1.read_text())
     s2 = json.loads(S2.read_text())
@@ -60,6 +67,7 @@ def build() -> dict:
             "threshold": 0.05,
         },
         "BNCI_chain_state": "UNLOCKED_FOR_PREREGISTRATION_ONLY" if s2_pass else "BLOCKED",
+        "bnci_execution_state": _bnci_execution_state(),
         "supported_claims": [
             "Bonn S2 bright-line passed (real Andrzejak-2001 EEG): G1 power + G2 specificity.",
             "Reproducible, artifact-backed operating characteristic for the frozen S2 instrument.",
