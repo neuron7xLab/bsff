@@ -14,8 +14,8 @@ facts (version, live test count, CLI surface, extras) by
 | Field | Value |
 |---|---|
 | Package version | `0.4.0` |
-| Live test count | **508** (collected by `pytest tests/`) |
-| CLI subcommands | 16 (parsed from `src/bsff/cli.py`) |
+| Live test count | **516** (collected by `pytest tests/`) |
+| CLI subcommands | 18 (parsed from `src/bsff/cli.py`) |
 | Optional extras | `dev`, `full`, `fuzz`, `leakage`, `moabb`, `security`, `stats`, `yaml` |
 
 ## CI state
@@ -69,6 +69,8 @@ Subcommands registered in `src/bsff/cli.py` (source order). See
 | `bsff release-check` |
 | `bsff reproduce` |
 | `bsff bids-app` |
+| `bsff benchmark` |
+| `bsff evidence` |
 
 ## Known blockers / limitations
 

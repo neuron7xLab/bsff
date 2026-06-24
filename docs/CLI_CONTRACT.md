@@ -44,7 +44,9 @@ authoritative flags of any command in your installed version.
 | `bsff capabilities` | operational | Report which optional features are available given installed extras. |
 | `bsff validate` | operational | Run the self-validation / contract gates and emit a machine-readable report. |
 | `bsff release-check` | operational | Aggregate readiness gates into a single release pass/fail. |
-| `bsff reproduce` | operational | Re-run a recorded case from its manifest and verify the verdict + hashes. |
+| `bsff reproduce` | operational | Re-run a recorded case (`--case`), or the Bonn S2 bright-line (`reproduce bonn-s2`). |
+| `bsff benchmark` | operational | Run a real-data benchmark (`benchmark bonn-bright-line`) and emit its verdict. |
+| `bsff evidence` | operational | Verify the committed evidence bundle (`evidence verify`): coherence, hashes, release gate. |
 | `bsff bids-app` | operational | BIDS-App entry point for the deterministic real-EEG ingestion path. |
 | `bsff selftest` | core | Run the operational-kernel self-validation; write the Phase-1 artifact. |
 | `bsff falsify` | core | Aim BSFF at an external claim + signal; emit a provenance-stamped verdict case-file. |
