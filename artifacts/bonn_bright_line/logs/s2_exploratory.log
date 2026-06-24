@@ -1,0 +1,11 @@
+S2 exploratory | n_segments=30 n_surrogates=199
+  computing G1 nulls (E, A, B)...
+  computing G2 AR-null nulls (A, B)...
+  S2-C1-sampen-finiteN: E=0.97 A_not=0.87 B_not=0.97 | FPR A=0.000 B=0.000 comb=0.000 -> PASS
+  S2-C2-sampen-corroboration: E=0.97 A_not=0.87 B_not=0.97 | FPR A=0.000 B=0.000 comb=0.000 -> PASS
+  S2-C3-sampen-fdr: E=0.97 A_not=1.00 B_not=1.00 | FPR A=0.000 B=0.000 comb=0.000 -> PASS
+  S2-C4-sampen-strictconv: E=0.97 A_not=0.77 B_not=0.93 | FPR A=0.033 B=0.000 comb=0.017 -> FAIL
+  S2-C7-permen: E=0.90 A_not=0.97 B_not=0.83 | FPR A=0.000 B=0.000 comb=0.000 -> PASS
+
+S2 exploratory done in 599.0s | candidates passing G1+G2: 4
+-> ../../artifacts/bonn_bright_line/s2_EXPLORATORY_RESULTS.json
