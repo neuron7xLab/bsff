@@ -1,0 +1,35 @@
+{
+  "schema": "bsff.bnci_preregistration_lock/v1",
+  "status": "PREREGISTRATION_LOCKED_NOT_EXECUTED",
+  "dataset": "BNCI2014-001 (BCI Competition IV-2a)",
+  "doi": "10.3389/fnins.2012.00055",
+  "source": "bnci-horizon-2020.eu (canonical) / MOABB loader",
+  "subjects": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "tasks": ["left_hand", "right_hand", "feet", "tongue"],
+  "inclusion": "all 9 subjects, both sessions (train T + eval E); 22 EEG channels @ 250 Hz",
+  "exclusion": "EOG channels; trials with documented artifacts per dataset metadata only",
+  "preprocessing": "fixed band-pass 8-30 Hz, fixed epoch [0.5, 2.5] s post-cue; no per-subject tuning",
+  "statistic": "sampen_lower_tail_m2_r015_v1 with S2 finite-N rule (p <= alpha/2 = 0.025)",
+  "null": "MIAAFT (convergence-gated)",
+  "alpha": 0.05,
+  "correction": "Benjamini-Hochberg FDR across subjects x classes",
+  "success_threshold": {
+    "positive_control": "epochs with motor-imagery structure SURVIVED fraction >= 0.80 (per class)",
+    "specificity": "real-spectrum AR-null combined FPR <= 0.05"
+  },
+  "failure_threshold": "specificity combined FPR > 0.05 OR positive-control SURVIVED < 0.80",
+  "exact_commands": [
+    "python research/bci_generalization/run_experiment.py --dataset bnci2014_001 --subjects 1-9 --n-surrogates 199 --output artifacts/bnci2014_001/CONFIRMATORY_VERDICT.json",
+    "python tools/... aggregate -> artifacts/bnci2014_001/BNCI_SUMMARY.json"
+  ],
+  "artifact_paths": {
+    "manifest": "artifacts/bnci2014_001/DATASET_MANIFEST.json",
+    "confirmatory": "artifacts/bnci2014_001/CONFIRMATORY_VERDICT.json",
+    "summary": "artifacts/bnci2014_001/BNCI_SUMMARY.json"
+  },
+  "allowed_terminal_states": ["BNCI_VALIDATED", "BNCI_NOT_VALIDATED", "BLOCKED_DATA", "BLOCKED_RUNTIME", "BLOCKED_API", "BLOCKED_METHOD"],
+  "forbidden": ["alpha change", "threshold change after results", "subject/class dropping", "per-subject instrument tuning", "exploratory-only success", "clinical/medical/regulatory/device claim", "BNCI validated before execution artifacts exist"],
+  "frozen_git_commit": "0e2258e444f809b1ad8a6975c088c866b7fd8929",
+  "execution_status": "NOT_EXECUTED",
+  "note": "Lock freezes the confirmatory plan BEFORE any BNCI run (Phase 10.2). Execution is a separate, explicitly-authorized step; no BNCI claim exists until artifact_paths are produced."
+}
