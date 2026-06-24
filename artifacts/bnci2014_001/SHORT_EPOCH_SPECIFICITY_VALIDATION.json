@@ -1,0 +1,18 @@
+{
+  "schema": "bsff.short_epoch_validation/v1",
+  "state": "INCONCLUSIVE_FOR_NARROWBAND",
+  "L": 501,
+  "N": 80,
+  "n_surrogates": 199,
+  "result_white_noise_AR": {
+    "S2C1_fpr": 0.0125,
+    "S2C1_power": 1.0,
+    "R1_calibrated_pstar": 0.1,
+    "R1_fpr": 0.0625,
+    "R1_power": 1.0
+  },
+  "caveat": "This validation used WHITE-NOISE-spectrum AR nulls; S2-C1 FPR was fine (0.0125). But real BNCI epochs are band-passed 8-30 Hz (narrowband), where the earlier probe showed FPR 0.375. The specificity failure is SPECTRUM-specific (narrowband), not merely length. A valid repair must be validated on SPECTRUM-MATCHED (8-30 Hz) 501-sample nulls.",
+  "conclusion": "BNCI_BLOCKED_METHOD stands; this synthetic test does not lift the block.",
+  "git_commit": "85009007efec4b0adcfd236d906acd66b6a46b26",
+  "timestamp_utc": "2026-06-24T15:05:49Z"
+}

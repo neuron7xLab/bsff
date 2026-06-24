@@ -1,0 +1,33 @@
+{
+  "schema": "bsff.replication_lock/v1",
+  "status": "PREREGISTRATION_SCAFFOLD_NOT_EXECUTED",
+  "dataset": "lee2019",
+  "doi": "10.1093/gigascience/giz002",
+  "source": "MOABB",
+  "subjects": "54 subjects",
+  "channels": "62 EEG",
+  "sampling_rate": "1000 Hz",
+  "method": "frozen BSFF instrument (pending BNCI method repair for short epochs)",
+  "alpha": 0.05,
+  "correction": "Benjamini-Hochberg FDR",
+  "required_before_execution": [
+    "dataset manifest + hashes",
+    "fixed method (post BNCI repair)",
+    "fixed thresholds",
+    "preregistration lock committed",
+    "explicit authorization"
+  ],
+  "outputs": [
+    "DATASET_MANIFEST.json",
+    "CONFIRMATORY_VERDICT.json",
+    "HASHES.sha256",
+    "REPLICATION_SUMMARY.json"
+  ],
+  "forbidden": [
+    "replication claim before CONFIRMATORY_VERDICT.json exists",
+    "method tuning per dataset",
+    "clinical/regulatory claim"
+  ],
+  "git_commit": "85009007efec4b0adcfd236d906acd66b6a46b26",
+  "timestamp_utc": "2026-06-24T15:05:49Z"
+}
