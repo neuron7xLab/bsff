@@ -1,0 +1,15 @@
+{
+  "schema": "bsff.risk_acceptance/v1",
+  "open_red_risks": [
+    "R1 false-positive instability",
+    "R2 favorable-seed pass",
+    "R3 multi-null DOF (not run)",
+    "R4 BNCI method transfer"
+  ],
+  "accepted_residual": "Repository is published as a falsification framework with a NOMINAL single-seed Bonn pass and an OPEN, disclosed robustness gap (G2 not robust). No robust/clinical/replication claim is made.",
+  "fail_closed": true,
+  "all_states_bounded": true,
+  "canonical_state": "BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST",
+  "git_commit": "a173ca7f1abd1e52e672fad1bf792d334b842f5c",
+  "timestamp_utc": "2026-06-24T19:38:12Z"
+}
