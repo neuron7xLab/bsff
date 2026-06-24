@@ -28,11 +28,11 @@ bash examples/bonn_bright_line/download_bonn.sh examples/bonn_bright_line/bonn_d
 
 Provenance + per-file SHA256: `artifacts/bonn_bright_line/DATASET_MANIFEST.json`.
 
-## 3. Run the controls (pre-declared protocol)
+## 3a. Reproduce the S1 negative artifact (historical: NOT_PASSED)
 
 ```bash
 cd examples/bonn_bright_line
-# G1 — Bonn positive control (Sample-Entropy lower-tail)
+# G1 — Bonn positive control (Sample-Entropy lower-tail, nominal alpha=0.05)
 python run.py --data-dir ./bonn_data --sets A B E --n-segments 100 --n-surrogates 199 \
   --output ../../artifacts/bonn_bright_line/bonn_CONFIRMATORY_VERDICT.json
 # G2 — real-spectrum AR negative control (same instrument), per set
@@ -40,28 +40,41 @@ python run_ar_negative.py --input-dir ./bonn_data/A --n-segments 100 --n-surroga
   --output ../../artifacts/controls/ar_negative_CONFIRMATORY_A.json
 python run_ar_negative.py --input-dir ./bonn_data/B --n-segments 100 --n-surrogates 199 \
   --output ../../artifacts/controls/ar_negative_CONFIRMATORY_B.json
-# Aggregate -> machine-readable verdict
 python aggregate_verdict.py
-
-# Verify cross-artifact numeric consistency + release gate (fail-closed)
 python check_consistency.py --output ../../artifacts/release/CONSISTENCY_CHECK.json
 python release_check.py --root ../.. --output artifacts/release/RELEASE_CHECK.json
 ```
 
-Verify hashes:
+Expected S1 final state: `BRIGHT_LINE_NOT_PASSED` (G1 pass, G2 fail — combined AR-null FPR 0.065).
+Preserved as the historical negative result.
+
+## 3b. Reproduce the S2 PASS artifact (current canonical: PASSED)
+
+```bash
+cd examples/bonn_bright_line
+python s2_evaluate_candidates.py --data-dir ./bonn_data --n-segments 30 --n-surrogates 199 \
+  --output ../../artifacts/bonn_bright_line/s2_EXPLORATORY_RESULTS.json
+python s2_select_candidate.py          # freezes ONE candidate before confirmatory
+python s2_confirmatory.py --data-dir ./bonn_data --n-segments 100 --n-surrogates 199 \
+  --output ../../artifacts/bonn_bright_line/s2_CONFIRMATORY_VERDICT.json
+python s2_aggregate.py                 # -> S2_BRIGHT_LINE_SUMMARY.json + docs/validation/S2_VERDICT.md
+cd ../.. && python tools/generate_current_truth.py
+```
+
+**Expected current canonical final state: `S2_BRIGHT_LINE_PASSED`** (G1 pass, G2 pass —
+combined AR-null FPR 0.02). Runtime: each confirmatory ≈ 30–100 min (199 surrogates).
+
+Verify hashes + truth coherence:
 
 ```bash
 cd "$(git rev-parse --show-toplevel)"
 sha256sum -c artifacts/release/bonn_bright_line/HASHES.sha256
+python tools/validate_current_truth.py     # docs must agree with CURRENT_TRUTH.json
 ```
 
-Expected final state: `BRIGHT_LINE_NOT_PASSED` (G1 pass, G2 fail). Runtime: confirmatory
-≈ 100 min (199 surrogates × 500 segments). A non-zero `aggregate_verdict.py`/`release_check.py`
-exit means the gate is unmet — read `artifacts/bonn_bright_line/BRIGHT_LINE_SUMMARY.json`.
-
-Result: `artifacts/bonn_bright_line/BRIGHT_LINE_SUMMARY.json` and
-`docs/validation/BRIGHT_LINE_VERDICT.md`. Verdict ∈
-{`BRIGHT_LINE_PASSED`, `BRIGHT_LINE_NOT_PASSED`, `BLOCKED_DATA`}.
+Canonical truth: `artifacts/release/CURRENT_TRUTH.json`
+(`latest_validation_state = BONN_S2_BRIGHT_LINE_PASSED`). A non-zero exit on any gate means
+the state is unmet — read the summaries, do not assume PASS.
 
 ## 4. Tests
 

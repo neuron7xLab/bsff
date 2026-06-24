@@ -14,7 +14,7 @@ facts (version, live test count, CLI surface, extras) by
 | Field | Value |
 |---|---|
 | Package version | `0.4.0` |
-| Live test count | **471** (collected by `pytest tests/`) |
+| Live test count | **508** (collected by `pytest tests/`) |
 | CLI subcommands | 16 (parsed from `src/bsff/cli.py`) |
 | Optional extras | `dev`, `full`, `fuzz`, `leakage`, `moabb`, `security`, `stats`, `yaml` |
 
@@ -29,7 +29,7 @@ authoritative status:
 
 ## Validation level
 
-Instrument calibration on synthetic ground truth + independent numpy surrogate reference. NOT clinical, regulatory, or external-suite validated.
+Synthetic-ground-truth calibration PLUS a passed external real-data bright-line benchmark (Bonn S2: G1 power + G2 specificity, BONN_S2_BRIGHT_LINE_PASSED). BNCI2014-001 is preregistration-only (not executed). NOT clinical, regulatory, or multi-dataset replicated. Canonical state: artifacts/release/CURRENT_TRUTH.json.
 
 See [`docs/VALIDATION.md`](docs/VALIDATION.md) for the full evidence tier
 table and [`docs/OPERATING_CHARACTERISTIC.md`](docs/OPERATING_CHARACTERISTIC.md)
@@ -76,9 +76,12 @@ Subcommands registered in `src/bsff/cli.py` (source order). See
   numpy surrogate reference as its in-CI oracle; the real TISEAN binary is
   an optional out-of-band cross-check and is recorded as `tisean_was_run:
   false` whenever it is absent.
-- **No real published dataset is shipped.** The validation corpus and the
-  BIDS example are synthetic, deterministic, EEG-shaped fixtures. A verdict
-  on them is a calibration, **not** a finding about real neural data.
+- **No raw published dataset is shipped** (license/size). The committed
+  fixtures are synthetic; however the **Bonn S2 bright-line verdict on real**
+  Andrzejak-2001 EEG IS committed as an artifact (hashes in DATASET_MANIFEST).
+  `BONN_S2_BRIGHT_LINE_PASSED` — see `artifacts/release/CURRENT_TRUTH.json`.
+- **BNCI2014-001 is preregistration-only** (unlocked by the Bonn S2 pass; not
+  yet executed). No BNCI claim exists until BNCI execution artifacts exist.
 - **Statistical scope is linear / spectral.** Nonlinear directed coupling
   (k-NN transfer entropy) and non-time-series designs (two-group, cohort)
   require their own validated tests before any claim that needs them can be

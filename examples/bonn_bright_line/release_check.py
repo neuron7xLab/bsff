@@ -28,6 +28,7 @@ REQUIRED = [
     "artifacts/bonn_bright_line/DATASET_MANIFEST.json",
     "artifacts/controls/ar_negative_CONFIRMATORY_A.json",
     "artifacts/controls/ar_negative_CONFIRMATORY_B.json",
+    "artifacts/release/CURRENT_TRUTH.json",
     "artifacts/release/bonn_bright_line/HASHES.sha256",
     "artifacts/release/bonn_bright_line/VERDICT.json",
     "artifacts/release/bonn_bright_line/TESTS.json",

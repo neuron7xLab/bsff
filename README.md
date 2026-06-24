@@ -196,7 +196,7 @@ It keeps the open-source security/provenance layer from v0.1.3 and the adaptive 
 
 ```text
 pytest: 80/80 passing
-validation corpus: synthetic-only, non-clinical, SHA-256 pinned
+validation: synthetic calibration + real Bonn S2 bright-line PASSED, non-clinical, SHA-256 pinned
 package mass target: 7-10 MB
 license: GPL-3.0-or-later for code; CC-BY-4.0 for documentation/specs
 ```
