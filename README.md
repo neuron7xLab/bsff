@@ -38,8 +38,11 @@ BSFF aims at a **BCI/EEG signal claim** and tries to refute it under stated atta
 
 **Current canonical evidence — `BONN_S2_BRIGHT_LINE_PASSED`**
 ([`artifacts/release/CURRENT_TRUTH.json`](artifacts/release/CURRENT_TRUTH.json)): on real
-Andrzejak-2001 Bonn EEG the instrument has **power** (ictal SURVIVED 0.96) **and specificity**
-(real-spectrum AR-null FPR 0.02 ≤ 0.05). The earlier S1 negative result is preserved as evidence.
+Andrzejak-2001 Bonn EEG the instrument has robust **power** (ictal SURVIVED 0.96) and a
+**marginal, NOT-robust specificity**: the predeclared-seed AR-null FPR was 0.02, but a
+seed-averaged falsification gives FPR 0.035, Wilson 95% CI **[0.022, 0.056] crossing the 0.05 gate**
+(`S2_SPECIFICITY_CALIBRATION.json`). The bright line is **not robustly crossed** — a favorable-seed
+pass. The earlier S1 negative result is preserved as evidence.
 
 ```bash
 git clone https://github.com/neuron7xLab/bsff && cd bsff

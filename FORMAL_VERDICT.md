@@ -5,12 +5,16 @@ Canonical machine-readable truth: [`artifacts/release/CURRENT_TRUTH.json`](artif
 This document must agree with it (enforced by `tools/validate_current_truth.py`).
 
 ## 1. Current canonical verdict
-**BONN_S2_BRIGHT_LINE_PASSED.** BSFF passed the Bonn S2 bright-line under the frozen
-finite-N-corrected SampEn protocol (`S2-C1-sampen-finiteN`).
+**BONN_S2_BRIGHT_LINE_PASSED (predeclared confirmatory) — but a MARGINAL, NOT-robust pass.**
+BSFF cleared the frozen `S2-C1-sampen-finiteN` confirmatory at the predeclared seed, but a
+seed-averaged falsification (§Robustness) shows **G2 specificity is NOT robust**: pooled AR-null
+FPR 0.0354, Wilson 95% CI **[0.022, 0.056]** crosses the 0.05 gate. The bright line is **not
+robustly crossed**; the FPR 0.02 below was a favorable-seed point estimate.
 
-- G1 (power): Set E SURVIVED **0.96**, Set A not-SURVIVED **0.92**, Set B not-SURVIVED **0.92** (≥ 0.80).
-- G2 (specificity): real-spectrum AR-null FPR A **0.02**, B **0.02**, combined **0.02** (≤ 0.05).
+- G1 (power): Set E SURVIVED **0.96**, Set A not-SURVIVED **0.92**, Set B not-SURVIVED **0.92** (≥ 0.80) — **robust**.
+- G2 (specificity): predeclared-seed AR-null FPR **0.02** ≤ 0.05; **seed-averaged 0.035, CI [0.022, 0.056] — not robustly ≤ 0.05**.
 - BNCI2014-001 chain: **UNLOCKED_FOR_PREREGISTRATION_ONLY**.
+- `CURRENT_TRUTH.s2_robustness = NOT_ROBUST_G2_SPECIFICITY` (see `S2_SPECIFICITY_CALIBRATION.json`).
 
 > BSFF passed the Bonn S2 bright-line under the frozen finite-N-corrected SampEn protocol.
 > This permits BNCI2014-001 preregistration. It does not validate BSFF across BCI datasets,

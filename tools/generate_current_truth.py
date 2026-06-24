@@ -39,13 +39,17 @@ def _bnci_execution_state() -> str:
 
 
 def _s2_robustness() -> str:
-    # Calibrated by the falsification battery: power robust, specificity margin thin/seed-sensitive.
-    p = ROOT / "artifacts" / "bonn_bright_line" / "S2_FALSIFICATION_REPORT.json"
-    if p.is_file():
-        r = json.loads(p.read_text())
-        if not r.get("claim_survives_attacks", True):
-            return "BOUNDARY_PASS_G1_POWER_ROBUST_G2_SPECIFICITY_SEED_SENSITIVE"
+    # Calibrated by the falsification battery + seed-averaged specificity calibration.
+    cal = ROOT / "artifacts" / "bonn_bright_line" / "S2_SPECIFICITY_CALIBRATION.json"
+    if cal.is_file():
+        c = json.loads(cal.read_text())
+        if not c.get("fpr_ci_upper_below_threshold", True):
+            ci = c.get("wilson_95ci")
+            return f"NOT_ROBUST_G2_SPECIFICITY_seed_avg_FPR_{c.get('pooled_fpr')}_CI_{ci}_crosses_0.05"
         return "ROBUST"
+    fals = ROOT / "artifacts" / "bonn_bright_line" / "S2_FALSIFICATION_REPORT.json"
+    if fals.is_file() and not json.loads(fals.read_text()).get("claim_survives_attacks", True):
+        return "BOUNDARY_PASS_G1_POWER_ROBUST_G2_SPECIFICITY_SEED_SENSITIVE"
     return "NOT_TESTED"
 
 

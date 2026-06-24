@@ -1,0 +1,51 @@
+{
+  "schema": "bsff.s2_specificity_calibration/v1",
+  "n_ar_null_tests": 480,
+  "n_false_positives": 17,
+  "pooled_fpr": 0.0354,
+  "wilson_95ci": [
+    0.0222,
+    0.056
+  ],
+  "threshold": 0.05,
+  "seeds": [
+    20260624,
+    7,
+    999,
+    314159,
+    2718,
+    42
+  ],
+  "per_seed": [
+    {
+      "seed": 20260624,
+      "fpr": 0.075
+    },
+    {
+      "seed": 7,
+      "fpr": 0.0625
+    },
+    {
+      "seed": 999,
+      "fpr": 0.0
+    },
+    {
+      "seed": 314159,
+      "fpr": 0.0125
+    },
+    {
+      "seed": 2718,
+      "fpr": 0.025
+    },
+    {
+      "seed": 42,
+      "fpr": 0.0375
+    }
+  ],
+  "fpr_ci_upper_below_threshold": false,
+  "verdict": "S2_SPECIFICITY_NOT_ROBUSTLY_BELOW_0.05",
+  "git_commit": "62ea84bff09d4e6f97c3a44eae12a08f388ea0c2",
+  "timestamp_utc": "2026-06-24T18:35:51Z",
+  "interpretation": "Seed-averaged AR-null FPR = 0.0354 (17/480), Wilson 95% CI [0.022, 0.056]. The CI UPPER bound (0.056) EXCEEDS the 0.05 gate, and 2 of 6 seeds gave FPR > 0.05 (0.075, 0.0625). The predeclared confirmatory FPR=0.02 (seed 20260623, N=100) was a favorable-seed point estimate. G2 specificity is NOT robustly below 0.05.",
+  "calibrated_verdict": "BONN_S2_BRIGHT_LINE not robustly crossed: G1 power robust, but G2 specificity fails robustness (seed-averaged FPR CI crosses the gate). Marginal/favorable-seed pass only."
+}

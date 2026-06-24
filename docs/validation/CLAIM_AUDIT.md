@@ -68,3 +68,10 @@ Still **FORBIDDEN**: clinical/medical/regulatory/device claims; final proof of b
 | S2 G1 power is robust to seed | PROVEN_BY_ARTIFACT | Set E SURVIVED 0.967 all seeds (`S2_FALSIFICATION_REPORT.json`) |
 | S2 G2 specificity is robustly below 0.05 | REFUTED_BY_ARTIFACT | seed_base=7 -> AR-null FPR 0.067 > 0.05; margin thin/seed-sensitive |
 | S2 bright line is a boundary/marginal pass (not robustly crossed) | PROVEN_BY_ARTIFACT | falsification battery; calibrated claim |
+
+## S2 specificity calibration (decisive)
+| claim | status | evidence |
+|-------|--------|----------|
+| S2 G2 specificity is robustly below 0.05 | REFUTED_BY_ARTIFACT | seed-avg FPR 0.0354, Wilson 95% CI [0.022, 0.056] crosses 0.05; 2/6 seeds >0.05 (`S2_SPECIFICITY_CALIBRATION.json`) |
+| Bonn S2 bright line is robustly crossed | REFUTED_BY_ARTIFACT | marginal/favorable-seed pass only; G2 not robust |
+| Bonn S2 G1 power is robust | PROVEN_BY_ARTIFACT | Set E SURVIVED 0.96-0.967 across all seeds |

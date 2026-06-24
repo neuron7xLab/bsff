@@ -119,3 +119,13 @@ verdict with 4 seed perturbations + 3 AR-order misspecifications (N=30, 199 surr
 predeclared N=100 confirmatory (FPR 0.02) but the specificity margin is thin (Wilson 95% CI of
 0.02 reaches ~0.05) and **seed-sensitive**. The bright line is not claimed as robustly crossed; a
 seed-averaged or larger-N specificity confirmatory is the honest next step.
+
+### S2 specificity — seed-averaged calibration (decisive)
+
+Following the falsification, a seed-averaged calibration (`S2_SPECIFICITY_CALIBRATION.json`, 480
+AR-null tests over 6 seeds × Sets A+B) gives **pooled FPR 0.0354, Wilson 95% CI [0.022, 0.056]**.
+The CI **upper bound (0.056) exceeds the 0.05 gate**, and 2 of 6 seeds gave FPR > 0.05 (0.075, 0.0625).
+**G2 specificity is NOT robustly below 0.05.** The predeclared confirmatory FPR=0.02 (seed 20260623)
+was a favorable-seed point estimate. The Bonn bright line is **not robustly crossed** — a marginal,
+seed-dependent pass. `CURRENT_TRUTH.s2_robustness` carries this. Honest next step: re-preregister a
+seed-averaged specificity gate (require the FPR CI upper bound ≤ 0.05) and re-run.
