@@ -30,6 +30,31 @@
 
 ---
 
+## What this proves right now
+
+BSFF aims at a **BCI/EEG signal claim** and tries to refute it under stated attacks
+(surrogate nulls, controls, corroboration), emitting a bounded verdict —
+`SURVIVED` / `REFUTED` / `UNSUPPORTED` (see [`docs/VERDICT_SEMANTICS.md`](docs/VERDICT_SEMANTICS.md)).
+
+**Current canonical evidence — `BONN_S2_BRIGHT_LINE_PASSED`**
+([`artifacts/release/CURRENT_TRUTH.json`](artifacts/release/CURRENT_TRUTH.json)): on real
+Andrzejak-2001 Bonn EEG the instrument has **power** (ictal SURVIVED 0.96) **and specificity**
+(real-spectrum AR-null FPR 0.02 ≤ 0.05). The earlier S1 negative result is preserved as evidence.
+
+```bash
+git clone https://github.com/neuron7xLab/bsff && cd bsff
+python -m pip install -e ".[dev,stats]"
+bsff evidence verify          # coherence + hashes + release gate  →  state: PASS
+bsff reproduce bonn-s2        # verify the committed S2 bright-line
+```
+
+**Forbidden (never claimed):** clinical diagnosis · medical/therapeutic use · regulatory or
+device status · final proof of brain nonlinear dynamics · universal BCI authority · "BNCI
+validated" (BNCI is preregistration-only, not executed). Quickstart: [`docs/QUICKSTART.md`](docs/QUICKSTART.md).
+Hostile reviewer? [`docs/ADVERSARIAL_REVIEW.md`](docs/ADVERSARIAL_REVIEW.md).
+
+---
+
 ## How it works
 
 BSFF is a layered system, not a loose collection of scripts. Each layer enforces a

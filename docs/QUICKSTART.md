@@ -40,7 +40,7 @@ bsff falsify --claim my_claim.json --signal my_signal.npy --out verdict.json
 ```
 
 ## Interpreting a verdict
-See [`VERDICT_SEMANTICS`](validation/) and [`REPRODUCE.md`](../REPRODUCE.md). Forbidden uses
+See [`VERDICT_SEMANTICS`](VERDICT_SEMANTICS.md) and [`REPRODUCE.md`](../REPRODUCE.md). Forbidden uses
 (clinical / diagnostic / regulatory / "final proof of brain dynamics" / universal BCI
 authority) are enumerated in `artifacts/release/CURRENT_TRUTH.json` and never claimed.
 
