@@ -54,3 +54,10 @@ Still **FORBIDDEN**: clinical/medical/regulatory/device claims; final proof of b
 | BNCI data is acquirable (subject 1, 250 Hz, 22 EEG) — not the blocker | PROVEN_BY_ARTIFACT | `artifacts/bnci2014_001/DATA_SMOKE_SUBJECT1.json` |
 | BNCI confirmatory completed / passed | REFUTED_BY_ARTIFACT | not executed — `BNCI_BLOCKED_LOCK_INCOMPLETE` (`BNCI_SUMMARY.json`) |
 | The locked command implements the locked method | REFUTED_BY_ARTIFACT | run_experiment.py = CSP decoding, not sampen/MIAAFT/AR-null (`LOCK_AUDIT.json`) |
+
+## Replication + method-repair (roadmap, recorded)
+| claim | status | evidence |
+|-------|--------|----------|
+| Multi-dataset replication (Cho2017/Lee2019) is done | REFUTED_BY_ARTIFACT | NOT_DONE — only preregistration scaffolds (`artifacts/replication/*/LOCK.json`) |
+| BNCI method repair has passed its short-epoch check | UNSUPPORTED (not yet) | `METHOD_REPAIR_LOCK.json` = PREDECLARED_NOT_VALIDATED; short-epoch validation INCONCLUSIVE for narrowband |
+| Forbidden claims are enforced in CI | PROVEN_BY_ARTIFACT | `tools/validate_forbidden_claims.py` (CI) + `CLAIM_SAFETY_REPORT.json` |

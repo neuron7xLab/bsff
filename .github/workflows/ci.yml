@@ -67,6 +67,7 @@ jobs:
       - run: python tools/validate_truth_contract.py
       - run: python tools/generate_current_truth.py --check
       - run: python tools/validate_current_truth.py
+      - run: python tools/validate_forbidden_claims.py
       - run: python tools/validate_release_notes.py
       - run: python tools/validate_open_source_readiness.py
       - run: python tools/check_github_actions_policy.py

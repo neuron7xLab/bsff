@@ -1,7 +1,7 @@
 {
   "schema": "bsff.current_truth/v1",
   "package_version": "0.4.0",
-  "main_commit": "0e2d836f74dc30898d6e9c8486499382fe97556f",
+  "main_commit": "85009007efec4b0adcfd236d906acd66b6a46b26",
   "latest_validation_state": "BONN_S2_BRIGHT_LINE_PASSED",
   "bonn_s1_state": "BRIGHT_LINE_NOT_PASSED",
   "bonn_s2_state": "S2_BRIGHT_LINE_PASSED",
@@ -19,6 +19,7 @@
   },
   "BNCI_chain_state": "UNLOCKED_FOR_PREREGISTRATION_ONLY",
   "bnci_execution_state": "BNCI_BLOCKED_METHOD",
+  "multi_dataset_replication_state": "NOT_DONE",
   "pypi_deployment_state": "TESTPYPI_READY_PYPI_READY",
   "supported_claims": [
     "Bonn S2 bright-line passed (real Andrzejak-2001 EEG): G1 power + G2 specificity.",
@@ -47,5 +48,5 @@
   },
   "hash_manifest_path": "artifacts/release/bonn_bright_line/HASHES.sha256",
   "reproduction_entrypoint": "REPRODUCE.md",
-  "timestamp_utc": "2026-06-24T10:53:24Z"
+  "timestamp_utc": "2026-06-24T15:06:33Z"
 }

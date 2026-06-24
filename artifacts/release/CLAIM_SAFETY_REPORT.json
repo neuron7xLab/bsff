@@ -1,0 +1,19 @@
+{
+  "schema": "bsff.claim_safety/v1",
+  "status": "PASS",
+  "bnci_validated_allowed": false,
+  "replication_artifacts_present": false,
+  "checked": [
+    "README.md",
+    "FORMAL_VERDICT.md",
+    "STATUS.md",
+    "REPRODUCE.md",
+    "docs/validation/CLAIM_AUDIT.md",
+    "docs/validation/BONN_STATUS.md",
+    "docs/reviewer_packet/REVIEWER_PACKET.md",
+    "docs/QUICKSTART.md"
+  ],
+  "violations": [],
+  "git_commit": "85009007efec4b0adcfd236d906acd66b6a46b26",
+  "timestamp_utc": "2026-06-24T15:13:00Z"
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "bsff.bnci_method_repair_lock/v1",
+  "status": "PREDECLARED_NOT_VALIDATED",
+  "problem": "S2-C1 (sampen lower-tail, p<=alpha/2) anti-conservative on narrowband 8-30 Hz 501-sample epochs (probe FPR 0.375).",
+  "candidate_repairs": [
+    {
+      "id": "R1-empirical-threshold",
+      "desc": "calibrate detection threshold p* on a CALIBRATION set of spectrum-matched (8-30 Hz) 501-sample AR nulls to nominal alpha; validate FPR on a HELD-OUT set."
+    },
+    {
+      "id": "R2-fdr-on-ar-null",
+      "desc": "BH-FDR specificity: control false-discovery across the epoch family."
+    },
+    {
+      "id": "R3-length-aware-statistic",
+      "desc": "alternative statistic robust to short narrowband signals (e.g. permutation entropy or RQA), re-preregistered."
+    }
+  ],
+  "success_criterion": "spectrum-matched (8-30 Hz) held-out AR-null FPR <= 0.05 AND positive-control SURVIVED >= 0.80",
+  "predeclared_before_validation": true,
+  "alpha": 0.05,
+  "forbidden": [
+    "tuning threshold after seeing validation/power",
+    "changing alpha",
+    "subject/channel cherry-picking",
+    "BNCI confirmatory before repair passes spectrum-matched validation"
+  ],
+  "git_commit": "85009007efec4b0adcfd236d906acd66b6a46b26",
+  "timestamp_utc": "2026-06-24T15:05:49Z"
+}
