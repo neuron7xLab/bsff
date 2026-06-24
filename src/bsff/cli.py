@@ -165,10 +165,35 @@ def _run_release_check(args: argparse.Namespace) -> None:
 
 
 def _run_reproduce(args: argparse.Namespace) -> None:
+    if getattr(args, "target", None) == "bonn-s2":
+        from bsff.bench import reproduce_bonn_s2
+
+        report = reproduce_bonn_s2(execute=getattr(args, "execute", False))
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        raise SystemExit(0 if report.get("state") == "PASS" else 1)
+    if not args.case:
+        raise SystemExit("reproduce: provide a target (bonn-s2) or --case <file>")
     report = reproduce_case(args.case, signal_path=args.signal, out_path=args.out)
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if report["status"] != "REPRODUCIBLE":
         raise SystemExit(1)
+
+
+def _run_benchmark(args: argparse.Namespace) -> None:
+    from bsff.bench import run_benchmark
+
+    report = run_benchmark(args.target, mode=args.mode, n_segments=args.n_segments,
+                           n_surrogates=args.n_surrogates)
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    raise SystemExit(0 if report.get("state") == "PASS" else 1)
+
+
+def _run_evidence(args: argparse.Namespace) -> None:
+    from bsff.bench import verify_evidence
+
+    report = verify_evidence()
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    raise SystemExit(0 if report.get("state") == "PASS" else 1)
 
 
 def _run_bids_app(args: argparse.Namespace) -> None:
@@ -582,9 +607,17 @@ def main(argv: list[str] | None = None) -> None:
     )
 
     reproduce = sub.add_parser(
-        "reproduce", help="Re-run a saved verdict case-file and confirm it is reproducible."
+        "reproduce", help="Re-run a saved verdict case-file, or the Bonn S2 bright-line."
     )
-    reproduce.add_argument("--case", required=True, help="Path to a bsff falsify case-file JSON.")
+    reproduce.add_argument(
+        "target", nargs="?", default=None, choices=("bonn-s2",),
+        help="Public target: 'bonn-s2' verifies/re-runs the Bonn S2 bright-line.",
+    )
+    reproduce.add_argument(
+        "--execute", action="store_true",
+        help="For 'bonn-s2': re-run the confirmatory (~30-100 min) instead of dry-run verify.",
+    )
+    reproduce.add_argument("--case", default=None, help="Path to a bsff falsify case-file JSON.")
     reproduce.add_argument(
         "--signal", default=None, help="Override the signal path recorded in the case-file."
     )
@@ -612,7 +645,30 @@ def main(argv: list[str] | None = None) -> None:
     )
     bids_app.add_argument("--seed", type=int, default=123, help="Deterministic seed.")
 
+    benchmark = sub.add_parser(
+        "benchmark", help="Run a real-data benchmark (Bonn bright-line) and emit its verdict."
+    )
+    benchmark.add_argument("target", choices=("bonn-bright-line",), help="Benchmark to run.")
+    benchmark.add_argument(
+        "--mode", choices=("exploratory", "confirmatory"), default="confirmatory",
+        help="confirmatory (default) runs the frozen S2 candidate; exploratory sweeps candidates.",
+    )
+    benchmark.add_argument("--n-segments", type=int, default=100)
+    benchmark.add_argument("--n-surrogates", type=int, default=199)
+
+    evidence = sub.add_parser(
+        "evidence", help="Verify the committed evidence bundle (coherence, hashes, release gate)."
+    )
+    evidence.add_argument("action", choices=("verify",), help="Action: 'verify'.")
+
     args = parser.parse_args(argv)
+
+    if args.command == "benchmark":
+        _run_benchmark(args)
+        return
+    if args.command == "evidence":
+        _run_evidence(args)
+        return
 
     if args.command == "falsify":
         _run_falsify(args)
