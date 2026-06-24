@@ -4,7 +4,7 @@
   "package": "bsff",
   "generator": "tools/generate_manifest.py",
   "version": "0.4.0",
-  "test_count": 525,
+  "test_count": 527,
   "release_gates": [
     "truth_contract",
     "architecture_contract",

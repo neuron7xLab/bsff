@@ -66,6 +66,27 @@ def _pypi_state() -> str:
     return "TESTPYPI_READY_PYPI_READY" if (has_test and has_pypi) else "INCOMPLETE"
 
 
+def _bonn_robustness() -> dict:
+    """Resolve the robust specificity state from the strongest available evidence:
+    S3 seed-averaged confirmatory > seed-averaged calibration > nominal-only."""
+    cal_p = ROOT / "artifacts" / "bonn_bright_line" / "S2_SPECIFICITY_CALIBRATION.json"
+    s3_p = ROOT / "artifacts" / "bonn_bright_line" / "S3_CONFIRMATORY_VERDICT.json"
+    fpr = ci_upper = None
+    robust = None
+    if cal_p.is_file():
+        c = json.loads(cal_p.read_text())
+        fpr = c.get("pooled_fpr")
+        ci_upper = (c.get("wilson_95ci") or [None, None])[1]
+        robust = bool(c.get("fpr_ci_upper_below_threshold", False))
+    if s3_p.is_file():  # S3 is the authoritative, larger-N evidence
+        s3 = json.loads(s3_p.read_text())
+        g2 = s3.get("G2", {})
+        fpr = g2.get("ar_null_fpr", fpr)
+        ci_upper = (g2.get("wilson_95ci") or [None, ci_upper])[1]
+        robust = bool(s3.get("S3_PASS", False))
+    return {"robust": robust, "seed_avg_fpr": fpr, "wilson_ci_upper": ci_upper}
+
+
 def build() -> dict:
     s1 = json.loads(S1.read_text())
     s2 = json.loads(S2.read_text())
@@ -74,14 +95,26 @@ def build() -> dict:
         ["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=ROOT
     ).stdout.strip()
     g1, g2 = s2["G1"], s2["G2"]
-    latest = "BONN_S2_BRIGHT_LINE_PASSED" if s2_pass else s2["final_state"]
+    rob = _bonn_robustness()
+    if rob["robust"] is True:
+        latest = "BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED"
+    elif rob["robust"] is False:
+        latest = "BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST"
+    else:
+        latest = "BONN_S2_BRIGHT_LINE_PASSED" if s2_pass else s2["final_state"]
     return {
-        "schema": "bsff.current_truth/v1",
+        "schema": "bsff.current_truth/v2",
         "package_version": _ver(),
         "main_commit": commit,
         "latest_validation_state": latest,
+        "bonn_s2_nominal_state": "PASSED_SINGLE_SEED" if s2_pass else s2["final_state"],
+        "bonn_s2_robustness_state": _s2_robustness(),
+        "s2_seed_averaged_fpr": rob["seed_avg_fpr"],
+        "s2_wilson_ci_upper": rob["wilson_ci_upper"],
+        "robust_gate": "G1_power>=0.80 AND G2_AR-null_FPR_Wilson95_CI_upper<=0.05",
+        "robust_gate_passed": bool(rob["robust"]) if rob["robust"] is not None else None,
         "bonn_s1_state": s1["final_state"],  # BRIGHT_LINE_NOT_PASSED (historical)
-        "bonn_s2_state": s2["final_state"],  # S2_BRIGHT_LINE_PASSED (current)
+        "bonn_s2_state": s2["final_state"],  # nominal single-seed confirmatory
         "G1_metrics": {
             "E_survived": g1["E_survived_fraction"],
             "A_not_survived": g1["A_not_survived_fraction"],

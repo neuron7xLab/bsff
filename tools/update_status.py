@@ -41,10 +41,12 @@ STATUS = ROOT / "STATUS.md"
 
 CI_WORKFLOW = ".github/workflows/ci.yml"
 VALIDATION_LEVEL = (
-    "Synthetic-ground-truth calibration PLUS a passed external real-data bright-line "
-    "benchmark (Bonn S2: G1 power + G2 specificity, BONN_S2_BRIGHT_LINE_PASSED). BNCI2014-001 "
-    "is preregistration-only (not executed). NOT clinical, regulatory, or multi-dataset replicated. "
-    "Canonical state: artifacts/release/CURRENT_TRUTH.json."
+    "Synthetic-ground-truth calibration PLUS a Bonn external benchmark that is a NOMINAL "
+    "single-seed pass with G2 specificity NOT robust: BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST. "
+    "Falsification + seed-averaged calibration show the AR-null FPR Wilson-95-CI upper bound "
+    "(0.056) exceeds the 0.05 gate (robust_gate_passed=false). G1 power is robust. BNCI2014-001 "
+    "is preregistration-only (BLOCKED_METHOD). NOT clinical, regulatory, multi-dataset replicated, "
+    "or robustly validated. Canonical state: artifacts/release/CURRENT_TRUTH.json."
 )
 
 

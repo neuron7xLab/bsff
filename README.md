@@ -36,7 +36,7 @@ BSFF aims at a **BCI/EEG signal claim** and tries to refute it under stated atta
 (surrogate nulls, controls, corroboration), emitting a bounded verdict —
 `SURVIVED` / `REFUTED` / `UNSUPPORTED` (see [`docs/VERDICT_SEMANTICS.md`](docs/VERDICT_SEMANTICS.md)).
 
-**Current canonical evidence — `BONN_S2_BRIGHT_LINE_PASSED`**
+**Current canonical evidence — `BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST`**
 ([`artifacts/release/CURRENT_TRUTH.json`](artifacts/release/CURRENT_TRUTH.json)): on real
 Andrzejak-2001 Bonn EEG the instrument has robust **power** (ictal SURVIVED 0.96) and a
 **marginal, NOT-robust specificity**: the predeclared-seed AR-null FPR was 0.02, but a

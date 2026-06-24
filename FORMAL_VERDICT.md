@@ -5,11 +5,12 @@ Canonical machine-readable truth: [`artifacts/release/CURRENT_TRUTH.json`](artif
 This document must agree with it (enforced by `tools/validate_current_truth.py`).
 
 ## 1. Current canonical verdict
-**BONN_S2_BRIGHT_LINE_PASSED (predeclared confirmatory) — but a MARGINAL, NOT-robust pass.**
-BSFF cleared the frozen `S2-C1-sampen-finiteN` confirmatory at the predeclared seed, but a
-seed-averaged falsification (§Robustness) shows **G2 specificity is NOT robust**: pooled AR-null
-FPR 0.0354, Wilson 95% CI **[0.022, 0.056]** crosses the 0.05 gate. The bright line is **not
-robustly crossed**; the FPR 0.02 below was a favorable-seed point estimate.
+**`BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST`.** BSFF cleared the frozen `S2-C1-sampen-finiteN`
+confirmatory at the **predeclared single seed** (nominal pass, FPR 0.02), but a seed-averaged
+falsification (§Robustness) shows **G2 specificity is NOT robust**: pooled AR-null FPR 0.0354,
+Wilson 95% CI **[0.022, 0.056]** whose **upper bound 0.056 > 0.05**. Under the robust gate
+(`robust_gate = G1 power ≥ 0.80 AND G2 AR-null FPR Wilson-95-CI-upper ≤ 0.05`), **`robust_gate_passed
+= false`**. The bright line is **not robustly crossed**; the 0.02 was a favorable-seed point estimate.
 
 - G1 (power): Set E SURVIVED **0.96**, Set A not-SURVIVED **0.92**, Set B not-SURVIVED **0.92** (≥ 0.80) — **robust**.
 - G2 (specificity): predeclared-seed AR-null FPR **0.02** ≤ 0.05; **seed-averaged 0.035, CI [0.022, 0.056] — not robustly ≤ 0.05**.

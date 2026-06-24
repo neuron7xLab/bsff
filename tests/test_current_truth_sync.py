@@ -28,10 +28,18 @@ def test_no_public_doc_contradicts_current_truth(tmp_path):
     assert _load("validate_current_truth").main(["--output", str(out)]) == 0
 
 
-def test_canonical_state_is_s2_passed():
+def test_canonical_state_is_honest_about_robustness():
     import json
 
     truth = json.loads((ROOT / "artifacts" / "release" / "CURRENT_TRUTH.json").read_text())
-    assert truth["latest_validation_state"] == "BONN_S2_BRIGHT_LINE_PASSED"
+    # Nominal single-seed pass, but the falsification downgraded G2 specificity to NOT robust.
+    assert truth["latest_validation_state"] in {
+        "BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST",
+        "BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED",  # only if S3 proves robust
+    }
+    assert truth["bonn_s2_nominal_state"] == "PASSED_SINGLE_SEED"
+    # The robust gate must not be silently claimed passed unless an artifact proves it.
+    if truth["latest_validation_state"] == "BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST":
+        assert truth["robust_gate_passed"] is False
     assert truth["BNCI_chain_state"] == "UNLOCKED_FOR_PREREGISTRATION_ONLY"
     assert truth["bonn_s1_state"] == "BRIGHT_LINE_NOT_PASSED"  # preserved

@@ -75,3 +75,10 @@ Still **FORBIDDEN**: clinical/medical/regulatory/device claims; final proof of b
 | S2 G2 specificity is robustly below 0.05 | REFUTED_BY_ARTIFACT | seed-avg FPR 0.0354, Wilson 95% CI [0.022, 0.056] crosses 0.05; 2/6 seeds >0.05 (`S2_SPECIFICITY_CALIBRATION.json`) |
 | Bonn S2 bright line is robustly crossed | REFUTED_BY_ARTIFACT | marginal/favorable-seed pass only; G2 not robust |
 | Bonn S2 G1 power is robust | PROVEN_BY_ARTIFACT | Set E SURVIVED 0.96-0.967 across all seeds |
+
+## Canonical-state honesty (PI-grade)
+| claim | status | evidence |
+|-------|--------|----------|
+| Bonn S2 robust bright-line passed | REFUTED_BY_ARTIFACT | robust_gate_passed=false; CI upper 0.056 > 0.05 (`CURRENT_TRUTH.json`) |
+| Bonn S2 nominal single-seed pass exists | PROVEN_BY_ARTIFACT | predeclared confirmatory (FPR 0.02), `bonn_s2_nominal_state=PASSED_SINGLE_SEED` |
+| "Bonn validated" without a robustness qualifier | FORBIDDEN | enforced by `tools/validate_statistical_claims.py` (CI) |
