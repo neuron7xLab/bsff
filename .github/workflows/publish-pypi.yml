@@ -6,6 +6,15 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
+  # Tag-push trigger: GitHub does NOT run workflows for `release: published`
+  # events whose release was created by GITHUB_TOKEN (e.g. the SLSA generator in
+  # release-artifact.yml creates the release as github-actions[bot]). A human
+  # `git push` of a v* tag triggers this directly, so publishing no longer
+  # depends on who created the GitHub release. The pre-publish gate still asserts
+  # the tag matches the pyproject version.
+  push:
+    tags:
+      - "v*"
   workflow_dispatch:
 
 permissions:
