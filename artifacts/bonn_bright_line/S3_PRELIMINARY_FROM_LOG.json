@@ -1,0 +1,38 @@
+{
+  "schema": "bsff.s3_preliminary/v1",
+  "status": "PRELIMINARY_NOT_AUTHORITATIVE",
+  "provenance": "Reconstructed from exact per-seed integer counts in s3_confirmatory.log; the original run completed all 10 seeds but crashed on JSON write (numpy bool_ not serializable, now fixed).",
+  "reconstructed_verdict": "S3_BRIGHT_LINE_ROBUSTLY_PASSED",
+  "G1": {
+    "E_survived_fraction": 0.94,
+    "threshold": 0.8,
+    "pass": true
+  },
+  "G2": {
+    "ar_null_fpr": 0.028,
+    "wilson_95ci": [
+      0.0194,
+      0.0402
+    ],
+    "ci_upper_threshold": 0.05,
+    "pass": true,
+    "n_ar_null": 1000,
+    "n_false_positives": 28
+  },
+  "per_seed_fpr": {
+    "20260623": 0.01,
+    "7": 0.05,
+    "999": 0.0,
+    "314159": 0.01,
+    "2718": 0.02,
+    "42": 0.04,
+    "161803": 0.04,
+    "27182": 0.04,
+    "31337": 0.04,
+    "123456": 0.03
+  },
+  "vs_calibration": "Calibration (N=480, 6 seeds) gave FPR 0.0354 CI-upper 0.056 (not robust); this larger pre-registered S3 (N=1000, 10 seeds) gives 0.028 CI-upper 0.040. The estimate is seed-set/N sensitive near the boundary; the pre-registered larger-N test passes its gate.",
+  "canonical_state_action": "NOT applied yet. CURRENT_TRUTH stays BONN_NOMINAL_S2_PASS_BUT_G2_NOT_ROBUST until the clean re-run produces the authoritative artifact and reproduces these per-seed counts.",
+  "git_commit": "a81d595620b1435f9a3caa0f5bd42890bd964dee",
+  "timestamp_utc": "2026-06-24T21:08:40Z"
+}

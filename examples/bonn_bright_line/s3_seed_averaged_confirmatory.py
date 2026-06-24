@@ -43,7 +43,7 @@ def _wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float, float]:
     den = 1 + z * z / n
     centre = (p + z * z / (2 * n)) / den
     half = (z * np.sqrt(p * (1 - p) / n + z * z / (4 * n * n))) / den
-    return p, max(0.0, centre - half), min(1.0, centre + half)
+    return float(p), float(max(0.0, centre - half)), float(min(1.0, centre + half))
 
 
 def _survived(sig, seed) -> str:
@@ -99,8 +99,8 @@ def main(argv=None) -> int:
 
     e_frac = e_surv / e_tot
     fpr, fpr_lo, fpr_hi = _wilson(fp, ar_tot)
-    g1 = e_frac >= G1_MIN
-    g2 = fpr_hi <= G2_MAX_FPR  # robust gate: CI upper bound, not the point estimate
+    g1 = bool(e_frac >= G1_MIN)
+    g2 = bool(fpr_hi <= G2_MAX_FPR)  # robust gate: CI upper bound, not the point estimate
     passed = bool(g1 and g2)
     verdict = "S3_BRIGHT_LINE_ROBUSTLY_PASSED" if passed else "S3_BRIGHT_LINE_NOT_ROBUSTLY_PASSED"
     out = {

@@ -31,5 +31,10 @@
   "runner": "examples/bonn_bright_line/s3_seed_averaged_confirmatory.py",
   "runner_sha256": "a19f6400945c2f96d0603c864743f435a4e62f5844b16d62850b57ba4a21dc0a",
   "git_commit": "3ae10213e789c05f3139a4cc92117417277ce263",
-  "timestamp_utc": "2026-06-24T18:50:14Z"
+  "timestamp_utc": "2026-06-24T18:50:14Z",
+  "original_runner_sha256": "a19f6400945c2f96d0603c864743f435a4e62f5844b16d62850b57ba4a21dc0a",
+  "patched_runner_sha256": "89485f335b4b6622d245b132a6ce176e670bcba890c639b7d958d8e0c7a363c8",
+  "patch_note": "Post-run serialization-only fix: cast numpy bool_/float64 to Python types so the verdict JSON serializes. The measurement logic (seeds, statistic, AR-null, gate) is byte-identical; the clean re-run reproduces the same per-seed counts. No methodological change.",
+  "patch_affects_measurement": false,
+  "patch_timestamp_utc": "2026-06-24T21:08:09Z"
 }
