@@ -1,0 +1,4 @@
+S2 confirmatory | candidate=S2-C1-sampen-finiteN n_segments=100 n_surrogates=199
+  G1: E=0.96 A_not=0.92 B_not=0.92 -> True
+  G2: FPR_A=0.020 FPR_B=0.020 combined=0.0200 -> True
+  S2_BRIGHT_LINE_PASSED

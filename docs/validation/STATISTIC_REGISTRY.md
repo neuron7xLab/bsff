@@ -96,3 +96,14 @@ hypotheses + expected failure modes: `examples/bonn_bright_line/s2_candidate_reg
 
 Exploratory: `artifacts/bonn_bright_line/s2_EXPLORATORY_RESULTS.json`. Selection lock +
 confirmatory verdict follow the same fail-closed pattern as S1.
+
+### S2 confirmatory — VERDICT (executed)
+
+- Frozen candidate **S2-C1-sampen-finiteN** (SampEn lower-tail with conservative p ≤ α/2 = 0.025).
+- Confirmatory (n=100, 199 surrogates): G1 E=0.96, A_not=0.92, B_not=0.92 (all ≥0.80);
+  G2 FPR_A=0.020, FPR_B=0.020, **combined=0.020 ≤ 0.05**.
+- **S2_BRIGHT_LINE_PASSED = True** → chain to BNCI2014-001 **UNLOCKED**.
+- Mechanism: the α/2 threshold corrects SampEn's finite-N anti-conservative bias (S1 nominal
+  0.05 gave real FPR 0.08); strong ictal rejections (p≈0.005) survive the stricter threshold,
+  so G1 power is preserved. A conservative-threshold variant, not a new statistic.
+- Evidence: `s2_CONFIRMATORY_VERDICT.json`, `S2_BRIGHT_LINE_SUMMARY.json`, `docs/validation/S2_VERDICT.md`.

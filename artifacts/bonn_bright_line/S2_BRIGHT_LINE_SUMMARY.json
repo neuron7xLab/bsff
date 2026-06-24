@@ -1,0 +1,74 @@
+{
+  "schema": "bsff.s2_bright_line_summary/v1",
+  "final_state": "S2_BRIGHT_LINE_PASSED",
+  "candidate": "S2-C1-sampen-finiteN",
+  "S2_G1_PASS": true,
+  "S2_G2_PASS": true,
+  "S2_BRIGHT_LINE_PASSED": true,
+  "G1": {
+    "E_survived_fraction": 0.96,
+    "A_not_survived_fraction": 0.92,
+    "B_not_survived_fraction": 0.92,
+    "G1_PASS": true
+  },
+  "G2": {
+    "FPR_A": 0.02,
+    "FPR_B": 0.02,
+    "combined_FPR": 0.02,
+    "G2_PASS": true
+  },
+  "thresholds": {
+    "G1_min": 0.8,
+    "G2_max_fpr": 0.05,
+    "alpha": 0.05
+  },
+  "n_segments": 100,
+  "n_surrogates": 199,
+  "chain_to_bnci2014_001": "UNLOCKED",
+  "selection_lock": {
+    "S2_SELECTION": "S2-C1-sampen-finiteN",
+    "family": "sampen",
+    "rule": "pvalue_half",
+    "frozen_params": {
+      "alpha_eff": 0.025
+    },
+    "alpha_frozen": 0.05,
+    "thresholds_frozen": {
+      "G1_min": 0.8,
+      "G2_max_fpr": 0.05
+    },
+    "selection_reason": "lowest combined_FPR (0.0) among 4 passing candidate(s), then highest Set-E power",
+    "exploratory_metrics": {
+      "G1_E_survived": 0.9667,
+      "G1_A_not_survived": 0.8667,
+      "G1_B_not_survived": 0.9667,
+      "FPR_A": 0.0,
+      "FPR_B": 0.0,
+      "combined_FPR": 0.0
+    },
+    "forbidden_changes": [
+      "alpha",
+      "thresholds",
+      "params",
+      "candidate after freeze",
+      "set removal",
+      "segment cherry-picking"
+    ],
+    "git_commit": "1a95bce4bc240d7fde3187ee17b40c4a65241301",
+    "timestamp_utc": "2026-06-23T21:21:08Z"
+  },
+  "limitations": [
+    "Single benchmark (Bonn); confirmatory n_surrogates=199 (compute-bound).",
+    "S2-C1 is a conservative-threshold variant of SampEn; not a new statistic.",
+    "Not externally replicated; not clinical/regulatory."
+  ],
+  "forbidden_claims": [
+    "clinical diagnosis",
+    "medical use",
+    "regulatory validation",
+    "final proof of brain nonlinear dynamics",
+    "universal BCI benchmark authority"
+  ],
+  "timestamp_utc": "2026-06-24T05:49:35Z",
+  "git_commit": "f4f2532624c162af6e8c5db8f79846af0f379a2a"
+}

@@ -34,3 +34,13 @@ Every claim is classified into exactly one status:
 ## FORBIDDEN (never asserted; enforced by `release_check.py`)
 clinical diagnosis · medical/therapeutic use · regulatory or device-grade status ·
 seizure-detection product · final proof of brain nonlinear dynamics · universal BCI truth oracle.
+
+## S2 update (PROVEN_BY_ARTIFACT)
+| claim | evidence |
+|-------|----------|
+| A finite-N-corrected SampEn (p≤α/2) passes G2 specificity (combined FPR 0.020 ≤ 0.05) | `s2_CONFIRMATORY_VERDICT.json` |
+| The same candidate preserves G1 (E 0.96, A_not 0.92, B_not 0.92 ≥ 0.80) | `s2_CONFIRMATORY_VERDICT.json` |
+| S2 bright line PASSED under the frozen protocol; BNCI2014-001 chain UNLOCKED | `S2_BRIGHT_LINE_SUMMARY.json` |
+
+Still **UNSUPPORTED**: external replication, multi-dataset generalization, paper-grade completeness.
+Still **FORBIDDEN**: clinical/medical/regulatory/device claims; final proof of brain dynamics; universal BCI authority.

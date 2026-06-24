@@ -1,0 +1,27 @@
+{
+  "schema": "bsff.s2_confirmatory/v1",
+  "candidate": "S2-C1-sampen-finiteN",
+  "family": "sampen",
+  "rule": "pvalue_half",
+  "n_segments": 100,
+  "n_surrogates": 199,
+  "G1": {
+    "E_survived_fraction": 0.96,
+    "A_not_survived_fraction": 0.92,
+    "B_not_survived_fraction": 0.92,
+    "G1_PASS": true
+  },
+  "G2": {
+    "FPR_A": 0.02,
+    "FPR_B": 0.02,
+    "combined_FPR": 0.02,
+    "G2_PASS": true
+  },
+  "S2_G1_PASS": true,
+  "S2_G2_PASS": true,
+  "S2_BRIGHT_LINE_PASSED": true,
+  "verdict": "S2_BRIGHT_LINE_PASSED",
+  "chain_to_bnci2014_001": "UNLOCKED",
+  "timestamp_utc": "2026-06-23T21:50:59Z",
+  "elapsed_sec": 1759.0
+}
