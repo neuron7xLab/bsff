@@ -40,6 +40,8 @@ jobs:
       - run: uv run --no-sync python -m pytest tests/ -m slow -v --tb=short
 
       - run: uv run --no-sync python tools/validate_truth_contract.py
+      - run: uv run --no-sync python tools/generate_current_truth.py --check
+      - run: uv run --no-sync python tools/validate_current_truth.py
       - run: uv run --no-sync python tools/validate_artifact_schema.py
       - run: uv run --no-sync python tools/update_status.py --check
       - run: uv run --no-sync python tools/generate_manifest.py --check

@@ -13,7 +13,7 @@ Every claim is classified into exactly one status:
 | SampEn passed G1 thresholds on A (0.86), B (0.91), E (0.96) | `bonn_CONFIRMATORY_VERDICT.json` |
 | G2 AR-null specificity guard FAILED (combined FPR 0.065 > 0.05) | `ar_negative_CONFIRMATORY_{A,B}.json` |
 | The bright line did NOT pass | `BRIGHT_LINE_SUMMARY.json` (`final_state=BRIGHT_LINE_NOT_PASSED`) |
-| BNCI2014-001 chain remains BLOCKED | `BRIGHT_LINE_SUMMARY.json` (`chain_to_bnci2014_001=BLOCKED`) |
+| BNCI2014-001 chain was BLOCKED at S1 (historical; UNLOCKED after S2 — see S2 update below) | `BRIGHT_LINE_SUMMARY.json` |
 | SampEn(chaos) < SampEn(noise); lower-tail SURVIVES henon, REFUTES white | `tests/bonn_bright_line/test_statistics_sampen.py` |
 | Non-converged MIAAFT → UNSUPPORTED (fail-closed) | same test file |
 

@@ -3,7 +3,7 @@
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
 """Finalize the Bonn bright-line evidence artifact (Phases 7-10).
 
-Runs the aggregator, writes FORMAL_VERDICT.md / docs/validation/BONN_STATUS.md, assembles the
+Runs the aggregator, writes the S1 bundle verdict + docs/validation/BONN_STATUS.md, assembles the
 artifacts/release/ bundle, regenerates HASHES, and runs release_check.
 Idempotent; verdict comes only from executed confirmatory bundles.
 """
@@ -74,8 +74,9 @@ def main() -> int:
     g1, g2 = summary.get("G1", {}), summary.get("G2", {})
     commit = _run(["git", "rev-parse", "HEAD"]).stdout.strip()
 
-    # FORMAL_VERDICT.md
-    (ROOT / "FORMAL_VERDICT.md").write_text(f"""<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+    # S1-scoped verdict only — the root FORMAL_VERDICT.md is the canonical multi-phase doc
+    # (S1 history + S2 current) and must not be clobbered by this S1 finalizer.
+    (REL / "S1_FORMAL_VERDICT.md").write_text(f"""<!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # BSFF — formal verdict (Bonn bright line)
 
 **{verdict}** · statistic `{summary.get('statistic_id')}` · commit `{commit[:12]}` · {summary.get('timestamp_utc')}
@@ -118,17 +119,20 @@ Open the **S2** specificity-method branch (`docs/validation/NEXT_METHOD_CONTRACT
     (ROOT / "docs" / "validation" / "BONN_STATUS.md").write_text(f"""<!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Bonn bright-line STATUS
 
-- Bonn bright line: **{verdict}** (commit `{commit[:12]}`).
+**S1 (historical) snapshot.** Current canonical state lives in
+`artifacts/release/CURRENT_TRUTH.json` and `FORMAL_VERDICT.md`. The lines below are S1 only.
+
+- Bonn bright line (S1, historical): **{verdict}** (commit `{commit[:12]}`).
 - G1: E={g1.get('frac_survived_E')}, A_not={g1.get('frac_A_not_survived')}, B_not={g1.get('frac_B_not_survived')} (≥0.80).
 - G2: AR FPR A={g2.get('fpr_A')}, B={g2.get('fpr_B')}, combined={g2.get('combined_fpr')} (≤0.05), G2_PASS={g2.get('G2_PASS')}.
-- BNCI2014-001 chain: **{summary.get('chain_to_bnci2014_001')}**.
+- BNCI2014-001 chain at S1 (historical): **{summary.get('chain_to_bnci2014_001')}**.
 - Evidence: `artifacts/bonn_bright_line/BRIGHT_LINE_SUMMARY.json`, `docs/validation/BRIGHT_LINE_VERDICT.md`.
 - Reproduce: `REPRODUCE.md`. Tests: `artifacts/release/TESTS.json`.
 """, encoding="utf-8")
 
     # Release bundle
     (REL / "VERDICT.json").write_text(json.dumps(summary, indent=2) + "\n")
-    (REL / "VERDICT.md").write_text((ROOT / "FORMAL_VERDICT.md").read_text())
+    (REL / "VERDICT.md").write_text((REL / "S1_FORMAL_VERDICT.md").read_text())
     (REL / "ENVIRONMENT.txt").write_text(
         f"python={platform.python_version()}\nplatform={platform.platform()}\n"
         f"git_commit={commit}\ntimestamp_utc={time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}\n")
