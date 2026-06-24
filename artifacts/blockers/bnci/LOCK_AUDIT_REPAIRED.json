@@ -1,0 +1,70 @@
+{
+  "schema": "bsff.bnci_lock_audit/v2",
+  "state": "BNCI_LOCK_EXECUTABLE",
+  "lock": "docs/preregistration/BNCI2014_001_EXECUTABLE_LOCK.json",
+  "checks": [
+    {
+      "check": "status_executable",
+      "ok": true,
+      "detail": "COMPLETE_EXECUTABLE_LOCK"
+    },
+    {
+      "check": "runner_declared",
+      "ok": true,
+      "detail": "research/bci_generalization/run_bnci_confirmatory.py"
+    },
+    {
+      "check": "runner_exists",
+      "ok": true,
+      "detail": "research/bci_generalization/run_bnci_confirmatory.py"
+    },
+    {
+      "check": "no_placeholder_command",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "check": "statistic_declared",
+      "ok": true,
+      "detail": "sampen_lower_tail_m2_r015_v1 with S2 finite-N rule (p <= alpha/2 = 0.025)"
+    },
+    {
+      "check": "channel_aggregation_specified",
+      "ok": true,
+      "detail": "spatial mean across the 22 EEG channels (common-average), one signal per epoch (FROZEN, deterministic)"
+    },
+    {
+      "check": "epoch_policy_specified",
+      "ok": true,
+      "detail": "all trials per class, both sessions (train+test), trial-order deterministic"
+    },
+    {
+      "check": "alpha_frozen",
+      "ok": true,
+      "detail": "0.05"
+    },
+    {
+      "check": "subjects_frozen",
+      "ok": true,
+      "detail": "[1, 2, 3, 4, 5, 6, 7, 8, 9]"
+    },
+    {
+      "check": "thresholds_frozen",
+      "ok": true,
+      "detail": "present"
+    },
+    {
+      "check": "method_not_csp",
+      "ok": true,
+      "detail": "runner command must not be CSP/LDA decoding"
+    },
+    {
+      "check": "forbidden_present",
+      "ok": true,
+      "detail": "7 entries"
+    }
+  ],
+  "incomplete": [],
+  "git_commit": "0e2d836f74dc30898d6e9c8486499382fe97556f",
+  "timestamp_utc": "2026-06-24T10:49:14Z"
+}

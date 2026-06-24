@@ -1,0 +1,32 @@
+{
+  "schema": "bsff.pypi_deployment_plan/v1",
+  "package": "bsff",
+  "version": "0.4.0",
+  "method": "Trusted Publishing (OIDC); no API token",
+  "order": [
+    "TestPyPI (publish-testpypi.yml)",
+    "PyPI (publish-pypi.yml, protected env, manual approval)"
+  ],
+  "tag_policy": {
+    "pypi": "v<version>",
+    "testpypi": "testpypi-v<version>",
+    "must_equal_pyproject_version": true
+  },
+  "guards": [
+    "validate_current_truth",
+    "validate_truth_contract",
+    "evidence verify (testpypi)",
+    "tag==pyproject version",
+    "twine check",
+    "no skip-existing on real PyPI"
+  ],
+  "rollback": "yank + higher patch; never reuse a version",
+  "verification": [
+    "pip install bsff==0.4.0",
+    "bsff selftest",
+    "bsff evidence verify"
+  ],
+  "deployment_state": "TESTPYPI_READY_PYPI_READY (workflows added; Trusted Publisher registration is the manual one-time step)",
+  "git_commit": "0e2d836f74dc30898d6e9c8486499382fe97556f",
+  "timestamp_utc": "2026-06-24T10:51:42Z"
+}

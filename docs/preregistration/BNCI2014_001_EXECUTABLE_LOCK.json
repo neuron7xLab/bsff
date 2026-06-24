@@ -1,0 +1,77 @@
+{
+  "schema": "bsff.bnci_preregistration_lock/v1",
+  "status": "COMPLETE_EXECUTABLE_LOCK",
+  "dataset": "BNCI2014-001 (BCI Competition IV-2a)",
+  "doi": "10.3389/fnins.2012.00055",
+  "source": "bnci-horizon-2020.eu (canonical) / MOABB loader",
+  "subjects": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "tasks": [
+    "left_hand",
+    "right_hand",
+    "feet",
+    "tongue"
+  ],
+  "inclusion": "all 9 subjects, both sessions (train T + eval E); 22 EEG channels @ 250 Hz",
+  "exclusion": "EOG channels; trials with documented artifacts per dataset metadata only",
+  "preprocessing": "fixed band-pass 8-30 Hz, fixed epoch [0.5, 2.5] s post-cue; no per-subject tuning",
+  "statistic": "sampen_lower_tail_m2_r015_v1 with S2 finite-N rule (p <= alpha/2 = 0.025)",
+  "null": "MIAAFT (convergence-gated)",
+  "alpha": 0.05,
+  "correction": "Benjamini-Hochberg FDR across subjects x classes",
+  "success_threshold": {
+    "positive_control": "epochs with motor-imagery structure SURVIVED fraction >= 0.80 (per class)",
+    "specificity": "real-spectrum AR-null combined FPR <= 0.05"
+  },
+  "failure_threshold": "specificity combined FPR > 0.05 OR positive-control SURVIVED < 0.80",
+  "exact_commands": [
+    "python research/bci_generalization/run_bnci_confirmatory.py --subjects 1 2 3 4 5 6 7 8 9 --output artifacts/bnci2014_001/CONFIRMATORY_VERDICT.json",
+    "python research/bci_generalization/aggregate_bnci.py  # -> artifacts/bnci2014_001/BNCI_SUMMARY.json + BNCI_VERDICT.md"
+  ],
+  "artifact_paths": {
+    "manifest": "artifacts/bnci2014_001/DATASET_MANIFEST.json",
+    "confirmatory": "artifacts/bnci2014_001/CONFIRMATORY_VERDICT.json",
+    "summary": "artifacts/bnci2014_001/BNCI_SUMMARY.json"
+  },
+  "allowed_terminal_states": [
+    "BNCI_VALIDATED",
+    "BNCI_NOT_VALIDATED",
+    "BLOCKED_DATA",
+    "BLOCKED_RUNTIME",
+    "BLOCKED_API",
+    "BLOCKED_METHOD"
+  ],
+  "forbidden": [
+    "alpha change",
+    "threshold change after results",
+    "subject/class dropping",
+    "per-subject instrument tuning",
+    "exploratory-only success",
+    "clinical/medical/regulatory/device claim",
+    "BNCI validated before execution artifacts exist"
+  ],
+  "frozen_git_commit": "0e2258e444f809b1ad8a6975c088c866b7fd8929",
+  "execution_status": "READY",
+  "note": "Re-frozen as a complete executable lock after the prior BNCI_BLOCKED_LOCK_INCOMPLETE audit (runner implements the locked SampEn+MIAAFT+AR-null method; deterministic channel->epoch aggregation specified; placeholder removed). Method/thresholds/alpha unchanged from the original preregistration. Execution under explicit authorization.",
+  "runner": "research/bci_generalization/run_bnci_confirmatory.py",
+  "channel_aggregation": "spatial mean across the 22 EEG channels (common-average), one signal per epoch (FROZEN, deterministic)",
+  "epoch_policy": "all trials per class, both sessions (train+test), trial-order deterministic",
+  "positive_control_unit": "per epoch (channel-mean signal); SURVIVED if BH-FDR-adjusted lower-tail p <= 0.025",
+  "m": 2,
+  "r_factor": 0.15,
+  "epoch_length_samples": 501,
+  "expected_sampling_rate_hz": 250,
+  "expected_channels": "22 EEG (non-EEG ignored via MOABB MotorImagery paradigm)",
+  "missing_channel_policy": "MotorImagery paradigm returns EEG only; no manual drop",
+  "failed_epoch_policy": "non-converged MIAAFT -> UNSUPPORTED (fail-closed)",
+  "failed_subject_policy": "record in subjects_failed; never silently skipped; no removal from denominator intent"
+}

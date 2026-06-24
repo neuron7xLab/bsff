@@ -1,0 +1,14 @@
+{
+  "schema": "bsff.release_gate_summary/v1",
+  "commit": "0e2d836f74dc30898d6e9c8486499382fe97556f",
+  "timestamp_utc": "2026-06-24T10:54:22Z",
+  "local_gates": {
+    "validate_current_truth": "PASS",
+    "validate_truth_contract": "PASS",
+    "validate_markdown": "PASS",
+    "evidence_verify": "PASS",
+    "lock_audit": "BNCI_LOCK_EXECUTABLE",
+    "certificate": "see CI"
+  },
+  "note": "Authoritative CI conclusions (check names + run IDs + SHA) are recorded on PR via GitHub Actions; no 'green' is claimed here without the CI run."
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "bsff.bnci_lock_repair_plan/v1",
+  "B1": "BNCI_LOCK_INCOMPLETE",
+  "actions_done": [
+    "implemented locked-method runner run_bnci_confirmatory.py (SampEn+MIAAFT+AR-null)",
+    "implemented aggregate_bnci.py (replaced 'tools/...' placeholder)",
+    "froze channel->epoch aggregation (spatial mean across 22 EEG channels)",
+    "froze epoch_policy (all trials per class), m=2, r=0.15, p<=alpha/2, n_surrogates=199",
+    "re-froze lock status COMPLETE_EXECUTABLE_LOCK / EXECUTABLE_LOCK.json"
+  ],
+  "lock_sha256": "1ea3ab955e6b3c1f9351f45264a3904b1a8058cfc02eb0e2d5446bb44eb92317",
+  "git_commit": "0e2d836f74dc30898d6e9c8486499382fe97556f",
+  "timestamp_utc": "2026-06-24T10:49:14Z"
+}

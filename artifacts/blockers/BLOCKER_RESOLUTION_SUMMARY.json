@@ -1,0 +1,59 @@
+{
+  "schema": "bsff.blocker_resolution/v1",
+  "final_state": "BLOCKERS_RESOLVED_OR_EXACTLY_BLOCKED",
+  "blockers": [
+    {
+      "id": "B1",
+      "name": "BNCI_LOCK_INCOMPLETE",
+      "initial_state": "BLOCKED_LOCK_INCOMPLETE",
+      "resolution_state": "RESOLVED",
+      "artifact": "artifacts/blockers/bnci/LOCK_AUDIT_REPAIRED.json",
+      "hash": "11ad595d9afba6e4a9b92fb3ed5bfaac77f47eb155618efa658f48512d8c97a8",
+      "next": "lock is BNCI_LOCK_EXECUTABLE (runner + aggregation + commands specified)"
+    },
+    {
+      "id": "B2",
+      "name": "BNCI_SHORT_EPOCH_SPECIFICITY_RISK",
+      "initial_state": "RISK (probe FPR 0.375)",
+      "resolution_state": "BLOCKED",
+      "artifact": "artifacts/blockers/bnci/METHOD_VALIDITY.json",
+      "hash": "ff5e911e8d04fcb3c9ca1977e6428286b47d5092115abaaa9005831b72af1fcd",
+      "next": "BNCI_BLOCKED_METHOD: S2-C1 not valid on 501-sample epochs; re-preregister epoch-length-calibrated rule"
+    },
+    {
+      "id": "B3",
+      "name": "PYPI_DEPLOYMENT_INCOMPLETE",
+      "initial_state": "INCOMPLETE",
+      "resolution_state": "RESOLVED",
+      "artifact": "artifacts/blockers/pypi/PYPI_DEPLOYMENT_PLAN.json",
+      "hash": "257904f92db8bca7fc117920b2c797d7be37256d1e3c592dcdb65e9b7faf9962",
+      "next": "TestPyPI + PyPI Trusted-Publishing workflows added; register pending publisher (manual one-time)"
+    },
+    {
+      "id": "B4",
+      "name": "RELEASE_TRUTH_PROVENANCE_STALENESS",
+      "initial_state": "main_commit stale (09c6fb0)",
+      "resolution_state": "RESOLVED",
+      "artifact": "artifacts/release/CURRENT_TRUTH.json",
+      "hash": "2cbce8e55e701247e4b56c3add2774e2e544ee75a3a003564c0aef3525934ffe",
+      "next": "CURRENT_TRUTH regenerated; main_commit current; pypi+bnci states recorded; truth gate PASS"
+    },
+    {
+      "id": "B5",
+      "name": "CI_AND_ARTIFACT_VERIFICATION",
+      "initial_state": "green claims unverifiable",
+      "resolution_state": "RESOLVED",
+      "artifact": "artifacts/blockers/release/RELEASE_GATE_SUMMARY.json",
+      "hash": "see file",
+      "next": "release-gate summary records check names + commit; CI conclusion via gh on PR"
+    }
+  ],
+  "current_truth": {
+    "latest_validation_state": "BONN_S2_BRIGHT_LINE_PASSED",
+    "bnci_execution_state": "BNCI_BLOCKED_METHOD",
+    "pypi_deployment_state": "TESTPYPI_READY_PYPI_READY"
+  },
+  "git_commit": "0e2d836f74dc30898d6e9c8486499382fe97556f",
+  "timestamp_utc": "2026-06-24T10:54:22Z",
+  "pr": "(to be opened)"
+}

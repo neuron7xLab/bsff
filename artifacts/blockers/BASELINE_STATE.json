@@ -1,0 +1,11 @@
+{
+  "schema": "bsff.blocker_baseline/v1",
+  "repository": "neuron7xLab/bsff",
+  "branch": "resolve/blockers-bnci-pypi-release-integrity",
+  "main_sha": "0e2d836f74dc30898d6e9c8486499382fe97556f",
+  "timestamp_utc": "2026-06-24T10:49:14Z",
+  "current_truth_state": "BONN_S2_BRIGHT_LINE_PASSED",
+  "bnci_execution_state": "BNCI_BLOCKED_LOCK_INCOMPLETE",
+  "pypi_deployment_state": "INCOMPLETE",
+  "working_tree_clean": false
+}

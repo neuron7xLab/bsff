@@ -38,6 +38,13 @@ def _bnci_execution_state() -> str:
     return "NOT_ATTEMPTED"
 
 
+def _pypi_state() -> str:
+    # Trusted-Publishing workflows present => ready; actual publish is a manual gated step.
+    has_test = (ROOT / ".github" / "workflows" / "publish-testpypi.yml").is_file()
+    has_pypi = (ROOT / ".github" / "workflows" / "publish-pypi.yml").is_file()
+    return "TESTPYPI_READY_PYPI_READY" if (has_test and has_pypi) else "INCOMPLETE"
+
+
 def build() -> dict:
     s1 = json.loads(S1.read_text())
     s2 = json.loads(S2.read_text())
@@ -68,6 +75,7 @@ def build() -> dict:
         },
         "BNCI_chain_state": "UNLOCKED_FOR_PREREGISTRATION_ONLY" if s2_pass else "BLOCKED",
         "bnci_execution_state": _bnci_execution_state(),
+        "pypi_deployment_state": _pypi_state(),
         "supported_claims": [
             "Bonn S2 bright-line passed (real Andrzejak-2001 EEG): G1 power + G2 specificity.",
             "Reproducible, artifact-backed operating characteristic for the frozen S2 instrument.",
