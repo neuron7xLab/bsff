@@ -23,7 +23,10 @@ S2 = ROOT / "artifacts" / "bonn_bright_line" / "S2_BRIGHT_LINE_SUMMARY.json"
 
 
 def _ver() -> str:
-    import tomllib
+    try:
+        import tomllib  # Python >= 3.11
+    except ModuleNotFoundError:  # pragma: no cover - 3.10 path
+        import tomli as tomllib  # type: ignore[no-redef]
 
     return tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
 
