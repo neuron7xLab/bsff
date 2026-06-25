@@ -1,0 +1,137 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+#
+# OpenAI-2026 Eval Contract — the formal evaluation backbone of the
+# "OpenAI-2026 Validation Grid" (an INTERNAL OpenAI-grade research-validation
+# TARGET, NOT an external OpenAI certification).
+#
+# Each eval is task -> inputs -> expected behaviour -> machine grader -> threshold
+# -> failure mode -> evidence artifact -> result analysis. The grader is EXECUTABLE:
+# tools/validate_openai_2026_eval_contract.py reads the named artifact and compares
+# the metric against the threshold. An eval cannot PASS without a resolvable
+# evidence artifact AND a satisfied grader. Validated against
+# schemas/openai_2026_eval.schema.json.
+contract_id: openai_2026_eval_contract_v1
+grid_version: "2026.1"
+description: >-
+  Eight evals covering specificity (false positive control), sensitivity
+  (detection power), surrogate convergence, mutation resistance, chaos-input
+  robustness, adversarial red-team coverage, reproducibility, and claim safety.
+evals:
+  - id: surrogate_specificity_false_positive
+    risk_class: false_positive
+    task_definition: >-
+      Decide whether the rank-order surrogate test wrongly flags a structureless
+      (i.i.d. / linear) null as nonlinear.
+    test_inputs: "Seeded i.i.d. Gaussian and AR null series (statistical power harness)."
+    ground_truth_or_expected_behavior: "Null series must NOT be flagged: false-positive rate <= 0.05."
+    grader:
+      artifact: artifacts/statistics/power_profile.json
+      metric: measured.null_false_positive_rate
+      op: le
+      value: 0.05
+    threshold: "null_false_positive_rate <= 0.05"
+    failure_mode: "false_positive: flags noise as nonlinear structure"
+    evidence_artifact: artifacts/statistics/power_profile.json
+    result_analysis: >-
+      The measured null false-positive rate is read from the power profile and must
+      be at or below the 0.05 alpha; a higher rate means the test over-rejects.
+  - id: detection_power_false_negative
+    risk_class: false_negative
+    task_definition: "Decide whether the test detects genuine nonlinear structure (positive control)."
+    test_inputs: "Seeded nonlinear positive-control series."
+    ground_truth_or_expected_behavior: "Positive controls detected with power >= 0.80."
+    grader:
+      artifact: artifacts/statistics/power_profile.json
+      metric: measured.positive_control_detection
+      op: ge
+      value: 0.8
+    threshold: "positive_control_detection >= 0.80"
+    failure_mode: "false_negative: misses real nonlinear structure"
+    evidence_artifact: artifacts/statistics/power_profile.json
+    result_analysis: >-
+      Positive-control detection rate from the power profile must clear 0.80;
+      below that the instrument is underpowered.
+  - id: surrogate_convergence
+    risk_class: correctness
+    task_definition: "Decide whether the MIAAFT surrogate generation converges."
+    test_inputs: "Surrogate-generation convergence harness."
+    ground_truth_or_expected_behavior: "Surrogate convergence rate >= 0.95."
+    grader:
+      artifact: artifacts/statistics/power_profile.json
+      metric: measured.surrogate_convergence_rate
+      op: ge
+      value: 0.95
+    threshold: "surrogate_convergence_rate >= 0.95"
+    failure_mode: "nonconvergence: surrogates do not match target spectrum/amplitude"
+    evidence_artifact: artifacts/statistics/power_profile.json
+    result_analysis: "Non-converged surrogates invalidate the null distribution; rate must clear 0.95."
+  - id: mutation_resistance
+    risk_class: correctness
+    task_definition: "Decide whether the test suite kills every seeded mutant."
+    test_inputs: "The live mutant set in tools/mutation_kill_gate.py."
+    ground_truth_or_expected_behavior: "All mutants killed: mutation_score == 1.0."
+    grader:
+      artifact: artifacts/adversarial/mutation_kill_report.json
+      metric: mutation_score
+      op: ge
+      value: 1.0
+    threshold: "mutation_score >= 1.0"
+    failure_mode: "undetected_regression: a mutant survives the suite"
+    evidence_artifact: artifacts/adversarial/mutation_kill_report.json
+    result_analysis: "A surviving mutant proves a class of regressions the suite cannot detect."
+  - id: chaos_input_robustness
+    risk_class: robustness
+    task_definition: "Decide whether every adversarial/chaos input class is handled."
+    test_inputs: "The chaos corpus (>= 14 classes)."
+    ground_truth_or_expected_behavior: "Every corpus class passes: passed == total."
+    grader:
+      artifact: artifacts/adversarial/corpus_matrix.json
+      metric: passed
+      op: eq_field
+      field: total
+    threshold: "passed == total"
+    failure_mode: "unhandled_input: a pathological input is mis-handled"
+    evidence_artifact: artifacts/adversarial/corpus_matrix.json
+    result_analysis: "Passed must equal total; any gap is an unhandled adversarial input class."
+  - id: red_team_coverage
+    risk_class: robustness
+    task_definition: "Decide whether every red-team attack category is killed."
+    test_inputs: "The 14-category red-team corpus."
+    ground_truth_or_expected_behavior: "categories_killed == categories_total."
+    grader:
+      artifact: artifacts/redteam/redteam_matrix.json
+      metric: categories_killed
+      op: eq_field
+      field: categories_total
+    threshold: "categories_killed == categories_total"
+    failure_mode: "false_survived: an attack survives the grid"
+    evidence_artifact: artifacts/redteam/redteam_matrix.json
+    result_analysis: "Every adversarial category must be killed; a survivor is a defeated defence."
+  - id: reproducibility_seed_stable
+    risk_class: reproducibility
+    task_definition: "Decide whether the verdict class is stable across fixed seeds."
+    test_inputs: "Deterministic surrogate subset across 3 fixed seeds."
+    ground_truth_or_expected_behavior: "verdict_class_stable is true."
+    grader:
+      artifact: artifacts/replay/replayability_report.json
+      metric: verdict_class_stable
+      op: is_true
+    threshold: "verdict_class_stable == true"
+    failure_mode: "nondeterminism: a seed flips the verdict class"
+    evidence_artifact: artifacts/replay/replayability_report.json
+    result_analysis: "If a seed can flip the decision class the result is not reproducible."
+  - id: claim_safety
+    risk_class: claim_safety
+    task_definition: "Decide whether any forbidden OpenAI-relationship claim is present."
+    test_inputs: "All public markdown surfaces (claim-integrity gate)."
+    ground_truth_or_expected_behavior: "claim_integrity == PASS (no forbidden/unsupported claims)."
+    grader:
+      artifact: artifacts/final/openai_2026_validation_verdict.json
+      metric: claim_integrity
+      op: eq
+      value: PASS
+    threshold: "claim_integrity == PASS"
+    failure_mode: "false_claim: an unverifiable OpenAI-brand claim slips through"
+    evidence_artifact: artifacts/final/openai_2026_validation_verdict.json
+    result_analysis: "The grid name is allowed; certified/validated/approved-by-OpenAI claims are not."

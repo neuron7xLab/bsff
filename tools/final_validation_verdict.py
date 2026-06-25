@@ -61,6 +61,7 @@ _DIGEST_ARTIFACTS = {
     "redteam_matrix": A / "redteam" / "redteam_matrix.json",
     "replayability_report": A / "replay" / "replayability_report.json",
     "offline_evidence": A / "hermetic" / "offline_evidence.json",
+    "eval_contract_report": A / "eval" / "eval_contract_report.json",
 }
 
 
@@ -286,6 +287,33 @@ def _claim_integrity() -> tuple[dict, list[str]]:
     return {"verdict": verdict, "forbidden_violations": violations}, fails
 
 
+def _eval_contract() -> tuple[dict, list[str]]:
+    """Run the formal eval contract; every eval's grader must pass against evidence."""
+    proc = subprocess.run(
+        [sys.executable, "tools/validate_openai_2026_eval_contract.py", "--json", "--check"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    try:
+        parsed = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        parsed = None
+    if parsed is None:
+        return (
+            {"verdict": "FAIL", "evals_total": 0, "evals_passed": 0},
+            ["eval contract gate did not emit JSON"],
+        )
+    summary = {
+        "verdict": parsed.get("verdict", "FAIL"),
+        "evals_total": int(parsed.get("evals_total", 0)),
+        "evals_passed": int(parsed.get("evals_passed", 0)),
+    }
+    fails = [] if summary["verdict"] == "PASS" else ["eval contract failed"]
+    return summary, fails
+
+
 def _offline_evidence() -> tuple[bool, list[str]]:
     """The correctness suite must have run with the network denied."""
     report = _read_json(A / "hermetic" / "offline_evidence.json")
@@ -386,6 +414,8 @@ def derive() -> dict:
     blocking += f
     claim_audit, f = _claim_integrity()
     blocking += f
+    eval_contract, f = _eval_contract()
+    blocking += f
     network_denied, f = _offline_evidence()
     blocking += f
 
@@ -416,6 +446,7 @@ def derive() -> dict:
         "16-red-team-corpus": red_team_summary["verdict"],
         "17-claim-integrity": claim_audit["verdict"],
         "18-artifact-digest-binding": "PASS" if digests_present else "FAIL",
+        "eval-contract": eval_contract["verdict"],
     }
     for name, status in gate_results.items():
         if status == "FAIL":
@@ -450,6 +481,7 @@ def derive() -> dict:
         "power_profile": power_profile or {"verdict": "FAIL"},
         "red_team_summary": red_team_summary,
         "claim_audit": claim_audit,
+        "eval_contract": eval_contract,
         "blocking_failures": sorted(set(blocking)),
         "evidence_complete": evidence_complete,
         "network_denied": network_denied,

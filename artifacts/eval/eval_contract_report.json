@@ -1,0 +1,83 @@
+{
+  "contract_id": "openai_2026_eval_contract_v1",
+  "evals_passed": 8,
+  "evals_total": 8,
+  "failures": [],
+  "gate": "openai-2026-eval-contract",
+  "results": [
+    {
+      "detail": "measured.null_false_positive_rate=0.025 <= 0.05? True",
+      "evidence_artifact": "artifacts/statistics/power_profile.json",
+      "failure_mode": "false_positive: flags noise as nonlinear structure",
+      "id": "surrogate_specificity_false_positive",
+      "risk_class": "false_positive",
+      "threshold": "null_false_positive_rate <= 0.05",
+      "verdict": "PASS"
+    },
+    {
+      "detail": "measured.positive_control_detection=1.0 >= 0.8? True",
+      "evidence_artifact": "artifacts/statistics/power_profile.json",
+      "failure_mode": "false_negative: misses real nonlinear structure",
+      "id": "detection_power_false_negative",
+      "risk_class": "false_negative",
+      "threshold": "positive_control_detection >= 0.80",
+      "verdict": "PASS"
+    },
+    {
+      "detail": "measured.surrogate_convergence_rate=1.0 >= 0.95? True",
+      "evidence_artifact": "artifacts/statistics/power_profile.json",
+      "failure_mode": "nonconvergence: surrogates do not match target spectrum/amplitude",
+      "id": "surrogate_convergence",
+      "risk_class": "correctness",
+      "threshold": "surrogate_convergence_rate >= 0.95",
+      "verdict": "PASS"
+    },
+    {
+      "detail": "mutation_score=1.0 >= 1.0? True",
+      "evidence_artifact": "artifacts/adversarial/mutation_kill_report.json",
+      "failure_mode": "undetected_regression: a mutant survives the suite",
+      "id": "mutation_resistance",
+      "risk_class": "correctness",
+      "threshold": "mutation_score >= 1.0",
+      "verdict": "PASS"
+    },
+    {
+      "detail": "passed=14 == total=14? True",
+      "evidence_artifact": "artifacts/adversarial/corpus_matrix.json",
+      "failure_mode": "unhandled_input: a pathological input is mis-handled",
+      "id": "chaos_input_robustness",
+      "risk_class": "robustness",
+      "threshold": "passed == total",
+      "verdict": "PASS"
+    },
+    {
+      "detail": "categories_killed=14 == categories_total=14? True",
+      "evidence_artifact": "artifacts/redteam/redteam_matrix.json",
+      "failure_mode": "false_survived: an attack survives the grid",
+      "id": "red_team_coverage",
+      "risk_class": "robustness",
+      "threshold": "categories_killed == categories_total",
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verdict_class_stable=True is true? True",
+      "evidence_artifact": "artifacts/replay/replayability_report.json",
+      "failure_mode": "nondeterminism: a seed flips the verdict class",
+      "id": "reproducibility_seed_stable",
+      "risk_class": "reproducibility",
+      "threshold": "verdict_class_stable == true",
+      "verdict": "PASS"
+    },
+    {
+      "detail": "claim_integrity='PASS' == 'PASS'? True",
+      "evidence_artifact": "artifacts/final/openai_2026_validation_verdict.json",
+      "failure_mode": "false_claim: an unverifiable OpenAI-brand claim slips through",
+      "id": "claim_safety",
+      "risk_class": "claim_safety",
+      "threshold": "claim_integrity == PASS",
+      "verdict": "PASS"
+    }
+  ],
+  "schema_errors": [],
+  "verdict": "PASS"
+}

@@ -3,6 +3,7 @@
   "artifact_digests": {
     "benchmark_baseline": "fe16cc1c9f56517952b97c80571b7528b9041c1e569a192d3c74719541bc7b04",
     "corpus_matrix": "5037c79b8f4afa8a81128776a8ded08103296f3e058178f4b09e46aa9961dfdb",
+    "eval_contract_report": "dd38b17c4faa6b643ea5a4efe23626f3a3ad3c1a7574279aefec599d3cf7575d",
     "mutation_kill_report": "6348140af685e123b36f2d943bb6dac4f87b750e44fbdc8d2fa3eb1134bbe2ef",
     "offline_evidence": "a348e4226341f0556f22a36b4b427270b0cd458caf3c1c690ef5e2a9c120bec4",
     "power_profile": "1223d7d1a1f2ad49e55a4cf999d2612ca1ca922625a74f42f18af2d4998fd6fb",
@@ -27,6 +28,11 @@
     "fuzz.lock": "0516e68c760422e400414e5696ab94990867ddda5e786f5793e7ef5bc7f06436",
     "security.lock": "ce57c883ddeff0bb267998f253e9762ae2ead7d33d7efd1de54bec681b111459"
   },
+  "eval_contract": {
+    "evals_passed": 8,
+    "evals_total": 8,
+    "verdict": "PASS"
+  },
   "evidence_complete": true,
   "fuzz_property_chaos": "PASS",
   "gate_results": {
@@ -46,10 +52,11 @@
     "15-meta-validation": "PASS",
     "16-red-team-corpus": "PASS",
     "17-claim-integrity": "PASS",
-    "18-artifact-digest-binding": "PASS"
+    "18-artifact-digest-binding": "PASS",
+    "eval-contract": "PASS"
   },
   "grid_version": "2026.1",
-  "head_sha": "01cf1a25dd36929871a3aa45de82957dc0b7a146",
+  "head_sha": "7afa285a9ddef22bcf18ac2b9dbb491715c387c0",
   "hermetic_ci": "PASS",
   "mutation_report": {
     "mutants_total": 9,
