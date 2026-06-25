@@ -33,9 +33,7 @@ from bsff.verdict_engine import evaluate_claim
 
 def _all_finite(bf: dict) -> bool:
     return all(
-        math.isfinite(float(bf[k]))
-        for k in ("BF10", "BF01", "cohens_d")
-        if bf[k] is not None
+        math.isfinite(float(bf[k])) for k in ("BF10", "BF01", "cohens_d") if bf[k] is not None
     )
 
 
