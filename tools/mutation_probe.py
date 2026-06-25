@@ -53,8 +53,8 @@ MUTANTS = [
     ),
     (
         "src/bsff/verdict_engine.py",
-        'if any(bool(v.get("flagged"))',
-        'if not any(bool(v.get("flagged"))',
+        "if any_leakage_flagged(leakage_flags):",
+        "if not any_leakage_flagged(leakage_flags):",
         "invert leakage fail-closed gate",
     ),
     (

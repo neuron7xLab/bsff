@@ -136,6 +136,32 @@ def test_inv3_leakage_can_only_demote_to_refuted():
     assert v.verdict == "REFUTED"
 
 
+@pytest.mark.parametrize(
+    "leak",
+    [
+        {"x": True},  # bare truthy non-dict — must not be silently ignored
+        {"x": {"leak": True}},  # malformed dict, no "flagged" key — fail closed
+        {"x": "leaking"},  # truthy string
+    ],
+)
+def test_inv3_malformed_leakage_entry_fails_closed(leak):
+    # Regression: the consumer filtered with `isinstance(v, dict)` and read
+    # `.get("flagged")`, so a truthy-but-unrecognised leakage entry slipped past
+    # the gate and the claim could SURVIVE. An unknown leakage shape must demote.
+    spec = ClaimSpec(
+        claim_id="lk",
+        signal_type="EEG",
+        task_type="nonlinear_structure",
+        sampling_rate_hz=250.0,
+        n_channels=1,
+        n_samples=768,
+        statistic="lagged_quadratic",
+        surrogate_count=49,
+    )
+    v = evaluate_claim(spec, henon_series(768, seed=11), seed=7, leakage_flags=leak)
+    assert v.verdict == "REFUTED"
+
+
 def test_inv3_null_signal_does_not_survive():
     # IID Gaussian carries no nonlinear structure -> must not SURVIVE.
     spec, data = materialize("nonlinear_null")

@@ -12,6 +12,23 @@ FloatArray = NDArray[np.float64]
 FallbackMode = Literal["warn", "var_phase", "raise"]
 
 
+def min_surrogates_for_alpha(alpha: float) -> int:
+    """Minimum surrogate budget to resolve a one-sided rank-order test at ``alpha``.
+
+    Canonical statement of the resolution law (single source of truth; schemas,
+    calibration, and the deep-leakage probes all delegate here). A rank-order test
+    resolves a p-value no finer than ``p_floor = 1/(n+1)``, so rejecting at ``alpha``
+    requires ``1/(n+1) <= alpha`` i.e. ``n >= ceil(1/alpha) - 1``. Using floor
+    (``int(1/alpha) - 1``) admits an under-budget spec whose entire achievable
+    p-spectrum lies strictly above ``alpha`` for every non-integer ``1/alpha`` — a
+    test that can never reject yet validates as well-formed (a silent calibration
+    fail-open). ``ceil`` is the fail-closed bound.
+    """
+    if not (0 < alpha < 1):
+        raise ValueError("alpha must be in (0, 1)")
+    return int(np.ceil(1.0 / alpha)) - 1
+
+
 def _as_2d(x: FloatArray) -> FloatArray:
     arr = np.asarray(x, dtype=float)
     if arr.ndim == 1:
@@ -239,7 +256,7 @@ def rank_order_surrogate_test(
     sub-convergence iteration budget and discarded the convergence flag, letting a
     SURVIVED/REFUTED verdict ride on a null that never plateaued.
     """
-    minimum = int(1 / alpha) - 1
+    minimum = min_surrogates_for_alpha(alpha)
     if n_surrogates < minimum:
         raise ValueError(f"n_surrogates must be >= {minimum} for alpha={alpha}")
     rng = np.random.default_rng(seed)

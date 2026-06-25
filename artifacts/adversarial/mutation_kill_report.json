@@ -1,6 +1,6 @@
 {
-  "mutants_total": 9,
-  "mutants_killed": 9,
+  "mutants_total": 11,
+  "mutants_killed": 11,
   "mutation_score": 1.0,
   "survivors": [],
   "verdict": "PASS",
@@ -86,10 +86,28 @@
         "tests/test_adversarial_operating_characteristics.py::test_degenerate_signal_not_falsely_rejected"
       ],
       "mutant_status": "killed"
+    },
+    {
+      "mutant_id": "MUT-010",
+      "file": "src/bsff/leakage_detector.py",
+      "behaviour": "a malformed leakage record (dict missing 'flagged') must fail closed, not be ignored",
+      "targets": [
+        "tests/test_invariants.py::test_inv3_malformed_leakage_entry_fails_closed"
+      ],
+      "mutant_status": "killed"
+    },
+    {
+      "mutant_id": "MUT-011",
+      "file": "src/bsff/surrogate_engine.py",
+      "behaviour": "surrogate budget must use ceil(1/alpha)-1 so the minimum can actually reject at alpha",
+      "targets": [
+        "tests/test_calibration.py::test_resolution_law_is_ceil_single_source_and_actually_resolves_alpha"
+      ],
+      "mutant_status": "killed"
     }
   ],
   "commands": [
-    "pytest tests/test_adversarial_operating_characteristics.py::test_nonconverged_null_cannot_exceed_unsupported tests/test_adversarial_operating_characteristics.py::test_leakage_short_circuits_to_refuted tests/test_adversarial_operating_characteristics.py::test_nonstationary_random_walk_fails_strict_gate_fatally tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence tests/test_adversarial_operating_characteristics.py::test_linear_null_never_survives_under_strict tests/test_adversarial_operating_characteristics.py::test_linear_null_false_positive_rate_within_binomial_guard tests/property/test_signal_validation_properties.py::test_p1_nonfinite_never_reaches_verdict tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence tests/test_claimspec_schema.py::test_claimspec_rejects_too_few_surrogates tests/test_adversarial_operating_characteristics.py::test_degenerate_signal_not_falsely_rejected",
+    "pytest tests/test_adversarial_operating_characteristics.py::test_nonconverged_null_cannot_exceed_unsupported tests/test_adversarial_operating_characteristics.py::test_leakage_short_circuits_to_refuted tests/test_adversarial_operating_characteristics.py::test_nonstationary_random_walk_fails_strict_gate_fatally tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence tests/test_adversarial_operating_characteristics.py::test_linear_null_never_survives_under_strict tests/test_adversarial_operating_characteristics.py::test_linear_null_false_positive_rate_within_binomial_guard tests/property/test_signal_validation_properties.py::test_p1_nonfinite_never_reaches_verdict tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence tests/test_claimspec_schema.py::test_claimspec_rejects_too_few_surrogates tests/test_adversarial_operating_characteristics.py::test_degenerate_signal_not_falsely_rejected tests/test_invariants.py::test_inv3_malformed_leakage_entry_fails_closed tests/test_calibration.py::test_resolution_law_is_ceil_single_source_and_actually_resolves_alpha",
     "pytest tests/test_adversarial_operating_characteristics.py::test_nonconverged_null_cannot_exceed_unsupported",
     "pytest tests/test_adversarial_operating_characteristics.py::test_leakage_short_circuits_to_refuted",
     "pytest tests/test_adversarial_operating_characteristics.py::test_nonstationary_random_walk_fails_strict_gate_fatally",
@@ -98,7 +116,9 @@
     "pytest tests/property/test_signal_validation_properties.py::test_p1_nonfinite_never_reaches_verdict",
     "pytest tests/test_adversarial_operating_characteristics.py::test_nonlinear_positive_control_survives_with_exposed_evidence",
     "pytest tests/test_claimspec_schema.py::test_claimspec_rejects_too_few_surrogates",
-    "pytest tests/test_adversarial_operating_characteristics.py::test_degenerate_signal_not_falsely_rejected"
+    "pytest tests/test_adversarial_operating_characteristics.py::test_degenerate_signal_not_falsely_rejected",
+    "pytest tests/test_invariants.py::test_inv3_malformed_leakage_entry_fails_closed",
+    "pytest tests/test_calibration.py::test_resolution_law_is_ceil_single_source_and_actually_resolves_alpha"
   ],
   "timestamp_policy": "no nondeterministic timestamp in hash-critical output"
 }

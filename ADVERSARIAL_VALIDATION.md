@@ -12,7 +12,7 @@ is regenerated from machine facts by
 
 **Final validation verdict: PASS — adversarial gates killed the intended regressions and the deterministic gates hold.**
 
-Mutation score: **9/9** (1.0). Surrogate seed policy: _all stochastic tests must use explicit seeds_. Network policy: _no test may require network access_.
+Mutation score: **11/11** (1.0). Surrogate seed policy: _all stochastic tests must use explicit seeds_. Network policy: _no test may require network access_.
 
 ## Baseline command matrix
 
@@ -51,6 +51,8 @@ the targeted oracle test to FAIL. A survivor is a hole in the suite.
 | `MUT-007` | `src/bsff/pipeline.py` | every verdict must carry a 64-hex evidence contract hash | ✅ killed |
 | `MUT-008` | `src/bsff/schemas.py` | ClaimSpec must reject an underpowered surrogate_count (no silent schema drift) | ✅ killed |
 | `MUT-009` | `src/bsff/surrogate_engine.py` | rank-order ties must count as not-exceeded, so a flat signal is never rejected | ✅ killed |
+| `MUT-010` | `src/bsff/leakage_detector.py` | a malformed leakage record (dict missing 'flagged') must fail closed, not be ignored | ✅ killed |
+| `MUT-011` | `src/bsff/surrogate_engine.py` | surrogate budget must use ceil(1/alpha)-1 so the minimum can actually reject at alpha | ✅ killed |
 
 ## Oracle fixtures
 

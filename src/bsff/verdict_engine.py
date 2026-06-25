@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 
 from .bayesian import jzs_bayes_factor
+from .leakage_detector import any_leakage_flagged
 from .schemas import ClaimSpec, VerdictJSON
 from .stationarity import check_stationarity
 from .surrogate_engine import rank_order_surrogate_test
@@ -28,7 +29,7 @@ def evaluate_claim(
     caveats: list[str] = []
     evidence: dict[str, object] = {}
 
-    if any(bool(v.get("flagged")) for v in leakage_flags.values() if isinstance(v, dict)):
+    if any_leakage_flagged(leakage_flags):
         return VerdictJSON(
             claim_id=spec.claim_id,
             verdict="REFUTED",

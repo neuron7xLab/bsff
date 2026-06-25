@@ -7,6 +7,7 @@ from typing import Any
 
 from .bayesian import jzs_bayes_factor
 from .evidence import StageResult
+from .leakage_detector import any_leakage_flagged
 from .policy import PolicyProfile
 from .schemas import ClaimSpec
 from .stationarity import check_stationarity
@@ -53,7 +54,7 @@ class LeakageStage:
 
     def run(self, context: PipelineContext) -> StageResult:
         flags = context.leakage_flags or {}
-        flagged = any(bool(v.get("flagged")) for v in flags.values() if isinstance(v, dict))
+        flagged = any_leakage_flagged(flags)
         evidence = {"leakage_flags": flags, "flagged": bool(flagged)}
         context.scratch[self.stage_id] = evidence
         if flagged:

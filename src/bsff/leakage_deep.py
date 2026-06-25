@@ -26,6 +26,8 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.signal import butter, hilbert, sosfiltfilt
 
+from .surrogate_engine import min_surrogates_for_alpha
+
 Band = tuple[float, float]
 FloatArray = NDArray[np.float64]
 
@@ -99,7 +101,7 @@ def detect_phase_locking_leakage(
     """Flag leakage if signal is phase-locked to a reference beyond chance."""
     if not (0 < alpha < 1):
         raise ValueError("alpha must be in (0, 1)")
-    minimum = int(1 / alpha) - 1
+    minimum = min_surrogates_for_alpha(alpha)
     if n_surrogates < minimum:
         raise ValueError(f"n_surrogates must be >= {minimum} for alpha={alpha}")
     xa = _validate_1d(signal)
@@ -139,7 +141,7 @@ def detect_cross_frequency_leakage(
     """Flag leakage if phase-amplitude coupling exceeds a circular-shift null."""
     if not (0 < alpha < 1):
         raise ValueError("alpha must be in (0, 1)")
-    minimum = int(1 / alpha) - 1
+    minimum = min_surrogates_for_alpha(alpha)
     if n_surrogates < minimum:
         raise ValueError(f"n_surrogates must be >= {minimum} for alpha={alpha}")
     xa = _validate_1d(signal)
