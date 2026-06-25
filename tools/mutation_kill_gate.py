@@ -72,6 +72,7 @@ class Mutant:
 PROP_SIGNAL = "tests/property/test_signal_validation_properties.py"
 SCHEMA = "tests/test_claimspec_schema.py"
 INV = "tests/test_invariants.py"
+CAL = "tests/test_calibration.py"
 
 MUTANTS: tuple[Mutant, ...] = (
     Mutant(
@@ -156,6 +157,14 @@ MUTANTS: tuple[Mutant, ...] = (
         new='            if bool(value.get("flagged")):  # MUT-010: silently ignore malformed leakage dict',
         behaviour="a malformed leakage record (dict missing 'flagged') must fail closed, not be ignored",
         targets=(f"{INV}::test_inv3_malformed_leakage_entry_fails_closed",),
+    ),
+    Mutant(
+        mutant_id="MUT-011",
+        rel_path="src/bsff/surrogate_engine.py",
+        old="    return int(np.ceil(1.0 / alpha)) - 1",
+        new="    return int(1.0 / alpha) - 1  # MUT-011: floor budget under-resolves alpha",
+        behaviour="surrogate budget must use ceil(1/alpha)-1 so the minimum can actually reject at alpha",
+        targets=(f"{CAL}::test_resolution_law_is_ceil_single_source_and_actually_resolves_alpha",),
     ),
 )
 

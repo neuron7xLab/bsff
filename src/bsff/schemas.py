@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any, Literal
 
+from .surrogate_engine import min_surrogates_for_alpha
+
 SignalType = Literal["EEG", "ECoG", "sEEG", "spike", "LFP"]
 TaskType = Literal["classification", "regression", "connectivity", "nonlinear_structure"]
 Verdict = Literal["REFUTED", "UNSUPPORTED", "SURVIVED"]
@@ -39,10 +41,11 @@ class ClaimSpec:
             raise ValueError("n_samples must be >= 16")
         if not (0 < self.alpha < 1):
             raise ValueError("alpha must be in (0, 1)")
-        minimum = int(1 / self.alpha) - 1
+        minimum = min_surrogates_for_alpha(self.alpha)
         if self.surrogate_count < minimum:
             raise ValueError(
-                f"surrogate_count must be >= 1/alpha - 1; got {self.surrogate_count}, need {minimum}"
+                "surrogate_count must be >= ceil(1/alpha) - 1 to resolve "
+                f"alpha={self.alpha} (p_floor=1/(n+1)); got {self.surrogate_count}, need {minimum}"
             )
 
     def to_dict(self) -> dict[str, Any]:

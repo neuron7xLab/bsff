@@ -26,6 +26,8 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
+from .surrogate_engine import min_surrogates_for_alpha
+
 FloatArray = NDArray[np.float64]
 
 _MIN_SAMPLES = 64
@@ -180,8 +182,9 @@ def transfer_entropy_test(
     """
     if not (0 < alpha < 1):
         raise ValueError("alpha must be in (0, 1)")
-    if n_surrogates < int(1 / alpha) - 1:
-        raise ValueError(f"n_surrogates must be >= 1/alpha - 1 = {int(1 / alpha) - 1}")
+    minimum = min_surrogates_for_alpha(alpha)
+    if n_surrogates < minimum:
+        raise ValueError(f"n_surrogates must be >= ceil(1/alpha) - 1 = {minimum} for alpha={alpha}")
     src = _check(source, "source")
     tgt = _check(target, "target")
     rng = np.random.default_rng(seed)

@@ -8,7 +8,7 @@ from dataclasses import asdict, dataclass
 import numpy as np
 from numpy.typing import NDArray
 
-from .surrogate_engine import miaaft_surrogate
+from .surrogate_engine import miaaft_surrogate, min_surrogates_for_alpha
 
 FloatArray = NDArray[np.float64]
 
@@ -44,10 +44,13 @@ class SurrogateBudgetCalibration:
 
 
 def required_rank_order_surrogates(alpha: float) -> int:
-    """Minimum surrogate count for a one-sided rank-order test at alpha."""
-    if not (0 < alpha < 1):
-        raise ValueError("alpha must be in (0, 1)")
-    return int(np.ceil(1.0 / alpha) - 1)
+    """Minimum surrogate count for a one-sided rank-order test at alpha.
+
+    Thin alias for the canonical resolution law in
+    :func:`bsff.surrogate_engine.min_surrogates_for_alpha` so the two surfaces of
+    this bound cannot drift apart.
+    """
+    return min_surrogates_for_alpha(alpha)
 
 
 def calibrate_miaaft_budget(
