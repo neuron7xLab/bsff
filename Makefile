@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
-.PHONY: lab-99 regen lock verify verify-offline build-proof openai-2026
+.PHONY: lab-99 regen lock verify verify-offline build-proof openai-2026 mission-check hostile-review
 
 # Full local lab run — mirrors the CI test + slow-tests + build surface.
 lab-99:
@@ -72,3 +72,23 @@ build-proof:
 # The whole grid, locally.
 openai-2026: lock verify-offline build-proof verify
 	@echo "OpenAI-2026 validation grid complete."
+
+# Mission-critical gate: no silent success, no ambiguous PASS, no stale truth, no unbounded claim.
+mission-check:
+	python -m compileall -q src tests examples research tools
+	python -m pytest -q tests/ -m "not slow"
+	bsff selftest
+	bsff evidence verify
+	python tools/validate_current_truth.py
+	python tools/generate_current_truth.py --check
+	python tools/validate_forbidden_claims.py
+	python tools/validate_statistical_claims.py
+	python tools/validate_truth_contract.py
+	python tools/regenerate.py --check
+
+# Reviewer-facing hostile-review surface.
+hostile-review:
+	@echo "See docs/reviewer_packet/HOSTILE_REVIEW_CHECKLIST.md and docs/ADVERSARIAL_REVIEW.md"
+	bsff evidence verify
+	python tools/validate_statistical_claims.py
+	python tools/validate_forbidden_claims.py

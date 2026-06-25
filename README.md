@@ -36,10 +36,17 @@ BSFF aims at a **BCI/EEG signal claim** and tries to refute it under stated atta
 (surrogate nulls, controls, corroboration), emitting a bounded verdict —
 `SURVIVED` / `REFUTED` / `UNSUPPORTED` (see [`docs/VERDICT_SEMANTICS.md`](docs/VERDICT_SEMANTICS.md)).
 
-**Current canonical evidence — `BONN_S2_BRIGHT_LINE_PASSED`**
+**Current canonical evidence — `BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED`**
 ([`artifacts/release/CURRENT_TRUTH.json`](artifacts/release/CURRENT_TRUTH.json)): on real
-Andrzejak-2001 Bonn EEG the instrument has **power** (ictal SURVIVED 0.96) **and specificity**
-(real-spectrum AR-null FPR 0.02 ≤ 0.05). The earlier S1 negative result is preserved as evidence.
+Andrzejak-2001 Bonn EEG the instrument has robust **power** (ictal SURVIVED 0.94 seed-averaged) and
+**specificity that is robust to both seed and null-model choice**. The pre-registered **S3
+seed-averaged AR-null** confirmatory (N=1000, 10 seeds, frozen before run, **independently re-run and
+reproduced byte-for-byte**) gives FPR 0.028, Wilson 95% CI **[0.019, 0.040]**; and the **multi-null**
+gate holds across AR (0.026), IAAFT (0.032), and phase-randomized (0.034) nulls — every Wilson
+CI-upper ≤ 0.05. This passed only after a falsification flagged, and a larger pre-registered test
+superseded, a smaller-N calibration (0.035, CI-upper 0.056) — robustness was *earned*, not assumed.
+Still not: clinical/regulatory, BNCI executed, or multi-dataset replicated. The S1 negative result is
+preserved as evidence.
 
 ```bash
 git clone https://github.com/neuron7xLab/bsff && cd bsff

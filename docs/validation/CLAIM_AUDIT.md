@@ -61,3 +61,39 @@ Still **FORBIDDEN**: clinical/medical/regulatory/device claims; final proof of b
 | Multi-dataset replication (Cho2017/Lee2019) is done | REFUTED_BY_ARTIFACT | NOT_DONE — only preregistration scaffolds (`artifacts/replication/*/LOCK.json`) |
 | BNCI method repair has passed its short-epoch check | UNSUPPORTED (not yet) | `METHOD_REPAIR_LOCK.json` = PREDECLARED_NOT_VALIDATED; short-epoch validation INCONCLUSIVE for narrowband |
 | Forbidden claims are enforced in CI | PROVEN_BY_ARTIFACT | `tools/validate_forbidden_claims.py` (CI) + `CLAIM_SAFETY_REPORT.json` |
+
+## S2 falsification (calibrated)
+| claim | status | evidence |
+|-------|--------|----------|
+| S2 G1 power is robust to seed | PROVEN_BY_ARTIFACT | Set E SURVIVED 0.967 all seeds (`S2_FALSIFICATION_REPORT.json`) |
+| S2 G2 specificity is robustly below 0.05 | REFUTED_BY_ARTIFACT | seed_base=7 -> AR-null FPR 0.067 > 0.05; margin thin/seed-sensitive |
+| S2 bright line is a boundary/marginal pass (not robustly crossed) | PROVEN_BY_ARTIFACT | falsification battery; calibrated claim |
+
+## S2 specificity calibration (decisive)
+| claim | status | evidence |
+|-------|--------|----------|
+| S2 G2 specificity is robustly below 0.05 | REFUTED_BY_ARTIFACT | seed-avg FPR 0.0354, Wilson 95% CI [0.022, 0.056] crosses 0.05; 2/6 seeds >0.05 (`S2_SPECIFICITY_CALIBRATION.json`) |
+| Bonn S2 bright line is robustly crossed | REFUTED_BY_ARTIFACT | marginal/favorable-seed pass only; G2 not robust |
+| Bonn S2 G1 power is robust | PROVEN_BY_ARTIFACT | Set E SURVIVED 0.96-0.967 across all seeds |
+
+## Canonical-state honesty (PI-grade)
+| claim | status | evidence |
+|-------|--------|----------|
+| Bonn S2 robust bright-line passed | REFUTED_BY_ARTIFACT | robust_gate_passed=false; CI upper 0.056 > 0.05 (`CURRENT_TRUTH.json`) |
+| Bonn S2 nominal single-seed pass exists | PROVEN_BY_ARTIFACT | predeclared confirmatory (FPR 0.02), `bonn_s2_nominal_state=PASSED_SINGLE_SEED` |
+| "Bonn validated" without a robustness qualifier | FORBIDDEN | enforced by `tools/validate_statistical_claims.py` (CI) |
+
+## S3 seed-averaged confirmatory (reproduced fact)
+| claim | status | evidence |
+|-------|--------|----------|
+| Seed-averaged AR-null specificity is robust (FPR 0.028, Wilson CI [0.019,0.040] upper ≤ 0.05) | PROVEN_BY_ARTIFACT | `S3_CONFIRMATORY_VERDICT.json` (N=1000, 10 seeds, frozen lock, re-run reproduced per-seed counts byte-for-byte) |
+| The S2 not-robust calibration is superseded by the larger pre-registered S3 | PROVEN_BY_ARTIFACT | N=480 (0.0354) vs N=1000 (0.028); seed-set/N sensitive near boundary; larger test passes |
+| Bonn S2 is robust across null models | UNSUPPORTED (not yet) | multi-null (IAAFT/phase-randomized) NOT_DONE; `multi_null_robustness_state=NOT_DONE` |
+| Bonn S2 bright line is fully robustly passed | UNVERIFIED | requires multi-null; `robust_gate_passed=null` |
+
+## Multi-null robustness (final gate — PASSED)
+| claim | status | evidence |
+|-------|--------|----------|
+| Specificity is robust across null models (AR/IAAFT/phase-randomized) | PROVEN_BY_ARTIFACT | `MULTI_NULL_ROBUSTNESS.json`: AR 0.026 [0.018,0.038], IAAFT 0.032 [0.023,0.045], phaserand 0.034 [0.024,0.047]; all CI-upper ≤ 0.05 |
+| Bonn S2 bright line is robustly passed (seed AND null-model) | PROVEN_BY_ARTIFACT | S3 (seed) + multi-null; `robust_gate_passed=true`, `BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED` |
+| Robustness was earned through falsification, not assumed | PROVEN_BY_ARTIFACT | calibration flagged not-robust → larger pre-registered S3 + multi-null confirmed |

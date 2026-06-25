@@ -1,0 +1,10 @@
+{
+  "schema": "bsff.statistical_claims/v1",
+  "status": "PASS",
+  "latest_validation_state": "BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED",
+  "s2_wilson_ci_upper": 0.0402,
+  "robust_gate_passed": true,
+  "violations": [],
+  "git_commit": "554adb3a0e5db9e51912ba6797af12723122d6a3",
+  "timestamp_utc": "2026-06-25T02:27:43Z"
+}

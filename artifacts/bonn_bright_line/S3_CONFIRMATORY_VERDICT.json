@@ -1,0 +1,81 @@
+{
+  "schema": "bsff.s3_seed_averaged/v1",
+  "verdict": "S3_BRIGHT_LINE_ROBUSTLY_PASSED",
+  "statistic_id": "sampen_lower_tail_m2_r015_v1",
+  "n_seeds": 10,
+  "n_segments_per_set": 50,
+  "n_surrogates": 199,
+  "G1": {
+    "E_survived_fraction": 0.94,
+    "threshold": 0.8,
+    "pass": true,
+    "n": 500
+  },
+  "G2": {
+    "ar_null_fpr": 0.028,
+    "wilson_95ci": [
+      0.0194,
+      0.0402
+    ],
+    "ci_upper_threshold": 0.05,
+    "pass": true,
+    "n_ar_null": 1000,
+    "n_false_positives": 28
+  },
+  "S3_PASS": true,
+  "per_seed": [
+    {
+      "seed": 20260623,
+      "E_survived": 0.94,
+      "ar_null_fpr": 0.01
+    },
+    {
+      "seed": 7,
+      "E_survived": 0.94,
+      "ar_null_fpr": 0.05
+    },
+    {
+      "seed": 999,
+      "E_survived": 0.94,
+      "ar_null_fpr": 0.0
+    },
+    {
+      "seed": 314159,
+      "E_survived": 0.94,
+      "ar_null_fpr": 0.01
+    },
+    {
+      "seed": 2718,
+      "E_survived": 0.94,
+      "ar_null_fpr": 0.02
+    },
+    {
+      "seed": 42,
+      "E_survived": 0.94,
+      "ar_null_fpr": 0.04
+    },
+    {
+      "seed": 161803,
+      "E_survived": 0.94,
+      "ar_null_fpr": 0.04
+    },
+    {
+      "seed": 27182,
+      "E_survived": 0.94,
+      "ar_null_fpr": 0.04
+    },
+    {
+      "seed": 31337,
+      "E_survived": 0.94,
+      "ar_null_fpr": 0.04
+    },
+    {
+      "seed": 123456,
+      "E_survived": 0.94,
+      "ar_null_fpr": 0.03
+    }
+  ],
+  "gate": "G1 seed-avg SURVIVED>=0.80 AND G2 AR-null FPR Wilson-95-CI-upper<=0.05",
+  "timestamp_utc": "2026-06-24T23:06:40Z",
+  "elapsed_sec": 7109.9
+}

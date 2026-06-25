@@ -44,7 +44,7 @@ def test_evidence_verify_on_repo_passes():
     # Integration: the committed bundle must verify clean on the canonical repo.
     out = bench.verify_evidence(REPO)
     assert out["state"] == "PASS", out.get("failed")
-    assert out["canonical_state"] == "BONN_S2_BRIGHT_LINE_PASSED"
+    assert out["canonical_state"] == "BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED"
 
 
 def test_reproduce_bonn_s2_dry_run_passes():

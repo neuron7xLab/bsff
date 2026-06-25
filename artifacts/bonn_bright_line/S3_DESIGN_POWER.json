@@ -1,0 +1,40 @@
+{
+  "schema": "bsff.s3_design_power/v1",
+  "n_ar_null": 1000,
+  "gate": "Wilson 95pct CI-upper <= 0.05",
+  "precision_half_width_at_p_0.035": 0.0115,
+  "decision_table": [
+    {
+      "true_fpr": 0.02,
+      "wilson95_upper_at_N1000": 0.0307,
+      "passes_gate_upper_le_0.05": true
+    },
+    {
+      "true_fpr": 0.03,
+      "wilson95_upper_at_N1000": 0.0425,
+      "passes_gate_upper_le_0.05": true
+    },
+    {
+      "true_fpr": 0.035,
+      "wilson95_upper_at_N1000": 0.0483,
+      "passes_gate_upper_le_0.05": true
+    },
+    {
+      "true_fpr": 0.04,
+      "wilson95_upper_at_N1000": 0.054,
+      "passes_gate_upper_le_0.05": false
+    },
+    {
+      "true_fpr": 0.045,
+      "wilson95_upper_at_N1000": 0.0597,
+      "passes_gate_upper_le_0.05": false
+    },
+    {
+      "true_fpr": 0.05,
+      "wilson95_upper_at_N1000": 0.0653,
+      "passes_gate_upper_le_0.05": false
+    }
+  ],
+  "max_true_fpr_that_passes": 0.035,
+  "interpretation": "At N=1000 the Wilson 95pct CI half-width at p=0.035 is ~0.012, so the design confidently excludes FPR>=0.05 only if the observed seed-averaged FPR is <= ~0.037. The calibration point estimate (0.035) sits at the resolution boundary; the S3 verdict hinges on whether the larger-N estimate lands just below or above ~0.037. Design precision is ADEQUATE to decide a robust pass vs a marginal/non-robust outcome."
+}

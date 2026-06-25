@@ -14,7 +14,7 @@ facts (version, live test count, CLI surface, extras) by
 | Field | Value |
 |---|---|
 | Package version | `0.4.0` |
-| Live test count | **525** (collected by `pytest tests/`) |
+| Live test count | **527** (collected by `pytest tests/`) |
 | CLI subcommands | 18 (parsed from `src/bsff/cli.py`) |
 | Optional extras | `dev`, `full`, `fuzz`, `leakage`, `moabb`, `security`, `stats`, `yaml` |
 
@@ -29,7 +29,7 @@ authoritative status:
 
 ## Validation level
 
-Synthetic-ground-truth calibration PLUS a passed external real-data bright-line benchmark (Bonn S2: G1 power + G2 specificity, BONN_S2_BRIGHT_LINE_PASSED). BNCI2014-001 is preregistration-only (not executed). NOT clinical, regulatory, or multi-dataset replicated. Canonical state: artifacts/release/CURRENT_TRUTH.json.
+Synthetic-ground-truth calibration PLUS a Bonn external benchmark that is ROBUSTLY passed: BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED. Specificity is robust to BOTH seed and null-model choice. Pre-registered S3 seed-averaged AR-null (N=1000, 10 seeds, frozen-before-run, re-run reproduced byte-for-byte): G1 power 0.94, G2 FPR 0.028, Wilson 95% CI [0.019, 0.040]. Multi-null gate (AR/IAAFT/phase-randomized) all Wilson CI-upper <= 0.05 (robust_gate_passed=true). This survived and superseded a smaller-N calibration. BNCI2014-001 preregistration-only (execution not valid for narrowband epochs). NOT clinical, regulatory, BNCI-executed, or multi-dataset replicated. Canonical state: artifacts/release/CURRENT_TRUTH.json.
 
 See [`docs/VALIDATION.md`](docs/VALIDATION.md) for the full evidence tier
 table and [`docs/OPERATING_CHARACTERISTIC.md`](docs/OPERATING_CHARACTERISTIC.md)

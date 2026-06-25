@@ -1,8 +1,16 @@
 {
-  "schema": "bsff.current_truth/v1",
+  "schema": "bsff.current_truth/v2",
   "package_version": "0.4.0",
-  "main_commit": "f3fcd3697ed56a4bc642fe7146058b66628f0b28",
-  "latest_validation_state": "BONN_S2_BRIGHT_LINE_PASSED",
+  "main_commit": "554adb3a0e5db9e51912ba6797af12723122d6a3",
+  "latest_validation_state": "BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED",
+  "bonn_s2_nominal_state": "PASSED_SINGLE_SEED",
+  "bonn_s2_robustness_state": "SEED_ROBUST_AR_NULL_PASS_CI_[0.0194, 0.0402]_MULTINULL_CONFIRMED",
+  "s2_seed_averaged_fpr": 0.028,
+  "s2_wilson_ci_upper": 0.0402,
+  "robust_gate": "G1_power>=0.80 AND G2_AR-null_FPR_Wilson95_CI_upper<=0.05",
+  "seed_robust_gate_passed": true,
+  "multi_null_robustness_state": "PASSED",
+  "robust_gate_passed": true,
   "bonn_s1_state": "BRIGHT_LINE_NOT_PASSED",
   "bonn_s2_state": "S2_BRIGHT_LINE_PASSED",
   "G1_metrics": {
@@ -19,6 +27,7 @@
   },
   "BNCI_chain_state": "UNLOCKED_FOR_PREREGISTRATION_ONLY",
   "bnci_execution_state": "BNCI_BLOCKED_METHOD",
+  "s2_robustness": "SEED_ROBUST_AR_NULL_PASS_CI_[0.0194, 0.0402]_MULTINULL_CONFIRMED",
   "multi_dataset_replication_state": "NOT_DONE",
   "pypi_deployment_state": "TESTPYPI_READY_PYPI_READY",
   "supported_claims": [
@@ -48,5 +57,5 @@
   },
   "hash_manifest_path": "artifacts/release/bonn_bright_line/HASHES.sha256",
   "reproduction_entrypoint": "REPRODUCE.md",
-  "timestamp_utc": "2026-06-24T16:18:36Z"
+  "timestamp_utc": "2026-06-25T02:21:38Z"
 }

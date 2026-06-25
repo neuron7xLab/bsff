@@ -107,3 +107,25 @@ confirmatory verdict follow the same fail-closed pattern as S1.
   0.05 gave real FPR 0.08); strong ictal rejections (p≈0.005) survive the stricter threshold,
   so G1 power is preserved. A conservative-threshold variant, not a new statistic.
 - Evidence: `s2_CONFIRMATORY_VERDICT.json`, `S2_BRIGHT_LINE_SUMMARY.json`, `docs/validation/S2_VERDICT.md`.
+
+### S2 robustness — falsification (calibrated)
+
+An adversarial battery (`artifacts/bonn_bright_line/S2_FALSIFICATION_REPORT.json`) attacked the S2
+verdict with 4 seed perturbations + 3 AR-order misspecifications (N=30, 199 surrogates):
+- **G1 power ROBUST:** Set E SURVIVED = 0.967 under every seed and AR order.
+- **G2 specificity BOUNDARY/FRAGILE:** AR-null FPR ranged 0.0–0.067; `seed_base=7` gave **0.067 > 0.05**.
+
+**Calibrated claim:** `BONN_S2_BRIGHT_LINE_PASSED` is a **boundary/marginal pass** — it passed the
+predeclared N=100 confirmatory (FPR 0.02) but the specificity margin is thin (Wilson 95% CI of
+0.02 reaches ~0.05) and **seed-sensitive**. The bright line is not claimed as robustly crossed; a
+seed-averaged or larger-N specificity confirmatory is the honest next step.
+
+### S2 specificity — seed-averaged calibration (decisive)
+
+Following the falsification, a seed-averaged calibration (`S2_SPECIFICITY_CALIBRATION.json`, 480
+AR-null tests over 6 seeds × Sets A+B) gives **pooled FPR 0.0354, Wilson 95% CI [0.022, 0.056]**.
+The CI **upper bound (0.056) exceeds the 0.05 gate**, and 2 of 6 seeds gave FPR > 0.05 (0.075, 0.0625).
+**G2 specificity is NOT robustly below 0.05.** The predeclared confirmatory FPR=0.02 (seed 20260623)
+was a favorable-seed point estimate. The Bonn bright line is **not robustly crossed** — a marginal,
+seed-dependent pass. `CURRENT_TRUTH.s2_robustness` carries this. Honest next step: re-preregister a
+seed-averaged specificity gate (require the FPR CI upper bound ≤ 0.05) and re-run.

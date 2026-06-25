@@ -1,0 +1,40 @@
+{
+  "schema": "bsff.s3_protocol_lock/v1",
+  "status": "FROZEN_BEFORE_RUN",
+  "statistic_id": "sampen_lower_tail_m2_r015_v1",
+  "detection_p": 0.025,
+  "alpha": 0.05,
+  "n_surrogates": 199,
+  "n_seeds": 10,
+  "seeds": [
+    20260623,
+    7,
+    999,
+    314159,
+    2718,
+    42,
+    161803,
+    27182,
+    31337,
+    123456
+  ],
+  "n_segments_per_set": 50,
+  "G1_gate": "seed-averaged Set-E SURVIVED fraction >= 0.80",
+  "G2_gate": "pooled AR-null FPR (A+B) Wilson-95-CI upper bound <= 0.05",
+  "forbidden": [
+    "alpha change",
+    "threshold change",
+    "statistic change",
+    "seed dropping",
+    "favorable-seed selection"
+  ],
+  "runner": "examples/bonn_bright_line/s3_seed_averaged_confirmatory.py",
+  "runner_sha256": "a19f6400945c2f96d0603c864743f435a4e62f5844b16d62850b57ba4a21dc0a",
+  "git_commit": "3ae10213e789c05f3139a4cc92117417277ce263",
+  "timestamp_utc": "2026-06-24T18:50:14Z",
+  "original_runner_sha256": "a19f6400945c2f96d0603c864743f435a4e62f5844b16d62850b57ba4a21dc0a",
+  "patched_runner_sha256": "89485f335b4b6622d245b132a6ce176e670bcba890c639b7d958d8e0c7a363c8",
+  "patch_note": "Post-run serialization-only fix: cast numpy bool_/float64 to Python types so the verdict JSON serializes. The measurement logic (seeds, statistic, AR-null, gate) is byte-identical; the clean re-run reproduces the same per-seed counts. No methodological change.",
+  "patch_affects_measurement": false,
+  "patch_timestamp_utc": "2026-06-24T21:08:09Z"
+}
