@@ -5,8 +5,8 @@
   "claim_id": "bids-sub-01-task-rest",
   "evidence": {
     "bayesian_evidence": {
-      "BF01": 5.528217425560752e-20,
-      "BF10": 1.8089013564776088e+19,
+      "BF01": 1.0000000000000004e-06,
+      "BF10": 999999.9999999995,
       "cohens_d": 44.023248648650394,
       "interpretation": "strong_evidence_for_claim",
       "method": "bic_normal_approximation",
