@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+#
+# Forbidden claims for the OpenAI-2026 Validation Grid.
+#
+# The grid is an INTERNAL OpenAI-grade research-validation TARGET. It must never
+# be described as an external OpenAI certification, endorsement, or official
+# benchmark. Any public surface that asserts one of these patterns (without a
+# negating qualifier) FAILS the claim-integrity gate. Patterns are case-insensitive
+# regular expressions matched per line; a line that negates the claim
+# ("not", "no", "never", "is NOT", "neither ... nor", "we do not claim") is exempt.
+version: 1
+forbidden:
+  - id: certified-by-openai
+    pattern: "certified by openai"
+    reason: "BSFF is not certified by OpenAI; the grid is an internal target, not an OpenAI certification."
+  - id: validated-by-openai
+    pattern: "validated by openai"
+    reason: "No external OpenAI validation exists."
+  - id: official-openai-benchmark
+    pattern: "official openai benchmark"
+    reason: "The grid is inspired by public eval/red-team principles; it is not an official OpenAI benchmark."
+  - id: openai-approved
+    pattern: "openai[- ]approved"
+    reason: "No OpenAI approval exists."
+  - id: openai-endorsed
+    pattern: "openai[- ]endorsed"
+    reason: "No OpenAI endorsement exists."
+  - id: openai-partnership
+    pattern: "openai (partner|partnership|collaboration)"
+    reason: "No OpenAI partnership exists."

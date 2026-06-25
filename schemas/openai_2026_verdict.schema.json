@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neuron7xlab.github.io/bsff/schemas/openai_2026_verdict.schema.json",
+  "title": "OpenAI-2026 Validation Grid Verdict (v2)",
+  "description": "Machine-derived verdict for the OpenAI-2026 Validation Grid. This is an INTERNAL OpenAI-grade research-validation target, NOT an external OpenAI certification. PASS is forbidden if any required key is absent: the schema is the fail-closed evidence contract. Every gate result, artifact digest, dataset/seed manifest, mutation/power/red-team/claim summary is machine-emitted by tools/final_validation_verdict.py and re-verifiable.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "workflow_name",
+    "project",
+    "verdict",
+    "grid_version",
+    "head_sha",
+    "run_context",
+    "python_version",
+    "dependency_lock_hashes",
+    "gate_results",
+    "artifact_digests",
+    "dataset_manifest",
+    "seed_manifest",
+    "mutation_report",
+    "power_profile",
+    "red_team_summary",
+    "claim_audit",
+    "blocking_failures",
+    "evidence_complete",
+    "network_denied",
+    "replayable",
+    "mutation_score",
+    "statistical_power",
+    "artifact_digests_present",
+    "claim_integrity"
+  ],
+  "properties": {
+    "workflow_name": {
+      "const": "OpenAI-2026 Validation Grid",
+      "description": "Frozen grid name. Internal OpenAI-grade research-validation target; not an external OpenAI certification."
+    },
+    "project": { "const": "bsff" },
+    "verdict": {
+      "enum": ["PASS", "FAIL"],
+      "description": "PASS only if blocking_failures is empty AND every required key is present and schema-valid."
+    },
+    "grid_version": {
+      "type": "string",
+      "pattern": "^[0-9]{4}\\.[0-9]+$",
+      "description": "Calendar-versioned grid revision, e.g. '2026.1'."
+    },
+    "head_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{7,40}$",
+      "description": "Commit the verdict was computed against."
+    },
+    "run_context": {
+      "enum": ["ci", "local", "scheduled", "dispatch", "unknown"],
+      "description": "Where the verdict was produced; never affects PASS/FAIL, only provenance."
+    },
+    "python_version": {
+      "type": "string",
+      "pattern": "^3\\.[0-9]+\\.[0-9]+",
+      "description": "Interpreter that produced the verdict."
+    },
+    "dependency_lock_hashes": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+      "description": "sha256 of every requirements/*.lock file; binds the verdict to a hermetic dependency closure."
+    },
+    "gate_results": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "enum": ["PASS", "FAIL"] },
+      "description": "Per-gate PASS/FAIL roll-up keyed by gate id (01..18 style names)."
+    },
+    "artifact_digests": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+      "description": "sha256 of every evidence artifact the verdict depends on."
+    },
+    "dataset_manifest": {
+      "type": "object",
+      "required": ["datasets"],
+      "properties": {
+        "datasets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "sha256"],
+            "properties": {
+              "name": { "type": "string" },
+              "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+            }
+          }
+        }
+      },
+      "description": "Datasets bound by content hash; empty datasets array is allowed (synthetic-only) but the key is mandatory."
+    },
+    "seed_manifest": {
+      "type": "object",
+      "required": ["seeds"],
+      "properties": {
+        "seeds": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "description": "Every seed the deterministic gates were run under."
+        }
+      },
+      "description": "Pinned RNG seeds; replayability is meaningless without them."
+    },
+    "mutation_report": {
+      "type": "object",
+      "required": ["mutation_score", "mutants_total", "survivors", "verdict"],
+      "properties": {
+        "mutation_score": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "mutants_total": { "type": "integer", "minimum": 1 },
+        "survivors": { "type": "array" },
+        "verdict": { "enum": ["PASS", "FAIL"] }
+      }
+    },
+    "power_profile": {
+      "type": "object",
+      "required": ["verdict"],
+      "properties": { "verdict": { "enum": ["PASS", "FAIL"] } },
+      "description": "Embedded statistical power profile (effect size, CI, FPR/FNR, sample/surrogate/permutation counts, null convergence)."
+    },
+    "red_team_summary": {
+      "type": "object",
+      "required": ["verdict", "categories_total", "categories_killed"],
+      "properties": {
+        "verdict": { "enum": ["PASS", "FAIL"] },
+        "categories_total": { "type": "integer", "minimum": 0 },
+        "categories_killed": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "claim_audit": {
+      "type": "object",
+      "required": ["verdict", "forbidden_violations"],
+      "properties": {
+        "verdict": { "enum": ["PASS", "FAIL"] },
+        "forbidden_violations": { "type": "array" }
+      }
+    },
+    "blocking_failures": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Empty iff verdict == PASS."
+    },
+    "evidence_complete": { "type": "boolean" },
+    "network_denied": { "type": "boolean" },
+    "replayable": { "type": "boolean" },
+    "mutation_score": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+    "statistical_power": { "enum": ["PASS", "FAIL"] },
+    "artifact_digests_present": { "type": "boolean" },
+    "claim_integrity": { "enum": ["PASS", "FAIL"] }
+  },
+  "allOf": [
+    {
+      "description": "PASS requires an empty blocking_failures list.",
+      "if": { "properties": { "verdict": { "const": "PASS" } } },
+      "then": { "properties": { "blocking_failures": { "maxItems": 0 } } }
+    },
+    {
+      "description": "PASS requires every machine-derived sub-verdict to be green.",
+      "if": { "properties": { "verdict": { "const": "PASS" } } },
+      "then": {
+        "properties": {
+          "evidence_complete": { "const": true },
+          "network_denied": { "const": true },
+          "replayable": { "const": true },
+          "artifact_digests_present": { "const": true },
+          "statistical_power": { "const": "PASS" },
+          "claim_integrity": { "const": "PASS" },
+          "mutation_score": { "const": 1.0 }
+        }
+      }
+    }
+  ]
+}

@@ -50,16 +50,26 @@ verify:
 	python -m ruff format --check src tests tools benchmarks fuzz
 	python -m pytest tests/ -m "not slow" --tb=short
 	python -m pytest tests/property tests/adversarial --tb=short
+	python -m pytest tests/redteam tests/meta_validation --tb=short
+	python -m pytest tests/test_openai_2026_verdict_schema.py tests/test_openai_2026_claims.py --tb=short
 	python tools/mutation_kill_gate.py --strict
 	python tools/validate_mutation_report.py artifacts/adversarial/mutation_kill_report.json
 	python tools/statistical_power_profile.py --output artifacts/statistics/power_profile.json
 	python tools/validate_power_profile.py artifacts/statistics/power_profile.json
+	python tools/record_offline_evidence.py
+	python tools/run_replayability_gate.py
+	python tools/generate_redteam_matrix.py
+	python tools/validate_redteam_matrix.py
+	python tools/validate_openai_2026_claims.py
+	python tools/validate_openai_2026_eval_contract.py --check
+	python -m pytest tests/test_openai_2026_eval_contract.py --tb=short
 	python tools/final_validation_verdict.py
 
 # Same correctness surface, with external network denied.
 verify-offline:
 	python -m pytest tests/ -m "not slow" --tb=short --disable-network
 	python -m pytest tests/property tests/adversarial --tb=short --disable-network
+	python -m pytest tests/redteam tests/meta_validation --tb=short --disable-network
 
 # Build proof: wheel runs offline, SBOM + manifest are reproducible.
 build-proof:
