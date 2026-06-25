@@ -1,7 +1,7 @@
 {
   "schema": "bsff.current_truth/v2",
   "package_version": "0.4.0",
-  "main_commit": "554adb3a0e5db9e51912ba6797af12723122d6a3",
+  "main_commit": "e743c992caaeb5c685774d18afb779534ab191b3",
   "latest_validation_state": "BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED",
   "bonn_s2_nominal_state": "PASSED_SINGLE_SEED",
   "bonn_s2_robustness_state": "SEED_ROBUST_AR_NULL_PASS_CI_[0.0194, 0.0402]_MULTINULL_CONFIRMED",
@@ -57,5 +57,5 @@
   },
   "hash_manifest_path": "artifacts/release/bonn_bright_line/HASHES.sha256",
   "reproduction_entrypoint": "REPRODUCE.md",
-  "timestamp_utc": "2026-06-25T02:21:38Z"
+  "timestamp_utc": "2026-06-25T07:42:47Z"
 }
