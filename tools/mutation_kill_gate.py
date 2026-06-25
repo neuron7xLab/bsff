@@ -71,6 +71,7 @@ class Mutant:
 
 PROP_SIGNAL = "tests/property/test_signal_validation_properties.py"
 SCHEMA = "tests/test_claimspec_schema.py"
+INV = "tests/test_invariants.py"
 
 MUTANTS: tuple[Mutant, ...] = (
     Mutant(
@@ -84,7 +85,7 @@ MUTANTS: tuple[Mutant, ...] = (
     Mutant(
         mutant_id="MUT-002",
         rel_path="src/bsff/stages.py",
-        old='        flagged = any(bool(v.get("flagged")) for v in flags.values() if isinstance(v, dict))',
+        old="        flagged = any_leakage_flagged(flags)",
         new="        flagged = False  # MUT-002: leakage fatality disabled",
         behaviour="flagged leakage must short-circuit claim promotion to REFUTED",
         targets=(f"{OC}::test_leakage_short_circuits_to_refuted",),
@@ -147,6 +148,14 @@ MUTANTS: tuple[Mutant, ...] = (
         new="    exceed = int(np.sum(surrogate_stats_arr > original_stat))  # MUT-009: tie semantics",
         behaviour="rank-order ties must count as not-exceeded, so a flat signal is never rejected",
         targets=(f"{OC}::test_degenerate_signal_not_falsely_rejected",),
+    ),
+    Mutant(
+        mutant_id="MUT-010",
+        rel_path="src/bsff/leakage_detector.py",
+        old='            if "flagged" not in value or bool(value["flagged"]):',
+        new='            if bool(value.get("flagged")):  # MUT-010: silently ignore malformed leakage dict',
+        behaviour="a malformed leakage record (dict missing 'flagged') must fail closed, not be ignored",
+        targets=(f"{INV}::test_inv3_malformed_leakage_entry_fails_closed",),
     ),
 )
 
