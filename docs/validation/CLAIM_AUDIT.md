@@ -90,3 +90,10 @@ Still **FORBIDDEN**: clinical/medical/regulatory/device claims; final proof of b
 | The S2 not-robust calibration is superseded by the larger pre-registered S3 | PROVEN_BY_ARTIFACT | N=480 (0.0354) vs N=1000 (0.028); seed-set/N sensitive near boundary; larger test passes |
 | Bonn S2 is robust across null models | UNSUPPORTED (not yet) | multi-null (IAAFT/phase-randomized) NOT_DONE; `multi_null_robustness_state=NOT_DONE` |
 | Bonn S2 bright line is fully robustly passed | UNVERIFIED | requires multi-null; `robust_gate_passed=null` |
+
+## Multi-null robustness (final gate — PASSED)
+| claim | status | evidence |
+|-------|--------|----------|
+| Specificity is robust across null models (AR/IAAFT/phase-randomized) | PROVEN_BY_ARTIFACT | `MULTI_NULL_ROBUSTNESS.json`: AR 0.026 [0.018,0.038], IAAFT 0.032 [0.023,0.045], phaserand 0.034 [0.024,0.047]; all CI-upper ≤ 0.05 |
+| Bonn S2 bright line is robustly passed (seed AND null-model) | PROVEN_BY_ARTIFACT | S3 (seed) + multi-null; `robust_gate_passed=true`, `BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED` |
+| Robustness was earned through falsification, not assumed | PROVEN_BY_ARTIFACT | calibration flagged not-robust → larger pre-registered S3 + multi-null confirmed |

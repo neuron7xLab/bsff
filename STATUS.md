@@ -29,7 +29,7 @@ authoritative status:
 
 ## Validation level
 
-Synthetic-ground-truth calibration PLUS a Bonn external benchmark whose pre-registered, reproduced seed-averaged AR-null specificity gate PASSES: BONN_S2_SEED_ROBUST_PASS_MULTINULL_PENDING. S3 (N=1000, 10 seeds, frozen-before-run, re-run reproduced byte-for-byte): G1 power 0.94, G2 AR-null FPR 0.028, Wilson 95% CI [0.019, 0.040], upper <= 0.05. Specificity is robust to seed under the AR null; multi-null robustness (IAAFT/phase-randomized) is NOT_DONE, so the full robust claim is withheld (robust_gate_passed=null). BNCI2014-001 preregistration-only (BLOCKED_METHOD). NOT clinical, regulatory, multi-dataset replicated, or multi-null robust. Canonical state: artifacts/release/CURRENT_TRUTH.json.
+Synthetic-ground-truth calibration PLUS a Bonn external benchmark that is ROBUSTLY passed: BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED. Specificity is robust to BOTH seed and null-model choice. Pre-registered S3 seed-averaged AR-null (N=1000, 10 seeds, frozen-before-run, re-run reproduced byte-for-byte): G1 power 0.94, G2 FPR 0.028, Wilson 95% CI [0.019, 0.040]. Multi-null gate (AR/IAAFT/phase-randomized) all Wilson CI-upper <= 0.05 (robust_gate_passed=true). This survived and superseded a smaller-N calibration. BNCI2014-001 preregistration-only (execution not valid for narrowband epochs). NOT clinical, regulatory, BNCI-executed, or multi-dataset replicated. Canonical state: artifacts/release/CURRENT_TRUTH.json.
 
 See [`docs/VALIDATION.md`](docs/VALIDATION.md) for the full evidence tier
 table and [`docs/OPERATING_CHARACTERISTIC.md`](docs/OPERATING_CHARACTERISTIC.md)

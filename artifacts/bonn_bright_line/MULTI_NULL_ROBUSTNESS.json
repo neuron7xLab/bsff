@@ -1,0 +1,43 @@
+{
+  "schema": "bsff.multi_null_robustness/v1",
+  "verdict": "MULTI_NULL_ROBUST",
+  "all_nulls_pass": true,
+  "gate": "per-null seed-averaged FPR Wilson-95-CI-upper <= 0.05",
+  "n_seeds": 10,
+  "n_segments_per_set": 50,
+  "n_surrogates": 199,
+  "nulls": {
+    "ar": {
+      "fpr": 0.026,
+      "wilson_95ci": [
+        0.0178,
+        0.0378
+      ],
+      "n": 1000,
+      "n_false_positives": 26,
+      "pass": true
+    },
+    "iaaft": {
+      "fpr": 0.032,
+      "wilson_95ci": [
+        0.0228,
+        0.0448
+      ],
+      "n": 1000,
+      "n_false_positives": 32,
+      "pass": true
+    },
+    "phaserand": {
+      "fpr": 0.034,
+      "wilson_95ci": [
+        0.0244,
+        0.0471
+      ],
+      "n": 1000,
+      "n_false_positives": 34,
+      "pass": true
+    }
+  },
+  "timestamp_utc": "2026-06-25T02:20:10Z",
+  "elapsed_sec": 10418.5
+}

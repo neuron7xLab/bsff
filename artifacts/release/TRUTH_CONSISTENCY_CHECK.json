@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "final_state": "BONN_S2_SEED_ROBUST_PASS_MULTINULL_PENDING",
+  "final_state": "BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED",
   "BNCI_chain_state": "UNLOCKED_FOR_PREREGISTRATION_ONLY",
   "checked_files": [
     "FORMAL_VERDICT.md",
@@ -14,6 +14,6 @@
   ],
   "contradictions": [],
   "stale_claims": [],
-  "timestamp_utc": "2026-06-24T23:17:38Z",
-  "git_commit": "4bd046407948f34daed565eb585e49b0dc1ec9ff"
+  "timestamp_utc": "2026-06-25T02:27:44Z",
+  "git_commit": "554adb3a0e5db9e51912ba6797af12723122d6a3"
 }

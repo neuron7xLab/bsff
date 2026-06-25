@@ -5,19 +5,21 @@ Canonical machine-readable truth: [`artifacts/release/CURRENT_TRUTH.json`](artif
 This document must agree with it (enforced by `tools/validate_current_truth.py`).
 
 ## 1. Current canonical verdict
-**`BONN_S2_SEED_ROBUST_PASS_MULTINULL_PENDING`.** The pre-registered **S3 seed-averaged AR-null
-confirmatory** (frozen lock before run; N=1000 over 10 seeds; independently re-run and **reproduced
-byte-for-byte**) PASSES the robust gate: G1 power 0.94, G2 AR-null FPR **0.028**, Wilson 95% CI
-**[0.0194, 0.0402]**, upper bound ≤ 0.05 (`S3_CONFIRMATORY_VERDICT.json`). This supersedes the smaller
-N=480 calibration (FPR 0.0354, CI-upper 0.056) — the estimate is seed-set/N sensitive near the
-boundary, and the larger pre-registered test passes. **Specificity is now robust to seed under the
-AR null.** It is **not yet** robust across null models: **multi-null robustness (IAAFT /
-phase-randomized) is NOT_DONE**, so the full robust claim is withheld (`robust_gate_passed = null`).
+**`BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED`.** The bright line passes the full PI-grade gauntlet:
+falsification → seed-averaged confirmation → byte-for-byte reproduction → multi-null robustness.
+G1 power 0.94 (seed-averaged, robust). G2 specificity is robust to **both** seed and null-model
+choice: the pre-registered **S3 seed-averaged AR-null** test (N=1000, 10 seeds, frozen lock before
+run, re-run reproduced byte-for-byte) gives FPR **0.028**, Wilson 95% CI **[0.019, 0.040]**; and the
+**multi-null** gate (`MULTI_NULL_ROBUSTNESS.json`) holds across all three independent linear-null
+families — AR 0.026 [0.018, 0.038], IAAFT 0.032 [0.023, 0.045], phase-randomized 0.034 [0.024, 0.047]
+— every Wilson CI-upper ≤ 0.05. `robust_gate_passed = true`. This survived (and superseded) a
+smaller-N calibration that had flagged the estimate as seed-set/N sensitive near the boundary.
 
 - G1 (power): Set E SURVIVED **0.94** seed-averaged (≥ 0.80) — **robust**.
-- G2 (specificity, seed-averaged AR-null): FPR **0.028**, CI **[0.019, 0.040]**, upper ≤ 0.05 — **robust (reproduced)**.
-- Remaining gate: multi-null (AR/IAAFT/phase-randomized), `multi_null_robustness_state = NOT_DONE`.
+- G2 (specificity): seed-averaged AR-null FPR **0.028** [0.019, 0.040]; multi-null all ≤ 0.05 — **robust**.
+- `multi_null_robustness_state = PASSED` (AR / IAAFT / phase-randomized).
 - BNCI2014-001 chain: **UNLOCKED_FOR_PREREGISTRATION_ONLY** (execution not valid for narrowband epochs).
+- Still NOT: clinical/regulatory; BNCI executed; multi-dataset replicated.
 - `CURRENT_TRUTH.bonn_s2_robustness_state = SEED_ROBUST_AR_NULL_PASS ... MULTINULL_PENDING`.
 
 > BSFF passed the Bonn S2 bright-line under the frozen finite-N-corrected SampEn protocol.
