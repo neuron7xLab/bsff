@@ -70,7 +70,7 @@ def main(argv=None) -> int:
             lows = [ln.lower() for ln in lines]
             for i, ln in enumerate(lines):
                 # negation context = this line + previous 2 (handles wrapped "not\nrobustly crossed").
-                ctx = " ".join(lows[max(0, i - 2): i + 1])
+                ctx = " ".join(lows[max(0, i - 2) : i + 1])
                 if bad.search(ln) and not neg.search(ctx):
                     viol.append(
                         f"{rel}:{i + 1}: claims robust pass while robust_gate_passed!=True: {ln.strip()[:60]}"

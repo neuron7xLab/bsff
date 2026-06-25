@@ -46,7 +46,11 @@ def _s2_robustness() -> str:
         ci = d.get("G2", {}).get("wilson_95ci")
         if d.get("S3_PASS"):
             mn = _multi_null_passed()
-            tag = {True: "_MULTINULL_CONFIRMED", False: "_MULTINULL_FAILED", None: "_MULTINULL_PENDING"}[mn]
+            tag = {
+                True: "_MULTINULL_CONFIRMED",
+                False: "_MULTINULL_FAILED",
+                None: "_MULTINULL_PENDING",
+            }[mn]
             return f"SEED_ROBUST_AR_NULL_PASS_CI_{ci}{tag}"
         return f"S3_SEED_AVERAGED_NOT_ROBUST_CI_{ci}"
     cal = ROOT / "artifacts" / "bonn_bright_line" / "S2_SPECIFICITY_CALIBRATION.json"
@@ -54,7 +58,9 @@ def _s2_robustness() -> str:
         c = json.loads(cal.read_text())
         if not c.get("fpr_ci_upper_below_threshold", True):
             ci = c.get("wilson_95ci")
-            return f"NOT_ROBUST_G2_SPECIFICITY_seed_avg_FPR_{c.get('pooled_fpr')}_CI_{ci}_crosses_0.05"
+            return (
+                f"NOT_ROBUST_G2_SPECIFICITY_seed_avg_FPR_{c.get('pooled_fpr')}_CI_{ci}_crosses_0.05"
+            )
         return "ROBUST"
     fals = ROOT / "artifacts" / "bonn_bright_line" / "S2_FALSIFICATION_REPORT.json"
     if fals.is_file() and not json.loads(fals.read_text()).get("claim_survives_attacks", True):
@@ -104,8 +110,11 @@ def _bonn_robustness() -> dict:
     multi_null = _multi_null_passed()
     full_robust = (seed_robust is True and multi_null is True) if multi_null is not None else None
     return {
-        "seed_robust": seed_robust, "multi_null": multi_null, "full_robust": full_robust,
-        "seed_avg_fpr": fpr, "wilson_ci_upper": ci_upper,
+        "seed_robust": seed_robust,
+        "multi_null": multi_null,
+        "full_robust": full_robust,
+        "seed_avg_fpr": fpr,
+        "wilson_ci_upper": ci_upper,
     }
 
 
@@ -143,8 +152,11 @@ def build() -> dict:
         "robust_gate": "G1_power>=0.80 AND G2_AR-null_FPR_Wilson95_CI_upper<=0.05",
         "seed_robust_gate_passed": rob["seed_robust"],  # S3 seed-averaged AR-null (reproduced)
         "multi_null_robustness_state": (
-            "PASSED" if rob["multi_null"] is True
-            else "FAILED" if rob["multi_null"] is False else "NOT_DONE"
+            "PASSED"
+            if rob["multi_null"] is True
+            else "FAILED"
+            if rob["multi_null"] is False
+            else "NOT_DONE"
         ),
         # robust_gate_passed requires BOTH seed-averaged AND multi-null robustness.
         "robust_gate_passed": rob["full_robust"],
