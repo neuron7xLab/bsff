@@ -5,10 +5,15 @@
 
 This is the single source of truth for "is BSFF research-grade right now". It reads
 the dynamic gate reports (mutation, chaos corpus, statistical power, degradation,
-wheel runtime) and re-derives the cheap static gates (hermetic locks, SBOM,
-provenance binding, API/CLI contract, contributor surface). The verdict is FAIL if
-any report is missing, any sub-gate fails, any mutant survives, the profile is
-underpowered, or the SBOM/provenance binding is unverifiable.
+wheel runtime, red-team corpus, replayability) and re-derives the cheap static gates
+(hermetic locks, SBOM, provenance binding, API/CLI contract, contributor surface,
+claim integrity). The output JSON conforms to ``schemas/openai_2026_verdict.schema.json``
+(v2): PASS is forbidden if any required key is absent, any sub-gate fails, any mutant
+survives, the profile is underpowered, the SBOM/provenance binding is unverifiable, a
+forbidden claim is present, evidence is stale/missing, or replay is unstable.
+
+``OpenAI-2026 Validation Grid`` is an INTERNAL OpenAI-grade research-validation target,
+NOT an external OpenAI certification.
 
     python tools/final_validation_verdict.py [--output artifacts/final/openai_2026_validation_verdict.json]
 
@@ -18,14 +23,21 @@ No hand-written verdict: the output JSON is computed here. No network.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.util
 import json
+import os
+import platform
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 A = ROOT / "artifacts"
+SCHEMA_PATH = ROOT / "schemas" / "openai_2026_verdict.schema.json"
+
+GRID_VERSION = "2026.1"
+WORKFLOW_NAME = "OpenAI-2026 Validation Grid"
 
 # The public API surface the contract must expose (mirror of bsff.api.__all__).
 _EXPECTED_API = {
@@ -39,11 +51,30 @@ _EXPECTED_API = {
 _MIN_CORPUS_CLASSES = 14
 _MIN_BENCHMARKS = 4
 
+# Evidence artifacts whose content is bound by sha256 into the verdict. A required
+# artifact that is missing makes evidence_complete False and blocks PASS.
+_DIGEST_ARTIFACTS = {
+    "mutation_kill_report": A / "adversarial" / "mutation_kill_report.json",
+    "corpus_matrix": A / "adversarial" / "corpus_matrix.json",
+    "power_profile": A / "statistics" / "power_profile.json",
+    "benchmark_baseline": A / "benchmarks" / "baseline.json",
+    "redteam_matrix": A / "redteam" / "redteam_matrix.json",
+    "replayability_report": A / "replay" / "replayability_report.json",
+    "offline_evidence": A / "hermetic" / "offline_evidence.json",
+}
+
 
 def _read_json(path: Path) -> dict | None:
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
+        return None
+
+
+def _sha256(path: Path) -> str | None:
+    try:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError:
         return None
 
 
@@ -54,6 +85,9 @@ def _tool_ok(args: list[str]) -> bool:
     return proc.returncode == 0
 
 
+# --------------------------------------------------------------------------- #
+# Static / cheap gates (re-derived here)                                       #
+# --------------------------------------------------------------------------- #
 def _hermetic_ci() -> tuple[str, list[str]]:
     return ("PASS", []) if _tool_ok(["tools/validate_lockfiles.py"]) else ("FAIL", ["lockfiles"])
 
@@ -183,6 +217,147 @@ def _bus_factor() -> tuple[str, list[str]]:
     return ("PASS", []) if not fails else ("FAIL", [f"missing {f}" for f in fails])
 
 
+# --------------------------------------------------------------------------- #
+# v2 gates: red-team corpus, replayability, claim integrity, offline evidence  #
+# --------------------------------------------------------------------------- #
+def _red_team() -> tuple[dict, list[str]]:
+    """Read the red-team corpus matrix; every category must be killed."""
+    report = _read_json(A / "redteam" / "redteam_matrix.json")
+    if not report:
+        return (
+            {"verdict": "FAIL", "categories_total": 0, "categories_killed": 0},
+            ["redteam matrix missing"],
+        )
+    fails: list[str] = []
+    # Re-validate against the dedicated validator so a malformed/forged matrix cannot
+    # certify itself.
+    if not _tool_ok(["tools/validate_redteam_matrix.py"]):
+        fails.append("redteam matrix invalid")
+    total = int(report.get("categories_total", 0))
+    killed = int(report.get("categories_killed", 0))
+    if report.get("verdict") != "PASS" or killed != total or total <= 0:
+        fails.append("redteam categories not all killed")
+    summary = {
+        "verdict": "PASS" if not fails else "FAIL",
+        "categories_total": total,
+        "categories_killed": killed,
+    }
+    return summary, fails
+
+
+def _replayability() -> tuple[bool, list[int], list[str]]:
+    """Read the replayability report; verdict class must be seed-stable across >=3 seeds."""
+    report = _read_json(A / "replay" / "replayability_report.json")
+    if not report:
+        return False, [], ["replayability report missing"]
+    fails: list[str] = []
+    seeds = [int(s) for s in report.get("seeds", []) if isinstance(s, int)]
+    if len(seeds) < 3:
+        fails.append("fewer than 3 seed sets")
+    if not report.get("verdict_class_stable", False):
+        fails.append("verdict class not seed-stable")
+    if not report.get("artifact_hashes_match", False):
+        fails.append("replay artifact hashes diverge")
+    replayable = report.get("verdict") == "PASS" and not fails
+    return replayable, seeds, fails
+
+
+def _claim_integrity() -> tuple[dict, list[str]]:
+    """Run the OpenAI-2026 claim gate; forbidden/unsupported claims block PASS."""
+    proc = subprocess.run(
+        [sys.executable, "tools/validate_openai_2026_claims.py", "--json"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    try:
+        parsed = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        parsed = None
+    if parsed is None:
+        return (
+            {"verdict": "FAIL", "forbidden_violations": ["claim gate did not emit JSON"]},
+            ["claim integrity gate failed"],
+        )
+    violations = list(parsed.get("forbidden_violations", []))
+    verdict = "PASS" if proc.returncode == 0 and not violations else "FAIL"
+    fails = [] if verdict == "PASS" else ["claim integrity violations"]
+    return {"verdict": verdict, "forbidden_violations": violations}, fails
+
+
+def _offline_evidence() -> tuple[bool, list[str]]:
+    """The correctness suite must have run with the network denied."""
+    report = _read_json(A / "hermetic" / "offline_evidence.json")
+    if not report:
+        return False, ["offline evidence missing"]
+    if not report.get("network_denied", False):
+        return False, ["network not denied"]
+    return True, []
+
+
+# --------------------------------------------------------------------------- #
+# Provenance helpers                                                           #
+# --------------------------------------------------------------------------- #
+def _head_sha() -> str:
+    env = os.environ.get("GITHUB_SHA")
+    if env and len(env) >= 7:
+        return env
+    proc = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=False
+    )
+    sha = proc.stdout.strip()
+    return sha if sha else "0000000"
+
+
+def _run_context() -> str:
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        event = os.environ.get("GITHUB_EVENT_NAME", "")
+        if event == "schedule":
+            return "scheduled"
+        if event == "workflow_dispatch":
+            return "dispatch"
+        return "ci"
+    return "local"
+
+
+def _lock_hashes() -> dict[str, str]:
+    out: dict[str, str] = {}
+    for lock in sorted((ROOT / "requirements").glob("*.lock")):
+        digest = _sha256(lock)
+        if digest:
+            out[lock.name] = digest
+    return out
+
+
+def _artifact_digests() -> tuple[dict[str, str], bool, list[str]]:
+    digests: dict[str, str] = {}
+    fails: list[str] = []
+    for name, path in _DIGEST_ARTIFACTS.items():
+        digest = _sha256(path)
+        if digest is None:
+            fails.append(f"artifact missing for digest: {name}")
+            continue
+        digests[name] = digest
+    present = len(fails) == 0 and len(digests) == len(_DIGEST_ARTIFACTS)
+    return digests, present, fails
+
+
+def _dataset_manifest() -> dict:
+    """Bind any committed evidence datasets by content hash (synthetic-only ⇒ empty)."""
+    manifest = _read_json(A / "evidence_manifest.json") or {}
+    datasets: list[dict] = []
+    for entry in manifest.get("datasets", []) or []:
+        name = entry.get("name") or entry.get("path")
+        sha = entry.get("sha256")
+        if isinstance(name, str) and isinstance(sha, str):
+            datasets.append({"name": name, "sha256": sha})
+    return {"datasets": datasets}
+
+
+# --------------------------------------------------------------------------- #
+# Verdict roll-up                                                              #
+# --------------------------------------------------------------------------- #
 def derive() -> dict:
     blocking: list[str] = []
 
@@ -205,21 +380,109 @@ def derive() -> dict:
     bus, f = _bus_factor()
     blocking += f
 
+    red_team_summary, f = _red_team()
+    blocking += f
+    replayable, seeds, f = _replayability()
+    blocking += f
+    claim_audit, f = _claim_integrity()
+    blocking += f
+    network_denied, f = _offline_evidence()
+    blocking += f
+
+    artifact_digests, digests_present, f = _artifact_digests()
+    blocking += f
+
+    mutation_report = _read_json(A / "adversarial" / "mutation_kill_report.json") or {}
+    power_profile = _read_json(A / "statistics" / "power_profile.json") or {}
+
+    wheel_ok = _tool_ok(["tools/validate_wheel_runtime.py", "--offline"])
+    secrets_ok = _tool_ok(["tools/scan_secrets.py"])
+    meta_present = (ROOT / "tests" / "meta_validation").is_dir()
+    gate_results = {
+        "01-lock-integrity": hermetic,
+        "02-hermetic-offline-tests": "PASS" if network_denied else "FAIL",
+        "03-adversarial-oracles": fpc,
+        "04-property-tests": fpc,
+        "05-fuzz-smoke": fpc,
+        "06-mutation-kill": "PASS" if (score >= 1.0 and not _mutation()[1]) else "FAIL",
+        "07-wheel-runtime": "PASS" if wheel_ok else "FAIL",
+        "08-sbom-provenance": "PASS" if (sbom == "PASS" and provenance == "PASS") else "FAIL",
+        "09-security": "PASS" if secrets_ok else "FAIL",
+        "10-statistical-power": power,
+        "11-degradation": degradation,
+        "12-api-cli-contract": api,
+        "14-replayability": "PASS" if replayable else "FAIL",
+        "15-meta-validation": "PASS" if meta_present else "FAIL",
+        "16-red-team-corpus": red_team_summary["verdict"],
+        "17-claim-integrity": claim_audit["verdict"],
+        "18-artifact-digest-binding": "PASS" if digests_present else "FAIL",
+    }
+    for name, status in gate_results.items():
+        if status == "FAIL":
+            tag = f"gate {name} FAIL"
+            if tag not in blocking:
+                blocking.append(tag)
+
+    evidence_complete = digests_present and bool(mutation_report) and bool(power_profile)
+    if not evidence_complete and "evidence incomplete" not in blocking:
+        blocking.append("evidence incomplete")
+
     verdict = "PASS" if not blocking else "FAIL"
     return {
+        "workflow_name": WORKFLOW_NAME,
         "project": "bsff",
         "verdict": verdict,
+        "grid_version": GRID_VERSION,
+        "head_sha": _head_sha(),
+        "run_context": _run_context(),
+        "python_version": platform.python_version(),
+        "dependency_lock_hashes": _lock_hashes(),
+        "gate_results": gate_results,
+        "artifact_digests": artifact_digests,
+        "dataset_manifest": _dataset_manifest(),
+        "seed_manifest": {"seeds": seeds},
+        "mutation_report": {
+            "mutation_score": float(mutation_report.get("mutation_score", 0.0)),
+            "mutants_total": int(mutation_report.get("mutants_total", 0)),
+            "survivors": list(mutation_report.get("survivors", [])),
+            "verdict": mutation_report.get("verdict", "FAIL"),
+        },
+        "power_profile": power_profile or {"verdict": "FAIL"},
+        "red_team_summary": red_team_summary,
+        "claim_audit": claim_audit,
+        "blocking_failures": sorted(set(blocking)),
+        "evidence_complete": evidence_complete,
+        "network_denied": network_denied,
+        "replayable": replayable,
+        "mutation_score": score,
+        "statistical_power": power,
+        "artifact_digests_present": digests_present,
+        "claim_integrity": claim_audit["verdict"],
+        # Legacy keys retained for backward compatibility with older consumers.
         "hermetic_ci": hermetic,
         "signed_provenance": provenance,
         "sbom": sbom,
-        "mutation_score": score,
         "fuzz_property_chaos": fpc,
-        "statistical_power": power,
         "degradation": degradation,
         "api_contract": api,
         "bus_factor_reduction": bus,
-        "blocking_failures": blocking,
     }
+
+
+def _schema_validate(result: dict) -> list[str]:
+    """Validate the verdict against the v2 schema; any error is a blocking failure."""
+    schema = _read_json(SCHEMA_PATH)
+    if schema is None:
+        return ["verdict schema missing"]
+    try:
+        import jsonschema
+    except ImportError:
+        # jsonschema absent: fall back to a hard required-key check so PASS is still
+        # forbidden when a key is missing.
+        required = schema.get("required", [])
+        return [f"missing required key: {k}" for k in required if k not in result]
+    validator = jsonschema.Draft202012Validator(schema)
+    return [f"schema: {e.message}" for e in validator.iter_errors(result)]
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -229,6 +492,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     result = derive()
+
+    # Fail-closed schema enforcement: a structurally incomplete verdict cannot PASS.
+    schema_errors = _schema_validate(result)
+    if schema_errors:
+        merged = sorted(set(result["blocking_failures"]) | set(schema_errors))
+        result["blocking_failures"] = merged
+        result["verdict"] = "FAIL"
+
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2, sort_keys=True))

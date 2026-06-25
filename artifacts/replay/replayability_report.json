@@ -1,0 +1,33 @@
+{
+  "artifact_hashes_match": true,
+  "failures": [],
+  "gate": "openai-2026-replayability",
+  "per_seed": [
+    {
+      "artifact_hash": "bcc9ebdcc3cce670b37705ef05209a65a459e9735bfdaf518c1e90010f6d9b34",
+      "p_value": 0.05,
+      "seed": 2026,
+      "verdict_class": "REJECT_NULL"
+    },
+    {
+      "artifact_hash": "bcc9ebdcc3cce670b37705ef05209a65a459e9735bfdaf518c1e90010f6d9b34",
+      "p_value": 0.05,
+      "seed": 7,
+      "verdict_class": "REJECT_NULL"
+    },
+    {
+      "artifact_hash": "bcc9ebdcc3cce670b37705ef05209a65a459e9735bfdaf518c1e90010f6d9b34",
+      "p_value": 0.05,
+      "seed": 1337,
+      "verdict_class": "REJECT_NULL"
+    }
+  ],
+  "seeds": [
+    2026,
+    7,
+    1337
+  ],
+  "subset": "rank_order_surrogate_test/logistic_map",
+  "verdict": "PASS",
+  "verdict_class_stable": true
+}

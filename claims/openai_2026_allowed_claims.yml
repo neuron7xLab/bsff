@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
+#
+# Allowed claims for the OpenAI-2026 Validation Grid.
+#
+# These phrasings are explicitly sanctioned: they describe the grid as an
+# internal OpenAI-grade research-validation target with machine-derived evidence,
+# without asserting any external OpenAI relationship. Every allowed claim that is
+# evidence-bearing must point at a machine-emitted artifact (see `evidence`).
+version: 1
+allowed:
+  - id: grid-name
+    phrase: "OpenAI-2026 Validation Grid"
+    evidence: ".github/workflows/openai-2026-validation-grid.yml"
+  - id: internal-target
+    phrase: "internal OpenAI-grade validation target"
+    evidence: "docs/OPENAI_2026_VALIDATION_GRID.md"
+  - id: research-grade-inspired
+    phrase: "research-grade validation grid inspired by public eval/red-team/safety principles"
+    evidence: "docs/OPENAI_2026_VALIDATION_GRID.md"
+  - id: machine-derived
+    phrase: "machine-derived PASS/FAIL evidence"
+    evidence: "artifacts/final/openai_2026_validation_verdict.json"
+# Evidence-pointer policy: an evidence-bearing claim WITHOUT a resolvable evidence
+# pointer is treated as a forbidden (unsupported) claim by the gate.
+require_evidence_pointer: true

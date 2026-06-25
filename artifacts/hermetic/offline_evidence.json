@@ -1,0 +1,7 @@
+{
+  "detail": "blocked by network guard: offline mode: external connect to ('192.0.2.1', 9) is forbidden",
+  "gate": "openai-2026-hermetic-offline",
+  "method": "in-tree network guard + RFC-5737 TEST-NET probe",
+  "network_denied": true,
+  "probe_address": "192.0.2.1:9"
+}

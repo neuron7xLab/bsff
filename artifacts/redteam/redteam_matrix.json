@@ -1,0 +1,149 @@
+{
+  "categories": [
+    {
+      "category": "malformed_signal",
+      "expected_failure_mode": "ValueError raised",
+      "hash": "1896be9ef51ef63f976645d6828843eedc5ff57380860b5c386218bb0badd651",
+      "input": "2-D (4x4) array passed where a 1-D signal is required",
+      "observed_result": "ValueError raised: signal must contain at least 16 samples",
+      "seed": 2026,
+      "severity": "high",
+      "verdict": "KILLED"
+    },
+    {
+      "category": "poisoned_input",
+      "expected_failure_mode": "ValueError raised (signal must be finite)",
+      "hash": "69f33a5e919a8b4aaa974f9be9c3841d728f2b4f3ae0b22253c396f4e92ad404",
+      "input": "valid signal with NaN and Inf injected at fixed indices",
+      "observed_result": "ValueError raised: signal must be finite; got NaN or Inf",
+      "seed": 2027,
+      "severity": "high",
+      "verdict": "KILLED"
+    },
+    {
+      "category": "adversarial_surrogate",
+      "expected_failure_mode": "null not rejected (no false SURVIVED)",
+      "hash": "a6cb44eae4a7d21b545b5e7face4ee81a11252d2535aa8bbe4d43bcbfc6bc06b",
+      "input": "pure white noise with no nonlinear structure",
+      "observed_result": "rank_order_surrogate_test rejected=False, p_value=0.6500",
+      "seed": 2028,
+      "severity": "critical",
+      "verdict": "KILLED"
+    },
+    {
+      "category": "unstable_statistic",
+      "expected_failure_mode": "exception propagates, no silent verdict",
+      "hash": "e26fd440e65b23aaaa6a2c42a2080aca1ddb81f1e6ab8a72cf742c4edf29dc6c",
+      "input": "statistic callable that raises RuntimeError",
+      "observed_result": "exception propagated (no silent verdict): statistic numerically unstable",
+      "seed": 2029,
+      "severity": "medium",
+      "verdict": "KILLED"
+    },
+    {
+      "category": "forged_evidence",
+      "expected_failure_mode": "recomputed manifest_sha256 mismatch detected",
+      "hash": "5100bb60944208c52495d86a4e0b336f223bd3898d55ec28c699014b617d5bf3",
+      "input": "evidence manifest with verdict flipped but old digest kept",
+      "observed_result": "forged verdict, recomputed manifest digest 5a342667c46b != bound 26ee995f944f: mismatch_detected=True",
+      "seed": 2030,
+      "severity": "critical",
+      "verdict": "KILLED"
+    },
+    {
+      "category": "stale_manifest",
+      "expected_failure_mode": "stale digest detected on recompute",
+      "hash": "cde58bdd080902808f58014a94b279b037e67d7d5527c6c0e8743d4a4d2a487b",
+      "input": "manifest content mutated after the digest was bound",
+      "observed_result": "content mutated after signing; stale digest 1df7c50acb29 != recomputed a89cf92f836a: stale_detected=True",
+      "seed": 2031,
+      "severity": "high",
+      "verdict": "KILLED"
+    },
+    {
+      "category": "missing_provenance",
+      "expected_failure_mode": "validate_verdict_json raises (required property)",
+      "hash": "d2ae32aad97eaab90cf9a64cf89fc335fe22cbfda5071fd881ce07260c895da4",
+      "input": "verdict JSON with the required evidence block omitted",
+      "observed_result": "ValidationError raised: missing evidence rejected",
+      "seed": 2032,
+      "severity": "high",
+      "verdict": "KILLED"
+    },
+    {
+      "category": "contradictory_claim",
+      "expected_failure_mode": "validate_verdict_json raises (enum violation)",
+      "hash": "254c5f762cca958a57119ef62be7cdbea5ae8a9d4f0a9b50e5571aedf75126f3",
+      "input": "verdict JSON with verdict label 'PASS' (outside enum)",
+      "observed_result": "ValidationError raised: out-of-enum verdict rejected",
+      "seed": 2033,
+      "severity": "high",
+      "verdict": "KILLED"
+    },
+    {
+      "category": "nonconverged_null",
+      "expected_failure_mode": "RuntimeError raised on non-convergence",
+      "hash": "4760c597b179b1b763c7cd152e0fd83cab5cc8035dc4d2a71b5975137bf2cb97",
+      "input": "miaaft with max_iter=1, tol=1e-12, fallback='raise'",
+      "observed_result": "RuntimeError raised on non-converged null: MIAAFT did not plateau within 1 iterations at tol=1e-12.",
+      "seed": 2034,
+      "severity": "high",
+      "verdict": "KILLED"
+    },
+    {
+      "category": "edge_case_short_series",
+      "expected_failure_mode": "ValueError raised (too few samples)",
+      "hash": "4538960837acf62089bbff306225b531255bd3b7f51f021b4f04bd1c3874c783",
+      "input": "8-sample series below the 16-sample minimum",
+      "observed_result": "ValueError raised: signal must contain at least 16 samples",
+      "seed": 2035,
+      "severity": "medium",
+      "verdict": "KILLED"
+    },
+    {
+      "category": "pathological_constant_series",
+      "expected_failure_mode": "verdict is not SURVIVED",
+      "hash": "d5b44c3173344d4da648e1700dd32da8142df115fb49abeffe2e3bd67bfb653a",
+      "input": "constant series (zero variance) through the claim pipeline",
+      "observed_result": "pipeline verdict=REFUTED on constant series",
+      "seed": 2036,
+      "severity": "high",
+      "verdict": "KILLED"
+    },
+    {
+      "category": "randomized_label_leakage",
+      "expected_failure_mode": "fail-closed verdict REFUTED, surrogate short-circuited",
+      "hash": "7a59046b62b1f811c836d15ecf620116989d1c73fb373b556d2da587480418b6",
+      "input": "pipeline run with a flagged label-leakage path",
+      "observed_result": "verdict=REFUTED, leakage_short_circuited=True",
+      "seed": 2037,
+      "severity": "critical",
+      "verdict": "KILLED"
+    },
+    {
+      "category": "benchmark_gaming",
+      "expected_failure_mode": "gaming detected on independent recompute",
+      "hash": "f551195fc7834a45365abbff03e07460a3234853b0cb312a66f336cbf925143f",
+      "input": "corpus matrix claiming passed==total while a result is a survivor",
+      "observed_result": "claimed passed=14, recomputed=0/14, survivor_present=True: gaming_detected=True",
+      "seed": 2038,
+      "severity": "critical",
+      "verdict": "KILLED"
+    },
+    {
+      "category": "cli_misuse",
+      "expected_failure_mode": "nonzero exit code",
+      "hash": "9322f075fc5d02a9cbe97f0686118c8dc0aac4f1b36d3ced946b4993d5f0bbab",
+      "input": "invalid CLI subcommand '__rt_bogus__'",
+      "observed_result": "invalid CLI subcommand exited with code 2",
+      "seed": 2039,
+      "severity": "low",
+      "verdict": "KILLED"
+    }
+  ],
+  "categories_killed": 14,
+  "categories_total": 14,
+  "gate": "openai-2026-red-team-corpus",
+  "seed_root": 2026,
+  "verdict": "PASS"
+}

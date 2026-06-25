@@ -1,14 +1,109 @@
 {
   "api_contract": "PASS",
+  "artifact_digests": {
+    "benchmark_baseline": "fe16cc1c9f56517952b97c80571b7528b9041c1e569a192d3c74719541bc7b04",
+    "corpus_matrix": "5037c79b8f4afa8a81128776a8ded08103296f3e058178f4b09e46aa9961dfdb",
+    "mutation_kill_report": "6348140af685e123b36f2d943bb6dac4f87b750e44fbdc8d2fa3eb1134bbe2ef",
+    "offline_evidence": "a348e4226341f0556f22a36b4b427270b0cd458caf3c1c690ef5e2a9c120bec4",
+    "power_profile": "1223d7d1a1f2ad49e55a4cf999d2612ca1ca922625a74f42f18af2d4998fd6fb",
+    "redteam_matrix": "2b39807b9bba59f5cc6156138aba468185dbe241ce2fbaeaed7e0d390a65200e",
+    "replayability_report": "9cfa97a0dce5911549381a086884c1645dd0905c4c4be04059908fca8e14f9a0"
+  },
+  "artifact_digests_present": true,
   "blocking_failures": [],
   "bus_factor_reduction": "PASS",
+  "claim_audit": {
+    "forbidden_violations": [],
+    "verdict": "PASS"
+  },
+  "claim_integrity": "PASS",
+  "dataset_manifest": {
+    "datasets": []
+  },
   "degradation": "PASS",
+  "dependency_lock_hashes": {
+    "ci.lock": "309a8288b2afce85e73356aa1d70b0f89bc56b2f0241f8a85f081d00c76ac19a",
+    "dev.lock": "258299ce1bb58e7a8f0caee040d8f967666e586cda7f8a738ec84a125c416ed1",
+    "fuzz.lock": "0516e68c760422e400414e5696ab94990867ddda5e786f5793e7ef5bc7f06436",
+    "security.lock": "ce57c883ddeff0bb267998f253e9762ae2ead7d33d7efd1de54bec681b111459"
+  },
+  "evidence_complete": true,
   "fuzz_property_chaos": "PASS",
+  "gate_results": {
+    "01-lock-integrity": "PASS",
+    "02-hermetic-offline-tests": "PASS",
+    "03-adversarial-oracles": "PASS",
+    "04-property-tests": "PASS",
+    "05-fuzz-smoke": "PASS",
+    "06-mutation-kill": "PASS",
+    "07-wheel-runtime": "PASS",
+    "08-sbom-provenance": "PASS",
+    "09-security": "PASS",
+    "10-statistical-power": "PASS",
+    "11-degradation": "PASS",
+    "12-api-cli-contract": "PASS",
+    "14-replayability": "PASS",
+    "15-meta-validation": "PASS",
+    "16-red-team-corpus": "PASS",
+    "17-claim-integrity": "PASS",
+    "18-artifact-digest-binding": "PASS"
+  },
+  "grid_version": "2026.1",
+  "head_sha": "01cf1a25dd36929871a3aa45de82957dc0b7a146",
   "hermetic_ci": "PASS",
+  "mutation_report": {
+    "mutants_total": 9,
+    "mutation_score": 1.0,
+    "survivors": [],
+    "verdict": "PASS"
+  },
   "mutation_score": 1.0,
+  "network_denied": true,
+  "power_profile": {
+    "measured": {
+      "false_negative_estimate": 0.0,
+      "minimum_detectable_effect": 0.6,
+      "minimum_detectable_effect_curve": {
+        "0.2": 0.1,
+        "0.4": 0.5,
+        "0.6": 1.0,
+        "0.8": 1.0,
+        "1.0": 1.0
+      },
+      "n_null": 40,
+      "n_positive": 30,
+      "null_false_positive_rate": 0.025,
+      "positive_control_detection": 1.0,
+      "seed_stable": true,
+      "surrogate_convergence_rate": 1.0
+    },
+    "thresholds": {
+      "null_false_positive_rate_max": 0.05,
+      "positive_control_detection_min": 0.8,
+      "seed_stability_required": true,
+      "surrogate_convergence_min": 0.95
+    },
+    "verdict": "PASS"
+  },
   "project": "bsff",
+  "python_version": "3.12.3",
+  "red_team_summary": {
+    "categories_killed": 14,
+    "categories_total": 14,
+    "verdict": "PASS"
+  },
+  "replayable": true,
+  "run_context": "local",
   "sbom": "PASS",
+  "seed_manifest": {
+    "seeds": [
+      2026,
+      7,
+      1337
+    ]
+  },
   "signed_provenance": "PASS",
   "statistical_power": "PASS",
-  "verdict": "PASS"
+  "verdict": "PASS",
+  "workflow_name": "OpenAI-2026 Validation Grid"
 }
