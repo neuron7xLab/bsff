@@ -148,3 +148,10 @@ BSFF does not:
 - hide caveats behind pleasant prose.
 
 BSFF is a falsification control plane. Its job is to break weak claims cheaply, reproducibly, and early.
+
+## Full repository decomposition
+
+For a per-subsystem map of specification + purpose for everything in the repository
+(`src/bsff`, `tools`, `examples`, `tests`, `docs`, workflows, artifacts) with an honest
+**accuracy / clarity / logic / factuality / aesthetics / simplicity / elegance** scorecard, see
+[`docs/REPOSITORY_DECOMPOSITION.md`](REPOSITORY_DECOMPOSITION.md).
