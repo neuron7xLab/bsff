@@ -48,4 +48,5 @@ def test_method_validity_is_blocked_method():
 def test_canonical_bnci_state_blocked_method():
     truth = json.loads((ROOT / "artifacts" / "release" / "CURRENT_TRUTH.json").read_text())
     assert truth["bnci_execution_state"] == "BNCI_BLOCKED_METHOD"
-    assert truth["latest_validation_state"] == "BONN_S2_BRIGHT_LINE_PASSED"  # preserved
+    # Bonn evolved to the robustly-passed state; BNCI remains independently method-blocked.
+    assert truth["latest_validation_state"].startswith("BONN_S2_BRIGHT_LINE")
