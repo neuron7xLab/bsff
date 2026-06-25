@@ -309,7 +309,7 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: python -m pip install --require-hashes -r requirements/ci.lock
       - run: python -m pip install --no-deps -e .
-      - run: python tools/validate_openai_2026_claims.py
+      - run: python tools/validate_openai_2026_claims.py --check
       - run: python tools/validate_openai_2026_eval_contract.py --check
       - run: python -m pytest tests/test_openai_2026_claims.py tests/test_openai_2026_verdict_schema.py tests/test_openai_2026_eval_contract.py -v --tb=short --disable-network
 
@@ -387,6 +387,7 @@ jobs:
       - run: python tools/run_replayability_gate.py
       - run: python tools/generate_redteam_matrix.py
       - run: python tools/statistical_power_profile.py --output artifacts/statistics/power_profile.json
+      - run: python tools/validate_openai_2026_claims.py --check
       - run: python tools/validate_openai_2026_eval_contract.py --check
       - run: python tools/generate_sbom.py --outdir artifacts/sbom
       - run: python tools/final_validation_verdict.py --output artifacts/final/openai_2026_validation_verdict.json

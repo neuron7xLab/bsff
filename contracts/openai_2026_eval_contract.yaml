@@ -124,14 +124,17 @@ evals:
   - id: claim_safety
     risk_class: claim_safety
     task_definition: "Decide whether any forbidden OpenAI-relationship claim is present."
-    test_inputs: "All public markdown surfaces (claim-integrity gate)."
+    test_inputs: "All tracked public text surfaces (claim-integrity gate)."
     ground_truth_or_expected_behavior: "claim_integrity == PASS (no forbidden/unsupported claims)."
     grader:
-      artifact: artifacts/final/openai_2026_validation_verdict.json
-      metric: claim_integrity
+      artifact: artifacts/claim/claim_integrity_report.json
+      metric: verdict
       op: eq
       value: PASS
-    threshold: "claim_integrity == PASS"
+    threshold: "fresh claim-integrity report verdict == PASS"
     failure_mode: "false_claim: an unverifiable OpenAI-brand claim slips through"
-    evidence_artifact: artifacts/final/openai_2026_validation_verdict.json
-    result_analysis: "The grid name is allowed; certified/validated/approved-by-OpenAI claims are not."
+    evidence_artifact: artifacts/claim/claim_integrity_report.json
+    result_analysis: >-
+      Grades the FRESHLY emitted claim report (not the committed roll-up verdict,
+      which is forgeable — audit fix #7). The grid name is allowed; certified/
+      validated/approved-by-OpenAI claims are not.

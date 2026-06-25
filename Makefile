@@ -60,7 +60,7 @@ verify:
 	python tools/run_replayability_gate.py
 	python tools/generate_redteam_matrix.py
 	python tools/validate_redteam_matrix.py
-	python tools/validate_openai_2026_claims.py
+	python tools/validate_openai_2026_claims.py --check
 	python tools/validate_openai_2026_eval_contract.py --check
 	python -m pytest tests/test_openai_2026_eval_contract.py --tb=short
 	python tools/final_validation_verdict.py

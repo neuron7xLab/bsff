@@ -33,9 +33,9 @@
     {
       "category": "unstable_statistic",
       "expected_failure_mode": "exception propagates, no silent verdict",
-      "hash": "e26fd440e65b23aaaa6a2c42a2080aca1ddb81f1e6ab8a72cf742c4edf29dc6c",
+      "hash": "f5543ae5d58dbf7b9ad2b263cc7eeb8cbc4ba0f2ad57d95f32fd828f8fb2db08",
       "input": "statistic callable that raises RuntimeError",
-      "observed_result": "exception propagated (no silent verdict): statistic numerically unstable",
+      "observed_result": "exception-raising and NaN-returning statistics both fail closed: statistic returned a non-finite value on the original signal: nan",
       "seed": 2029,
       "severity": "medium",
       "verdict": "KILLED"

@@ -32,14 +32,14 @@
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
-          "referenceLocator": "pkg:pypi/numpy@2.4.6",
+          "referenceLocator": "pkg:pypi/numpy@2.4.3",
           "referenceType": "purl"
         }
       ],
       "filesAnalyzed": false,
       "licenseConcluded": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
       "name": "numpy",
-      "versionInfo": "2.4.6"
+      "versionInfo": "2.4.3"
     },
     {
       "SPDXID": "SPDXRef-Package-packaging",
@@ -62,14 +62,14 @@
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
-          "referenceLocator": "pkg:pypi/pandas@3.0.3",
+          "referenceLocator": "pkg:pypi/pandas@2.3.3",
           "referenceType": "purl"
         }
       ],
       "filesAnalyzed": false,
       "licenseConcluded": "BSD License",
       "name": "pandas",
-      "versionInfo": "3.0.3"
+      "versionInfo": "2.3.3"
     },
     {
       "SPDXID": "SPDXRef-Package-patsy",
@@ -92,14 +92,29 @@
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
-          "referenceLocator": "pkg:pypi/python-dateutil@2.9.0.post0",
+          "referenceLocator": "pkg:pypi/python-dateutil@2.8.2",
           "referenceType": "purl"
         }
       ],
       "filesAnalyzed": false,
       "licenseConcluded": "BSD License",
       "name": "python-dateutil",
-      "versionInfo": "2.9.0.post0"
+      "versionInfo": "2.8.2"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-pytz",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:pypi/pytz@2024.1",
+          "referenceType": "purl"
+        }
+      ],
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT License",
+      "name": "pytz",
+      "versionInfo": "2024.1"
     },
     {
       "SPDXID": "SPDXRef-Package-scipy",
@@ -107,29 +122,14 @@
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
-          "referenceLocator": "pkg:pypi/scipy@1.18.0",
+          "referenceLocator": "pkg:pypi/scipy@1.17.1",
           "referenceType": "purl"
         }
       ],
       "filesAnalyzed": false,
       "licenseConcluded": "BSD License",
       "name": "scipy",
-      "versionInfo": "1.18.0"
-    },
-    {
-      "SPDXID": "SPDXRef-Package-six",
-      "downloadLocation": "NOASSERTION",
-      "externalRefs": [
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceLocator": "pkg:pypi/six@1.17.0",
-          "referenceType": "purl"
-        }
-      ],
-      "filesAnalyzed": false,
-      "licenseConcluded": "MIT License",
-      "name": "six",
-      "versionInfo": "1.17.0"
+      "versionInfo": "1.17.1"
     },
     {
       "SPDXID": "SPDXRef-Package-statsmodels",
@@ -145,6 +145,21 @@
       "licenseConcluded": "BSD License",
       "name": "statsmodels",
       "versionInfo": "0.14.6"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-tzdata",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:pypi/tzdata@2025.3",
+          "referenceType": "purl"
+        }
+      ],
+      "filesAnalyzed": false,
+      "licenseConcluded": "Apache-2.0",
+      "name": "tzdata",
+      "versionInfo": "2025.3"
     }
   ],
   "relationships": [
@@ -179,17 +194,22 @@
       "spdxElementId": "SPDXRef-Package-bsff"
     },
     {
+      "relatedSpdxElement": "SPDXRef-Package-pytz",
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-Package-bsff"
+    },
+    {
       "relatedSpdxElement": "SPDXRef-Package-scipy",
       "relationshipType": "DEPENDS_ON",
       "spdxElementId": "SPDXRef-Package-bsff"
     },
     {
-      "relatedSpdxElement": "SPDXRef-Package-six",
+      "relatedSpdxElement": "SPDXRef-Package-statsmodels",
       "relationshipType": "DEPENDS_ON",
       "spdxElementId": "SPDXRef-Package-bsff"
     },
     {
-      "relatedSpdxElement": "SPDXRef-Package-statsmodels",
+      "relatedSpdxElement": "SPDXRef-Package-tzdata",
       "relationshipType": "DEPENDS_ON",
       "spdxElementId": "SPDXRef-Package-bsff"
     }

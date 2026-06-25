@@ -174,6 +174,24 @@
           "mutation_score": { "const": 1.0 }
         }
       }
+    },
+    {
+      "description": "PASS forbids any nested sub-summary from self-reporting FAIL (audit fix #6): no top-level green over a nested red.",
+      "if": { "properties": { "verdict": { "const": "PASS" } } },
+      "then": {
+        "properties": {
+          "gate_results": { "additionalProperties": { "const": "PASS" } },
+          "mutation_report": { "properties": { "verdict": { "const": "PASS" } } },
+          "red_team_summary": { "properties": { "verdict": { "const": "PASS" } } },
+          "power_profile": { "properties": { "verdict": { "const": "PASS" } } },
+          "claim_audit": {
+            "properties": {
+              "verdict": { "const": "PASS" },
+              "forbidden_violations": { "maxItems": 0 }
+            }
+          }
+        }
+      }
     }
   ]
 }
