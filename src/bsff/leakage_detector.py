@@ -82,3 +82,22 @@ def detect_feature_selection_leakage(
         "alpha": float(alpha),
         "n_permutations": int(n_permutations),
     }
+
+
+def any_leakage_flagged(leakage_flags: dict | None) -> bool:
+    """Fail-closed reduction of a leakage_flags map to a single boolean.
+
+    A leak short-circuits surrogate testing, so the consumer side must never
+    silently ignore an entry it does not understand. The recognised record is a
+    ``{"flagged": bool, ...}`` dict (every detector above emits exactly that);
+    anything else that is present and truthy — a bare ``True``, a non-dict value,
+    or a dict missing the ``flagged`` key — is treated AS a leak rather than
+    skipped. Only an explicit ``{"flagged": False}`` or a falsy/empty entry clears.
+    """
+    for value in (leakage_flags or {}).values():
+        if isinstance(value, dict):
+            if "flagged" not in value or bool(value["flagged"]):
+                return True
+        elif value:
+            return True
+    return False

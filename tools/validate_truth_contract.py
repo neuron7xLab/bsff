@@ -31,15 +31,10 @@ REQUIRED_LIMIT_DISCLOSURES = [
     "not regulatory validation",
     "does **not** prove BCI claims",
 ]
-# Explicitly enumerated negated/non-goal uses of an otherwise-forbidden lexeme.
-# Every legitimate occurrence is listed and reviewable; any NEW affirmative use
-# (e.g. "BSFF proves BCI claims") that is not on this list trips the gate.
-# Truth-defining surfaces (the contract doc, validation tiers) necessarily quote
-# the forbidden phrases to forbid them; those quotations are allow-listed here.
-ALLOWED_NEGATED_PHRASES = [
-    "prove BCI claims true",  # docs/ARCHITECTURE.md "Non-goals: BSFF does not: ..."
-    "does not prove BCI claims",  # STATUS.md plain-text limitation disclosure
-]
+# A forbidden lexeme is legitimate only when negated (a non-goal disclosure, e.g.
+# docs/ARCHITECTURE.md "BSFF does not: ... prove BCI claims true"). That exemption
+# is enforced by adjacency in find_forbidden_claims (see `_is_negated`), not by a
+# static allow-list, so an affirmative reuse of the same words cannot inherit it.
 
 # Every public claim surface scanned by the contract. Declared so the truth
 # surface is itself auditable (see docs/TRUTH_SURFACE.md). Files that define the
@@ -66,21 +61,37 @@ CONTRACT_DEFINING_FILES = {
 }
 
 
+_NEGATION_TOKENS = ("not", "never", "n't", "without", "cannot", "no ")
+
+
+def _is_negated(corpus: str, start: int, window: int = 48) -> bool:
+    """True if a negation token sits just before position ``start``.
+
+    The exemption is for *negated* non-goal phrasings ("BSFF does not prove BCI
+    claims", "does not: ... prove BCI claims true"), NOT the affirmative form.
+    Anchoring to an adjacent negation — rather than globally stripping the lexeme
+    everywhere it occurs — stops an affirmative reuse ("we prove BCI claims true")
+    from inheriting the exemption merely because it shares the words.
+    """
+    return any(tok in corpus[max(0, start - window) : start].lower() for tok in _NEGATION_TOKENS)
+
+
 def find_forbidden_claims(corpus: str) -> list[str]:
     """Return forbidden affirmative claims present in ``corpus``.
 
-    Negated disclosures and explicitly enumerated non-goal phrasings are stripped
-    first so a legitimate "does not prove BCI claims" sentence is not mistaken for
-    the affirmative "proves BCI claims"; matching is case-insensitive so
-    capitalised patterns ("TISEAN validated", "proves BCI claims") actually
-    enforce instead of silently never firing against a lower-cased corpus.
+    A forbidden pattern is reported unless EVERY occurrence is negated (a negation
+    token immediately precedes it), so a legitimate "does **not** prove BCI claims"
+    disclosure is exempt while an affirmative "we prove BCI claims true" still trips
+    the gate. Matching is case-insensitive so capitalised patterns ("TISEAN
+    validated", "proves BCI claims") actually enforce instead of silently never
+    firing against a lower-cased corpus.
     """
-    scan = corpus.lower()
-    for phrase in (*REQUIRED_LIMIT_DISCLOSURES, *ALLOWED_NEGATED_PHRASES):
-        scan = scan.replace(phrase.lower(), " ")
-    return [
-        claim for claim in FORBIDDEN_UNQUALIFIED_CLAIMS if re.search(claim, scan, re.IGNORECASE)
-    ]
+    found: list[str] = []
+    for claim in FORBIDDEN_UNQUALIFIED_CLAIMS:
+        matches = list(re.finditer(claim, corpus, re.IGNORECASE))
+        if matches and not all(_is_negated(corpus, m.start()) for m in matches):
+            found.append(claim)
+    return found
 
 
 def build_corpus(root: Path = ROOT) -> str:

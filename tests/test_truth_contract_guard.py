@@ -33,6 +33,16 @@ def test_negated_disclosures_are_not_false_positives():
     assert find_forbidden_claims("BSFF does not:\n- prove BCI claims true,") == []
 
 
+def test_affirmative_reuse_of_negated_lexeme_is_caught():
+    # Regression: the exemption was a global string-strip of "prove BCI claims
+    # true", so an AFFIRMATIVE reuse inherited it and slipped through. The
+    # exemption must be anchored to an adjacent negation.
+    assert find_forbidden_claims("We prove BCI claims true for all subjects.")
+    assert find_forbidden_claims("BSFF proves BCI claims and EEG claims.")
+    # The genuinely negated non-goal in the same paragraph still must not fire.
+    assert find_forbidden_claims("BSFF does not prove BCI claims; it tests them.") == []
+
+
 def test_repo_corpus_is_clean():
     # Use the validator's canonical corpus so test and tool cannot drift; the
     # contract-defining docs (which quote the forbidden phrases to forbid them)
