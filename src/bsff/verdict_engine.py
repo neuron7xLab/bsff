@@ -2,6 +2,8 @@
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
 from __future__ import annotations
 
+import math
+
 from .bayesian import jzs_bayes_factor
 from .schemas import ClaimSpec, VerdictJSON
 from .stationarity import check_stationarity
@@ -97,9 +99,10 @@ def evaluate_claim(
             # BF01 > 3 is explicit evidence for the null; otherwise the correct
             # verdict is insufficient evidence, not fake certainty wearing a lab coat.
             verdict = "REFUTED" if float(bf["BF01"]) > 3.0 else "UNSUPPORTED"
-        elif float(bf["BF10"]) < bayesian_corroboration_min:
+        elif not math.isfinite(float(bf["BF10"])) or float(bf["BF10"]) < bayesian_corroboration_min:
             # Conjunction gate: a frequentist rejection that is NOT corroborated by
-            # an effect-size Bayes factor is demoted from SURVIVED to UNSUPPORTED.
+            # an effect-size Bayes factor (or whose Bayes factor is non-finite, which
+            # cannot corroborate anything) is demoted from SURVIVED to UNSUPPORTED.
             # This is the rejected-path twin of the BF01 rule above and exists
             # because the rank-order p-value is anti-conservative for strongly
             # autocorrelated linear-Gaussian nulls (finite-N IAAFT bias): a
