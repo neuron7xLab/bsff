@@ -62,6 +62,7 @@ _DIGEST_ARTIFACTS = {
     "replayability_report": A / "replay" / "replayability_report.json",
     "offline_evidence": A / "hermetic" / "offline_evidence.json",
     "eval_contract_report": A / "eval" / "eval_contract_report.json",
+    "claim_integrity_report": A / "claim" / "claim_integrity_report.json",
 }
 
 
@@ -247,18 +248,41 @@ def _red_team() -> tuple[dict, list[str]]:
 
 
 def _replayability() -> tuple[bool, list[int], list[str]]:
-    """Read the replayability report; verdict class must be seed-stable across >=3 seeds."""
-    report = _read_json(A / "replay" / "replayability_report.json")
-    if not report:
-        return False, [], ["replayability report missing"]
+    """RECOMPUTE replayability — never trust the committed report's self-declared flags.
+
+    Audit fix (BYPASS-1): the prior version read verdict_class_stable /
+    artifact_hashes_match / verdict straight from the file, so a forged report whose
+    per_seed array diverged could still claim PASS. We now re-run the deterministic
+    (no-network) gate live and derive stability from the freshly computed per_seed
+    results; the committed report is provenance only.
+    """
+    spec = importlib.util.spec_from_file_location(
+        "run_replayability_gate", ROOT / "tools" / "run_replayability_gate.py"
+    )
+    if spec is None or spec.loader is None:
+        return False, [], ["replayability gate unavailable"]
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = mod
+    try:
+        spec.loader.exec_module(mod)
+        report = mod.derive()
+    except Exception as exc:  # a gate that cannot run is fail-closed
+        return False, [], [f"replayability recompute failed: {exc!r}"]
     fails: list[str] = []
     seeds = [int(s) for s in report.get("seeds", []) if isinstance(s, int)]
+    per_seed = report.get("per_seed", [])
+    classes = {s.get("verdict_class") for s in per_seed}
     if len(seeds) < 3:
         fails.append("fewer than 3 seed sets")
-    if not report.get("verdict_class_stable", False):
-        fails.append("verdict class not seed-stable")
+    if len(classes) != 1:
+        fails.append(f"verdict class diverges across seeds: {sorted(classes)}")
     if not report.get("artifact_hashes_match", False):
         fails.append("replay artifact hashes diverge")
+    # Cross-check the committed report cannot lie undetected: its own flags must
+    # agree with the freshly recomputed truth.
+    committed = _read_json(A / "replay" / "replayability_report.json") or {}
+    if committed and committed.get("verdict") != report.get("verdict"):
+        fails.append("committed replay report disagrees with recompute")
     replayable = report.get("verdict") == "PASS" and not fails
     return replayable, seeds, fails
 
@@ -266,7 +290,10 @@ def _replayability() -> tuple[bool, list[int], list[str]]:
 def _claim_integrity() -> tuple[dict, list[str]]:
     """Run the OpenAI-2026 claim gate; forbidden/unsupported claims block PASS."""
     proc = subprocess.run(
-        [sys.executable, "tools/validate_openai_2026_claims.py", "--json"],
+        # --check writes artifacts/claim/claim_integrity_report.json (the FRESH
+        # report the eval contract grades, so claim_safety never trusts the
+        # forgeable committed roll-up verdict — audit fix #7).
+        [sys.executable, "tools/validate_openai_2026_claims.py", "--json", "--check"],
         cwd=ROOT,
         capture_output=True,
         text=True,
@@ -315,13 +342,37 @@ def _eval_contract() -> tuple[dict, list[str]]:
 
 
 def _offline_evidence() -> tuple[bool, list[str]]:
-    """The correctness suite must have run with the network denied."""
-    report = _read_json(A / "hermetic" / "offline_evidence.json")
-    if not report:
-        return False, ["offline evidence missing"]
-    if not report.get("network_denied", False):
-        return False, ["network not denied"]
-    return True, []
+    """RE-PROBE network denial live — never trust the committed boolean.
+
+    Audit fix (BYPASS-2): the prior version returned True on the file's
+    self-asserted network_denied flag, which is forgeable. We now install the
+    in-tree network guard and confirm it actually blocks an outbound connect to an
+    RFC-5737 TEST-NET address (no packet leaves the host).
+    """
+    import socket
+
+    spec = importlib.util.spec_from_file_location(
+        "bsff_network_guard", ROOT / "tools" / "network_guard.py"
+    )
+    if spec is None or spec.loader is None:
+        return False, ["network guard unavailable"]
+    guard = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(guard)
+        guard.install()
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                sock.settimeout(0.1)
+                sock.connect(("192.0.2.1", 9))
+            return False, ["network not denied: outbound connect succeeded"]
+        except guard.NetworkAccessError:
+            return True, []
+        except OSError as exc:
+            return False, [f"network denial unproven (no guard interception): {exc!r}"]
+        finally:
+            guard.uninstall()
+    except Exception as exc:
+        return False, [f"offline re-probe failed: {exc!r}"]
 
 
 # --------------------------------------------------------------------------- #
@@ -525,6 +576,25 @@ def _schema_validate(result: dict) -> list[str]:
     return [f"schema: {e.message}" for e in validator.iter_errors(result)]
 
 
+def _consistency_errors(result: dict) -> list[str]:
+    """Cross-field integer equalities JSON Schema cannot express (audit fix #6).
+
+    A PASS verdict must not carry a nested count mismatch (e.g. red-team
+    categories_killed < categories_total, or eval_contract evals_passed <
+    evals_total) even if each scalar individually validates.
+    """
+    if result.get("verdict") != "PASS":
+        return []
+    errs: list[str] = []
+    rt = result.get("red_team_summary", {})
+    if rt.get("categories_killed") != rt.get("categories_total"):
+        errs.append("consistency: red_team categories_killed != categories_total under PASS")
+    ec = result.get("eval_contract", {})
+    if ec and ec.get("evals_passed") != ec.get("evals_total"):
+        errs.append("consistency: eval_contract evals_passed != evals_total under PASS")
+    return errs
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -533,8 +603,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     result = derive()
 
-    # Fail-closed schema enforcement: a structurally incomplete verdict cannot PASS.
-    schema_errors = _schema_validate(result)
+    # Fail-closed schema + cross-field enforcement: a structurally incomplete or
+    # internally inconsistent verdict cannot PASS.
+    schema_errors = _schema_validate(result) + _consistency_errors(result)
     if schema_errors:
         merged = sorted(set(result["blocking_failures"]) | set(schema_errors))
         result["blocking_failures"] = merged

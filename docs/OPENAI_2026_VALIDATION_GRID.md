@@ -183,3 +183,16 @@ ending on `tools/final_validation_verdict.py`. See the Makefile targets `lock`,
 
 The schema is `schemas/openai_2026_verdict.schema.json`. The reviewer packet
 lives under [`docs/reviewer_packet/`](reviewer_packet/).
+
+## Sanctioned phrasings (claim firewall)
+
+These are the only sanctioned ways to describe the grid's standing. They are an
+internal OpenAI-grade research-validation target — not an OpenAI certification,
+endorsement, or affiliation. The claim-integrity gate
+(`tools/validate_openai_2026_claims.py`) treats these as allowed and rejects any
+external-OpenAI-relationship assertion:
+
+- OpenAI-2026 Validation Grid
+- internal OpenAI-grade research-validation target
+- research-grade validation grid inspired by public eval/red-team/safety principles
+- machine-derived PASS/FAIL evidence

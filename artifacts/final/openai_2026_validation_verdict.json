@@ -2,12 +2,13 @@
   "api_contract": "PASS",
   "artifact_digests": {
     "benchmark_baseline": "fe16cc1c9f56517952b97c80571b7528b9041c1e569a192d3c74719541bc7b04",
+    "claim_integrity_report": "b0cab5cb7fb6139bdb521c390b10ef1929ef73238c055240d5fb2432d7788cc9",
     "corpus_matrix": "5037c79b8f4afa8a81128776a8ded08103296f3e058178f4b09e46aa9961dfdb",
-    "eval_contract_report": "dd38b17c4faa6b643ea5a4efe23626f3a3ad3c1a7574279aefec599d3cf7575d",
+    "eval_contract_report": "5aa4da978421a73f21d487b95fff9096642464785277e9d8daad9ad17731c404",
     "mutation_kill_report": "6348140af685e123b36f2d943bb6dac4f87b750e44fbdc8d2fa3eb1134bbe2ef",
     "offline_evidence": "a348e4226341f0556f22a36b4b427270b0cd458caf3c1c690ef5e2a9c120bec4",
     "power_profile": "1223d7d1a1f2ad49e55a4cf999d2612ca1ca922625a74f42f18af2d4998fd6fb",
-    "redteam_matrix": "2b39807b9bba59f5cc6156138aba468185dbe241ce2fbaeaed7e0d390a65200e",
+    "redteam_matrix": "f86d5bb6536c0fab765484a0fbc5712f9410b7f1705a35c1912f0a604dbbafa1",
     "replayability_report": "9cfa97a0dce5911549381a086884c1645dd0905c4c4be04059908fca8e14f9a0"
   },
   "artifact_digests_present": true,
@@ -56,7 +57,7 @@
     "eval-contract": "PASS"
   },
   "grid_version": "2026.1",
-  "head_sha": "3b58bb71ad084aa94906fc196eb084702bda4e82",
+  "head_sha": "1d4d960f9948ccf674d9c61490e90a03348cd6f7",
   "hermetic_ci": "PASS",
   "mutation_report": {
     "mutants_total": 9,

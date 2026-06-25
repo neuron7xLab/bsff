@@ -245,6 +245,13 @@ def rank_order_surrogate_test(
     rng = np.random.default_rng(seed)
     x = np.asarray(signal, dtype=float)
     original_stat = float(statistic(x))
+    # Fail-closed on a non-finite test statistic: a statistic that returns NaN/inf
+    # would otherwise yield a silent (and meaningless) rejection decision. Adversarial
+    # red-team finding 2026-06: surface it as an error, never a false SURVIVED.
+    if not np.isfinite(original_stat):
+        raise ValueError(
+            f"statistic returned a non-finite value on the original signal: {original_stat!r}"
+        )
     surrogate_stats: list[float] = []
     n_nonconverged = 0
     worst_spectrum_error = 0.0
@@ -271,6 +278,12 @@ def rank_order_surrogate_test(
         worst_covariance_rmsd = max(worst_covariance_rmsd, covariance_rmsd)
         surrogate_stats.append(float(statistic(np.asarray(s, dtype=float))))
     surrogate_stats_arr = np.array(surrogate_stats, dtype=float)
+    if not np.all(np.isfinite(surrogate_stats_arr)):
+        n_bad = int(np.sum(~np.isfinite(surrogate_stats_arr)))
+        raise ValueError(
+            f"statistic returned a non-finite value on {n_bad} surrogate(s); "
+            "refusing to derive a rejection decision from non-finite statistics"
+        )
     exceed = int(np.sum(surrogate_stats_arr >= original_stat))
     p_value = (exceed + 1) / (n_surrogates + 1)
     rejected = bool(p_value <= alpha)

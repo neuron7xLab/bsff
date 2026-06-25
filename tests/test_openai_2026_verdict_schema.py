@@ -144,6 +144,27 @@ def test_workflow_name_is_frozen(validator: jsonschema.Draft202012Validator) -> 
     assert list(validator.iter_errors(bad))
 
 
+@pytest.mark.parametrize(
+    "mutate",
+    [
+        lambda v: v["gate_results"].update({"06-mutation-kill": "FAIL"}),
+        lambda v: v["mutation_report"].update({"verdict": "FAIL"}),
+        lambda v: v["red_team_summary"].update({"verdict": "FAIL"}),
+        lambda v: v["power_profile"].update({"verdict": "FAIL"}),
+        lambda v: v["claim_audit"].update({"verdict": "FAIL"}),
+        lambda v: v["claim_audit"].update({"forbidden_violations": [{"id": "x"}]}),
+    ],
+)
+def test_pass_forbids_nested_fail_summaries(
+    validator: jsonschema.Draft202012Validator, mutate
+) -> None:
+    """Audit fix #6: a top-level PASS over a nested FAIL summary must be rejected."""
+    bad = _pass_skeleton()
+    bad.setdefault("gate_results", {"01-lock-integrity": "PASS"})
+    mutate(bad)
+    assert list(validator.iter_errors(bad)), "nested FAIL under a PASS verdict must be rejected"
+
+
 def test_committed_verdict_matches_schema(validator: jsonschema.Draft202012Validator) -> None:
     """The committed verdict artifact must itself be schema-valid (it is committed)."""
     path = ROOT / "artifacts" / "final" / "openai_2026_validation_verdict.json"

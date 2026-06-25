@@ -67,6 +67,14 @@ def validate_verdict_json(payload: dict[str, Any]) -> None:
     ... })
     """
     jsonschema.validate(payload, verdict_json_schema())
+    # JSON Schema's "number" type accepts NaN/inf in-process; a non-finite numeric
+    # field is meaningless evidence. Fail closed (adversarial red-team finding 2026-06).
+    import math
+
+    for field in ("p_value", "original_statistic", "surrogate_min", "surrogate_max"):
+        value = payload.get(field)
+        if isinstance(value, float) and not math.isfinite(value):
+            raise jsonschema.ValidationError(f"{field} must be finite, got {value!r}")
 
 
 def generate_evidence_manifest(verdict: PipelineVerdict) -> dict[str, Any]:

@@ -136,20 +136,36 @@ def _probe_adversarial_surrogate(seed: int) -> tuple[str, bool]:
 
 
 def _probe_unstable_statistic(seed: int) -> tuple[str, bool]:
-    """A statistic that blows up must propagate, never collapse into a green verdict."""
+    """An unstable statistic must fail closed — whether it RAISES or silently returns NaN.
+
+    The NaN-return path was a documented latent gap (the statistic returned a
+    non-finite value and the test produced a meaningless rejection); it is now
+    hardened to raise, so both sub-attacks must be killed for this category to pass.
+    """
     rng = np.random.default_rng(seed)
     sig = rng.standard_normal(128)
 
     def exploding_statistic(_x: np.ndarray) -> float:
         raise RuntimeError("statistic numerically unstable")
 
+    def nan_statistic(_x: np.ndarray) -> float:
+        return float("nan")
+
     try:
         api.rank_order_surrogate_test(sig, statistic=exploding_statistic, seed=seed)
-    except RuntimeError as exc:
-        return (f"exception propagated (no silent verdict): {exc}", True)
+        return ("unstable statistic was swallowed into a verdict", False)
+    except RuntimeError:
+        pass
     except Exception as exc:
-        return (f"unexpected {type(exc).__name__}: {exc}", False)
-    return ("unstable statistic was swallowed into a verdict", False)
+        return (f"unexpected {type(exc).__name__} on exploding statistic: {exc}", False)
+
+    try:
+        api.rank_order_surrogate_test(sig, statistic=nan_statistic, seed=seed)
+        return ("NaN-returning statistic produced a silent verdict (not killed)", False)
+    except ValueError as exc:
+        return (f"exception-raising and NaN-returning statistics both fail closed: {exc}", True)
+    except Exception as exc:
+        return (f"unexpected {type(exc).__name__} on NaN statistic: {exc}", False)
 
 
 def _probe_forged_evidence(seed: int) -> tuple[str, bool]:

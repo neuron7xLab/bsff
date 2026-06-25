@@ -69,12 +69,12 @@
       "verdict": "PASS"
     },
     {
-      "detail": "claim_integrity='PASS' == 'PASS'? True",
-      "evidence_artifact": "artifacts/final/openai_2026_validation_verdict.json",
+      "detail": "verdict='PASS' == 'PASS'? True",
+      "evidence_artifact": "artifacts/claim/claim_integrity_report.json",
       "failure_mode": "false_claim: an unverifiable OpenAI-brand claim slips through",
       "id": "claim_safety",
       "risk_class": "claim_safety",
-      "threshold": "claim_integrity == PASS",
+      "threshold": "fresh claim-integrity report verdict == PASS",
       "verdict": "PASS"
     }
   ],
