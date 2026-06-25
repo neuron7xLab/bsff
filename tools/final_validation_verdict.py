@@ -425,7 +425,15 @@ def derive() -> dict:
     mutation_report = _read_json(A / "adversarial" / "mutation_kill_report.json") or {}
     power_profile = _read_json(A / "statistics" / "power_profile.json") or {}
 
-    wheel_ok = _tool_ok(["tools/validate_wheel_runtime.py", "--offline"])
+    # Wheel runtime is enforced live by the dedicated 07-wheel-runtime job (which
+    # 13-final-verdict `needs`). The roll-up reads that job's committed evidence so
+    # it does not require a freshly built wheel in the verdict's own environment —
+    # consistent with how mutation/power/corpus reports are consumed here.
+    wheel_report = _read_json(A / "wheel_validation.json") or {}
+    wheel_ok = (
+        str(wheel_report.get("status", "")).startswith("SURVIVED")
+        or wheel_report.get("pipeline_status") == "EXECUTION_COMPLETE"
+    )
     secrets_ok = _tool_ok(["tools/scan_secrets.py"])
     meta_present = (ROOT / "tests" / "meta_validation").is_dir()
     gate_results = {

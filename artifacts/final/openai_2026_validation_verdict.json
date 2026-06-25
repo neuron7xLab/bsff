@@ -56,7 +56,7 @@
     "eval-contract": "PASS"
   },
   "grid_version": "2026.1",
-  "head_sha": "7afa285a9ddef22bcf18ac2b9dbb491715c387c0",
+  "head_sha": "3b58bb71ad084aa94906fc196eb084702bda4e82",
   "hermetic_ci": "PASS",
   "mutation_report": {
     "mutants_total": 9,

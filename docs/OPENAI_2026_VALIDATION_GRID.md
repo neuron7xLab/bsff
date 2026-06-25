@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab -->
+
 # OpenAI-2026 Validation Grid
 
 > **Disclaimer — read first.** The "OpenAI-2026 Validation Grid" is an
