@@ -74,12 +74,25 @@ def modulation_index(
         raise ValueError("n_bins must be >= 4")
     phase = np.angle(hilbert(_bandpass(xa, fs, phase_band)))
     amp = np.abs(hilbert(_bandpass(xa, fs, amp_band)))
+    # No measurable oscillatory power in the amplitude band (e.g. a constant/DC signal
+    # whose band-limited envelope is only filter ringing at the numerical-noise floor)
+    # means the Tort MI is undefined; report zero coupling rather than a spurious value.
+    scale = float(np.abs(xa).max())
+    if scale == 0.0 or float(amp.max()) <= np.sqrt(np.finfo(float).eps) * scale:
+        return 0.0
     edges = np.linspace(-np.pi, np.pi, n_bins + 1)
     idx = np.clip(np.digitize(phase, edges) - 1, 0, n_bins - 1)
     mean_amp = np.array([amp[idx == b].mean() if np.any(idx == b) else 0.0 for b in range(n_bins)])
-    p = mean_amp / (mean_amp.sum() + 1e-12)
-    p = np.clip(p, 1e-12, None)
-    entropy = -np.sum(p * np.log(p))
+    total = float(mean_amp.sum())
+    if total <= 0.0:
+        return 0.0
+    # p MUST be a normalized probability distribution (sum == 1) before its entropy is
+    # taken; the previous code clipped p AFTER an un-normalized division, so when the
+    # amplitudes underflowed the additive epsilon the "distribution" no longer summed to
+    # one, collapsing the entropy and yielding a spurious MI of 1.0 (maximal coupling)
+    # for signals with zero coupling. Normalize, then add epsilon only inside the log.
+    p = mean_amp / total
+    entropy = -np.sum(p * np.log(p + 1e-12))
     return float((np.log(n_bins) - entropy) / np.log(n_bins))
 
 
@@ -147,6 +160,22 @@ def detect_cross_frequency_leakage(
     xa = _validate_1d(signal)
     phase = np.angle(hilbert(_bandpass(xa, fs, phase_band)))
     amp = np.abs(hilbert(_bandpass(xa, fs, amp_band)))
+    # No measurable oscillatory power in the amplitude band -> no coupling to test
+    # (consistent with modulation_index); report a clean unflagged result instead of the
+    # MI of filter ringing.
+    scale = float(np.abs(xa).max())
+    if scale == 0.0 or float(amp.max()) <= np.sqrt(np.finfo(float).eps) * scale:
+        return {
+            "detector": "phase_amplitude_coupling",
+            "flagged": False,
+            "modulation_index": 0.0,
+            "surrogate_mi_mean": 0.0,
+            "p_value": 1.0,
+            "alpha": float(alpha),
+            "phase_band_hz": [float(phase_band[0]), float(phase_band[1])],
+            "amp_band_hz": [float(amp_band[0]), float(amp_band[1])],
+            "n_surrogates": int(n_surrogates),
+        }
     edges = np.linspace(-np.pi, np.pi, n_bins + 1)
     idx = np.clip(np.digitize(phase, edges) - 1, 0, n_bins - 1)
 
@@ -154,9 +183,14 @@ def detect_cross_frequency_leakage(
         mean_amp = np.array(
             [amp_series[idx == b].mean() if np.any(idx == b) else 0.0 for b in range(n_bins)]
         )
-        p = mean_amp / (mean_amp.sum() + 1e-12)
-        p = np.clip(p, 1e-12, None)
-        entropy = -np.sum(p * np.log(p))
+        total = float(mean_amp.sum())
+        if total <= 0.0:
+            return 0.0
+        # Normalize to a probability distribution before taking entropy (see the same
+        # fix in modulation_index): an un-normalized clip collapses the entropy and
+        # reports spurious maximal coupling for zero-power signals.
+        p = mean_amp / total
+        entropy = -np.sum(p * np.log(p + 1e-12))
         return float((np.log(n_bins) - entropy) / np.log(n_bins))
 
     observed = _mi_from(amp)
