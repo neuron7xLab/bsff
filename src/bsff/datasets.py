@@ -237,7 +237,15 @@ def adjudicate_dataset(
             statistic="lagged_quadratic",
             surrogate_count=n_surrogates,
         )
-        verdict = evaluate_claim(cs, series, seed=seed)
+        # Route the real-data path through the same frequentist-AND-Bayesian
+        # conjunction gate the shipped pipeline uses. Without it this path emits
+        # the bare rank-order verdict, which is anti-conservative for strongly
+        # autocorrelated linear-Gaussian nulls (finite-N IAAFT bias) — a near-zero
+        # effect can clear alpha by chance and earn a spurious SURVIVED. Requiring
+        # BF10 >= 3 corroboration restores nominal specificity on real data.
+        verdict = evaluate_claim(
+            cs, series, seed=seed, bayesian_evidence=True, bayesian_corroboration_min=3.0
+        )
         return {
             "test_type": spec.test_type,
             "verdict": verdict.verdict,
