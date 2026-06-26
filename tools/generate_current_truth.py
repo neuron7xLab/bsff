@@ -201,6 +201,12 @@ def build() -> dict:
             "s1_summary": "artifacts/bonn_bright_line/BRIGHT_LINE_SUMMARY.json",
             "s2_summary": "artifacts/bonn_bright_line/S2_BRIGHT_LINE_SUMMARY.json",
             "s2_confirmatory": "artifacts/bonn_bright_line/s2_CONFIRMATORY_VERDICT.json",
+            # The headline seed-averaged FPR / Wilson CI come from S3, and the
+            # robustness state from the multi-null + cluster-robust artifacts; list
+            # them so a reviewer can trace every headline number to its source.
+            "s3_confirmatory": "artifacts/bonn_bright_line/S3_CONFIRMATORY_VERDICT.json",
+            "multi_null": "artifacts/bonn_bright_line/MULTI_NULL_ROBUSTNESS.json",
+            "cluster_robust_ci": "artifacts/bonn_bright_line/S3_CLUSTER_ROBUST_CI.json",
             "selection_lock": "artifacts/bonn_bright_line/S2_SELECTION_LOCK.json",
             "dataset_manifest": "artifacts/bonn_bright_line/DATASET_MANIFEST.json",
         },

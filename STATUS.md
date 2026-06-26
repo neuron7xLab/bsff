@@ -14,7 +14,7 @@ facts (version, live test count, CLI surface, extras) by
 | Field | Value |
 |---|---|
 | Package version | `0.4.0` |
-| Live test count | **668** (collected by `pytest tests/`) |
+| Live test count | **697** (collected by `pytest tests/`) |
 | CLI subcommands | 18 (parsed from `src/bsff/cli.py`) |
 | Optional extras | `dev`, `full`, `fuzz`, `leakage`, `moabb`, `security`, `stats`, `yaml` |
 
@@ -81,7 +81,7 @@ Subcommands registered in `src/bsff/cli.py` (source order). See
 - **No raw published dataset is shipped** (license/size). The committed
   fixtures are synthetic; however the **Bonn S2 bright-line verdict on real**
   Andrzejak-2001 EEG IS committed as an artifact (hashes in DATASET_MANIFEST).
-  `BONN_S2_BRIGHT_LINE_PASSED` — see `artifacts/release/CURRENT_TRUTH.json`.
+  `BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED` — see `artifacts/release/CURRENT_TRUTH.json`.
 - **BNCI2014-001 is preregistration-only** (unlocked by the Bonn S2 pass; not
   yet executed). No BNCI claim exists until BNCI execution artifacts exist.
 - **Statistical scope is linear / spectral.** Nonlinear directed coupling

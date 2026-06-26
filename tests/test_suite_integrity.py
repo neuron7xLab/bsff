@@ -98,7 +98,13 @@ def test_no_skip_or_xfail_on_core_tests():
     offenders: list[str] = []
     for path in _test_files():
         text = path.read_text(encoding="utf-8")
-        for pat in (r"mark\.skip\b", r"mark\.xfail\b", r"pytest\.skip\(", r"@unittest\.skip"):
+        for pat in (
+            r"mark\.skip\b",
+            r"mark\.xfail\b",
+            r"pytest\.skip\(",
+            r"pytest\.xfail\(",  # inline xfail hides a real failure just like the decorator form
+            r"@unittest\.skip",
+        ):
             if re.search(pat, text):
                 offenders.append(f"{path.name}: {pat}")
     assert not offenders, f"skip/xfail smuggled onto core tests: {offenders}"
