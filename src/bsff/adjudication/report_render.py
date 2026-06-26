@@ -57,7 +57,9 @@ def _md(value: Any) -> str:
     extra columns and a newline forges extra rows (e.g. a clean accountability row
     detached from a 100%-fabrication actor). Pipes and line breaks are neutralised.
     """
-    return str(value).replace("\\", "\\\\").replace("|", "\\|").replace("\n", " ").replace("\r", " ")
+    return (
+        str(value).replace("\\", "\\\\").replace("|", "\\|").replace("\n", " ").replace("\r", " ")
+    )
 
 
 def _md_kv_table(title: str, rows: list[tuple[str, Any]]) -> list[str]:
