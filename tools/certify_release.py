@@ -119,6 +119,17 @@ def verify_chain(cert: dict) -> tuple[bool, str]:
         prev = link["link_hash"]
     if prev != cert.get("root_hash"):
         return False, "root hash does not match the chain"
+    # Re-derive the aggregate verdict from the (now hash-verified) link ok-values and
+    # reject any contradiction. all_streams_green/overall are top-level fields folded
+    # into NO link hash, so without this an honestly-recorded FAILED chain (a link with
+    # ok=False, byte-intact) could be stamped CERTIFIED by flipping those two unhashed
+    # booleans — a fail-open in the exact gate meant to certify the WHOLE chain.
+    all_ok = all(bool(link.get("ok")) for link in cert.get("chain", []))
+    if bool(cert.get("all_streams_green")) != all_ok:
+        return False, "all_streams_green contradicts the chain's ok-values"
+    expected_overall = "CERTIFIED" if all_ok else "NOT_CERTIFIED"
+    if cert.get("overall") != expected_overall:
+        return False, f"overall verdict contradicts the chain (chain implies {expected_overall})"
     return True, "chain intact"
 
 
@@ -134,7 +145,10 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         cert = json.loads(args.output.read_text(encoding="utf-8"))
         intact, reason = verify_chain(cert)
-        certified = intact and cert.get("all_streams_green") and cert.get("overall") == "CERTIFIED"
+        # Derive the verdict from the verified chain, not the unhashed top-level fields
+        # (verify_chain already rejects any contradiction between the two).
+        chain_all_ok = all(bool(link.get("ok")) for link in cert.get("chain", []))
+        certified = intact and chain_all_ok
         print(
             f"chain: {reason}; all_green={cert.get('all_streams_green')}; root={cert.get('root_hash')[:16]}…"
         )

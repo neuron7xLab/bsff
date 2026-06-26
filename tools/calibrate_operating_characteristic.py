@@ -35,10 +35,13 @@ def _summary_lines(payload: dict) -> list[str]:
     lines = ["class                power/FPR  frequentist  conjunction  verdict"]
     for c in payload["classes"]:
         target = "power" if c["expect_survive"] else "FPR  "
+        # Specificity uses the measured FPR (point estimate), not the LOWER CI bound:
+        # the lower bound is the most permissive tail, so an FPR regression to 2x alpha
+        # (CI straddling alpha) would still print OK — a vacuous specificity check.
         ok = (
             c["conjunction_survive_rate"] >= 0.95
             if c["expect_survive"]
-            else c["conjunction_ci95"][0] <= payload["config"]["alpha"]
+            else c["conjunction_survive_rate"] <= payload["config"]["alpha"]
         )
         lines.append(
             f"{c['name']:<20}{target:>9}  "

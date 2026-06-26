@@ -57,12 +57,12 @@ def test_committed_artifact_is_consistent_and_shows_gate_effect():
     for name in ("henon", "logistic"):
         assert classes[name]["conjunction_survive_rate"] >= 0.95
 
-    # Specificity: under the conjunction gate every null class sits at or below
-    # the nominal alpha (lower CI bound), and the gate strictly helped the worst
-    # offender (strongly autocorrelated AR(1)).
+    # Specificity: under the conjunction gate every null class's MEASURED FPR (point
+    # estimate, not the permissive lower CI bound) sits at or below the nominal alpha,
+    # and the gate strictly helped the worst offender (strongly autocorrelated AR(1)).
     for name in ("ar1_phi0.75", "ar1_phi0.50", "white"):
         c = classes[name]
-        assert c["conjunction_ci95"][0] <= alpha
+        assert c["conjunction_survive_rate"] <= alpha
         assert c["conjunction_survive_rate"] <= c["frequentist_survive_rate"]
     worst = classes["ar1_phi0.75"]
     assert worst["conjunction_survive_rate"] < worst["frequentist_survive_rate"]
