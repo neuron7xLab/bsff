@@ -18,6 +18,7 @@ as a side effect of running the example. Styled after
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import sys
@@ -49,8 +50,22 @@ def _core_verdict_sha256(verdict: dict[str, object]) -> str:
     return hashlib.sha256(blob).hexdigest()
 
 
-def main() -> int:
+VERDICT_PATH = ART_DIR / "verdict.json"
+
+
+def main(check: bool = False) -> int:
     failures: list[str] = []
+
+    # Drift gate: in --check mode, snapshot the committed verdict.json *before* the run
+    # overwrites it, so we can assert the engine still reproduces the published evidence
+    # byte-for-byte. verdict.json is path-free and deterministic (unlike manifest.json,
+    # which embeds the absolute BIDS path), so this comparison is environment-stable.
+    # The core-fields reproducibility sha deliberately excludes the Bayesian block, so a
+    # BF10/BF01 drift (e.g. the 1.8e19 -> capped-1e6 change in #93) was invisible to it;
+    # comparing the whole verdict.json closes that hole for any field, not a hand-picked set.
+    committed_verdict: str | None = None
+    if check and VERDICT_PATH.is_file():
+        committed_verdict = VERDICT_PATH.read_text(encoding="utf-8")
 
     # Regenerate the fixture deterministically so the gate is hermetic.
     from generate_fixture import generate
@@ -114,6 +129,18 @@ def main() -> int:
         if not (ART_DIR / required).is_file():
             failures.append(f"missing artifact: {required}")
 
+    # Verdict drift: the freshly regenerated verdict.json must equal the committed one.
+    if check and committed_verdict is not None:
+        regenerated = VERDICT_PATH.read_text(encoding="utf-8")
+        # Restore the committed bytes so the working tree is never mutated by --check.
+        VERDICT_PATH.write_text(committed_verdict, encoding="utf-8")
+        if json.loads(regenerated) != json.loads(committed_verdict):
+            failures.append(
+                "verdict.json drifted from the committed artifact — the engine no longer "
+                "reproduces the published evidence. Run `python tools/validate_real_eeg_case.py` "
+                "and commit the refreshed artifacts/real_eeg_case/verdict.json."
+            )
+
     if failures:
         print("real-eeg case gate failures:")
         for failure in failures:
@@ -129,4 +156,12 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="fail if the regenerated verdict.json drifts from the committed artifact "
+        "(does not mutate the working tree)",
+    )
+    args = parser.parse_args()
+    sys.exit(main(check=args.check))
