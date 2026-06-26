@@ -77,7 +77,7 @@ jobs:
       - run: python tools/validate_ip_provenance.py
       - run: python tools/validate_markdown.py
       - run: python tools/validate_tisean_reference.py
-      - run: python tools/validate_real_eeg_case.py
+      - run: python tools/validate_real_eeg_case.py --check
       - run: python tools/update_status.py --check
       - run: python tools/generate_manifest.py --check
       - run: python tools/validate_artifact_schema.py
