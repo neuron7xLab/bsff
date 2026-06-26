@@ -50,6 +50,16 @@ def _provenance_id(report: dict[str, Any]) -> str:
 # --------------------------------- Markdown ---------------------------------
 
 
+def _md(value: Any) -> str:
+    """Escape Markdown table-cell metacharacters in attacker-controlled text.
+
+    Proposer / subject / claim ids are external input; an unescaped pipe forges
+    extra columns and a newline forges extra rows (e.g. a clean accountability row
+    detached from a 100%-fabrication actor). Pipes and line breaks are neutralised.
+    """
+    return str(value).replace("\\", "\\\\").replace("|", "\\|").replace("\n", " ").replace("\r", " ")
+
+
 def _md_kv_table(title: str, rows: list[tuple[str, Any]]) -> list[str]:
     out = [f"### {title}", "", "| key | value |", "| --- | --- |"]
     out += [f"| {k} | {v} |" for k, v in rows]
@@ -81,7 +91,7 @@ def _render_single_markdown(report: dict[str, Any]) -> str:
     ]
     for rec in report.get("records", []):
         d = rec["disposition"]
-        lines.append(f"| {rec['claim_id']} | {rec['tier']} | **{d}** | {_meaning(d)} |")
+        lines.append(f"| {_md(rec['claim_id'])} | {rec['tier']} | **{d}** | {_meaning(d)} |")
     lines.append("")
     return "\n".join(lines)
 
@@ -113,7 +123,7 @@ def _render_batch_markdown(report: dict[str, Any]) -> str:
         lines += ["| flag | subject | rate | detail |", "| --- | --- | --- | --- |"]
         for f in flags:
             lines.append(
-                f"| **{f['kind']}** | {f['subject']} | {f.get('rate', 0):.2f} | {f['detail']} |"
+                f"| **{f['kind']}** | {_md(f['subject'])} | {f.get('rate', 0):.2f} | {_md(f['detail'])} |"
             )
         lines.append("")
 
@@ -127,7 +137,7 @@ def _render_batch_markdown(report: dict[str, Any]) -> str:
         ]
         for proposer, s in sorted(acct.items()):
             lines.append(
-                f"| {proposer} | {s['proposed']} | {s['unanchored_rate']:.2f} | "
+                f"| {_md(proposer)} | {s['proposed']} | {s['unanchored_rate']:.2f} | "
                 f"{s['quarantine_rate']:.2f} |"
             )
         lines.append("")

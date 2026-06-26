@@ -55,8 +55,14 @@ _EXCLUDE_PREFIXES = (
 # appears within this many characters BEFORE it (a real disclaimer), not merely
 # somewhere on the line.
 _NEG_WINDOW = 18
+# A forbidden match is exempt only when a GENUINE negation governs it. Bare "no"/
+# "without" are excluded when they head an ASSERTION idiom ("no doubt", "no way",
+# "without question/doubt") — those are emphatic positives, so e.g. "no doubt …
+# certified by OpenAI" must still be CAUGHT (the module docstring's must-flag case).
 _NEG_TOKENS = re.compile(
-    r"\b(?:no|not|never|neither|nor|without|n't|forbidden|excluded)\b|do not claim|is not|are not",
+    r"\bno(?!\s+(?:doubt|way|question|denying|exception))\b|\bnot\b|\bnever\b|\bneither\b|"
+    r"\bnor\b|\bwithout(?!\s+(?:doubt|question|exception|fail))\b|n't\b|\bforbidden\b|"
+    r"\bexcluded\b|do not claim|is not|are not",
     re.IGNORECASE,
 )
 _ZERO_WIDTH = re.compile(r"[​‌‍﻿]")

@@ -39,6 +39,33 @@ def _batch():
     return adjudicate_batch([BatchItem(source=src, claims=claims)])
 
 
+def test_markdown_escapes_table_injection_in_proposer_id():
+    # Regression: render_markdown interpolated attacker-controlled ids raw, so a
+    # proposer like "honest | 9 | 0.00 | 0.00 |\n| <!--" forged a clean accountability
+    # row and detached the real fabrication rate from the actor. Pipes/newlines must
+    # be neutralised so one proposer renders exactly one row.
+    from bsff.adjudication.report_render import BATCH_SCHEMA
+
+    forged = "honest | 9 | 0.00 | 0.00 |\n| <!--"
+    report = {
+        "schema": BATCH_SCHEMA,
+        "integrity_flags": [
+            {"kind": "PROPOSER_FABRICATION", "subject": forged, "rate": 1.0, "detail": "x|y"}
+        ],
+        "proposer_accountability": {
+            forged: {"proposed": 3, "unanchored_rate": 1.0, "quarantine_rate": 1.0}
+        },
+        "artifact_sha256": "0" * 64,
+    }
+    md = render_markdown(report)
+    # The forged content survives only as escaped text on a single line — never as a
+    # second table row (no unescaped pipe, no injected newline splitting the row).
+    assert "honest \\| 9 \\| 0.00" in md
+    for line in md.splitlines():
+        # No data row may present a forged clean count for the fabricating proposer.
+        assert not line.strip().startswith("| honest | 9 |")
+
+
 def test_single_markdown_has_verdicts():
     md = render_markdown(_single())
     assert "# BSFF adjudication report" in md

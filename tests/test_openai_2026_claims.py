@@ -83,6 +83,11 @@ def _compiled(gate):
         ("BSFF is not certified by OpenAI.", False),  # adjacent disclaimer
         ("BSFF is NOT an official OpenAI benchmark.", False),  # adjacent disclaimer
         ("There is no doubt that BSFF is certified by OpenAI.", True),  # far-neg trick (#2)
+        # In-window assertion idiom: "no doubt" sits inside _NEG_WINDOW of the match, so
+        # the old bare-"no" token exempted it. Assertion idioms must NOT count as negation.
+        ("There is no doubt BSFF is certified by OpenAI.", True),
+        ("No way is BSFF an official OpenAI benchmark.", True),
+        ("Without doubt BSFF is openai-approved.", True),
         ("BSFF is certified  by  OpenAI.", True),  # double-space (#4)
         ("Without question, BSFF is openai-approved.", True),  # far-neg trick
     ],
