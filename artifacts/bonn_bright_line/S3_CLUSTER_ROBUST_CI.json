@@ -1,0 +1,47 @@
+{
+ "cluster_bootstrap_95ci": [
+  0.018,
+  0.037
+ ],
+ "cluster_bootstrap_upper_below_threshold": true,
+ "cluster_robust_one_sided_95_upper": 0.0378,
+ "cluster_robust_t_95ci": [
+  0.0159,
+  0.0401
+ ],
+ "cluster_robust_upper_below_threshold": true,
+ "cluster_unit": "seed",
+ "design_effect": 1.045,
+ "iid_binomial_se": 0.0052,
+ "interpretation": "Seed-clustered analysis of the 10-seed S3 run (per-seed FPR n=100). Cluster-robust t-interval upper 0.0401 and cluster-bootstrap upper 0.0370 vs the 0.05 gate; design effect 1.05 (negligible clustering). The pooled Wilson interval is corroborated by the cluster-robust interval.",
+ "n_false_positives": 28,
+ "n_per_seed": 100,
+ "n_seeds": 10,
+ "n_total_trials": 1000,
+ "per_seed_fpr": [
+  0.01,
+  0.05,
+  0.0,
+  0.01,
+  0.02,
+  0.04,
+  0.04,
+  0.04,
+  0.04,
+  0.03
+ ],
+ "pooled_fpr": 0.028,
+ "pooled_wilson_95ci": [
+  0.0194,
+  0.0402
+ ],
+ "purpose": "Cluster-robust (seed-clustered) specificity CI for the Bonn S3 G2 gate, guarding against pseudoreplication in the pooled Wilson interval.",
+ "schema": "bsff.s3_cluster_robust_ci/v1",
+ "seed_level_mean_fpr": 0.028,
+ "seed_level_sd": 0.0169,
+ "seed_level_se": 0.0053,
+ "source_artifact": "bonn_bright_line/S3_CONFIRMATORY_VERDICT.json",
+ "source_sha256": "562578b74854d17bc0140decc9931e9395c43a077317b249c46fbdc1941c323a",
+ "threshold": 0.05,
+ "verdict": "S3_SPECIFICITY_CLUSTER_ROBUST_BELOW_0.05"
+}

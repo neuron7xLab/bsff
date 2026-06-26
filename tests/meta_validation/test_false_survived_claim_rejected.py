@@ -5,11 +5,12 @@
 Two fronts of the same lie ("an adversary got through, but we passed anyway"):
 
 1. Red-team matrix: a matrix with a category whose verdict is "SURVIVED" but an
-   overall "PASS" (or categories_killed < categories_total) must be rejected by
-   ``tools/validate_redteam_matrix`` AND by the verdict tool's ``_red_team`` roll-up.
-   The dedicated validator is a sibling deliverable; if it has not landed yet this
-   test xfails on the import rather than silently passing, while the roll-up check
-   (which is already in-tree) is asserted unconditionally.
+   overall "PASS" (and categories_killed claiming the full total) must be rejected
+   by ``tools/validate_redteam_matrix`` AND by the verdict tool's ``_red_team``
+   roll-up. The forged matrix is the committed valid matrix with exactly one
+   category flipped to SURVIVED, so the ONLY remaining defect is the survived-but-
+   PASS lie — the test asserts rejection cites that specific disagreement, not an
+   unrelated structural error.
 2. Claim surface: an unsupported "validated by OpenAI" boast on a public surface
    must be flagged by ``tools/validate_openai_2026_claims``.
 """
@@ -37,24 +38,32 @@ def _load(name: str) -> Any:
 
 
 def _forged_matrix() -> dict[str, Any]:
-    """A matrix that admits a SURVIVED category yet claims overall PASS."""
-    return {
-        "verdict": "PASS",
-        "categories_total": 3,
-        "categories_killed": 3,  # the lie: claims all killed...
-        "categories": [
-            {"id": "prompt-injection", "verdict": "KILLED"},
-            {"id": "data-exfiltration", "verdict": "KILLED"},
-            {"id": "evidence-forgery", "verdict": "SURVIVED"},  # ...but one survived
-        ],
-    }
+    """The committed VALID matrix with exactly one category flipped to SURVIVED.
+
+    Because ``verdict`` is not a hashed field, flipping it leaves every per-entry
+    hash valid, so the matrix is structurally perfect and the ONLY defect is the
+    survived-but-still-PASS lie (stored categories_killed and verdict=PASS no
+    longer agree with the recomputed kill count). This isolates the SURVIVED→PASS
+    logic the validator must catch — a structurally-broken blob would be rejected
+    for the wrong reason and would not test that logic at all.
+    """
+    import copy
+    import json
+
+    matrix_path = ROOT / "artifacts" / "redteam" / "redteam_matrix.json"
+    matrix = json.loads(matrix_path.read_text(encoding="utf-8"))
+    forged = copy.deepcopy(matrix)
+    # Flip the first category KILLED -> SURVIVED, but keep the PASS rollup (the lie).
+    forged["categories"][0]["verdict"] = "SURVIVED"
+    assert forged["verdict"] == "PASS"
+    assert forged["categories_killed"] == forged["categories_total"]
+    return forged
 
 
 def _redteam_validator() -> Any:
-    """Load the dedicated red-team validator, xfailing if the sibling file is absent."""
+    """Load the dedicated red-team validator (a required, in-tree deliverable)."""
     path = ROOT / "tools" / "validate_redteam_matrix.py"
-    if not path.is_file():
-        pytest.xfail("tools/validate_redteam_matrix.py not yet present (sibling deliverable)")
+    assert path.is_file(), "tools/validate_redteam_matrix.py is a required deliverable"
     return _load("validate_redteam_matrix")
 
 
@@ -93,15 +102,26 @@ def _is_rejected(result: Any) -> bool:
 
 
 def test_redteam_validator_rejects_survived_as_pass() -> None:
-    """The dedicated validator must reject a forged SURVIVED->PASS matrix."""
+    """The dedicated validator must reject a forged SURVIVED->PASS matrix.
+
+    And it must reject it *for the right reason*: the recomputed kill count and
+    PASS verdict no longer agree with the flipped category. A blanket "any
+    failure counts" check would pass even if the survived-but-PASS logic were
+    deleted, so we assert the specific disagreement is cited.
+    """
     mod = _redteam_validator()
     forged = _forged_matrix()
-    try:
-        result = _call_validator(mod, forged)
-    except Exception:
-        # A validator that raises on a forged matrix is also a rejection.
-        return
+    result = _call_validator(mod, forged)
     assert _is_rejected(result), f"validator accepted a forged SURVIVED->PASS matrix: {result!r}"
+
+    failures = result if isinstance(result, list) else []
+    if isinstance(result, tuple) and len(result) > 1 and isinstance(result[1], list):
+        failures = result[1]
+    blob = " ".join(failures).lower()
+    assert "killed" in blob or "disagrees with recompute" in blob, (
+        "validator rejected the forged matrix but not for the survived-but-PASS "
+        f"reason; failures={failures!r}"
+    )
 
 
 def test_rollup_rejects_survived_as_pass(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

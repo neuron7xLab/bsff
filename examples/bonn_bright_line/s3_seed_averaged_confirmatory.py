@@ -25,7 +25,7 @@ _HERE = Path(__file__).resolve().parent
 if str(_HERE) not in sys.path:
     sys.path.insert(0, str(_HERE))
 
-from loader import load_set  # noqa: E402
+from loader import load_manifest, load_set  # noqa: E402
 from run_ar_negative import ar_null  # noqa: E402
 from statistics_sampen import STATISTIC_ID, sampen_lower_tail_test  # noqa: E402
 
@@ -63,11 +63,23 @@ def main(argv=None) -> int:
         type=Path,
         default=Path("artifacts/bonn_bright_line/S3_CONFIRMATORY_VERDICT.json"),
     )
+    p.add_argument(
+        "--manifest",
+        type=Path,
+        default=Path("artifacts/bonn_bright_line/DATASET_MANIFEST.json"),
+        help="per-file sha256 provenance pin; staged data is verified fail-closed against it",
+    )
+    p.add_argument(
+        "--no-verify-manifest",
+        action="store_true",
+        help="skip the provenance pin (NOT valid for the canonical result)",
+    )
     a = p.parse_args(argv)
     t0 = time.time()
-    E = [s.data for s in load_set(a.data_dir, "E", n_segments=a.n_segments)]
-    A = [s.data for s in load_set(a.data_dir, "A", n_segments=a.n_segments)]
-    B = [s.data for s in load_set(a.data_dir, "B", n_segments=a.n_segments)]
+    manifest = None if a.no_verify_manifest else load_manifest(a.manifest)
+    E = [s.data for s in load_set(a.data_dir, "E", n_segments=a.n_segments, manifest=manifest)]
+    A = [s.data for s in load_set(a.data_dir, "A", n_segments=a.n_segments, manifest=manifest)]
+    B = [s.data for s in load_set(a.data_dir, "B", n_segments=a.n_segments, manifest=manifest)]
 
     e_surv = e_tot = 0
     fp = ar_tot = 0

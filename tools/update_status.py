@@ -173,7 +173,7 @@ def render_status(version: str, test_count: int, extras: list[str], subcommands:
         "- **No raw published dataset is shipped** (license/size). The committed",
         "  fixtures are synthetic; however the **Bonn S2 bright-line verdict on real**",
         "  Andrzejak-2001 EEG IS committed as an artifact (hashes in DATASET_MANIFEST).",
-        "  `BONN_S2_BRIGHT_LINE_PASSED` — see `artifacts/release/CURRENT_TRUTH.json`.",
+        "  `BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED` — see `artifacts/release/CURRENT_TRUTH.json`.",
         "- **BNCI2014-001 is preregistration-only** (unlocked by the Bonn S2 pass; not",
         "  yet executed). No BNCI claim exists until BNCI execution artifacts exist.",
         "- **Statistical scope is linear / spectral.** Nonlinear directed coupling",

@@ -1,7 +1,7 @@
 {
   "schema": "bsff.current_truth/v2",
   "package_version": "0.4.0",
-  "main_commit": "e743c992caaeb5c685774d18afb779534ab191b3",
+  "main_commit": "0dfc2757ff034fc6701b53900af93916fc355ecc",
   "latest_validation_state": "BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED",
   "bonn_s2_nominal_state": "PASSED_SINGLE_SEED",
   "bonn_s2_robustness_state": "SEED_ROBUST_AR_NULL_PASS_CI_[0.0194, 0.0402]_MULTINULL_CONFIRMED",
@@ -52,10 +52,13 @@
     "s1_summary": "artifacts/bonn_bright_line/BRIGHT_LINE_SUMMARY.json",
     "s2_summary": "artifacts/bonn_bright_line/S2_BRIGHT_LINE_SUMMARY.json",
     "s2_confirmatory": "artifacts/bonn_bright_line/s2_CONFIRMATORY_VERDICT.json",
+    "s3_confirmatory": "artifacts/bonn_bright_line/S3_CONFIRMATORY_VERDICT.json",
+    "multi_null": "artifacts/bonn_bright_line/MULTI_NULL_ROBUSTNESS.json",
+    "cluster_robust_ci": "artifacts/bonn_bright_line/S3_CLUSTER_ROBUST_CI.json",
     "selection_lock": "artifacts/bonn_bright_line/S2_SELECTION_LOCK.json",
     "dataset_manifest": "artifacts/bonn_bright_line/DATASET_MANIFEST.json"
   },
   "hash_manifest_path": "artifacts/release/bonn_bright_line/HASHES.sha256",
   "reproduction_entrypoint": "REPRODUCE.md",
-  "timestamp_utc": "2026-06-25T07:42:47Z"
+  "timestamp_utc": "2026-06-26T13:45:14Z"
 }

@@ -39,12 +39,18 @@ BSFF aims at a **BCI/EEG signal claim** and tries to refute it under stated atta
 **Current canonical evidence — `BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED`**
 ([`artifacts/release/CURRENT_TRUTH.json`](artifacts/release/CURRENT_TRUTH.json)): on real
 Andrzejak-2001 Bonn EEG the instrument has robust **power** (ictal SURVIVED 0.94 seed-averaged) and
-**specificity that is robust to both seed and null-model choice**. The pre-registered **S3
-seed-averaged AR-null** confirmatory (N=1000, 10 seeds, frozen before run, **independently re-run and
-reproduced byte-for-byte**) gives FPR 0.028, Wilson 95% CI **[0.019, 0.040]**; and the **multi-null**
-gate holds across AR (0.026), IAAFT (0.032), and phase-randomized (0.034) nulls — every Wilson
-CI-upper ≤ 0.05. This passed only after a falsification flagged, and a larger pre-registered test
-superseded, a smaller-N calibration (0.035, CI-upper 0.056) — robustness was *earned*, not assumed.
+**specificity that is robust to seed, null-model choice, and interval method**. The pre-registered
+**S3 seed-averaged AR-null** confirmatory (N=1000, 10 seeds, frozen before run; a clean re-run
+reproduced the original frozen run's **per-seed integer false-positive counts** after a post-freeze
+serialization-only patch — see [`artifacts/bonn_bright_line/S3_PROTOCOL_LOCK.json`](artifacts/bonn_bright_line/S3_PROTOCOL_LOCK.json))
+gives FPR 0.028, Wilson 95% CI **[0.019, 0.040]**. Because the 1000 trials reuse the same segments
+across seeds (a clustered design), this is also checked with a **cluster-robust** seed-level interval:
+t-95 **[0.016, 0.040]**, cluster-bootstrap **[0.018, 0.037]**, design effect **≈ 1.05** (negligible
+clustering) — the pooled Wilson interval survives the pseudoreplication critique
+([`tools/cluster_robust_specificity.py`](tools/cluster_robust_specificity.py), CI-gated). The
+**multi-null** gate holds across AR (0.026), IAAFT (0.032), and phase-randomized (0.034) nulls — every
+Wilson CI-upper ≤ 0.05. This passed only after a falsification flagged, and a larger pre-registered
+test superseded, a smaller-N calibration (0.035, CI-upper 0.056) — robustness was *earned*, not assumed.
 Still not: clinical/regulatory, BNCI executed, or multi-dataset replicated. The S1 negative result is
 preserved as evidence.
 
@@ -227,7 +233,7 @@ v0.1.5 deterministic synthetic validation corpus and development control plane.
 It keeps the open-source security/provenance layer from v0.1.3 and the adaptive architecture from v0.1.4, then adds corpus validation and release-mass integrity.
 
 ```text
-pytest: 80/80 passing
+pytest: 80/80 passing (v0.2.0 snapshot — live count is in STATUS.md, never hand-typed here)
 validation: synthetic calibration + real Bonn S2 bright-line PASSED, non-clinical, SHA-256 pinned
 package mass target: 7-10 MB
 license: GPL-3.0-or-later for code; CC-BY-4.0 for documentation/specs
