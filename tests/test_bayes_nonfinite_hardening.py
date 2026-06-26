@@ -27,8 +27,30 @@ import numpy as np
 import pytest
 
 from bsff.bayesian import BF10_CAP, jzs_bayes_factor
+from bsff.policy import PolicyProfile
 from bsff.schemas import ClaimSpec
 from bsff.verdict_engine import evaluate_claim
+
+
+def test_corroboration_threshold_above_cap_is_rejected() -> None:
+    """A threshold >= BF10_CAP is unsatisfiable post-saturation and must fail closed.
+
+    Recursion guard: the BF10 cap (this PR's own fix) silently made any corroboration
+    threshold above the cap impossible to meet, which would demote even decisive
+    evidence to UNSUPPORTED. Policy validation now rejects it at config time.
+    """
+    with pytest.raises(ValueError, match="BF10_CAP"):
+        PolicyProfile(
+            name="bad", bayesian_evidence=True, bayesian_corroboration_min=BF10_CAP
+        ).validate()
+    with pytest.raises(ValueError, match="BF10_CAP"):
+        PolicyProfile(
+            name="bad", bayesian_evidence=True, bayesian_corroboration_min=2 * BF10_CAP
+        ).validate()
+    # Just below the cap stays valid.
+    PolicyProfile(
+        name="ok", bayesian_evidence=True, bayesian_corroboration_min=BF10_CAP - 1
+    ).validate()
 
 
 def _all_finite(bf: dict) -> bool:

@@ -7,6 +7,7 @@ from typing import Literal
 
 import numpy as np
 
+from .bayesian import BF10_CAP
 from .calibration import required_rank_order_surrogates
 from .schemas import ClaimSpec
 
@@ -52,6 +53,14 @@ class PolicyProfile:
             raise ValueError("alpha must be in (0, 1)")
         if self.bayesian_corroboration_min < 1.0:
             raise ValueError("bayesian_corroboration_min must be >= 1.0 (a gate cannot loosen)")
+        if self.bayesian_corroboration_min >= BF10_CAP:
+            # BF10 is saturated to BF10_CAP, so a corroboration threshold at or above the
+            # cap is unsatisfiable: even decisive evidence would be silently demoted to
+            # UNSUPPORTED. Fail closed at config time rather than emit a wrong verdict.
+            raise ValueError(
+                f"bayesian_corroboration_min must be < BF10_CAP ({BF10_CAP:g}); a threshold "
+                "above the saturation cap can never be met, even by decisive evidence"
+            )
         minimum = required_rank_order_surrogates(self.alpha)
         if self.surrogate_count < minimum:
             raise ValueError(f"surrogate_count must be >= {minimum} for alpha={self.alpha}")
