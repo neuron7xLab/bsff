@@ -35,6 +35,23 @@ BIDS_DIR = ROOT / "examples" / "real_eeg_bids" / "bids"
 ART_DIR = ROOT / "artifacts" / "real_eeg_case"
 SEED = 101
 
+# Cross-environment float tolerance for the drift comparison. A reproducibility gate
+# must catch a real verdict change (algorithmic drift is orders of magnitude larger)
+# without firing on last-ULP numpy/BLAS noise that differs between CI runner images and
+# Python versions (e.g. py3.13's newer numpy). 6 decimals is ULP-safe yet drift-catching.
+_DRIFT_NDIGITS = 6
+
+
+def _round_floats(obj: object, ndigits: int = _DRIFT_NDIGITS) -> object:
+    """Recursively round floats so an exact comparison tolerates cross-env ULP noise."""
+    if isinstance(obj, float):
+        return round(obj, ndigits)
+    if isinstance(obj, dict):
+        return {k: _round_floats(v, ndigits) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_round_floats(v, ndigits) for v in obj]
+    return obj
+
 
 def _core_verdict_sha256(verdict: dict[str, object]) -> str:
     """Stable digest over the verdict-bearing fields only (no caveats prose)."""
@@ -134,7 +151,7 @@ def main(check: bool = False) -> int:
         regenerated = VERDICT_PATH.read_text(encoding="utf-8")
         # Restore the committed bytes so the working tree is never mutated by --check.
         VERDICT_PATH.write_text(committed_verdict, encoding="utf-8")
-        if json.loads(regenerated) != json.loads(committed_verdict):
+        if _round_floats(json.loads(regenerated)) != _round_floats(json.loads(committed_verdict)):
             failures.append(
                 "verdict.json drifted from the committed artifact — the engine no longer "
                 "reproduces the published evidence. Run `python tools/validate_real_eeg_case.py` "
