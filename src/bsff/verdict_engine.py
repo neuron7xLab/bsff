@@ -7,6 +7,7 @@ import math
 from .bayesian import jzs_bayes_factor
 from .leakage_detector import any_leakage_flagged
 from .schemas import ClaimSpec, VerdictJSON
+from .scope_guard import classify_scope
 from .stationarity import check_stationarity
 from .surrogate_engine import rank_order_surrogate_test
 
@@ -29,6 +30,27 @@ def evaluate_claim(
     caveats: list[str] = []
     evidence: dict[str, object] = {}
 
+    # Fail-closed scope boundary: a claim outside the falsifiable, empirical,
+    # time-series envelope (clinical, regulatory, non-time-series, ...) has no
+    # instrument that bears on it, so the surrogate engine must never run on it
+    # and must never emit SURVIVED. The disposition (incl. QUARANTINED for the
+    # harm-bearing clinical/regulatory categories) is recorded in evidence; the
+    # ``verdict`` field stays in the canonical {REFUTED,UNSUPPORTED,SURVIVED}
+    # enum (the redteam matrix forbids any other label), pinned to UNSUPPORTED.
+    scope = classify_scope(spec)
+    if not scope.in_scope:
+        return VerdictJSON(
+            claim_id=spec.claim_id,
+            verdict="UNSUPPORTED",
+            p_value=None,
+            original_statistic=None,
+            surrogate_min=None,
+            surrogate_max=None,
+            leakage_flags=leakage_flags,
+            evidence={"scope": scope.to_dict()},
+            caveats=[scope.caveat],
+        )
+
     if any_leakage_flagged(leakage_flags):
         return VerdictJSON(
             claim_id=spec.claim_id,
@@ -42,10 +64,12 @@ def evaluate_claim(
             caveats=["Leakage falsification short-circuited surrogate testing."],
         )
 
+    stationarity_failed = False
     if spec.stationarity_gate == "required":
         stat_check = check_stationarity(signal, alpha=spec.alpha)
         evidence["stationarity_gate"] = stat_check
         if not bool(stat_check["all_stationary"]):
+            stationarity_failed = True
             caveats.append(
                 f"Stationarity gate: {stat_check['n_channels_failed']} channel(s) failed KPSS. "
                 "Interpret surrogate verdict as preprocessing-sensitive."
@@ -122,6 +146,25 @@ def evaluate_claim(
                 f"{float(bayesian_corroboration_min):.3g}. Verdict demoted to UNSUPPORTED — a "
                 "rank-order p-value alone is anti-conservative for autocorrelated nulls."
             )
+
+    # Fail-closed stationarity gate: when stationarity is "required" and the
+    # signal is non-stationary, a surrogate rejection cannot be read as nonlinear
+    # structure — IAAFT/MIAAFT nulls assume a *stationary* linear-Gaussian
+    # process, so a rejection on a non-stationary trace is detecting drift, not
+    # dynamics. Such a SURVIVED is unearned and is demoted to UNSUPPORTED. The
+    # field name "required" now enforces a gate rather than only annotating one.
+    if stationarity_failed and verdict == "SURVIVED":
+        verdict = "UNSUPPORTED"
+        evidence["stationarity_demotion"] = {
+            "gate": "required",
+            "all_stationary": False,
+            "demoted_from": "SURVIVED",
+        }
+        caveats.append(
+            "Stationarity gate (required): SURVIVED demoted to UNSUPPORTED — the "
+            "surrogate null assumes stationarity, so a rejection on a non-stationary "
+            "signal detects drift, not nonlinear structure."
+        )
 
     if spec.surrogate_count < 99:
         caveats.append("Low surrogate count: suitable for CI smoke, not final evidence.")

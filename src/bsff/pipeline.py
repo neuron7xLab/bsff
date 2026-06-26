@@ -9,6 +9,7 @@ from .evidence import EvidenceGraph, StageResult, stable_sha256
 from .policy import PolicyProfile, adapt_policy_for_signal
 from .registry import StageRegistry
 from .schemas import ClaimSpec, VerdictJSON
+from .scope_guard import classify_scope, guard_verdict
 from .stages import (
     BayesianEvidenceStage,
     LeakageStage,
@@ -116,6 +117,18 @@ class FalsificationPipeline:
 
         graph = EvidenceGraph(tuple(results))
         verdict = self._collapse_verdict(results, context)
+        # Fail-closed scope boundary: an out-of-scope claim can never keep a
+        # SURVIVED. guard_verdict downgrades it to the scope disposition; we then
+        # normalize QUARANTINED to the in-enum UNSUPPORTED (the verdict field is
+        # bound to {REFUTED,UNSUPPORTED,SURVIVED} by the redteam contract) and
+        # surface the scope reason as a caveat.
+        scope = classify_scope(spec)
+        scope_caveats: list[str] = []
+        if not scope.in_scope:
+            guarded = guard_verdict(scope, verdict)
+            if guarded != verdict:
+                verdict = "UNSUPPORTED"
+                scope_caveats = [scope.caveat]
         graph_dict = graph.to_dict()
         contract = {
             "claim": spec.to_dict(),
@@ -129,7 +142,7 @@ class FalsificationPipeline:
             verdict=verdict,
             policy=adapted.to_dict(),
             evidence_graph=graph_dict,
-            caveats=graph.caveats,
+            caveats=graph.caveats + scope_caveats,
             contract_sha256=stable_sha256(contract),
         )
 
