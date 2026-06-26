@@ -33,6 +33,7 @@ DISPOSITION_MEANING: dict[str, str] = {
     "QUARANTINED_DEFINITIONAL": "a definition, not a claim about the world",
     "QUARANTINED_NORMATIVE": "a value/ought claim — not empirically falsifiable",
     "QUARANTINED_NON_FALSIFIABLE": "no empirical, quantitative, or deductive content",
+    "QUARANTINED_NON_RAW": "the supplied series is not a raw signal (feature/label/quantized) — refused by the raw-signal guard",
 }
 
 

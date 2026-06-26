@@ -53,7 +53,8 @@ _SIGNATURES: list[tuple[FalsifiabilityTier, str, re.Pattern[str]]] = [
         re.compile(
             r"\bno (?:instrument|experiment|observation|measurement|test|evidence)\b.{0,40}"
             r"\b(?:can|could|would)\b|"
-            r"\bcannot\b.{0,20}\b(?:be )?(?:detect|measur|test|observ|falsif|disprov)\w*|"
+            r"\b(?:cannot|can ?not|can never|could (?:not|never)|will never|would never)\b"
+            r".{0,20}\b(?:be )?(?:detect|measur|test|observ|falsif|disprov)\w*|"
             r"\bin principle\b.{0,30}\b(?:undetectable|unmeasurable|untestable|unobservable|"
             r"unfalsifiable)\b|\bunfalsifiable\b|\bno possible (?:observation|experiment|test)\b",
             re.IGNORECASE,

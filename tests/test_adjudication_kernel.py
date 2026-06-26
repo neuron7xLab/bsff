@@ -112,6 +112,14 @@ def test_proposed_claim_rejects_short_quote():
             "The system is fundamentally aware of the user's soul",
             FalsifiabilityTier.NON_FALSIFIABLE,
         ),
+        # Modal-negation self-forbidding of any test must win over the empirical lexeme
+        # it contains (regression: only the closed compound "cannot" used to hit this).
+        (
+            "Dark consciousness can never be measured by any conceivable experiment",
+            FalsifiabilityTier.NON_FALSIFIABLE,
+        ),
+        ("The aura could never be detected by any instrument", FalsifiabilityTier.NON_FALSIFIABLE),
+        ("This essence can not be observed even in principle", FalsifiabilityTier.NON_FALSIFIABLE),
     ],
 )
 def test_classify_tiers(quote, tier):

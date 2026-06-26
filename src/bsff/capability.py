@@ -51,19 +51,12 @@ class Capability:
 
 
 # The capability matrix. Each row is a real branch in the codebase:
-#   pingouin  -> bsff.bayesian.jzs_bayes_factor (JZS Cauchy vs BIC fallback)
 #   sklearn   -> bsff.leakage_detector deep MI-permutation leakage detection
 #   yaml      -> ClaimSpec loading from .yaml/.yml
 #   mne/moabb -> raw EDF normalization and MOABB external-benchmark ingestion
+# (The former pingouin "JZS" row was removed: that branch was permanently dead, so the
+#  Bayes factor is unconditionally the BIC normal approximation — no capability gates it.)
 _CAPABILITY_SPECS: tuple[dict[str, object], ...] = (
-    {
-        "name": "bayesian-jzs",
-        "module": "pingouin",
-        "extra": "stats",
-        "enables": "JZS Cauchy Bayes factor for the SURVIVED corroboration gate",
-        "required_for_strict": True,
-        "degraded_without": "Bayes factor falls back to a BIC normal approximation",
-    },
     {
         "name": "deep-leakage",
         "module": "sklearn",

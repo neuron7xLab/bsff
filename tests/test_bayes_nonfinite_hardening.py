@@ -138,3 +138,13 @@ def test_conjunction_gate_fails_closed_on_nonfinite_bf10(monkeypatch) -> None:
     signal = henon_series(n_samples=768, seed=11)
     verdict = evaluate_claim(_spec(768), signal, seed=101)
     assert verdict.verdict == "UNSUPPORTED"
+
+
+def test_method_is_bic_not_false_pingouin_provenance():
+    # Regression: the pingouin JZS path was permanently dead (a "cohen-d" vs "cohen_d"
+    # column rename) yet the function claimed method="pingouin_jzs_cauchy". The dead
+    # branch was removed; BIC is the method of record and the provenance is honest.
+    import numpy as np
+
+    bf = jzs_bayes_factor(2.5, np.random.default_rng(0).standard_normal(200))
+    assert bf["method"] == "bic_normal_approximation"

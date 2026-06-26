@@ -119,6 +119,7 @@ def _run_falsify(args: argparse.Namespace) -> None:
         policy=args.policy,
         seed=args.seed,
         out_path=args.out,
+        require_raw=not args.allow_nonraw,
     )
     print(json.dumps(artifact, ensure_ascii=False, indent=2))
 
@@ -450,6 +451,12 @@ def main(argv: list[str] | None = None) -> None:
     )
     falsify.add_argument("--seed", type=int, default=123, help="Deterministic surrogate seed.")
     falsify.add_argument("--out", default=None, help="Path to write the verdict case-file JSON.")
+    falsify.add_argument(
+        "--allow-nonraw",
+        action="store_true",
+        help="Override the raw-signal guard (records raw_override + reasons in the dossier). "
+        "Use only with an on-the-record assertion that the input is raw.",
+    )
 
     adj = sub.add_parser(
         "adjudicate",
