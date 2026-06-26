@@ -30,6 +30,47 @@
 
 ---
 
+> **BSFF is the falsification gate for neural-decoding claims** — a deterministic,
+> fail-closed CI step that sits between a signal *result* and the *claim* it
+> licenses, and returns a **provenance-bound verdict instead of trust**.
+> A result is not a claim; BSFF is where the gap is machine-checked.
+> ([`POSITIONING.md`](POSITIONING.md) fixes the coordinate · [`NAVIGATION.md`](NAVIGATION.md) is the map.)
+
+## See it kill a claim — 60 seconds, no data download
+
+Point BSFF at *someone's* claim about a signal; it tries to refute it under a
+stated attack battery and returns a bounded, hash-stamped verdict.
+
+```bash
+git clone https://github.com/neuron7xLab/bsff && cd bsff && pip install -e ".[stats]"
+
+# A genuinely nonlinear signal survives the surrogate attack:
+bsff falsify --claim examples/falsify/claim.json --signal examples/falsify/signal_chaotic.csv --policy strict
+#  → verdict: SURVIVED   (p ≈ 0.001)
+
+# The same claim on a linear-stochastic null is refuted:
+bsff falsify --claim examples/falsify/claim.json --signal examples/falsify/signal_null.csv  --policy strict
+#  → verdict: REFUTED    (p ≈ 0.78)
+```
+
+Same claim, two signals, opposite verdicts — and BSFF **never confirms**: the
+strongest disposition it offers is *survived falsification under stated
+conditions*. Out-of-scope claims (clinical, regulatory) are `QUARANTINED`, not
+judged.
+
+![Measured operating characteristic — false-positive rate vs power across null models](paper/figures/operating_characteristic.png)
+
+## Where BSFF sits
+
+|  | Verifies | BSFF instead |
+|---|---|---|
+| Reproducibility tools (DataLad, SLSA, cosign) | *that you ran the code / built the artifact* | binds a **scientific verdict** to its evidence |
+| Surrogate/stat libraries (TISEAN, nolds, SciPy) | computes a surrogate set or a *p*-value | **adjudicates the claim**, fail-closed, with a measured FPR |
+| EEG/BCI stacks (MNE, MOABB, NeuroKit2) | processes signals, benchmarks decoders | attacks the **claim a decoder licenses** |
+
+What `cosign verify` is to a build artifact, BSFF is to a BCI/EEG claim. See
+[`POSITIONING.md`](POSITIONING.md) for the full coordinate and how to falsify it.
+
 ## What this proves right now
 
 BSFF aims at a **BCI/EEG signal claim** and tries to refute it under stated attacks

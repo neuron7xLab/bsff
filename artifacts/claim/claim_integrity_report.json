@@ -254,6 +254,7 @@
     "tools/calibrate_transfer_entropy.py",
     "tools/certify_release.py",
     "tools/check_github_actions_policy.py",
+    "tools/cluster_robust_specificity.py",
     "tools/compare_benchmark_baseline.py",
     "tools/compute_scorecard.py",
     "tools/cross_validate_surrogate.py",
