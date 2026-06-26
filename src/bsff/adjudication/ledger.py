@@ -3,10 +3,19 @@
 """Hash-chained, append-only truth ledger.
 
 Every adjudication record is appended as one JSONL line whose ``record_hash``
-chains the previous entry's hash with the canonical payload. Any later edit to a
-recorded verdict — silently softening a REFUTED to SURVIVED, for instance —
-breaks the chain at that point and is detected by :meth:`TruthLedger.verify`.
-The ledger stores verdicts; it does not produce them.
+chains the previous entry's hash with the canonical payload. An in-place edit of a
+NON-terminal record that is not re-hashed breaks the chain at that point and is
+detected by :meth:`TruthLedger.verify`.
+
+THREAT MODEL (honest bound): ``_entry_hash`` is a public, keyless digest, so an
+adversary who can rewrite the JSONL can also recompute a consistent chain. Two
+attacks are therefore NOT caught by an unanchored ``verify()``: (a) trailing
+truncation — dropping the last record(s) leaves a shorter but internally consistent
+chain; (b) tail re-forge — softening the final REFUTED to SURVIVED and recomputing
+its ``record_hash``. To detect these, pass the head hash and length you previously
+trusted to ``verify(expected_head=..., expected_length=...)`` (callers persist
+``record_hash`` in the signed report), or sign the head with a key kept out of the
+JSONL. The ledger stores verdicts; it does not produce them.
 """
 
 from __future__ import annotations
@@ -61,9 +70,27 @@ class TruthLedger:
             fh.write(json.dumps(entry, ensure_ascii=False, sort_keys=True) + "\n")
         return entry
 
-    def verify(self) -> dict[str, Any]:
-        """Walk the chain; report integrity, length, head hash, and first break."""
+    def verify(
+        self,
+        *,
+        expected_head: str | None = None,
+        expected_length: int | None = None,
+    ) -> dict[str, Any]:
+        """Walk the chain; report integrity, length, head hash, and first break.
+
+        An unanchored call cannot detect trailing truncation or a re-hashed tail
+        forge (see the module threat model). Pass ``expected_head`` and/or
+        ``expected_length`` — values you trusted at write time — to fail closed when
+        the current head/length diverges from them.
+        """
         entries = self.entries()
+        if expected_length is not None and len(entries) != expected_length:
+            return {
+                "ok": False,
+                "length": len(entries),
+                "broken_at": None,
+                "reason": f"length {len(entries)} != anchored expected_length {expected_length}",
+            }
         prev_hash = GENESIS_HASH
         for i, entry in enumerate(entries):
             expected_seq = i
@@ -90,4 +117,12 @@ class TruthLedger:
                     "reason": "record_hash does not match payload (tampered or non-canonical)",
                 }
             prev_hash = entry["record_hash"]
+        if expected_head is not None and prev_hash != expected_head:
+            return {
+                "ok": False,
+                "length": len(entries),
+                "broken_at": None,
+                "reason": "head_hash does not match the anchored expected_head (truncation or tail re-forge)",
+                "head_hash": prev_hash,
+            }
         return {"ok": True, "length": len(entries), "broken_at": None, "head_hash": prev_hash}

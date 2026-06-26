@@ -174,6 +174,38 @@ def test_ledger_tamper_breaks_chain(tmp_path):
     assert not result["ok"] and result["broken_at"] == 0
 
 
+def test_ledger_anchored_verify_catches_truncation_and_tail_reforge(tmp_path):
+    # An unanchored verify() cannot catch trailing truncation or a re-hashed tail forge
+    # (public keyless hash). The anchored verify(expected_head/length) must fail closed.
+    path = tmp_path / "ledger.jsonl"
+    led = TruthLedger(path)
+    led.append({"verdict": "SURVIVED"})
+    trusted = led.append({"verdict": "REFUTED"})  # the head we trust at write time
+    head, length = trusted["record_hash"], 2
+
+    # (a) trailing truncation: drop the REFUTED head -> unanchored passes, anchored fails.
+    lines = path.read_text(encoding="utf-8").splitlines()
+    path.write_text(lines[0] + "\n", encoding="utf-8")
+    assert led.verify()["ok"] is True  # blind to truncation
+    assert led.verify(expected_length=length)["ok"] is False
+    assert led.verify(expected_head=head)["ok"] is False
+
+    # (b) tail re-forge: soften REFUTED->SURVIVED and recompute its record_hash.
+    led2 = TruthLedger(tmp_path / "l2.jsonl")
+    led2.append({"verdict": "SURVIVED"})
+    trusted2 = led2.append({"verdict": "REFUTED"})["record_hash"]  # head trusted before forge
+    from bsff.adjudication.ledger import _entry_hash
+
+    rows = (tmp_path / "l2.jsonl").read_text(encoding="utf-8").splitlines()
+    tail = json.loads(rows[1])
+    tail["payload"]["verdict"] = "SURVIVED"
+    tail["record_hash"] = _entry_hash(tail["prev_hash"], tail["seq"], tail["payload"])
+    rows[1] = json.dumps(tail, ensure_ascii=False, sort_keys=True)
+    (tmp_path / "l2.jsonl").write_text("\n".join(rows) + "\n", encoding="utf-8")
+    assert led2.verify()["ok"] is True  # blind to the re-hashed forge
+    assert led2.verify(expected_head=trusted2)["ok"] is False  # anchored head diverges
+
+
 # ----------------------------- routing --------------------------------------
 
 

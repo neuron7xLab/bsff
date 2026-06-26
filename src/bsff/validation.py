@@ -60,20 +60,25 @@ def validate_phase1_artifact(report: dict[str, Any]) -> list[str]:
     missing = REQUIRED_PHASE1_GATES.difference(gates)
     if missing:
         failures.append(f"missing gates: {sorted(missing)}")
+    # Fail closed on type-confusion: a non-dict gate value is not structured evidence,
+    # so it must FAIL its gate, never bypass it. The old `isinstance(x, dict) and not
+    # x.get(...)` short-circuited to False on a bare ``True`` token, letting a forged
+    # SURVIVED artifact whose gates are non-dict truthy values pass with zero failures.
     conv = gates.get("miaaft_convergence", {})
-    if isinstance(conv, dict) and not conv.get("converged"):
+    if not isinstance(conv, dict) or not conv.get("converged"):
         failures.append("miaaft convergence gate did not converge")
     leak = gates.get("block_design_leakage", {})
-    if isinstance(leak, dict) and not leak.get("flagged"):
+    if not isinstance(leak, dict) or not leak.get("flagged"):
         failures.append("block-design leakage smoke did not flag leakage")
     # A SURVIVED artifact may not ride on a non-converged null: every surrogate
     # gate that carries convergence evidence must report all_converged.
     for gate_name in ("ar1_null_not_rejected", "henon_power_smoke"):
         gate = gates.get(gate_name, {})
         if not isinstance(gate, dict):
+            failures.append(f"{gate_name} gate is not a structured evidence object")
             continue
         gate_conv = gate.get("surrogate_convergence")
-        if gate_conv is None:
+        if not isinstance(gate_conv, dict):
             failures.append(f"{gate_name} missing surrogate_convergence evidence")
         elif not gate_conv.get("all_converged"):
             failures.append(f"{gate_name} surrogate null did not converge")
