@@ -1,0 +1,56 @@
+{
+ "alpha": 0.05,
+ "gates": {
+  "ar1_anticonservatism_present": true,
+  "conjunction_restores_specificity": true,
+  "white_null_calibrated": true
+ },
+ "interpretation": "White null: bare FPR 0.050 ~ alpha=0.05, KS uniformity p=0.352 (not rejected) -> engine calibrated. AR(1,0.75): bare FPR 0.180 > alpha (finite-N IAAFT anti-conservatism, openly measured), conjunction-gate FPR 0.040 <= alpha (gate restores specificity). No external TISEAN binary required.",
+ "n_draws": 200,
+ "n_samples": 256,
+ "n_surrogates": 99,
+ "nulls": {
+  "ar1_phi0.50": {
+   "bare_rank_order": {
+    "fpr": 0.125,
+    "ks_pvalue": 0.0003919450012692137,
+    "ks_statistic": 0.14500000000000002
+   },
+   "conjunction_gate": {
+    "fpr": 0.05
+   },
+   "fpr_bare": 0.125,
+   "fpr_conjunction": 0.05,
+   "ks_pvalue_bare": 0.0004
+  },
+  "ar1_phi0.75": {
+   "bare_rank_order": {
+    "fpr": 0.18,
+    "ks_pvalue": 6.403182120506462e-16,
+    "ks_statistic": 0.29500000000000004
+   },
+   "conjunction_gate": {
+    "fpr": 0.04
+   },
+   "fpr_bare": 0.18,
+   "fpr_conjunction": 0.04,
+   "ks_pvalue_bare": 0.0
+  },
+  "white": {
+   "bare_rank_order": {
+    "fpr": 0.05,
+    "ks_pvalue": 0.3515620403222688,
+    "ks_statistic": 0.06500000000000006
+   },
+   "conjunction_gate": {
+    "fpr": 0.015
+   },
+   "fpr_bare": 0.05,
+   "fpr_conjunction": 0.015,
+   "ks_pvalue_bare": 0.3516
+  }
+ },
+ "purpose": "Analytic-uniformity correctness check for the rank-order surrogate p-value; an in-repo substitute for the unavailable TISEAN byte-match that tests calibration against the Uniform(0,1) ground truth a true null implies.",
+ "schema": "bsff.analytic_uniformity_null/v1",
+ "verdict": "ANALYTIC_UNIFORMITY_CONFIRMED"
+}
