@@ -11,6 +11,10 @@ from statsmodels.tsa.stattools import kpss
 
 FloatArray = NDArray[np.float64]
 
+# statsmodels.tsa.stattools.kpss interpolates its p-value into [0.01, 0.10] and floors
+# at 0.01: a reported 0.01 only means "p <= 0.01". Below this the gate cannot resolve.
+_KPSS_P_FLOOR = 0.01
+
 
 def check_stationarity(signal: FloatArray, alpha: float = 0.05) -> dict[str, object]:
     """KPSS stationarity gate per channel.
@@ -51,13 +55,22 @@ def check_stationarity(signal: FloatArray, alpha: float = 0.05) -> dict[str, obj
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", InterpolationWarning)
             stat, p_value, lags, _critical = kpss(channel, regression="c", nlags="auto")
+        # statsmodels floors the KPSS p-value at 0.01 (and caps at 0.10): a reported
+        # 0.01 means "p <= 0.01", not the true value. For a stricter alpha < 0.01 the
+        # bare `p_value > alpha` then vacuously passes a clearly non-stationary signal
+        # (e.g. a random walk, KPSS stat ~2.7), silently bypassing a fatal gate. Below
+        # the KPSS resolution floor the test cannot certify stationarity → fail closed.
+        if alpha < _KPSS_P_FLOOR and p_value <= _KPSS_P_FLOOR:
+            stationary = False
+        else:
+            stationary = bool(p_value > alpha)
         results.append(
             {
                 "channel": idx,
                 "statistic": float(stat),
                 "p_value": float(p_value),
                 "lags": int(lags),
-                "stationary": bool(p_value > alpha),
+                "stationary": stationary,
             }
         )
 
