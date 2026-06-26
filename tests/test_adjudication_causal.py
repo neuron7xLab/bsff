@@ -98,3 +98,21 @@ def test_causal_claim_refuted_when_direction_is_reversed(tmp_path):
     rec = adjudicate_claim(_src(), claim)
     assert rec.disposition == "REFUTED"
     assert rec.evidence["direction"] == "target->source"
+
+
+def test_causal_te_refuses_nonraw_series(tmp_path):
+    # Regression (INV-6): the TE causal route loaded series with no raw-guard, so a
+    # quantized/categorical non-signal got a DIRECTED_COUPLING finding. It must be
+    # refused fail-closed (QUARANTINED_NON_RAW), like datasets.load_series.
+    rng = np.random.default_rng(0)
+    src = _write(tmp_path, "src", rng.integers(0, 8, size=512).astype(float))
+    tgt = _write(tmp_path, "tgt", rng.integers(0, 8, size=512).astype(float))
+    op = {"test": "transfer_entropy", "source": src, "target": tgt}
+    claim = ProposedClaim(
+        claim_id="c",
+        quote="neural activity in region X drives the response in region Y",
+        proposer="human:y",
+        operationalization=op,
+    )
+    rec = adjudicate_claim(_src(), claim)
+    assert rec.disposition == "QUARANTINED_NON_RAW"

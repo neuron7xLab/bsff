@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import math
-import warnings
 
 import numpy as np
 from numpy.typing import NDArray
@@ -54,8 +53,12 @@ def jzs_bayes_factor(
 ) -> dict[str, object]:
     """Bayes-factor evidence layer for original-vs-surrogate statistic.
 
-    Uses pingouin's JZS implementation when available. If the optional dependency
-    is absent, falls back to a BIC approximation so CI remains dependency-light.
+    The Bayes factor is a BIC normal approximation (Wagenmakers-style p->BF). An
+    earlier pingouin JZS-Cauchy path was removed: it was permanently dead (a pingouin
+    column rename, ``cohen-d`` -> ``cohen_d``, sent every call to the BIC branch), so
+    the instrument's operating characteristics — null FPR, power, and the conjunction
+    gate's ``BF10 >= threshold`` calibration — were all measured against THIS BIC
+    estimator. BIC is therefore the method of record, not a fallback.
     """
     surr = np.asarray(surrogate_stats, dtype=float)
     if surr.size < 2:
@@ -74,37 +77,23 @@ def jzs_bayes_factor(
             "interpretation": _interpret_bf10(float(bf10)),
         }
 
-    try:
-        import pingouin as pg  # type: ignore
+    mean = float(np.mean(surr))
+    std = float(np.std(surr, ddof=1))
+    z = abs((float(original_stat) - mean) / (std + 1e-12))
+    p = max(float(2.0 * stats.norm.sf(z)), 1e-300)
+    n = int(surr.size + 1)
+    # BIC approximation from a Wagenmakers-style p-value conversion. Clamp the exponent
+    # before exp() so a strongly separated statistic saturates to BF10_CAP instead of
+    # raising OverflowError ("math range error").
+    bic_delta = n * math.log1p(z * z / max(1, n)) - math.log(n)
+    exponent = min(0.5 * bic_delta, math.log(BF10_CAP))
+    bf10 = float(math.exp(exponent)) if p < 1 else 1.0
+    cohens_d = float((float(original_stat) - mean) / (std + 1e-12))
+    power = None
+    method = "bic_normal_approximation"
 
-        # pingouin's one-sample-vs-sample t-test emits a benign RuntimeWarning when
-        # the single original statistic gives zero degrees of freedom on that arm;
-        # the BF10 it returns is still well-defined. Silence the noise, not the math.
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", RuntimeWarning)
-            result = pg.ttest([float(original_stat)], surr.tolist(), correction=False)
-        bf10 = float(result["BF10"].values[0])
-        cohens_d = float(result["cohen-d"].values[0])
-        power = float(result["power"].values[0])
-        method = "pingouin_jzs_cauchy"
-    except Exception:
-        mean = float(np.mean(surr))
-        std = float(np.std(surr, ddof=1))
-        z = abs((float(original_stat) - mean) / (std + 1e-12))
-        p = max(float(2.0 * stats.norm.sf(z)), 1e-300)
-        n = int(surr.size + 1)
-        # BIC approximation from Wagenmakers-style p-value conversion. Clamp the exponent
-        # before exp() so a strongly separated statistic saturates to BF10_CAP instead of
-        # raising OverflowError ("math range error").
-        bic_delta = n * math.log1p(z * z / max(1, n)) - math.log(n)
-        exponent = min(0.5 * bic_delta, math.log(BF10_CAP))
-        bf10 = float(math.exp(exponent)) if p < 1 else 1.0
-        cohens_d = float((float(original_stat) - mean) / (std + 1e-12))
-        power = None
-        method = "bic_normal_approximation"
-
-    # pingouin can itself return a non-finite BF10 (inf/NaN) on degenerate arms; saturate
-    # so BF10/BF01/cohen's d are always finite, JSON-clean, and safe under `<` comparison.
+    # Saturate so BF10/BF01/cohen's d are always finite, JSON-clean, and safe under `<`
+    # comparison (a non-finite z from a pathological arm would otherwise propagate).
     bf10 = _saturate(float(bf10), BF10_CAP)
     if bf10 <= 1.0 / BF10_CAP:
         bf10 = 1.0 / BF10_CAP

@@ -68,8 +68,10 @@ def _run_empirical_statistical(op: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _load_series(path: str) -> Any:
+def _load_series(path: str, *, require_raw: bool = True) -> Any:
     import numpy as np  # local import: heavy numerical stack
+
+    from ..datasets import check_rawness
 
     p = Path(path)
     if not p.is_file():
@@ -86,6 +88,13 @@ def _load_series(path: str) -> Any:
         raise ValueError(f"series must be 1-D after squeeze, got {array.ndim}-D: {path}")
     if not np.all(np.isfinite(array)):
         raise ValueError(f"series contains non-finite values: {path}")
+    # INV-6 raw-guard: a transfer-entropy causal test on a non-signal (label array,
+    # quantized/categorical file) would emit a directed-coupling verdict on garbage.
+    # Refuse the same inputs datasets.load_series refuses, fail-closed.
+    if require_raw:
+        reasons = check_rawness(array.reshape(1, -1))
+        if reasons:
+            raise ValueError(f"series does not look raw ({'; '.join(reasons)}): {path}")
     return array
 
 
@@ -101,9 +110,20 @@ def _run_causal_te(op: dict[str, Any]) -> dict[str, Any]:
                 "required": [f"operationalization.{k}" for k in missing],
             },
         }
-    source = _load_series(op["source"])
-    target = _load_series(op["target"])
-    conditions = [_load_series(c) for c in op.get("conditions", [])]
+    try:
+        source = _load_series(op["source"])
+        target = _load_series(op["target"])
+        conditions = [_load_series(c) for c in op.get("conditions", [])]
+    except (ValueError, FileNotFoundError) as exc:
+        # Fail-closed: a non-raw / unloadable series is refused, never adjudicated into
+        # a directed-coupling finding (INV-6). Mirrors the raw-guard on load_series.
+        return {
+            "disposition": "QUARANTINED_NON_RAW",
+            "evidence": {
+                "reason": "transfer-entropy series refused by the raw-signal guard",
+                "detail": str(exc),
+            },
+        }
     result = transfer_entropy_test(
         source,
         target,

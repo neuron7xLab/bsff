@@ -178,3 +178,48 @@ def test_claimspec_field_set_matches_loader(tmp_path: Path) -> None:
     # Guard: loader allow-list must track the dataclass fields exactly.
     spec = ClaimSpec(**_claim_dict(64))
     assert set(asdict(spec)) >= set(_claim_dict(64))
+
+
+def test_run_case_refuses_feature_matrix(tmp_path: Path) -> None:
+    # Regression (INV-6): run_case ingested a feature/accuracy matrix that
+    # datasets.load_series refuses. The raw-guard must fire on the ingest path too.
+    import numpy as np
+
+    claim = _write_claim(tmp_path, n_samples=64, n_channels=70)
+    feat = tmp_path / "feat.npy"
+    np.save(feat, np.random.default_rng(0).standard_normal((70, 64)))
+    with pytest.raises(ValueError, match="does not look raw"):
+        run_case(claim, feat, policy="standard")
+    # The override path accepts it AND records the override + reasons on the record.
+    dossier = run_case(claim, feat, policy="standard", require_raw=False)
+    prov = dossier["signal_provenance"]
+    assert prov["raw_override"] is True
+    assert prov["raw_check_reasons"], "override must record why the guard would have fired"
+
+
+def test_falsify_cli_allow_nonraw_flag(tmp_path: Path) -> None:
+    import numpy as np
+
+    claim = _write_claim(tmp_path, n_samples=64, n_channels=70)
+    feat = tmp_path / "feat.npy"
+    np.save(feat, np.random.default_rng(1).standard_normal((70, 64)))
+    out = tmp_path / "case.json"
+    # Without the flag the headline command refuses; with it, it records the override.
+    with pytest.raises((ValueError, SystemExit)):
+        main(["falsify", "--claim", str(claim), "--signal", str(feat), "--policy", "standard"])
+    main(
+        [
+            "falsify",
+            "--claim",
+            str(claim),
+            "--signal",
+            str(feat),
+            "--policy",
+            "standard",
+            "--allow-nonraw",
+            "--out",
+            str(out),
+        ]
+    )
+    dossier = json.loads(out.read_text())
+    assert dossier["signal_provenance"]["raw_override"] is True

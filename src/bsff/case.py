@@ -21,6 +21,7 @@ from typing import Any
 import numpy as np
 
 from . import __version__
+from .datasets import check_rawness
 from .evidence import stable_sha256
 from .pipeline import FalsificationPipeline
 from .policy import PolicyProfile
@@ -68,13 +69,20 @@ def load_claim(path: str | Path) -> ClaimSpec:
     return spec
 
 
-def load_signal(path: str | Path, spec: ClaimSpec) -> np.ndarray:
+def load_signal(path: str | Path, spec: ClaimSpec, *, require_raw: bool = True) -> np.ndarray:
     """Load a signal array and fail-closed verify it against the contract.
 
     Accepts ``.npy`` (native) or delimited text (``.csv``/``.tsv``/``.txt``).
     The returned array is shaped ``(n_channels, n_samples)``; a 1-D file is
     accepted only for a single-channel claim. Channel/sample counts must match
     the ``ClaimSpec`` exactly — a mismatch is an aborted run, never a reshape.
+
+    With ``require_raw`` (the default) the oriented array is passed through the
+    raw-signal guard (``datasets.check_rawness``): a feature table, accuracy/metric
+    matrix, or label array is refused so BSFF tests a neural signal, not someone's
+    preprocessing — the same INV-6 guard ``datasets.load_series`` enforces. Pass
+    ``require_raw=False`` (``bsff falsify --allow-nonraw``) only with a recorded,
+    on-the-record assertion that the input really is raw.
     """
     path = Path(path)
     if not path.is_file():
@@ -110,6 +118,14 @@ def load_signal(path: str | Path, spec: ClaimSpec) -> np.ndarray:
         raise ValueError(
             f"signal length {array.shape[1]} does not match claim n_samples={spec.n_samples}"
         )
+    if require_raw:
+        reasons = check_rawness(array)
+        if reasons:
+            raise ValueError(
+                "signal does not look raw (" + "; ".join(reasons) + "). BSFF tests neural "
+                "signals, not preprocessing artefacts. If this truly is raw, re-run with "
+                "require_raw=False / `bsff falsify --allow-nonraw` to record the override."
+            )
     return array
 
 
@@ -120,6 +136,7 @@ def run_case(
     policy: PolicyProfile | str = "strict",
     seed: int = 123,
     out_path: str | Path | None = None,
+    require_raw: bool = True,
 ) -> dict[str, Any]:
     """Falsify an external claim and return (and optionally write) the dossier.
 
@@ -128,8 +145,11 @@ def run_case(
     hash, and a canonical ``artifact_sha256`` over the whole case file.
     """
     spec = load_claim(claim_path)
-    signal = load_signal(signal_path, spec)
+    signal = load_signal(signal_path, spec, require_raw=require_raw)
     signal_bytes = Path(signal_path).read_bytes()
+    # When the raw-guard is overridden, record the override AND the reasons it would
+    # have fired, so a non-raw run is never silent — it is on the record in the dossier.
+    raw_reasons = [] if require_raw else check_rawness(signal)
 
     pipeline_verdict = FalsificationPipeline().evaluate(spec, signal, policy=policy, seed=seed)
     verdict_json = pipeline_verdict.to_verdict_json()
@@ -148,6 +168,8 @@ def run_case(
             "sha256": sha256_bytes(signal_bytes),
             "shape": list(signal.shape),
             "dtype": str(signal.dtype),
+            "raw_override": not require_raw,
+            "raw_check_reasons": raw_reasons,
         },
         "verdict": verdict_json.to_dict(),
         "contract_sha256": pipeline_verdict.contract_sha256,
