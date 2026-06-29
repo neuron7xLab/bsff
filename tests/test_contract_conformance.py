@@ -32,15 +32,12 @@ def test_conformance_runs_and_has_no_nonconformant_feasible_item(tmp_path):
         capture_output=True,
         check=False,
     )
-    # exit 0 == no feasible item is NONCONFORMANT (PARTIAL from blocked items is OK)
     assert r.returncode == 0, r.stdout + r.stderr
 
     verdict = json.loads((out / "CONFORMANCE_VERDICT.json").read_text())
     assert verdict["overall"] in {"CONFORMANT", "PARTIAL"}
     assert verdict["nonconformant"] == 0
-    # the feasible items must actually be present and checked
     assert verdict["conformant"] >= 10
-    # blocked items must be honestly UNVERIFIABLE, never silently passed
     blocked = [i for i in verdict["items"] if i["kind"] == "blocked"]
     assert blocked and all(i["status"] == "UNVERIFIABLE" for i in blocked)
 
@@ -54,9 +51,7 @@ def test_command_items_record_argv_duration_and_bounded_output():
     )
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    result = mod._check_item(
-        {"id": "cmd", "kind": "command", "run": "python -c 'print(42)'"}
-    )
+    result = mod._check_item({"id": "cmd", "kind": "command", "run": "python -c 'print(42)'"})
     assert result["status"] == "CONFORMANT"
     assert result["argv"] == ["python", "-c", "print(42)"]
     assert isinstance(result["duration_ms"], int)
