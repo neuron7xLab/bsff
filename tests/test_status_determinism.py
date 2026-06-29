@@ -26,7 +26,11 @@ def test_committed_metadata_gate_is_cheap(tmp_path, monkeypatch, capsys):
     status = tmp_path / "STATUS.md"
     status.write_text(tool.generate(test_count=701), encoding="utf-8")
     monkeypatch.setattr(tool, "STATUS", status)
-    monkeypatch.setattr(tool, "collect_test_count", lambda: (_ for _ in ()).throw(RuntimeError()))
+
+    def fail_collect():
+        raise RuntimeError
+
+    monkeypatch.setattr(tool, "collect_test_count", fail_collect)
     assert tool.main(["--check"]) == 0
     assert "metadata in sync" in capsys.readouterr().out
 
