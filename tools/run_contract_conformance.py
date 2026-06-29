@@ -8,6 +8,7 @@ import argparse
 import json
 import shlex
 import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -38,6 +39,8 @@ def _command_argv(run: str) -> list[str]:
         raise ValueError(f"invalid command quoting: {run!r}: {exc}") from exc
     if not argv:
         raise ValueError("empty command")
+    if argv[0] == "python":
+        argv[0] = sys.executable
     return argv
 
 
