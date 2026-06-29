@@ -90,7 +90,9 @@ def render_status(
     extras: list[str],
     subcommands: list[str],
 ) -> str:
-    extras_line = ", ".join(f"`{name}`" for name in extras) if extras else "_none declared_"
+    extras_line = (
+        ", ".join(f"`{name}`" for name in extras) if extras else "_none declared_"
+    )
     rows = [
         "| Field | Value |",
         "|---|---|",
