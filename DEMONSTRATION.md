@@ -23,7 +23,8 @@ Honesty gate (`tools/verify_honesty.py`): **PASS**
 | null_hypotheses_explicit | PASS |
 | thresholds_have_provenance | PASS |
 | self_falsification_controls | PASS |
-| status_count_is_generated_and_in_sync | PASS |
+| status_metadata_is_generated_and_in_sync | PASS |
+| status_count_live_collection | PASS |
 | contract_self_conformance | PASS |
 
 ## 2. It fails and passes correctly on ground truth
