@@ -4,7 +4,9 @@
 """Regenerate or verify BSFF STATUS.md from repository metadata.
 
 ``--check`` is intentionally cheap: it validates committed metadata without
-running pytest collection. ``--verify-count`` is the explicit slow collection gate.
+running pytest collection. ``--verify-count`` is the explicit live collection
+availability gate. ``--verify-count --strict-status`` additionally proves that
+the committed status count equals the live pytest collection count.
 """
 
 from __future__ import annotations
@@ -27,6 +29,7 @@ CLI = ROOT / "src" / "bsff" / "cli.py"
 STATUS = ROOT / "STATUS.md"
 TRUTH = ROOT / "artifacts" / "release" / "CURRENT_TRUTH.json"
 CI_WORKFLOW = ".github/workflows/ci.yml"
+RELEASE_EVIDENCE_PATH = "docs/PR_109_EVIDENCE.md"
 
 
 def read_version() -> str:
@@ -91,47 +94,29 @@ def render_status(
     subcommands: list[str],
 ) -> str:
     extras_line = ", ".join(f"`{name}`" for name in extras) if extras else "_none declared_"
-    sub_rows = "\n".join(f"| `bsff {name}` |" for name in subcommands)
     return "\n".join(
         [
             "<!-- SPDX-License-Identifier: CC-BY-4.0 -->",
             "<!-- Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab -->",
             "<!-- GENERATED FILE — edit tools/update_status.py, then run it. Do not edit by hand. -->",
             "",
-            "# BSFF status",
-            "",
-            "Single source of truth for release status. Generated from repository metadata by",
-            "`python tools/update_status.py`. CI enforces deterministic sync with",
-            "`python tools/update_status.py --check`.",
-            "",
-            "## Current state",
+            "# BSFF status register",
             "",
             "| Field | Value |",
             "|---|---|",
-            f"| Package version | `{version}` |",
-            f"| Canonical state | `{canonical_state}` |",
-            f"| Live test count | **{test_count}** (collected by `pytest tests/`) |",
-            f"| CLI subcommands | {len(subcommands)} (parsed from `src/bsff/cli.py`) |",
-            f"| Optional extras | {extras_line} |",
-            "",
-            "## CI state",
-            "",
-            f"CI is defined by [`{CI_WORKFLOW}`]({CI_WORKFLOW}).",
-            "The GitHub Actions run for the relevant commit is authoritative.",
-            "",
-            "## Release readiness",
-            "",
-            "| Gate | Status |",
-            "|---|---|",
-            "| Current-truth consistency (`tools/validate_current_truth.py`) | enforced in CI |",
-            "| Status sync (`tools/update_status.py --check`) | enforced in CI |",
-            "| Live status count (`tools/update_status.py --verify-count`) | enforced in CI |",
-            "",
-            "## CLI surface",
-            "",
-            "| Command |",
-            "|---|",
-            sub_rows,
+            f"| package_version | `{version}` |",
+            f"| canonical_state | `{canonical_state}` |",
+            f"| committed_test_count | **{test_count}** |",
+            "| live_collection_gate | `tools/update_status.py --verify-count --strict-status` |",
+            "| live_collection_count_source | `pytest tests/ --collect-only -p no:cacheprovider` |",
+            f"| cli_subcommand_count | {len(subcommands)} |",
+            f"| optional_extras | {extras_line} |",
+            "| truth_artifact_path | `artifacts/release/CURRENT_TRUTH.json` |",
+            f"| workflow_authority | `{CI_WORKFLOW}` and GitHub Actions for the exact commit |",
+            f"| release_evidence_path | `{RELEASE_EVIDENCE_PATH}` |",
+            "| current_truth_gate | `tools/validate_current_truth.py` |",
+            "| status_sync_gate | `tools/update_status.py --check` |",
+            "| strict_count_sync_gate | `tools/update_status.py --verify-count --strict-status` |",
             "",
         ]
     )
@@ -149,12 +134,12 @@ def generate(*, test_count: int | None = None) -> str:
 
 
 def _read_status_count(text: str) -> int:
-    match = re.search(r"Live test count \| \*\*(\d+)\*\*", text)
+    match = re.search(r"committed_test_count \| \*\*(\d+)\*\*", text)
     if not match:
-        raise ValueError("STATUS.md is missing a live test count")
+        raise ValueError("STATUS.md is missing committed_test_count")
     count = int(match.group(1))
     if count <= 0:
-        raise ValueError("STATUS.md live test count must be positive")
+        raise ValueError("STATUS.md committed_test_count must be positive")
     return count
 
 
@@ -170,23 +155,50 @@ def check_status() -> int:
     text = STATUS.read_text(encoding="utf-8")
     try:
         _read_status_count(text)
-        _require_contains(text, f"| Package version | `{read_version()}` |", "version")
+        _require_contains(text, f"| package_version | `{read_version()}` |", "version")
         _require_contains(
             text,
-            f"| Canonical state | `{read_current_truth_state()}` |",
+            f"| canonical_state | `{read_current_truth_state()}` |",
             "canonical state",
         )
         _require_contains(
             text,
-            f"| CLI subcommands | {len(detect_cli_subcommands())}",
+            f"| cli_subcommand_count | {len(detect_cli_subcommands())} |",
             "CLI subcommand count",
         )
         extras_line = ", ".join(f"`{name}`" for name in read_extras())
-        _require_contains(text, f"| Optional extras | {extras_line} |", "extras")
+        _require_contains(text, f"| optional_extras | {extras_line} |", "extras")
+        _require_contains(
+            text,
+            "| strict_count_sync_gate | `tools/update_status.py --verify-count --strict-status` |",
+            "strict count sync gate",
+        )
     except ValueError as exc:
         print(str(exc))
         return 1
-    print("STATUS.md: in sync")
+    print("STATUS.md: metadata in sync")
+    return 0
+
+
+def verify_count(*, strict_status: bool) -> int:
+    live = collect_test_count()
+    print(f"pytest collect-only: {live} tests collected")
+    if not STATUS.exists():
+        print("STATUS.md is missing — cannot compare committed_test_count")
+        return 1 if strict_status else 0
+    try:
+        committed = _read_status_count(STATUS.read_text(encoding="utf-8"))
+    except ValueError as exc:
+        print(str(exc))
+        return 1
+    print(f"STATUS.md committed_test_count: {committed}")
+    if strict_status and live != committed:
+        print(f"STATUS.md strict count mismatch: live={live} committed={committed}")
+        return 1
+    if strict_status:
+        print("STATUS.md strict count sync: PASS")
+    else:
+        print("pytest collection availability: PASS")
     return 0
 
 
@@ -194,22 +206,17 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Regenerate / verify BSFF STATUS.md.")
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--verify-count", action="store_true")
+    parser.add_argument("--strict-status", action="store_true")
     args = parser.parse_args(argv)
 
     if args.check and args.verify_count:
         print("choose either --check or --verify-count, not both")
         return 2
+    if args.strict_status and not args.verify_count:
+        print("--strict-status requires --verify-count")
+        return 2
     if args.verify_count:
-        count = collect_test_count()
-        print(f"pytest collect-only: {count} tests collected")
-        if STATUS.exists():
-            try:
-                committed = _read_status_count(STATUS.read_text(encoding="utf-8"))
-                print(f"STATUS.md committed live count: {committed}")
-            except ValueError as exc:
-                print(str(exc))
-                return 1
-        return 0
+        return verify_count(strict_status=args.strict_status)
     if args.check:
         return check_status()
 
