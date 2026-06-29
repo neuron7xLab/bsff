@@ -12,7 +12,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def _load_update_status():
-    spec = importlib.util.spec_from_file_location("update_status", ROOT / "tools" / "update_status.py")
+    spec = importlib.util.spec_from_file_location(
+        "update_status",
+        ROOT / "tools" / "update_status.py",
+    )
     mod = importlib.util.module_from_spec(spec)
     sys.modules["update_status"] = mod
     spec.loader.exec_module(mod)
@@ -33,7 +36,11 @@ def test_status_check_does_not_collect_tests(tmp_path, monkeypatch, capsys):
     assert "STATUS.md: in sync" in capsys.readouterr().out
 
 
-def test_status_verify_count_is_the_explicit_collection_gate(tmp_path, monkeypatch, capsys):
+def test_status_verify_count_is_the_explicit_collection_gate(
+    tmp_path,
+    monkeypatch,
+    capsys,
+):
     tool = _load_update_status()
     status = tmp_path / "STATUS.md"
     status.write_text(tool.generate(test_count=701), encoding="utf-8")
