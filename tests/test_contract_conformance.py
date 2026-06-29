@@ -54,7 +54,9 @@ def test_command_items_record_argv_duration_and_bounded_output():
     )
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    result = mod._check_item({"id": "cmd", "kind": "command", "run": "python -c 'print(42)'"})
+    result = mod._check_item(
+        {"id": "cmd", "kind": "command", "run": "python -c 'print(42)'"}
+    )
     assert result["status"] == "CONFORMANT"
     assert result["argv"] == ["python", "-c", "print(42)"]
     assert isinstance(result["duration_ms"], int)
