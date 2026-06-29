@@ -10,6 +10,7 @@ running pytest collection. ``--verify-count`` is the explicit slow collection ga
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import subprocess
 import sys
@@ -24,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PYPROJECT = ROOT / "pyproject.toml"
 CLI = ROOT / "src" / "bsff" / "cli.py"
 STATUS = ROOT / "STATUS.md"
+TRUTH = ROOT / "artifacts" / "release" / "CURRENT_TRUTH.json"
 CI_WORKFLOW = ".github/workflows/ci.yml"
 
 
@@ -33,6 +35,14 @@ def read_version() -> str:
     if not isinstance(version, str):
         raise SystemExit("pyproject version is not a string")
     return version
+
+
+def read_current_truth_state() -> str:
+    truth = json.loads(TRUTH.read_text(encoding="utf-8"))
+    state = truth["latest_validation_state"]
+    if not isinstance(state, str) or not state:
+        raise SystemExit("CURRENT_TRUTH latest_validation_state is not a string")
+    return state
 
 
 def read_extras() -> list[str]:
@@ -75,6 +85,7 @@ def collect_test_count() -> int:
 
 def render_status(
     version: str,
+    canonical_state: str,
     test_count: int,
     extras: list[str],
     subcommands: list[str],
@@ -98,6 +109,7 @@ def render_status(
             "| Field | Value |",
             "|---|---|",
             f"| Package version | `{version}` |",
+            f"| Canonical state | `{canonical_state}` |",
             f"| Live test count | **{test_count}** (collected by `pytest tests/`) |",
             f"| CLI subcommands | {len(subcommands)} (parsed from `src/bsff/cli.py`) |",
             f"| Optional extras | {extras_line} |",
@@ -106,6 +118,14 @@ def render_status(
             "",
             f"CI is defined by [`{CI_WORKFLOW}`]({CI_WORKFLOW}).",
             "The GitHub Actions run for the relevant commit is authoritative.",
+            "",
+            "## Release readiness",
+            "",
+            "| Gate | Status |",
+            "|---|---|",
+            "| Current-truth consistency (`tools/validate_current_truth.py`) | enforced in CI |",
+            "| Status sync (`tools/update_status.py --check`) | enforced in CI |",
+            "| Live status count (`tools/update_status.py --verify-count`) | enforced in CI |",
             "",
             "## CLI surface",
             "",
@@ -121,6 +141,7 @@ def generate(*, test_count: int | None = None) -> str:
     resolved_count = collect_test_count() if test_count is None else test_count
     return render_status(
         read_version(),
+        read_current_truth_state(),
         resolved_count,
         read_extras(),
         detect_cli_subcommands(),
@@ -150,6 +171,11 @@ def check_status() -> int:
     try:
         _read_status_count(text)
         _require_contains(text, f"| Package version | `{read_version()}` |", "version")
+        _require_contains(
+            text,
+            f"| Canonical state | `{read_current_truth_state()}` |",
+            "canonical state",
+        )
         _require_contains(
             text,
             f"| CLI subcommands | {len(detect_cli_subcommands())}",
