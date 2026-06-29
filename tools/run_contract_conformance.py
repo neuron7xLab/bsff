@@ -64,6 +64,7 @@ def _run_command(run: str, *, timeout_seconds: int) -> dict:
         )
         duration_ms = int((time.perf_counter() - start) * 1000)
         return {
+            "argv": declared_argv,
             "declared_argv": declared_argv,
             "exec_argv": exec_argv,
             "python_executable": sys.executable,
@@ -84,6 +85,7 @@ def _run_command(run: str, *, timeout_seconds: int) -> dict:
         if isinstance(stderr, bytes):
             stderr = stderr.decode(errors="replace")
         return {
+            "argv": declared_argv,
             "declared_argv": declared_argv,
             "exec_argv": exec_argv,
             "python_executable": sys.executable,
