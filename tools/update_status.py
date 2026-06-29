@@ -69,7 +69,9 @@ def collect_test_count() -> int:
         )
     matches = re.findall(r"(\d+)\s+tests?\s+collected\s+in\b", proc.stdout)
     if not matches:
-        raise SystemExit("could not parse '<N> tests collected in ...' from pytest output")
+        raise SystemExit(
+            "could not parse '<N> tests collected in ...' from pytest output"
+        )
     return int(matches[-1])
 
 
@@ -79,7 +81,9 @@ def render_status(
     extras: list[str],
     subcommands: list[str],
 ) -> str:
-    extras_line = ", ".join(f"`{name}`" for name in extras) if extras else "_none declared_"
+    extras_line = (
+        ", ".join(f"`{name}`" for name in extras) if extras else "_none declared_"
+    )
     sub_rows = "\n".join(f"| `bsff {name}` |" for name in subcommands)
     return "\n".join(
         [
@@ -119,7 +123,12 @@ def render_status(
 
 def generate(*, test_count: int | None = None) -> str:
     resolved_count = collect_test_count() if test_count is None else test_count
-    return render_status(read_version(), resolved_count, read_extras(), detect_cli_subcommands())
+    return render_status(
+        read_version(),
+        resolved_count,
+        read_extras(),
+        detect_cli_subcommands(),
+    )
 
 
 def _read_status_count(text: str) -> int:
@@ -173,7 +182,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"pytest collect-only: {count} tests collected")
         if STATUS.exists():
             try:
-                print(f"STATUS.md committed live count: {_read_status_count(STATUS.read_text(encoding='utf-8'))}")
+                committed = _read_status_count(STATUS.read_text(encoding="utf-8"))
+                print(f"STATUS.md committed live count: {committed}")
             except ValueError as exc:
                 print(str(exc))
                 return 1
