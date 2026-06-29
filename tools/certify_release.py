@@ -8,12 +8,6 @@ stream's verdict + evidence hash is folded into a hash chain where each link
 carries the previous root, so the head hash certifies the WHOLE ordered chain at
 once. That single root is a property no individual gate has — change any stream's
 evidence and the root changes; reorder or drop a stream and the chain breaks.
-
-It scales the same way an append-only ledger does: add a stream (or, later, a
-case) and the chain extends; the root advances deterministically.
-
-    python tools/certify_release.py            # build CERTIFICATE.json (+ root)
-    python tools/certify_release.py --verify    # recompute the chain; CERTIFIED iff intact + all green
 """
 
 from __future__ import annotations
@@ -32,10 +26,13 @@ from bsff.evidence import stable_sha256  # noqa: E402
 GENESIS = "0" * 64
 OUT = ROOT / "artifacts" / "certificate" / "CERTIFICATE.json"
 
-# Ordered streams. Each must exit 0; its (exit, evidence-artifact hash) is folded
-# into the chain. Order is part of the certified state.
 STREAMS: list[tuple[str, list[str], str | None]] = [
     ("status_sync", ["tools/update_status.py", "--check"], None),
+    (
+        "status_count_strict_sync",
+        ["tools/update_status.py", "--verify-count", "--strict-status"],
+        None,
+    ),
     (
         "claim_audit",
         ["tools/validate_claim_audit.py"],
@@ -119,11 +116,6 @@ def verify_chain(cert: dict) -> tuple[bool, str]:
         prev = link["link_hash"]
     if prev != cert.get("root_hash"):
         return False, "root hash does not match the chain"
-    # Re-derive the aggregate verdict from the (now hash-verified) link ok-values and
-    # reject any contradiction. all_streams_green/overall are top-level fields folded
-    # into NO link hash, so without this an honestly-recorded FAILED chain (a link with
-    # ok=False, byte-intact) could be stamped CERTIFIED by flipping those two unhashed
-    # booleans — a fail-open in the exact gate meant to certify the WHOLE chain.
     all_ok = all(bool(link.get("ok")) for link in cert.get("chain", []))
     if bool(cert.get("all_streams_green")) != all_ok:
         return False, "all_streams_green contradicts the chain's ok-values"
@@ -145,12 +137,11 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         cert = json.loads(args.output.read_text(encoding="utf-8"))
         intact, reason = verify_chain(cert)
-        # Derive the verdict from the verified chain, not the unhashed top-level fields
-        # (verify_chain already rejects any contradiction between the two).
         chain_all_ok = all(bool(link.get("ok")) for link in cert.get("chain", []))
         certified = intact and chain_all_ok
         print(
-            f"chain: {reason}; all_green={cert.get('all_streams_green')}; root={cert.get('root_hash')[:16]}…"
+            f"chain: {reason}; all_green={cert.get('all_streams_green')}; "
+            f"root={cert.get('root_hash')[:16]}…"
         )
         print("CERTIFIED" if certified else "NOT CERTIFIED")
         return 0 if certified else 1
