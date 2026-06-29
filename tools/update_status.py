@@ -8,14 +8,15 @@ Regenerates ``STATUS.md`` from facts that already live in the repository — the
 test count, and the CLI subcommands actually registered in ``src/bsff/cli.py`` —
 so the status file can never silently drift from reality.
 
-    python tools/update_status.py            # write STATUS.md, exit 0
-    python tools/update_status.py --check     # exit 1 if STATUS.md is stale
+    python tools/update_status.py                 # write STATUS.md, exit 0
+    python tools/update_status.py --check          # cheap drift check, no pytest collection
+    python tools/update_status.py --verify-count   # slow: prove pytest collection still works
 
-``--check`` regenerates the file in memory and compares it byte-for-byte against
-the on-disk copy. CI runs it to enforce that STATUS.md was regenerated whenever
-the version, the test count, the CLI surface, or the extras changed. The tool is
-fail-closed: a count that cannot be measured aborts rather than emitting a
-fabricated number, and ``--check`` exits non-zero on any mismatch.
+``--check`` verifies the deterministic facts that must not silently drift
+(version, CLI surface, extras) using the committed positive test count already
+in ``STATUS.md``. The slow live ``pytest --collect-only`` path is isolated behind
+``--verify-count`` and normal regeneration, so CI can separate cheap truth-surface
+drift from expensive environment-dependent collection.
 
 Standard library only (``tomllib`` requires Python >= 3.11; a vendored
 ``tomli`` fallback is used on 3.10). No network.
@@ -187,13 +188,29 @@ def render_status(version: str, test_count: int, extras: list[str], subcommands:
     return "\n".join(lines)
 
 
-def generate() -> str:
-    """Build the STATUS.md content from the current repository state."""
+def _read_status_count(text: str) -> int:
+    """Extract the committed STATUS.md test count as a positive integer."""
+    match = re.search(r"Live test count \| \*\*(\d+)\*\*", text)
+    if not match:
+        raise ValueError("STATUS.md is missing a live test count")
+    count = int(match.group(1))
+    if count <= 0:
+        raise ValueError("STATUS.md live test count must be positive")
+    return count
+
+
+def generate(*, test_count: int | None = None) -> str:
+    """Build the STATUS.md content from the current repository state.
+
+    ``test_count=None`` is the slow authoritative regeneration path. Passing a
+    count lets ``--check`` verify all deterministic metadata without collecting
+    tests in the current environment.
+    """
     version = read_version()
-    test_count = collect_test_count()
+    resolved_test_count = collect_test_count() if test_count is None else test_count
     extras = read_extras()
     subcommands = detect_cli_subcommands()
-    return render_status(version, test_count, extras, subcommands)
+    return render_status(version, resolved_test_count, extras, subcommands)
 
 
 _COUNT_RE = re.compile(r"(Live test count \| )\*\*\d+\*\*")
@@ -215,17 +232,42 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--check",
         action="store_true",
-        help="Verify STATUS.md is in sync; exit 1 (with a diff hint) if stale.",
+        help="Verify STATUS.md deterministic facts are in sync without collecting tests.",
+    )
+    parser.add_argument(
+        "--verify-count",
+        action="store_true",
+        help="Slow gate: run pytest --collect-only and verify the live count is measurable.",
     )
     args = parser.parse_args(argv)
 
-    rendered = generate()
+    if args.check and args.verify_count:
+        print("choose either --check or --verify-count, not both")
+        return 2
+
+    if args.verify_count:
+        count = collect_test_count()
+        print(f"pytest collect-only: {count} tests collected")
+        if STATUS.exists():
+            try:
+                committed = _read_status_count(STATUS.read_text(encoding="utf-8"))
+                print(f"STATUS.md committed live count: {committed}")
+            except ValueError as exc:
+                print(str(exc))
+                return 1
+        return 0 if count > 0 else 1
 
     if args.check:
         if not STATUS.exists():
             print("STATUS.md is missing — run: python tools/update_status.py")
             return 1
         on_disk = STATUS.read_text(encoding="utf-8")
+        try:
+            committed_count = _read_status_count(on_disk)
+        except ValueError as exc:
+            print(str(exc))
+            return 1
+        rendered = generate(test_count=committed_count)
         # The live test count legitimately varies with which optional test
         # dependencies are installed (a leaner CI image collects fewer parametrised
         # cases than a fat developer machine), so gating it byte-exact would make
@@ -251,6 +293,7 @@ def main(argv: list[str] | None = None) -> int:
         print("STATUS.md: in sync")
         return 0
 
+    rendered = generate()
     STATUS.write_text(rendered, encoding="utf-8")
     print(f"Wrote {STATUS.relative_to(ROOT)}")
     return 0
