@@ -30,7 +30,10 @@ CHECKS: list[tuple[str, list[str]]] = [
     ("null_hypotheses_explicit", ["tools/validate_null_registry.py"]),
     ("thresholds_have_provenance", ["tools/validate_threshold_registry.py"]),
     ("self_falsification_controls", ["tools/verify_controls.py"]),
-    ("status_metadata_is_generated_and_in_sync", ["tools/update_status.py", "--check"]),
+    (
+        "status_metadata_is_generated_and_in_sync",
+        ["tools/update_status.py", "--check"],
+    ),
     ("status_count_live_collection", ["tools/update_status.py", "--verify-count"]),
     ("contract_self_conformance", ["tools/run_contract_conformance.py"]),
 ]
