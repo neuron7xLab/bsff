@@ -14,6 +14,7 @@ facts (version, live test count, CLI surface, extras) by
 | Field | Value |
 |---|---|
 | Package version | `0.4.0` |
+| Canonical state | `BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED` |
 | Live test count | **701** (collected by `pytest tests/`) |
 | CLI subcommands | 18 (parsed from `src/bsff/cli.py`) |
 | Optional extras | `dev`, `full`, `fuzz`, `leakage`, `moabb`, `security`, `stats`, `yaml` |
@@ -41,8 +42,10 @@ for the measured false-positive / power profile.
 |---|---|
 | Deterministic test suite | green when CI `test` job passes (see Actions) |
 | Truth contract (`tools/validate_truth_contract.py`) | enforced in CI |
+| Current-truth consistency (`tools/validate_current_truth.py`) | enforced in CI |
 | Markdown contract (`tools/validate_markdown.py`) | enforced in CI |
 | Status sync (`tools/update_status.py --check`) | enforced in CI |
+| Live status count (`tools/update_status.py --verify-count`) | enforced in CI |
 | Operating-characteristic calibration | committed artifact + CI smoke |
 | TISEAN reference gate | numpy reference is the in-CI oracle |
 
