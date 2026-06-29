@@ -50,10 +50,11 @@ def _exec_argv(argv: list[str]) -> list[str]:
 
 def _run_command(run: str, *, timeout_seconds: int) -> dict:
     start = time.perf_counter()
-    argv = _command_argv(run)
+    declared_argv = _command_argv(run)
+    exec_argv = _exec_argv(declared_argv)
     try:
         proc = subprocess.run(
-            _exec_argv(argv),
+            exec_argv,
             shell=False,
             cwd=ROOT,
             text=True,
@@ -63,7 +64,11 @@ def _run_command(run: str, *, timeout_seconds: int) -> dict:
         )
         duration_ms = int((time.perf_counter() - start) * 1000)
         return {
-            "argv": argv,
+            "declared_argv": declared_argv,
+            "exec_argv": exec_argv,
+            "python_executable": sys.executable,
+            "shell": False,
+            "timeout_seconds": timeout_seconds,
             "duration_ms": duration_ms,
             "exit": proc.returncode,
             "stdout_tail": _tail(proc.stdout),
@@ -79,18 +84,27 @@ def _run_command(run: str, *, timeout_seconds: int) -> dict:
         if isinstance(stderr, bytes):
             stderr = stderr.decode(errors="replace")
         return {
-            "argv": argv,
+            "declared_argv": declared_argv,
+            "exec_argv": exec_argv,
+            "python_executable": sys.executable,
+            "shell": False,
+            "timeout_seconds": timeout_seconds,
             "duration_ms": duration_ms,
             "exit": None,
             "stdout_tail": _tail(stdout),
             "stderr_tail": _tail(stderr),
             "timed_out": True,
-            "timeout_seconds": timeout_seconds,
         }
 
 
 def _stable_item(item: dict) -> dict:
-    volatile = {"duration_ms", "stdout_tail", "stderr_tail"}
+    volatile = {
+        "duration_ms",
+        "stdout_tail",
+        "stderr_tail",
+        "exec_argv",
+        "python_executable",
+    }
     return {k: v for k, v in item.items() if k not in volatile}
 
 
