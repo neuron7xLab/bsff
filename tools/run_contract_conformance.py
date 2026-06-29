@@ -13,11 +13,6 @@ Overall verdict:
   NONCONFORMANT  if any feasible item fails  (fail-closed)
   PARTIAL        if all feasible pass but some items are UNVERIFIABLE
   CONFORMANT     if every item is CONFORMANT
-
-Command execution is intentionally conservative: contract commands are parsed
-with ``shlex.split`` and executed with ``shell=False``. That keeps a repository
-contract from inheriting shell expansion semantics and records enough timing and
-stderr/stdout tail to diagnose failures without bloating the artifact.
 """
 
 from __future__ import annotations
@@ -173,10 +168,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     contract = yaml.safe_load(args.contract.read_text(encoding="utf-8"))
-    results = [
-        _check_item(it, timeout_seconds=args.timeout_seconds)
-        for it in contract["items"]
-    ]
+    results = [_check_item(it, timeout_seconds=args.timeout_seconds) for it in contract["items"]]
 
     nonconformant = [r for r in results if r["status"] == "NONCONFORMANT"]
     unverifiable = [r for r in results if r["status"] == "UNVERIFIABLE"]
@@ -208,9 +200,7 @@ def main(argv: list[str] | None = None) -> int:
     _write_stable_json(args.output / "CONFORMANCE_DIAGNOSTICS.json", diagnostics)
 
     for r in results:
-        mark = {"CONFORMANT": "[ok]", "NONCONFORMANT": "[X]", "UNVERIFIABLE": "[~]"}[
-            r["status"]
-        ]
+        mark = {"CONFORMANT": "[ok]", "NONCONFORMANT": "[X]", "UNVERIFIABLE": "[~]"}[r["status"]]
         print(f"  {mark} {r['id']:42} {r['status']}")
     print(
         f"\nOVERALL: {overall}  ({verdict['conformant']} conformant, "
