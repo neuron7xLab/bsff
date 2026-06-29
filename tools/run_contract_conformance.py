@@ -1,19 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
-"""Self-conformance: check the repo's ACTUAL output against its declared contract.
-
-The system verifies itself through its own output. Each contract item becomes:
-
-  CONFORMANT     — file exists / command exits 0
-  NONCONFORMANT  — declared + feasible, but missing or failed (a real defect)
-  UNVERIFIABLE   — declared `blocked` (network/GPU/external binary): honestly not
-                   checkable here, never faked CONFORMANT
-
-Overall verdict:
-  NONCONFORMANT  if any feasible item fails  (fail-closed)
-  PARTIAL        if all feasible pass but some items are UNVERIFIABLE
-  CONFORMANT     if every item is CONFORMANT
-"""
+"""Self-conformance: check repository output against its declared contract."""
 
 from __future__ import annotations
 
@@ -31,12 +18,10 @@ TAIL_CHARS = 2000
 
 
 def _tail(text: str, limit: int = TAIL_CHARS) -> str:
-    """Return a bounded diagnostic tail for machine artifacts."""
     return text[-limit:] if len(text) > limit else text
 
 
 def _write_stable_json(path: Path, payload: dict) -> None:
-    """Atomically write deterministic JSON without importing the installed package."""
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(path.name + ".tmp")
     tmp.write_text(
@@ -98,7 +83,6 @@ def _run_command(run: str, *, timeout_seconds: int) -> dict:
 
 
 def _stable_item(item: dict) -> dict:
-    """Strip volatile diagnostics from the committed verdict artifact."""
     volatile = {"duration_ms", "stdout_tail", "stderr_tail"}
     return {k: v for k, v in item.items() if k not in volatile}
 
@@ -130,7 +114,7 @@ def _check_item(item: dict, *, timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS) -
                 "expected_exit": expected_exit,
                 **run,
             }
-        except Exception as exc:  # fail closed on malformed contract items too
+        except Exception as exc:
             return {
                 "id": item_id,
                 "kind": kind,
@@ -168,7 +152,10 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     contract = yaml.safe_load(args.contract.read_text(encoding="utf-8"))
-    results = [_check_item(it, timeout_seconds=args.timeout_seconds) for it in contract["items"]]
+    results = [
+        _check_item(it, timeout_seconds=args.timeout_seconds)
+        for it in contract["items"]
+    ]
 
     nonconformant = [r for r in results if r["status"] == "NONCONFORMANT"]
     unverifiable = [r for r in results if r["status"] == "UNVERIFIABLE"]
@@ -200,14 +187,15 @@ def main(argv: list[str] | None = None) -> int:
     _write_stable_json(args.output / "CONFORMANCE_DIAGNOSTICS.json", diagnostics)
 
     for r in results:
-        mark = {"CONFORMANT": "[ok]", "NONCONFORMANT": "[X]", "UNVERIFIABLE": "[~]"}[r["status"]]
+        mark = {"CONFORMANT": "[ok]", "NONCONFORMANT": "[X]", "UNVERIFIABLE": "[~]"}[
+            r["status"]
+        ]
         print(f"  {mark} {r['id']:42} {r['status']}")
     print(
         f"\nOVERALL: {overall}  ({verdict['conformant']} conformant, "
         f"{verdict['nonconformant']} nonconformant, "
         f"{verdict['unverifiable']} unverifiable)"
     )
-    # fail-closed only on a real defect; PARTIAL (blocked items) is an honest pass
     return 1 if overall == "NONCONFORMANT" else 0
 
 
