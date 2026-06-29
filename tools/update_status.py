@@ -1,13 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
-"""Regenerate or verify BSFF STATUS.md from repository metadata.
-
-``--check`` is intentionally cheap: it validates committed metadata without
-running pytest collection. ``--verify-count`` is the explicit live collection
-availability gate. ``--verify-count --strict-status`` additionally proves that
-the committed status count equals the live pytest collection count.
-"""
+"""Regenerate or verify BSFF STATUS.md from repository metadata."""
 
 from __future__ import annotations
 
@@ -30,6 +24,7 @@ STATUS = ROOT / "STATUS.md"
 TRUTH = ROOT / "artifacts" / "release" / "CURRENT_TRUTH.json"
 CI_WORKFLOW = ".github/workflows/ci.yml"
 RELEASE_EVIDENCE_PATH = "docs/PR_109_EVIDENCE.md"
+STRICT_COUNT_GATE = "tools/update_status.py --verify-count --strict-status"
 
 
 def read_version() -> str:
@@ -82,7 +77,9 @@ def collect_test_count() -> int:
         )
     matches = re.findall(r"(\d+)\s+tests?\s+collected\s+in\b", proc.stdout)
     if not matches:
-        raise SystemExit("could not parse '<N> tests collected in ...' from pytest output")
+        raise SystemExit(
+            "could not parse '<N> tests collected in ...' from pytest output"
+        )
     return int(matches[-1])
 
 
@@ -94,29 +91,32 @@ def render_status(
     subcommands: list[str],
 ) -> str:
     extras_line = ", ".join(f"`{name}`" for name in extras) if extras else "_none declared_"
+    rows = [
+        "| Field | Value |",
+        "|---|---|",
+        f"| package_version | `{version}` |",
+        f"| canonical_state | `{canonical_state}` |",
+        f"| committed_test_count | **{test_count}** |",
+        f"| live_collection_gate | `{STRICT_COUNT_GATE}` |",
+        "| live_collection_count_source | `pytest tests/ --collect-only -p no:cacheprovider` |",
+        f"| cli_subcommand_count | {len(subcommands)} |",
+        f"| optional_extras | {extras_line} |",
+        "| truth_artifact_path | `artifacts/release/CURRENT_TRUTH.json` |",
+        f"| workflow_authority | `{CI_WORKFLOW}` and GitHub Actions for the exact commit |",
+        f"| release_evidence_path | `{RELEASE_EVIDENCE_PATH}` |",
+        "| current_truth_gate | `tools/validate_current_truth.py` |",
+        "| status_sync_gate | `tools/update_status.py --check` |",
+        f"| strict_count_sync_gate | `{STRICT_COUNT_GATE}` |",
+    ]
     return "\n".join(
         [
             "<!-- SPDX-License-Identifier: CC-BY-4.0 -->",
             "<!-- Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab -->",
-            "<!-- GENERATED FILE — edit tools/update_status.py, then run it. Do not edit by hand. -->",
+            "<!-- GENERATED FILE -->",
             "",
             "# BSFF status register",
             "",
-            "| Field | Value |",
-            "|---|---|",
-            f"| package_version | `{version}` |",
-            f"| canonical_state | `{canonical_state}` |",
-            f"| committed_test_count | **{test_count}** |",
-            "| live_collection_gate | `tools/update_status.py --verify-count --strict-status` |",
-            "| live_collection_count_source | `pytest tests/ --collect-only -p no:cacheprovider` |",
-            f"| cli_subcommand_count | {len(subcommands)} |",
-            f"| optional_extras | {extras_line} |",
-            "| truth_artifact_path | `artifacts/release/CURRENT_TRUTH.json` |",
-            f"| workflow_authority | `{CI_WORKFLOW}` and GitHub Actions for the exact commit |",
-            f"| release_evidence_path | `{RELEASE_EVIDENCE_PATH}` |",
-            "| current_truth_gate | `tools/validate_current_truth.py` |",
-            "| status_sync_gate | `tools/update_status.py --check` |",
-            "| strict_count_sync_gate | `tools/update_status.py --verify-count --strict-status` |",
+            *rows,
             "",
         ]
     )
@@ -170,7 +170,7 @@ def check_status() -> int:
         _require_contains(text, f"| optional_extras | {extras_line} |", "extras")
         _require_contains(
             text,
-            "| strict_count_sync_gate | `tools/update_status.py --verify-count --strict-status` |",
+            f"| strict_count_sync_gate | `{STRICT_COUNT_GATE}` |",
             "strict count sync gate",
         )
     except ValueError as exc:
