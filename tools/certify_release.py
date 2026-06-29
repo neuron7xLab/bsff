@@ -116,7 +116,10 @@ def verify_chain(cert: dict) -> tuple[bool, str]:
     for i, link in enumerate(cert.get("chain", [])):
         if link.get("seq") != i or link.get("prev_hash") != prev:
             return False, f"chain broken at seq {i} (order/prev mismatch)"
-        payload = {k: link[k] for k in ("seq", "stream", "exit", "ok", "evidence_sha256")}
+        payload = {
+            k: link[k]
+            for k in ("seq", "stream", "exit", "ok", "evidence_sha256")
+        }
         if stable_sha256({"prev": prev, "payload": payload}) != link.get("link_hash"):
             return False, f"link hash mismatch at seq {i} (tampered)"
         prev = link["link_hash"]
@@ -127,7 +130,10 @@ def verify_chain(cert: dict) -> tuple[bool, str]:
         return False, "all_streams_green contradicts the chain's ok-values"
     expected_overall = "CERTIFIED" if all_ok else "NOT_CERTIFIED"
     if cert.get("overall") != expected_overall:
-        return False, f"overall verdict contradicts the chain (chain implies {expected_overall})"
+        return False, (
+            "overall verdict contradicts the chain "
+            f"(chain implies {expected_overall})"
+        )
     return True, "chain intact"
 
 
