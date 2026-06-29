@@ -38,3 +38,29 @@ def test_conformance_runs_and_has_no_nonconformant_feasible_item(tmp_path):
     # blocked items must be honestly UNVERIFIABLE, never silently passed
     blocked = [i for i in verdict["items"] if i["kind"] == "blocked"]
     assert blocked and all(i["status"] == "UNVERIFIABLE" for i in blocked)
+
+
+def test_command_items_record_argv_duration_and_bounded_output():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("run_contract_conformance", ROOT / "tools" / "run_contract_conformance.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    result = mod._check_item({"id": "cmd", "kind": "command", "run": "python -c 'print(42)'"})
+    assert result["status"] == "CONFORMANT"
+    assert result["argv"] == ["python", "-c", "print(42)"]
+    assert isinstance(result["duration_ms"], int)
+    assert result["stdout_tail"].strip() == "42"
+
+
+def test_command_items_do_not_use_shell_redirection(tmp_path):
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("run_contract_conformance", ROOT / "tools" / "run_contract_conformance.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    target = tmp_path / "must_not_exist.txt"
+    result = mod._check_item({"id": "cmd", "kind": "command", "run": f"echo ok > {target}"})
+    assert result["status"] == "CONFORMANT"
+    assert not target.exists()
+    assert ">" in result["argv"]
