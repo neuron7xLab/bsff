@@ -69,9 +69,7 @@ def collect_test_count() -> int:
         )
     matches = re.findall(r"(\d+)\s+tests?\s+collected\s+in\b", proc.stdout)
     if not matches:
-        raise SystemExit(
-            "could not parse '<N> tests collected in ...' from pytest output"
-        )
+        raise SystemExit("could not parse '<N> tests collected in ...' from pytest output")
     return int(matches[-1])
 
 
@@ -81,9 +79,7 @@ def render_status(
     extras: list[str],
     subcommands: list[str],
 ) -> str:
-    extras_line = (
-        ", ".join(f"`{name}`" for name in extras) if extras else "_none declared_"
-    )
+    extras_line = ", ".join(f"`{name}`" for name in extras) if extras else "_none declared_"
     sub_rows = "\n".join(f"| `bsff {name}` |" for name in subcommands)
     return "\n".join(
         [
