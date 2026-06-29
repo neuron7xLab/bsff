@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
 """Regenerate or verify BSFF STATUS.md from repository metadata."""
 
 from __future__ import annotations
@@ -14,7 +13,7 @@ from pathlib import Path
 
 try:
     import tomllib
-except ModuleNotFoundError:  # pragma: no cover - Python 3.10 fallback
+except ModuleNotFoundError:  # pragma: no cover
     import tomli as tomllib  # type: ignore[no-redef]
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,7 +50,8 @@ def read_extras() -> list[str]:
 
 def detect_cli_subcommands() -> list[str]:
     source = CLI.read_text(encoding="utf-8")
-    return re.findall(r"""add_parser\(\s*["']([a-z][a-z0-9-]*)["']""", source)
+    pattern = r"""add_parser\(\s*["']([a-z][a-z0-9-]*)["']"""
+    return re.findall(pattern, source)
 
 
 def collect_test_count() -> int:
@@ -77,7 +77,9 @@ def collect_test_count() -> int:
         )
     matches = re.findall(r"(\d+)\s+tests?\s+collected\s+in\b", proc.stdout)
     if not matches:
-        raise SystemExit("could not parse '<N> tests collected in ...' from pytest output")
+        raise SystemExit(
+            "could not parse '<N> tests collected in ...' from pytest output"
+        )
     return int(matches[-1])
 
 
@@ -88,7 +90,9 @@ def render_status(
     extras: list[str],
     subcommands: list[str],
 ) -> str:
-    extras_line = ", ".join(f"`{name}`" for name in extras) if extras else "_none declared_"
+    extras_line = (
+        ", ".join(f"`{name}`" for name in extras) if extras else "_none declared_"
+    )
     rows = [
         "| Field | Value |",
         "|---|---|",
@@ -148,7 +152,7 @@ def _require_contains(text: str, needle: str, label: str) -> None:
 
 def check_status() -> int:
     if not STATUS.exists():
-        print("STATUS.md is missing — run: python tools/update_status.py")
+        print("STATUS.md is missing - run: python tools/update_status.py")
         return 1
     text = STATUS.read_text(encoding="utf-8")
     try:
@@ -182,7 +186,7 @@ def verify_count(*, strict_status: bool) -> int:
     live = collect_test_count()
     print(f"pytest collect-only: {live} tests collected")
     if not STATUS.exists():
-        print("STATUS.md is missing — cannot compare committed_test_count")
+        print("STATUS.md is missing - cannot compare committed_test_count")
         return 1 if strict_status else 0
     try:
         committed = _read_status_count(STATUS.read_text(encoding="utf-8"))
