@@ -44,7 +44,10 @@ def _write_stable_json(path: Path, payload: dict) -> None:
     """Atomically write deterministic JSON without importing the installed package."""
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(path.name + ".tmp")
-    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    tmp.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     tmp.replace(path)
 
 
@@ -118,7 +121,10 @@ def _check_item(item: dict, *, timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS) -
         }
     if kind == "command":
         try:
-            run = _run_command(item["run"], timeout_seconds=int(item.get("timeout_seconds", timeout_seconds)))
+            run = _run_command(
+                item["run"],
+                timeout_seconds=int(item.get("timeout_seconds", timeout_seconds)),
+            )
             expected_exit = int(item.get("expect_exit", 0))
             ok = (not run["timed_out"]) and run["exit"] == expected_exit
             return {
@@ -145,20 +151,32 @@ def _check_item(item: dict, *, timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS) -
             "blocker": item.get("blocker"),
             "detail": item.get("why", ""),
         }
-    return {"id": item_id, "kind": kind, "status": "NONCONFORMANT", "detail": "unknown item kind"}
+    return {
+        "id": item_id,
+        "kind": kind,
+        "status": "NONCONFORMANT",
+        "detail": "unknown item kind",
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
     import yaml
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--contract", type=Path, default=ROOT / "contracts" / "bsff_contract.yaml")
+    parser.add_argument(
+        "--contract",
+        type=Path,
+        default=ROOT / "contracts" / "bsff_contract.yaml",
+    )
     parser.add_argument("--output", type=Path, default=OUT)
     parser.add_argument("--timeout-seconds", type=int, default=DEFAULT_TIMEOUT_SECONDS)
     args = parser.parse_args(argv)
 
     contract = yaml.safe_load(args.contract.read_text(encoding="utf-8"))
-    results = [_check_item(it, timeout_seconds=args.timeout_seconds) for it in contract["items"]]
+    results = [
+        _check_item(it, timeout_seconds=args.timeout_seconds)
+        for it in contract["items"]
+    ]
 
     nonconformant = [r for r in results if r["status"] == "NONCONFORMANT"]
     unverifiable = [r for r in results if r["status"] == "UNVERIFIABLE"]
@@ -190,11 +208,14 @@ def main(argv: list[str] | None = None) -> int:
     _write_stable_json(args.output / "CONFORMANCE_DIAGNOSTICS.json", diagnostics)
 
     for r in results:
-        mark = {"CONFORMANT": "[ok]", "NONCONFORMANT": "[X]", "UNVERIFIABLE": "[~]"}[r["status"]]
+        mark = {"CONFORMANT": "[ok]", "NONCONFORMANT": "[X]", "UNVERIFIABLE": "[~]"}[
+            r["status"]
+        ]
         print(f"  {mark} {r['id']:42} {r['status']}")
     print(
         f"\nOVERALL: {overall}  ({verdict['conformant']} conformant, "
-        f"{verdict['nonconformant']} nonconformant, {verdict['unverifiable']} unverifiable)"
+        f"{verdict['nonconformant']} nonconformant, "
+        f"{verdict['unverifiable']} unverifiable)"
     )
     # fail-closed only on a real defect; PARTIAL (blocked items) is an honest pass
     return 1 if overall == "NONCONFORMANT" else 0
