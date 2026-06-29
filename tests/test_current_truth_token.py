@@ -39,5 +39,9 @@ def test_current_truth_gate_requires_status_token(tmp_path, monkeypatch):
     monkeypatch.setattr(validator, "TRUTH", truth)
     monkeypatch.setattr(validator, "OUT", release / "TRUTH_CONSISTENCY_CHECK.json")
     monkeypatch.setattr(validator, "SURFACES", ["STATUS.md"])
-    monkeypatch.setattr(validator, "MUST_AFFIRM", ["STATUS.md", "artifacts/release/CURRENT_TRUTH.json"])
+    monkeypatch.setattr(
+        validator,
+        "MUST_AFFIRM",
+        ["STATUS.md", "artifacts/release/CURRENT_TRUTH.json"],
+    )
     assert validator.main([]) == 1
