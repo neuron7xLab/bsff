@@ -76,7 +76,15 @@ def collect_test_count() -> int:
     rather than emitting a guessed count.
     """
     proc = subprocess.run(
-        [sys.executable, "-m", "pytest", "tests/", "--collect-only", "-p", "no:cacheprovider"],
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "tests/",
+            "--collect-only",
+            "-p",
+            "no:cacheprovider",
+        ],
         cwd=ROOT,
         capture_output=True,
         text=True,
@@ -92,7 +100,9 @@ def collect_test_count() -> int:
     # value. Take the last summary-anchored match to be robust against future ids.
     matches = re.findall(r"(\d+)\s+tests?\s+collected\s+in\b", proc.stdout)
     if not matches:
-        raise SystemExit("could not parse '<N> tests collected in ...' from pytest output")
+        raise SystemExit(
+            "could not parse '<N> tests collected in ...' from pytest output"
+        )
     return int(matches[-1])
 
 
@@ -103,7 +113,12 @@ def detect_cli_subcommands() -> list[str]:
     return re.findall(r"""add_parser\(\s*["']([a-z][a-z0-9-]*)["']""", source)
 
 
-def render_status(version: str, test_count: int, extras: list[str], subcommands: list[str]) -> str:
+def render_status(
+    version: str,
+    test_count: int,
+    extras: list[str],
+    subcommands: list[str],
+) -> str:
     """Render the full STATUS.md body from measured facts."""
     extras_line = ", ".join(f"`{e}`" for e in extras) if extras else "_none declared_"
     sub_rows = "\n".join(f"| `bsff {name}` |" for name in subcommands)
