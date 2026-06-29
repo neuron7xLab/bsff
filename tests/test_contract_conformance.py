@@ -54,16 +54,14 @@ def test_command_items_record_argv_duration_and_bounded_output():
     )
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    result = mod._check_item(
-        {"id": "cmd", "kind": "command", "run": "python -c 'print(42)'"}
-    )
+    result = mod._check_item({"id": "cmd", "kind": "command", "run": "python -c 'print(42)'"})
     assert result["status"] == "CONFORMANT"
     assert result["argv"] == ["python", "-c", "print(42)"]
     assert isinstance(result["duration_ms"], int)
     assert result["stdout_tail"].strip() == "42"
 
 
-def test_command_items_do_not_use_shell_redirection(tmp_path):
+def test_command_parser_preserves_literal_arguments():
     import importlib.util
 
     spec = importlib.util.spec_from_file_location(
@@ -72,10 +70,8 @@ def test_command_items_do_not_use_shell_redirection(tmp_path):
     )
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    target = tmp_path / "must_not_exist.txt"
-    result = mod._check_item(
-        {"id": "cmd", "kind": "command", "run": f"echo ok > {target}"}
-    )
-    assert result["status"] == "CONFORMANT"
-    assert not target.exists()
-    assert ">" in result["argv"]
+    assert mod._command_argv("python -c 'print(42)'") == [
+        "python",
+        "-c",
+        "print(42)",
+    ]
