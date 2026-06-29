@@ -74,9 +74,7 @@ def _with_ci(core: dict) -> dict:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
-    parser.add_argument(
-        "--ci", action="store_true", help="augment with commit/run/timestamp env"
-    )
+    parser.add_argument("--ci", action="store_true", help="augment with commit/run/timestamp env")
     args = parser.parse_args(argv)
 
     core = build_core()
@@ -88,27 +86,19 @@ def main(argv: list[str] | None = None) -> int:
         committed_core = {k: committed.get(k) for k in core}
         if committed_core != core:
             print("MANIFEST.json is STALE")
-            print(
-                f"expected: version={core['version']} test_count={core['test_count']}"
-            )
+            print(f"expected: version={core['version']} test_count={core['test_count']}")
             print(
                 f"found: version={committed.get('version')} "
                 f"test_count={committed.get('test_count')}"
             )
             return 1
-        print(
-            f"MANIFEST.json: in sync (version {core['version']}, "
-            f"{core['test_count']} tests)"
-        )
+        print(f"MANIFEST.json: in sync (version {core['version']}, {core['test_count']} tests)")
         return 0
 
     payload = _with_ci(core) if args.ci else core
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    print(
-        f"Wrote {OUT.relative_to(ROOT)} (version {core['version']}, "
-        f"{core['test_count']} tests)"
-    )
+    print(f"Wrote {OUT.relative_to(ROOT)} (version {core['version']}, {core['test_count']} tests)")
     return 0
 
 
