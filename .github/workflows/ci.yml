@@ -139,3 +139,34 @@ jobs:
       - run: python tools/generate_evidence_bundle.py
       # Supply-chain inventory: a deterministic CycloneDX SBOM of the runtime
       # closure, structurally gated (root + name/version/purl + essentials).
+      - run: python tools/generate_sbom.py --output artifacts/sbom.cdx.json
+      - run: python tools/generate_sbom.py --check
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: bsff-dist-and-evidence
+          path: |
+            dist/*
+            artifacts/*.json
+            artifacts/sbom.cdx.json
+
+  nightly-extended:
+    name: nightly-extended
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[dev,stats,leakage]'
+      - run: python -m pytest tests/ -v --tb=short
+        env:
+          BSFF_N_SURROGATES: "999"
+          BSFF_N_PERMUTATIONS: "1000"
+      - name: Full operating-characteristic calibration (drift check)
+        run: python tools/calibrate_operating_characteristic.py
