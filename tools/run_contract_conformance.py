@@ -39,8 +39,12 @@ def _command_argv(run: str) -> list[str]:
         raise ValueError(f"invalid command quoting: {run!r}: {exc}") from exc
     if not argv:
         raise ValueError("empty command")
+    return argv
+
+
+def _exec_argv(argv: list[str]) -> list[str]:
     if argv[0] == "python":
-        argv[0] = sys.executable
+        return [sys.executable, *argv[1:]]
     return argv
 
 
@@ -49,7 +53,7 @@ def _run_command(run: str, *, timeout_seconds: int) -> dict:
     argv = _command_argv(run)
     try:
         proc = subprocess.run(
-            argv,
+            _exec_argv(argv),
             shell=False,
             cwd=ROOT,
             text=True,
