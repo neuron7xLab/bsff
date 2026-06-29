@@ -46,6 +46,7 @@ jobs:
       - run: uv run --no-sync python tools/validate_statistical_claims.py
       - run: uv run --no-sync python tools/validate_artifact_schema.py
       - run: uv run --no-sync python tools/update_status.py --check
+      - run: uv run --no-sync python tools/update_status.py --verify-count
       - run: uv run --no-sync python tools/generate_manifest.py --check
       - run: uv run --no-sync python tools/regenerate.py --check
       - run: uv run --no-sync bsff release-check --strict --output artifacts/release
