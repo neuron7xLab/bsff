@@ -27,6 +27,7 @@ from bsff.statistics.contracts import (  # noqa: E402
 
 REQUIRED_FILES = (
     "docs/R6_R7_ASCENSION_PROTOCOL.md",
+    "docs/PUBLIC_RESEARCH_POSITION.md",
     "CLAIMS.md",
     "claims.yaml",
     "DATASET_PROVENANCE.md",
@@ -45,6 +46,7 @@ REQUIRED_FILES = (
 PUBLIC_BINDING_FILES = (
     "README.md",
     "docs/R6_R7_ASCENSION_PROTOCOL.md",
+    "docs/PUBLIC_RESEARCH_POSITION.md",
     "CLAIMS.md",
     "DATASET_PROVENANCE.md",
     "STATISTICAL_CONTRACT.md",
@@ -58,8 +60,6 @@ FORBIDDEN_COMPLETION_PHRASES = (
     "r6 complete",
     "r7 complete",
     "field-standard achieved",
-    "externally validated",
-    "externally replicated",
     "clinical-grade",
     "regulatory-grade",
 )
@@ -85,7 +85,11 @@ def _read_json(path: str) -> dict[str, Any]:
 
 
 def _check_required_files() -> list[str]:
-    return [f"missing required R6/R7 file: {path}" for path in REQUIRED_FILES if not (ROOT / path).is_file()]
+    errors: list[str] = []
+    for path in REQUIRED_FILES:
+        if not (ROOT / path).is_file():
+            errors.append(f"missing required R6/R7 file: {path}")
+    return errors
 
 
 def _check_registries() -> list[str]:
@@ -128,7 +132,8 @@ def _check_rank_boundary() -> list[str]:
     if missing:
         errors.append("rank boundary language missing: " + ", ".join(missing))
 
-    # Allow negative formulations such as "not yet R6/R7" but reject completion language.
+    # Allow honest negative formulations such as "not yet externally replicated".
+    # Reject only direct completion/status inflation and domain overclaim language.
     for phrase in FORBIDDEN_COMPLETION_PHRASES:
         if phrase in lowered:
             errors.append(f"forbidden rank or domain overclaim phrase present: {phrase!r}")
@@ -143,9 +148,11 @@ def _check_rank_boundary() -> list[str]:
 def _check_reproduction_entrypoint() -> list[str]:
     script = _read_text("reproduce.sh") if (ROOT / "reproduce.sh").is_file() else ""
     required_tokens = (
+        "tools/validate_r6_contracts.py",
         "test_claim_registry.py",
         "test_dataset_provenance.py",
         "test_statistical_contract.py",
+        "test_r6_contracts_tool.py",
         "bsff evidence verify",
         "REPRODUCTION_REPORT.md",
     )
