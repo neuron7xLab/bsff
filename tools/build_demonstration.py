@@ -45,8 +45,7 @@ def _read_json(rel: str) -> dict:
 
 def _status_count() -> str:
     m = re.search(
-        r"committed_test_count \| \*\*(\d+)\*\*",
-        (ROOT / "STATUS.md").read_text(encoding="utf-8"),
+        r"Live test count \| \*\*(\d+)\*\*", (ROOT / "STATUS.md").read_text(encoding="utf-8")
     )
     return m.group(1) if m else "?"
 

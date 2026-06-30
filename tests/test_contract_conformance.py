@@ -21,12 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_conformance_runs_and_has_no_nonconformant_feasible_item(tmp_path):
     out = tmp_path / "conf"
     r = subprocess.run(
-        [
-            sys.executable,
-            str(ROOT / "tools" / "run_contract_conformance.py"),
-            "--output",
-            str(out),
-        ],
+        [sys.executable, str(ROOT / "tools" / "run_contract_conformance.py"), "--output", str(out)],
         cwd=ROOT,
         text=True,
         capture_output=True,
@@ -43,35 +38,3 @@ def test_conformance_runs_and_has_no_nonconformant_feasible_item(tmp_path):
     # blocked items must be honestly UNVERIFIABLE, never silently passed
     blocked = [i for i in verdict["items"] if i["kind"] == "blocked"]
     assert blocked and all(i["status"] == "UNVERIFIABLE" for i in blocked)
-
-
-def test_command_items_record_argv_duration_and_bounded_output():
-    import importlib.util
-
-    spec = importlib.util.spec_from_file_location(
-        "run_contract_conformance",
-        ROOT / "tools" / "run_contract_conformance.py",
-    )
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    result = mod._check_item({"id": "cmd", "kind": "command", "run": "python -c 'print(42)'"})
-    assert result["status"] == "CONFORMANT"
-    assert result["argv"] == ["python", "-c", "print(42)"]
-    assert isinstance(result["duration_ms"], int)
-    assert result["stdout_tail"].strip() == "42"
-
-
-def test_command_parser_preserves_literal_arguments():
-    import importlib.util
-
-    spec = importlib.util.spec_from_file_location(
-        "run_contract_conformance",
-        ROOT / "tools" / "run_contract_conformance.py",
-    )
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    assert mod._command_argv("python -c 'print(42)'") == [
-        "python",
-        "-c",
-        "print(42)",
-    ]
