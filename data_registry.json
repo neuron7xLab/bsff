@@ -1,0 +1,74 @@
+{
+  "schema_version": "2026.06",
+  "registry_status": "foundational_scaffold",
+  "minimum_r6_rule": "At least one synthetic controlled dataset, one public EEG/BCI dataset, and one adversarial/null-heavy dataset must be reproducible from public instructions before R6 can be claimed.",
+  "datasets": {
+    "synthetic_controlled_v0": {
+      "status": "available",
+      "source": "Repository-generated synthetic signals from BSFF synthetic utilities and examples.",
+      "license": "GPL-3.0-or-later for code-generated artifacts unless an output artifact declares otherwise.",
+      "access_date": "2026-06-30",
+      "immutable_hash": "generated_deterministically_by_reproduction_command",
+      "artifact_hash_reference": "to be emitted by reproduce.sh once the full R6 artifact bundle is generated",
+      "inclusion_criteria": "Controlled positive and negative signals with known expected falsification behavior.",
+      "exclusion_criteria": "Any generator run without fixed seed, declared parameters, or expected verdict semantics.",
+      "preprocessing_steps": [
+        "generate deterministic signals",
+        "run BSFF falsification battery",
+        "record verdict and metric artifacts"
+      ],
+      "subject_session_split": "not applicable: synthetic generator has no human subjects",
+      "leakage_audit": "generator parameters must not be inferred from evaluation labels beyond the declared positive/negative control design",
+      "expected_artifact_outputs": [
+        "synthetic verdict JSON",
+        "metric summary",
+        "hash manifest"
+      ],
+      "reproducibility_command": "bash reproduce.sh --clean --verify"
+    },
+    "bonn_andrzejak_2001_s2": {
+      "status": "committed_evidence",
+      "source": "Andrzejak et al. 2001 Bonn EEG evidence as represented by committed BSFF artifacts.",
+      "license": "External dataset license/terms must be verified before redistribution; committed evidence should reference derived artifacts and manifests.",
+      "access_date": "2026-06-30",
+      "immutable_hash": "see artifacts/release/bonn_bright_line/HASHES.sha256",
+      "artifact_hash_reference": "artifacts/release/bonn_bright_line/HASHES.sha256",
+      "inclusion_criteria": "Committed Bonn S2 bright-line evidence package and protocol lock.",
+      "exclusion_criteria": "Any untracked local dataset mutation, missing manifest, or drift from frozen evidence.",
+      "preprocessing_steps": [
+        "verify current truth artifact",
+        "verify release hash manifest",
+        "run committed Bonn S2 reproduction entrypoint"
+      ],
+      "subject_session_split": "clustered repeated-segment design; seed-level and cluster-aware intervals are required",
+      "leakage_audit": "result must report segment reuse, seed reuse, clustered uncertainty, and null-model specific false-positive rates",
+      "expected_artifact_outputs": [
+        "artifacts/release/CURRENT_TRUTH.json",
+        "artifacts/bonn_bright_line/S3_PROTOCOL_LOCK.json",
+        "artifacts/release/bonn_bright_line/HASHES.sha256"
+      ],
+      "reproducibility_command": "bsff evidence verify && bsff reproduce bonn-s2"
+    },
+    "external_replication_dataset_tbd": {
+      "status": "external_required",
+      "source": "To be selected by an independent reviewer or preregistered before the R6 external reproduction candidate.",
+      "license": "must allow public scientific reproduction or documented controlled access",
+      "access_date": "not_yet_selected",
+      "immutable_hash": "not_yet_available",
+      "artifact_hash_reference": "not_yet_available",
+      "inclusion_criteria": "Public EEG/BCI or signal-processing corpus that can test BSFF claim semantics beyond the current internal evidence case.",
+      "exclusion_criteria": "Private-only data, unclear license, unverifiable preprocessing, or reviewer-dependent manual steps.",
+      "preprocessing_steps": [
+        "to be preregistered before execution"
+      ],
+      "subject_session_split": "must be declared before execution",
+      "leakage_audit": "must include subject/session leakage controls before any R6 claim",
+      "expected_artifact_outputs": [
+        "external reproduction report",
+        "dataset manifest",
+        "hash manifest"
+      ],
+      "reproducibility_command": "bash reproduce.sh --clean --verify --run-paper"
+    }
+  }
+}
