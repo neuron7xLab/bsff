@@ -59,6 +59,11 @@
     "dataset_manifest": "artifacts/bonn_bright_line/DATASET_MANIFEST.json"
   },
   "hash_manifest_path": "artifacts/release/bonn_bright_line/HASHES.sha256",
+  "freshness": {
+    "frozen_evidence_commit": "1f25fe7f0820fc237b191432f9d419daa5f5c01f",
+    "reason": "Bonn S2 bright-line evidence is byte-frozen at 1f25fe7 (2026-06-26). Commits since (CI observability, control-plane hardening) change no scientific artifact; the freeze is enforced by evidence_hash_manifest verifying on every run, so the anchor cannot mask drift. Regenerate CURRENT_TRUTH only when the evidence itself is re-derived.",
+    "evidence_hash_manifest": "artifacts/release/bonn_bright_line/HASHES.sha256"
+  },
   "reproduction_entrypoint": "REPRODUCE.md",
   "timestamp_utc": "2026-06-26T16:36:32Z"
 }

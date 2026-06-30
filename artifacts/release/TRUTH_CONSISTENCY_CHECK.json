@@ -14,6 +14,15 @@
   ],
   "contradictions": [],
   "stale_claims": [],
-  "timestamp_utc": "2026-06-30T07:49:33Z",
-  "git_commit": "7aab0cff510e3125fb85a63a955eef2249aa9742"
+  "freshness": {
+    "status": "PASS",
+    "mode": "FROZEN",
+    "head": "fd545d595a8156eb3e35897f44a7110fd872a09a",
+    "main_commit": "1f25fe7f0820fc237b191432f9d419daa5f5c01f",
+    "frozen_evidence_commit": "1f25fe7f0820fc237b191432f9d419daa5f5c01f",
+    "evidence_hash_manifest": "artifacts/release/bonn_bright_line/HASHES.sha256",
+    "problems": []
+  },
+  "timestamp_utc": "2026-06-30T09:11:50Z",
+  "git_commit": "fd545d595a8156eb3e35897f44a7110fd872a09a"
 }
