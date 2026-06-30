@@ -16,8 +16,12 @@ def pct(delta: float, base: float) -> float | None:
     return round(delta / base * 100.0, 6)
 
 
+def is_number(value: object) -> bool:
+    return isinstance(value, (int, float))  # noqa: UP038 - keep runtime-compatible tuple form.
+
+
 def top(items: list[dict[str, Any]], key: str) -> list[dict[str, Any]]:
-    measurable = [item for item in items if isinstance(item.get(key), int | float)]
+    measurable = [item for item in items if is_number(item.get(key))]
     return sorted(measurable, key=lambda item: item.get(key, 0), reverse=True)[:10]
 
 
