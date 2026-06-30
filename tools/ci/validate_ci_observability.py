@@ -6,7 +6,6 @@ import argparse
 import sys
 
 import jsonschema
-
 from tools.ci.common import ROOT, read_json
 
 SCHEMA_MAP = {
