@@ -8,7 +8,7 @@ import resource
 import subprocess
 import sys
 import time
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -18,7 +18,7 @@ TAIL_LIMIT = 12000
 
 
 def utc_now() -> str:
-    return datetime.now(UTC).isoformat().replace("+00:00", "Z")
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 def tail(text: str) -> str:

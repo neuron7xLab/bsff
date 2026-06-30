@@ -30,19 +30,28 @@ jobs:
 
       - run: python -m pip install --upgrade pip uv build
       - run: uv sync --locked --all-extras --dev
-      - name: Capture ruff diagnostics
+      # Gate and diagnostics are the SAME run: tee preserves the artifact while
+      # bash's default pipefail propagates a real failure, with no failure-swallowing
+      # suffix (honours tests/test_suite_integrity.py::test_no_swallowed_failures_in_ci).
+      - name: ruff check (gate + diagnostics)
         run: |
+          set -o pipefail
           mkdir -p artifacts/ci
-          uv run --no-sync python -m ruff check src tests tools --output-format=json > artifacts/ci/ruff-check.json || true
-          uv run --no-sync python -m ruff format --check src tests tools > artifacts/ci/ruff-format-check.txt 2>&1 || true
-          uv run --no-sync python -m ruff format --diff src tests tools > artifacts/ci/ruff-format-diff.txt 2>&1 || true
-      - run: uv run --no-sync python -m ruff check src tests tools
-      - run: uv run --no-sync python -m ruff format --check src tests tools
-      - name: Capture pytest diagnostics
+          uv run --no-sync python -m ruff check src tests tools --output-format=json \
+            | tee artifacts/ci/ruff-check.json
+      - name: ruff format check (gate + diagnostics)
         run: |
+          set -o pipefail
           mkdir -p artifacts/ci
-          uv run --no-sync python -m pytest tests/ -m "not slow" -v --tb=short --junitxml=artifacts/ci/pytest-nonslow.xml > artifacts/ci/pytest-nonslow.txt 2>&1 || true
-      - run: uv run --no-sync python -m pytest tests/ -m "not slow" -v --tb=short
+          uv run --no-sync python -m ruff format --check src tests tools \
+            | tee artifacts/ci/ruff-format-check.txt
+      - name: pytest non-slow (gate + diagnostics)
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/ci
+          uv run --no-sync python -m pytest tests/ -m "not slow" -v --tb=short \
+            --junitxml=artifacts/ci/pytest-nonslow.xml \
+            | tee artifacts/ci/pytest-nonslow.txt
       - run: uv run --no-sync python -m pytest tests/ -m slow -v --tb=short
       - run: uv run --no-sync python tools/validate_truth_contract.py
       - run: uv run --no-sync python tools/generate_current_truth.py --check
@@ -68,7 +77,6 @@ jobs:
             artifacts/evidence_manifest.json
             artifacts/ci/ruff-check.json
             artifacts/ci/ruff-format-check.txt
-            artifacts/ci/ruff-format-diff.txt
             artifacts/ci/pytest-nonslow.txt
             artifacts/ci/pytest-nonslow.xml
           if-no-files-found: warn
