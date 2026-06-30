@@ -141,7 +141,9 @@ def validate_claim_record(claim_id: str, record: Mapping[str, Any]) -> list[str]
 def validate_dataset_record(dataset_id: str, record: Mapping[str, Any]) -> list[str]:
     """Return validation errors for one dataset provenance record."""
 
-    errors = _validate_required_mapping_fields(dataset_id, record, REQUIRED_DATASET_FIELDS)
+    errors = _validate_required_mapping_fields(
+        dataset_id, record, REQUIRED_DATASET_FIELDS
+    )
 
     status = record.get("status")
     if status is not None and status not in DATASET_STATUSES:
@@ -164,7 +166,9 @@ def validate_metric_contract(record: Mapping[str, Any]) -> list[str]:
     """Return validation errors for one statistical metric contract."""
 
     metric_id = str(record.get("metric_id", "<unknown_metric>"))
-    errors = _validate_required_mapping_fields(metric_id, record, REQUIRED_METRIC_FIELDS)
+    errors = _validate_required_mapping_fields(
+        metric_id, record, REQUIRED_METRIC_FIELDS
+    )
 
     boundary = str(record.get("interpretation_boundary", "")).lower()
     forbidden_positive_language = (
@@ -174,7 +178,9 @@ def validate_metric_contract(record: Mapping[str, Any]) -> list[str]:
         "therapeutic",
     )
     if any(term in boundary for term in forbidden_positive_language):
-        errors.append(f"{metric_id}: interpretation boundary uses forbidden positive language")
+        errors.append(
+            f"{metric_id}: interpretation boundary uses forbidden positive language"
+        )
 
     return errors
 
