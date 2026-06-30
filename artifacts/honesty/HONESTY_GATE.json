@@ -33,10 +33,16 @@
       "tail": "CONTROLS OK \u2014 BSFF fails and passes correctly on ground truth."
     },
     {
-      "check": "status_count_is_generated_and_in_sync",
+      "check": "status_metadata_is_generated_and_in_sync",
       "exit": 0,
       "ok": true,
-      "tail": "STATUS.md: in sync"
+      "tail": "STATUS.md: metadata in sync"
+    },
+    {
+      "check": "status_count_strict_sync",
+      "exit": 0,
+      "ok": true,
+      "tail": "STATUS.md strict count sync: PASS"
     },
     {
       "check": "contract_self_conformance",
