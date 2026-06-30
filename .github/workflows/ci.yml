@@ -79,6 +79,7 @@ jobs:
       - run: python tools/validate_tisean_reference.py
       - run: python tools/validate_real_eeg_case.py --check
       - run: python tools/update_status.py --check
+      - run: python tools/update_status.py --verify-count --strict-status
       - run: python tools/generate_manifest.py --check
       - run: python tools/validate_artifact_schema.py
       - run: python tools/cluster_robust_specificity.py --check

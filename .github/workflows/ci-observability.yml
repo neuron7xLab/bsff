@@ -1,0 +1,74 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: CI Observability
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-observability-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci-observability:
+    name: ci-observability
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - id: setup-python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Measure dependency install
+        run: >
+          python tools/ci/measure_step.py
+          --step-id install
+          --workflow "${{ github.workflow }}"
+          --job "${{ github.job }}"
+          -- python -m pip install -e '.[dev,yaml]'
+      - name: Emit cache telemetry
+        if: always()
+        env:
+          CACHE_HIT: ${{ steps.setup-python.outputs.cache-hit }}
+        run: >
+          python tools/ci/emit_cache_telemetry.py
+          --workflow "${{ github.workflow }}"
+          --job "${{ github.job }}"
+          --dependency-manager pip
+          --cache-key "pip-${{ runner.os }}-${{ hashFiles('pyproject.toml', 'requirements/ci.lock') }}"
+          --cache-hit "${CACHE_HIT:-unknown}"
+          --cache-hit-reason "setup-python cache-hit output unavailable for this event"
+          --install-command "python -m pip install -e '.[dev,yaml]'"
+          --install-telemetry "artifacts/ci/steps/CI_Observability/ci-observability/install.json"
+      - name: Measure observability tests
+        run: >
+          python tools/ci/measure_step.py
+          --step-id observability-tests
+          --workflow "${{ github.workflow }}"
+          --job "${{ github.job }}"
+          -- python -m pytest
+          tests/test_ci_measure_step.py
+          tests/test_ci_cache_telemetry.py
+          tests/test_ci_workflow_inventory.py
+          tests/test_ci_observability_aggregation.py
+          tests/test_provenance_depth_classifier.py
+          -v --tb=short
+      - run: python tools/ci/inventory_workflows.py
+      - run: python tools/ci/classify_provenance_depth.py
+      - run: python tools/ci/aggregate_ci_observability.py --check
+      - run: python tools/ci/validate_ci_observability.py
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: ci-observability-${{ github.sha }}
+          path: artifacts/ci/**
+          if-no-files-found: error

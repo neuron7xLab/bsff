@@ -22,7 +22,11 @@
       "ok": true
     },
     {
-      "check": "status_count_is_generated_and_in_sync",
+      "check": "status_metadata_is_generated_and_in_sync",
+      "ok": true
+    },
+    {
+      "check": "status_count_strict_sync",
       "ok": true
     },
     {
@@ -40,5 +44,5 @@
   "loso_within": 0.807,
   "loso_cross": 0.603,
   "loso_gap": 0.204,
-  "test_count": "701"
+  "test_count": "709"
 }

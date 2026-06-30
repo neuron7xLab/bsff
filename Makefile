@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
-.PHONY: lab-99 regen lock verify verify-offline build-proof openai-2026 mission-check hostile-review
+.PHONY: lab-99 regen lock verify verify-offline build-proof openai-2026 mission-check hostile-review ci-observability-inventory ci-observability-validate ci-observability-summary
 
 # Full local lab run — mirrors the CI test + slow-tests + build surface.
 lab-99:
@@ -29,13 +29,9 @@ lab-99:
 	python -m build
 	python tools/generate_evidence_bundle.py
 
-# Regenerate every generated artifact in dependency order (STATUS -> MANIFEST -> pages).
 regen:
 	python tools/regenerate.py
 
-# --- OpenAI-2026 research-grade validation grid -----------------------------
-
-# Regenerate the hash-pinned dependency locks from pyproject.
 lock:
 	python -m pip install pip-tools
 	pip-compile pyproject.toml --extra dev --extra leakage --extra stats --extra yaml --generate-hashes -o requirements/ci.lock
@@ -44,7 +40,6 @@ lock:
 	pip-compile pyproject.toml --extra dev --extra security --generate-hashes -o requirements/security.lock
 	python tools/validate_lockfiles.py
 
-# Full research-grade verification, ending on the machine-derived verdict.
 verify:
 	python -m ruff check src tests tools benchmarks fuzz
 	python -m ruff format --check src tests tools benchmarks fuzz
@@ -65,13 +60,11 @@ verify:
 	python -m pytest tests/test_openai_2026_eval_contract.py --tb=short
 	python tools/final_validation_verdict.py
 
-# Same correctness surface, with external network denied.
 verify-offline:
 	python -m pytest tests/ -m "not slow" --tb=short --disable-network
 	python -m pytest tests/property tests/adversarial --tb=short --disable-network
 	python -m pytest tests/redteam tests/meta_validation --tb=short --disable-network
 
-# Build proof: wheel runs offline, SBOM + manifest are reproducible.
 build-proof:
 	python -m build
 	python tools/validate_wheel_runtime.py --offline
@@ -79,11 +72,9 @@ build-proof:
 	python tools/validate_provenance.py
 	python tools/generate_manifest.py --check
 
-# The whole grid, locally.
 openai-2026: lock verify-offline build-proof verify
 	@echo "OpenAI-2026 validation grid complete."
 
-# Mission-critical gate: no silent success, no ambiguous PASS, no stale truth, no unbounded claim.
 mission-check:
 	python -m compileall -q src tests examples research tools
 	python -m pytest -q tests/ -m "not slow"
@@ -96,9 +87,17 @@ mission-check:
 	python tools/validate_truth_contract.py
 	python tools/regenerate.py --check
 
-# Reviewer-facing hostile-review surface.
 hostile-review:
 	@echo "See docs/reviewer_packet/HOSTILE_REVIEW_CHECKLIST.md and docs/ADVERSARIAL_REVIEW.md"
 	bsff evidence verify
 	python tools/validate_statistical_claims.py
 	python tools/validate_forbidden_claims.py
+
+ci-observability-inventory:
+	python tools/ci/inventory_workflows.py --check
+
+ci-observability-validate:
+	python tools/ci/validate_ci_observability.py
+
+ci-observability-summary:
+	python tools/ci/aggregate_ci_observability.py --check
