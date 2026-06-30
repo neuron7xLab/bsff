@@ -82,7 +82,36 @@ the state is unmet — read the summaries, do not assume PASS.
 python -m pytest -q tests/bonn_bright_line
 ```
 
+## 5. R6/R7 reproduction wrapper
+
+The R6/R7 entrypoint is intentionally stricter than the Bonn-only path:
+
+```bash
+./reproduce.sh --clean --verify --run-paper
+```
+
+If the executable bit is not preserved by the checkout, run:
+
+```bash
+bash reproduce.sh --clean --verify --run-paper
+```
+
+A valid R6/R7 reproduction run must:
+
+1. build or verify a clean Python environment;
+2. install BSFF with development and statistics extras;
+3. compile source and tests;
+4. run the R6/R7 claim, dataset, and statistical-contract gates;
+5. run the existing BSFF evidence verification gate;
+6. optionally run the full repository verification cascade;
+7. emit `REPRODUCTION_REPORT.md`.
+
+A local PASS is not R6 by itself. R6 requires an external reviewer to run this protocol
+from public repository materials and reproduce the central evidence without private
+author explanation.
+
 ## Notes
+
 - Deterministic seeds (`SEED_BASE=20260623` G1, `20260624` G2); no Python hash() randomization.
 - Pre-declared thresholds (E SURVIVED ≥ 0.80, A/B not-SURVIVED ≥ 0.80, G2 FPR ≤ 0.05,
   alpha = 0.05) are fixed in `docs/validation/BONN_BRIGHT_LINE_PROTOCOL.md` and not changed
