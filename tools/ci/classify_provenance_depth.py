@@ -10,13 +10,17 @@ from tools.ci.common import ROOT, write_json
 
 
 def classify(workflow_dir: Path = ROOT / ".github" / "workflows") -> dict[str, object]:
-    text = "\n".join(p.read_text(encoding="utf-8") for p in sorted(workflow_dir.glob("*.y*ml")))
+    text = "\n".join(
+        path.read_text(encoding="utf-8") for path in sorted(workflow_dir.glob("*.y*ml"))
+    )
     lower = text.lower()
     sbom = "sbom" in lower
     provenance = "provenance" in lower
     sigstore = "sigstore" in lower
     attestation = "attest-build-provenance" in lower or "attestations:" in lower
-    pr_skip = "github.event_name != 'pull_request'" in text or 'github.event_name != "pull_request"' in text
+    pr_skip = "github.event_name != 'pull_request'" in text or (
+        'github.event_name != "pull_request"' in text
+    )
     classes: list[str] = []
     if sbom and provenance and sigstore and attestation and not pr_skip:
         classes.append("FULL_PROVENANCE")
@@ -32,7 +36,13 @@ def classify(workflow_dir: Path = ROOT / ".github" / "workflows") -> dict[str, o
         classes.append("UNKNOWN_UNACCEPTABLE")
     skipped = pr_skip
     skip_classification = "POLICY_GAP" if skipped else "INTENTIONAL_NOT_REQUIRED"
-    verdict = "FAIL" if classes == ["UNKNOWN_UNACCEPTABLE"] else "PASS_WITH_POLICY_GAPS" if skipped else "PASS"
+    verdict = (
+        "FAIL"
+        if classes == ["UNKNOWN_UNACCEPTABLE"]
+        else "PASS_WITH_POLICY_GAPS"
+        if skipped
+        else "PASS"
+    )
     return {
         "schema_version": 1,
         "sbom_present": sbom,
@@ -50,7 +60,10 @@ def classify(workflow_dir: Path = ROOT / ".github" / "workflows") -> dict[str, o
 def run(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--strict", action="store_true")
-    parser.add_argument("--output", default=str(ROOT / "artifacts" / "ci" / "provenance_depth.json"))
+    parser.add_argument(
+        "--output",
+        default=str(ROOT / "artifacts" / "ci" / "provenance_depth.json"),
+    )
     args = parser.parse_args(sys.argv[1:] if argv is None else argv)
     doc = classify()
     write_json(Path(args.output), doc)
