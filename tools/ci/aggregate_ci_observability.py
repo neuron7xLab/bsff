@@ -36,7 +36,11 @@ def aggregate(baseline: Path | None = None, require_baseline: bool = False) -> d
     caches = _read_many("cache/**/*.json")
     inventory_path = CI / "workflow_inventory.json"
     provenance_path = CI / "provenance_depth.json"
-    inventory = read_json(inventory_path) if inventory_path.exists() else {"workflows": [], "verdict": "FAIL"}
+    inventory = (
+        read_json(inventory_path)
+        if inventory_path.exists()
+        else {"workflows": [], "verdict": "FAIL"}
+    )
     provenance = read_json(provenance_path) if provenance_path.exists() else {"verdict": "FAIL"}
     cache_hit = sum(1 for cache in caches if cache.get("cache_hit") is True)
     cache_miss = sum(1 for cache in caches if cache.get("cache_hit") is False)
@@ -44,7 +48,9 @@ def aggregate(baseline: Path | None = None, require_baseline: bool = False) -> d
     total_cache = cache_hit + cache_miss + cache_unknown
     cache_ratio = round(cache_hit / total_cache, 6) if total_cache else 0.0
     total_wall = round(sum(float(step.get("wall_time_seconds") or 0.0) for step in steps), 6)
-    install_time = round(sum(float(cache.get("install_wall_time_seconds") or 0.0) for cache in caches), 6)
+    install_time = round(
+        sum(float(cache.get("install_wall_time_seconds") or 0.0) for cache in caches), 6
+    )
     baseline_doc = read_json(baseline) if baseline and baseline.exists() else None
     longitudinal = {
         "baseline_available": baseline_doc is not None,
@@ -57,11 +63,18 @@ def aggregate(baseline: Path | None = None, require_baseline: bool = False) -> d
         old_install = baseline_doc.get("install_wall_time_seconds", 0.0)
         longitudinal["wall_time_delta_percent"] = _pct(total_wall - old_wall, old_wall)
         longitudinal["install_time_delta_percent"] = _pct(install_time - old_install, old_install)
-        longitudinal["cache_hit_ratio_delta"] = round(cache_ratio - baseline_doc.get("cache_hit_ratio", 0.0), 6)
+        longitudinal["cache_hit_ratio_delta"] = round(
+            cache_ratio - baseline_doc.get("cache_hit_ratio", 0.0), 6
+        )
     verdict = "PASS"
     if require_baseline and not baseline_doc:
         verdict = "FAIL"
-    if not steps or not caches or inventory.get("verdict") == "FAIL" or provenance.get("verdict") == "FAIL":
+    if (
+        not steps
+        or not caches
+        or inventory.get("verdict") == "FAIL"
+        or provenance.get("verdict") == "FAIL"
+    ):
         verdict = "FAIL"
     elif provenance.get("verdict") == "PASS_WITH_POLICY_GAPS":
         verdict = "PASS_WITH_POLICY_GAPS"
@@ -109,7 +122,9 @@ def run(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--require-baseline", action="store_true")
-    parser.add_argument("--baseline", default=str(CI / "history" / "ci_observability_baseline.json"))
+    parser.add_argument(
+        "--baseline", default=str(CI / "history" / "ci_observability_baseline.json")
+    )
     parser.add_argument("--write-baseline", default=None)
     args = parser.parse_args(sys.argv[1:] if argv is None else argv)
     doc = aggregate(Path(args.baseline), args.require_baseline)
