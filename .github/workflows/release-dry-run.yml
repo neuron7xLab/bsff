@@ -30,6 +30,10 @@ jobs:
 
       - run: python -m pip install --upgrade pip uv build
       - run: uv sync --locked --all-extras --dev
+      - name: Capture ruff diagnostics
+        run: |
+          mkdir -p artifacts/ci
+          uv run --no-sync python -m ruff check src tests tools --output-format=json > artifacts/ci/ruff-check.json || true
       - run: uv run --no-sync python -m ruff check src tests tools
       - run: uv run --no-sync python -m ruff format --check src tests tools
       - run: uv run --no-sync python -m pytest tests/ -m "not slow" -v --tb=short
@@ -56,4 +60,5 @@ jobs:
             dist/
             artifacts/MANIFEST.json
             artifacts/evidence_manifest.json
+            artifacts/ci/ruff-check.json
           if-no-files-found: warn
