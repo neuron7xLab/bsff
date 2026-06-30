@@ -17,11 +17,8 @@ def pct(delta: float, base: float) -> float | None:
 
 
 def top(items: list[dict[str, Any]], key: str) -> list[dict[str, Any]]:
-    return sorted(
-        [i for i in items if isinstance(i.get(key), int | float)],
-        key=lambda x: x.get(key, 0),
-        reverse=True,
-    )[:10]
+    measurable = [item for item in items if isinstance(item.get(key), (int, float))]
+    return sorted(measurable, key=lambda item: item.get(key, 0), reverse=True)[:10]
 
 
 def aggregate(baseline: Path | None = None, require_baseline: bool = False) -> dict[str, Any]:
@@ -46,8 +43,10 @@ def aggregate(baseline: Path | None = None, require_baseline: bool = False) -> d
     }
     cache_ratio = round(cache_hit / total_cache, 6) if total_cache else 0.0
     if baseline_doc:
-        longitudinal["wall_time_delta_percent"] = pct(total_wall - baseline_doc.get("total_measured_wall_time_seconds", 0.0), baseline_doc.get("total_measured_wall_time_seconds", 0.0))
-        longitudinal["install_time_delta_percent"] = pct(install_time - baseline_doc.get("install_wall_time_seconds", 0.0), baseline_doc.get("install_wall_time_seconds", 0.0))
+        baseline_wall = baseline_doc.get("total_measured_wall_time_seconds", 0.0)
+        baseline_install = baseline_doc.get("install_wall_time_seconds", 0.0)
+        longitudinal["wall_time_delta_percent"] = pct(total_wall - baseline_wall, baseline_wall)
+        longitudinal["install_time_delta_percent"] = pct(install_time - baseline_install, baseline_install)
         longitudinal["cache_hit_ratio_delta"] = round(cache_ratio - baseline_doc.get("cache_hit_ratio", 0.0), 6)
     verdict = "PASS"
     if require_baseline and not baseline_doc:
@@ -96,12 +95,9 @@ def run(argv: list[str] | None = None) -> int:
     parser.add_argument("--baseline", default=str(ROOT / "artifacts" / "ci" / "history" / "ci_observability_baseline.json"))
     parser.add_argument("--write-baseline", default=None)
     args = parser.parse_args(sys.argv[1:] if argv is None else argv)
-    baseline = Path(args.baseline)
-    doc = aggregate(baseline, args.require_baseline)
-    out_json = ROOT / "artifacts" / "ci" / "ci_observability_summary.json"
-    out_md = ROOT / "artifacts" / "ci" / "ci_observability_summary.md"
-    write_json(out_json, doc)
-    write_markdown(out_md, doc)
+    doc = aggregate(Path(args.baseline), args.require_baseline)
+    write_json(ROOT / "artifacts" / "ci" / "ci_observability_summary.json", doc)
+    write_markdown(ROOT / "artifacts" / "ci" / "ci_observability_summary.md", doc)
     if args.write_baseline:
         write_json(Path(args.write_baseline), doc)
     return 1 if args.check and doc["verdict"] == "FAIL" else 0
