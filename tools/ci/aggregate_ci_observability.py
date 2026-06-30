@@ -98,7 +98,10 @@ def aggregate(baseline: Path | None = None, require_baseline: bool = False) -> d
         "cache_unknown_count": cache_unknown,
         "cache_hit_ratio": cache_ratio,
         "network_measurement_coverage": (
-            round(sum(1 for step in steps if step.get("network_bytes_sent") is not None) / len(steps), 6)
+            round(
+                sum(1 for step in steps if step.get("network_bytes_sent") is not None) / len(steps),
+                6,
+            )
             if steps
             else 0.0
         ),
