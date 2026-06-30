@@ -28,10 +28,7 @@ def tail(text: str) -> str:
 def proc_io() -> tuple[dict[str, int | None], dict[str, str | None]]:
     path = Path("/proc/self/io")
     if not path.exists():
-        return {"read_bytes": None, "write_bytes": None}, {
-            "measurement_status": "UNAVAILABLE_BY_PLATFORM_LIMITATION",
-            "reason": "/proc/self/io unavailable",
-        }
+        return {"read_bytes": None, "write_bytes": None}, {"measurement_status": "UNAVAILABLE_BY_PLATFORM_LIMITATION", "reason": "/proc/self/io unavailable"}
     data: dict[str, int] = {}
     for line in path.read_text(encoding="utf-8").splitlines():
         if ":" not in line:
@@ -40,20 +37,15 @@ def proc_io() -> tuple[dict[str, int | None], dict[str, str | None]]:
         try:
             data[key.strip()] = int(value.strip())
         except ValueError:
-            pass
-    return {"read_bytes": data.get("read_bytes"), "write_bytes": data.get("write_bytes")}, {
-        "measurement_status": "AVAILABLE",
-        "reason": None,
-    }
+            # Ignore malformed numeric values in procfs and continue collecting valid fields.
+            continue
+    return {"read_bytes": data.get("read_bytes"), "write_bytes": data.get("write_bytes")}, {"measurement_status": "AVAILABLE", "reason": None}
 
 
 def proc_net() -> tuple[dict[str, int | None], dict[str, str | None]]:
     path = Path("/proc/net/dev")
     if not path.exists():
-        return {"bytes_received": None, "bytes_sent": None}, {
-            "measurement_status": "UNAVAILABLE_BY_PLATFORM_LIMITATION",
-            "reason": "/proc/net/dev unavailable",
-        }
+        return {"bytes_received": None, "bytes_sent": None}, {"measurement_status": "UNAVAILABLE_BY_PLATFORM_LIMITATION", "reason": "/proc/net/dev unavailable"}
     rx = 0
     tx = 0
     for raw in path.read_text(encoding="utf-8").splitlines()[2:]:
@@ -105,16 +97,8 @@ def run(argv: list[str] | None = None) -> int:
     stdout = ""
     stderr = ""
     timed_out = False
-    exit_code = 127
     try:
-        completed = subprocess.run(
-            args.command,
-            shell=False,
-            text=True,
-            capture_output=True,
-            timeout=args.timeout,
-            check=False,
-        )
+        completed = subprocess.run(args.command, shell=False, text=True, capture_output=True, timeout=args.timeout, check=False)
         stdout = completed.stdout or ""
         stderr = completed.stderr or ""
         exit_code = int(completed.returncode)
