@@ -11,13 +11,13 @@ from pathlib import Path
 from tools.ci.common import ROOT, read_json, safe_name, sha256_file, write_json
 
 
-def parse_bool(value: str) -> tuple[bool | None, str | None]:
+def parse_bool(value: str) -> bool | None:
     low = value.strip().lower()
     if low in {"true", "1", "yes"}:
-        return True, None
+        return True
     if low in {"false", "0", "no"}:
-        return False, None
-    return None, "cache-hit output unavailable or unknown"
+        return False
+    return None
 
 
 def run(argv: list[str] | None = None) -> int:
@@ -35,12 +35,10 @@ def run(argv: list[str] | None = None) -> int:
     parser.add_argument("--pyproject", default="pyproject.toml")
     parser.add_argument("--output-root", default=str(ROOT / "artifacts" / "ci" / "cache"))
     args = parser.parse_args(sys.argv[1:] if argv is None else argv)
-    cache_hit, inferred_reason = parse_bool(args.cache_hit)
-    reason = args.cache_hit_reason or inferred_reason
+    cache_hit = parse_bool(args.cache_hit)
     lock_hash = sha256_file(ROOT / args.lockfile)
     pyproject_hash = sha256_file(ROOT / args.pyproject)
     install = read_json(Path(args.install_telemetry)) if Path(args.install_telemetry).exists() else {}
-    verdict = "PASS"
     errors: list[str] = []
     if not args.cache_key:
         errors.append("cache_key missing")
@@ -48,12 +46,10 @@ def run(argv: list[str] | None = None) -> int:
         errors.append("lockfile_hash missing")
     if not args.install_command:
         errors.append("install_command missing")
-    if cache_hit is None and not reason:
+    if cache_hit is None and not args.cache_hit_reason:
         errors.append("cache_hit unknown without reason")
     if install.get("wall_time_seconds") is None:
         errors.append("install duration missing")
-    if errors:
-        verdict = "FAIL"
     doc = {
         "schema_version": 1,
         "workflow": args.workflow,
@@ -66,18 +62,18 @@ def run(argv: list[str] | None = None) -> int:
         "cache_key": args.cache_key,
         "restore_keys": args.restore_key,
         "cache_hit": cache_hit,
-        "cache_hit_reason": reason,
+        "cache_hit_reason": args.cache_hit_reason,
         "lockfile_hash": lock_hash,
         "pyproject_hash": pyproject_hash,
         "install_command": args.install_command,
         "install_wall_time_seconds": install.get("wall_time_seconds"),
         "install_max_rss_kb": install.get("max_rss_kb"),
         "errors": errors,
-        "verdict": verdict,
+        "verdict": "PASS" if not errors else "FAIL",
     }
     out = Path(args.output_root) / safe_name(args.workflow) / f"{safe_name(args.job)}.json"
     write_json(out, doc)
-    return 0 if verdict == "PASS" else 1
+    return 0 if not errors else 1
 
 
 if __name__ == "__main__":
