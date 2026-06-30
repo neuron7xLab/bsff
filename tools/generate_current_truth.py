@@ -211,6 +211,18 @@ def build() -> dict:
             "dataset_manifest": "artifacts/bonn_bright_line/DATASET_MANIFEST.json",
         },
         "hash_manifest_path": "artifacts/release/bonn_bright_line/HASHES.sha256",
+        # Regeneration anchors the freeze at the current commit; once main advances for
+        # non-scientific commits the freshness gate keeps honouring this anchor as long as
+        # evidence_hash_manifest still verifies (see tools/validate_current_truth.py).
+        "freshness": {
+            "frozen_evidence_commit": commit,
+            "reason": (
+                "Evidence regenerated and anchored at this commit; the freeze is enforced "
+                "by evidence_hash_manifest verifying byte-for-byte, so it cannot mask drift. "
+                "Regenerate CURRENT_TRUTH only when the evidence itself is re-derived."
+            ),
+            "evidence_hash_manifest": "artifacts/release/bonn_bright_line/HASHES.sha256",
+        },
         "reproduction_entrypoint": "REPRODUCE.md",
         "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
@@ -221,8 +233,9 @@ def main(argv=None) -> int:
     ap.add_argument("--check", action="store_true")
     a = ap.parse_args(argv)
     truth = build()
-    # main_commit/timestamp are volatile; compare the rest for --check stability.
-    volatile = {"main_commit", "timestamp_utc"}
+    # main_commit/timestamp/freshness are volatile (they track the generation commit);
+    # compare the rest for --check stability.
+    volatile = {"main_commit", "timestamp_utc", "freshness"}
     if a.check:
         if not OUT.is_file():
             print("CURRENT_TRUTH.json missing")

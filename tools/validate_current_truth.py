@@ -12,6 +12,7 @@ Writes artifacts/release/TRUTH_CONSISTENCY_CHECK.json.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -57,6 +58,78 @@ STALE = [
 ]
 
 
+def _head_commit() -> str:
+    return subprocess.run(
+        ["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=ROOT
+    ).stdout.strip()
+
+
+def _verify_hash_manifest(manifest_rel: str) -> list[str]:
+    """Return a list of integrity problems for a `sha256sum`-format manifest (empty == clean)."""
+    problems: list[str] = []
+    manifest = ROOT / manifest_rel
+    if not manifest.is_file():
+        return [f"evidence hash manifest missing: {manifest_rel}"]
+    for line in manifest.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        digest, _, rel = line.partition("  ")
+        rel = rel.strip()
+        target = ROOT / rel
+        if not target.is_file():
+            problems.append(f"frozen evidence file missing: {rel}")
+            continue
+        actual = hashlib.sha256(target.read_bytes()).hexdigest()
+        if actual != digest:
+            problems.append(
+                f"frozen evidence drift: {rel} expected {digest[:12]} got {actual[:12]}"
+            )
+    return problems
+
+
+def evaluate_freshness(truth: dict, head: str) -> dict:
+    """Fail closed unless CURRENT_TRUTH is bound to HEAD (FRESH) or explicitly frozen with a
+    non-empty reason AND a still-verifying evidence hash manifest (FROZEN). A freeze can never
+    mask drift: the declared hashes must match on-disk bytes for the freeze to be honoured."""
+    main_commit = (truth.get("main_commit") or "").strip()
+    freshness = truth.get("freshness") or {}
+    frozen_commit = (freshness.get("frozen_evidence_commit") or "").strip()
+    reason = (freshness.get("reason") or "").strip()
+    manifest_rel = freshness.get("evidence_hash_manifest") or truth.get("hash_manifest_path") or ""
+
+    problems: list[str] = []
+    if main_commit and head and main_commit == head:
+        mode = "FRESH"
+    else:
+        mode = "FROZEN"
+        if not main_commit:
+            problems.append("CURRENT_TRUTH.main_commit is empty")
+        if frozen_commit != main_commit:
+            problems.append(
+                f"stale truth: main_commit {main_commit[:12] or '<empty>'} != HEAD "
+                f"{head[:12] or '<none>'} and freshness.frozen_evidence_commit "
+                f"{frozen_commit[:12] or '<unset>'} does not anchor it"
+            )
+        if not reason:
+            problems.append("freshness.reason is empty — a freeze must declare why")
+    # Whichever mode, a declared manifest must verify so the anchor is evidence-backed.
+    if manifest_rel:
+        problems.extend(_verify_hash_manifest(manifest_rel))
+    elif mode == "FROZEN":
+        problems.append("no evidence_hash_manifest declared to back the freeze")
+
+    return {
+        "status": "PASS" if not problems else "FAIL",
+        "mode": mode,
+        "head": head,
+        "main_commit": main_commit,
+        "frozen_evidence_commit": frozen_commit,
+        "evidence_hash_manifest": manifest_rel,
+        "problems": problems,
+    }
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--output", default=str(OUT))
@@ -64,6 +137,7 @@ def main(argv=None) -> int:
     truth = json.loads(TRUTH.read_text())
     latest = truth["latest_validation_state"]
     bnci = truth["BNCI_chain_state"]
+    freshness = evaluate_freshness(truth, _head_commit())
 
     contradictions, stale_claims, checked = [], [], []
     for rel in SURFACES:
@@ -94,7 +168,9 @@ def main(argv=None) -> int:
             ):
                 contradictions.append(f"{rel}: appears to claim BNCI validated (it is {bnci})")
 
-    status = "PASS" if not (contradictions or stale_claims) else "FAIL"
+    status = (
+        "PASS" if not (contradictions or stale_claims) and freshness["status"] == "PASS" else "FAIL"
+    )
     result = {
         "status": status,
         "final_state": latest,
@@ -102,14 +178,18 @@ def main(argv=None) -> int:
         "checked_files": checked,
         "contradictions": contradictions,
         "stale_claims": stale_claims,
+        "freshness": freshness,
         "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "git_commit": subprocess.run(
-            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=ROOT
-        ).stdout.strip(),
+        "git_commit": freshness["head"],
     }
     Path(a.output).write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(f"CURRENT_TRUTH consistency: {status} (state={latest})")
-    for x in contradictions + stale_claims:
+    print(
+        f"  freshness: {freshness['status']} (mode={freshness['mode']}, "
+        f"main_commit={freshness['main_commit'][:12] or '<empty>'}, "
+        f"head={freshness['head'][:12] or '<none>'})"
+    )
+    for x in contradictions + stale_claims + freshness["problems"]:
         print("  -", x)
     return 0 if status == "PASS" else 1
 
