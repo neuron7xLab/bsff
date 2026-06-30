@@ -17,7 +17,7 @@ def pct(delta: float, base: float) -> float | None:
 
 
 def top(items: list[dict[str, Any]], key: str) -> list[dict[str, Any]]:
-    measurable = [item for item in items if isinstance(item.get(key), (int, float))]
+    measurable = [item for item in items if isinstance(item.get(key), int | float)]
     return sorted(measurable, key=lambda item: item.get(key, 0), reverse=True)[:10]
 
 
