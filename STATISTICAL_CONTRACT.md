@@ -50,14 +50,14 @@ The strongest valid positive language in BSFF is:
 
 > survived falsification under stated conditions
 
-Forbidden language includes:
+Disallowed public interpretation patterns include:
 
 - proved;
 - confirmed universal validity;
-- clinical-grade;
-- regulatory-grade;
-- diagnostic;
-- therapeutic.
+- certified scientific authority;
+- approved device authority;
+- diagnostic conclusion;
+- therapeutic conclusion.
 
 ## CI starter gate
 
