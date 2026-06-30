@@ -30,7 +30,14 @@ CHECKS: list[tuple[str, list[str]]] = [
     ("null_hypotheses_explicit", ["tools/validate_null_registry.py"]),
     ("thresholds_have_provenance", ["tools/validate_threshold_registry.py"]),
     ("self_falsification_controls", ["tools/verify_controls.py"]),
-    ("status_count_is_generated_and_in_sync", ["tools/update_status.py", "--check"]),
+    (
+        "status_metadata_is_generated_and_in_sync",
+        ["tools/update_status.py", "--check"],
+    ),
+    (
+        "status_count_strict_sync",
+        ["tools/update_status.py", "--verify-count", "--strict-status"],
+    ),
     ("contract_self_conformance", ["tools/run_contract_conformance.py"]),
 ]
 
@@ -67,14 +74,9 @@ def main(argv: list[str] | None = None) -> int:
     for r in results:
         print(f"  {'[ok]' if r['ok'] else '[X]'} {r['check']:42} exit={r['exit']}")
     if not ok:
-        print(
-            "\nHONESTY GATE: FAIL — a decorative-lie sub-check did not pass. Merge must be blocked."
-        )
+        print("\nHONESTY GATE: FAIL")
         return 1
-    print(
-        "\nHONESTY GATE: PASS — no decorative VERIFIED, no soft state, no unsourced "
-        "threshold, no implicit null, no stale count, controls hold, contract self-conformant."
-    )
+    print("\nHONESTY GATE: PASS")
     return 0
 
 

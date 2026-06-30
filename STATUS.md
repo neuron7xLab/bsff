@@ -2,91 +2,20 @@
 <!-- Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab -->
 <!-- GENERATED FILE — edit tools/update_status.py, then run it. Do not edit by hand. -->
 
-# BSFF status
-
-Single source of truth for release status. Regenerated from repository
-facts (version, live test count, CLI surface, extras) by
-`python tools/update_status.py`. CI enforces sync with
-`python tools/update_status.py --check`.
-
-## Current state
+# BSFF status register
 
 | Field | Value |
 |---|---|
-| Package version | `0.4.0` |
-| Live test count | **701** (collected by `pytest tests/`) |
-| CLI subcommands | 18 (parsed from `src/bsff/cli.py`) |
-| Optional extras | `dev`, `full`, `fuzz`, `leakage`, `moabb`, `security`, `stats`, `yaml` |
-
-## CI state
-
-CI is defined by [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (workflow `CI`): test +
-build + nightly-extended jobs. This file does **not** assert a pass/fail
-result — consult the GitHub Actions run for the relevant commit for the
-authoritative status:
-
-> See **GitHub Actions** for the live CI verdict of the current commit.
-
-## Validation level
-
-Synthetic-ground-truth calibration PLUS a Bonn external benchmark that is ROBUSTLY passed: BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED. Specificity is robust to BOTH seed and null-model choice. Pre-registered S3 seed-averaged AR-null (N=1000, 10 seeds, frozen-before-run, re-run reproduced byte-for-byte): G1 power 0.94, G2 FPR 0.028, Wilson 95% CI [0.019, 0.040]. Multi-null gate (AR/IAAFT/phase-randomized) all Wilson CI-upper <= 0.05 (robust_gate_passed=true). This survived and superseded a smaller-N calibration. BNCI2014-001 preregistration-only (execution not valid for narrowband epochs). NOT clinical, regulatory, BNCI-executed, or multi-dataset replicated. Canonical state: artifacts/release/CURRENT_TRUTH.json.
-
-See [`docs/VALIDATION.md`](docs/VALIDATION.md) for the full evidence tier
-table and [`docs/OPERATING_CHARACTERISTIC.md`](docs/OPERATING_CHARACTERISTIC.md)
-for the measured false-positive / power profile.
-
-## Release readiness
-
-| Gate | Status |
-|---|---|
-| Deterministic test suite | green when CI `test` job passes (see Actions) |
-| Truth contract (`tools/validate_truth_contract.py`) | enforced in CI |
-| Markdown contract (`tools/validate_markdown.py`) | enforced in CI |
-| Status sync (`tools/update_status.py --check`) | enforced in CI |
-| Operating-characteristic calibration | committed artifact + CI smoke |
-| TISEAN reference gate | numpy reference is the in-CI oracle |
-
-## CLI surface
-
-Subcommands registered in `src/bsff/cli.py` (source order). See
-[`docs/CLI_CONTRACT.md`](docs/CLI_CONTRACT.md) for purposes and flags.
-
-| Command |
-|---|
-| `bsff selftest` |
-| `bsff falsify` |
-| `bsff adjudicate` |
-| `bsff adjudicate-batch` |
-| `bsff render` |
-| `bsff adjudicate-data` |
-| `bsff adjudicate-moabb` |
-| `bsff normalize` |
-| `bsff ledger-verify` |
-| `bsff ingest` |
-| `bsff doctor` |
-| `bsff capabilities` |
-| `bsff validate` |
-| `bsff release-check` |
-| `bsff reproduce` |
-| `bsff bids-app` |
-| `bsff benchmark` |
-| `bsff evidence` |
-
-## Known blockers / limitations
-
-- **Not externally validated against TISEAN.** BSFF ships an independent
-  numpy surrogate reference as its in-CI oracle; the real TISEAN binary is
-  an optional out-of-band cross-check and is recorded as `tisean_was_run:
-  false` whenever it is absent.
-- **No raw published dataset is shipped** (license/size). The committed
-  fixtures are synthetic; however the **Bonn S2 bright-line verdict on real**
-  Andrzejak-2001 EEG IS committed as an artifact (hashes in DATASET_MANIFEST).
-  `BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED` — see `artifacts/release/CURRENT_TRUTH.json`.
-- **BNCI2014-001 is preregistration-only** (unlocked by the Bonn S2 pass; not
-  yet executed). No BNCI claim exists until BNCI execution artifacts exist.
-- **Statistical scope is linear / spectral.** Nonlinear directed coupling
-  (k-NN transfer entropy) and non-time-series designs (two-group, cohort)
-  require their own validated tests before any claim that needs them can be
-  adjudicated.
-- **Not regulatory validation and does not prove BCI claims.** BSFF is a
-  falsifier: it can refute or fail to refute a claim under stated attacks.
+| package_version | `0.4.0` |
+| canonical_state | `BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED` |
+| committed_test_count | **709** |
+| live_collection_gate | `tools/update_status.py --verify-count --strict-status` |
+| live_collection_count_source | `pytest tests/ --collect-only -p no:cacheprovider` |
+| cli_subcommand_count | 18 |
+| optional_extras | `dev`, `full`, `fuzz`, `leakage`, `moabb`, `security`, `stats`, `yaml` |
+| truth_artifact_path | `artifacts/release/CURRENT_TRUTH.json` |
+| workflow_authority | `.github/workflows/ci.yml` and GitHub Actions for the exact commit |
+| release_evidence_path | `docs/PR_109_EVIDENCE.md` |
+| current_truth_gate | `tools/validate_current_truth.py` |
+| status_sync_gate | `tools/update_status.py --check` |
+| strict_count_sync_gate | `tools/update_status.py --verify-count --strict-status` |
