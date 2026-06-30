@@ -1,0 +1,35 @@
+{
+  "schema_version": "2026.06",
+  "artifact_name": "BSFF R6/R7 ascension scaffold",
+  "rank_boundary": "pre-R6 until external hostile reproduction exists",
+  "primary_entrypoints": [
+    "REPRODUCE.md",
+    "reproduce.sh",
+    "ARTIFACT_EVALUATION.md",
+    "reviewer_quickstart.md"
+  ],
+  "machine_readable_contracts": [
+    "claims.yaml",
+    "data_registry.json"
+  ],
+  "human_readable_contracts": [
+    "CLAIMS.md",
+    "DATASET_PROVENANCE.md",
+    "STATISTICAL_CONTRACT.md",
+    "SUPPLY_CHAIN.md",
+    "RELEASE_CHECKLIST.md"
+  ],
+  "ci_starter_tests": [
+    "tests/test_claim_registry.py",
+    "tests/test_dataset_provenance.py",
+    "tests/test_statistical_contract.py"
+  ],
+  "code_modules": [
+    "src/bsff/statistics/contracts.py"
+  ],
+  "non_claims": [
+    "No clinical or regulatory validation is claimed.",
+    "No external R6 reproduction is claimed.",
+    "No stable v1.0 API is claimed."
+  ]
+}
