@@ -38,6 +38,10 @@ jobs:
           uv run --no-sync python -m ruff format --diff src tests tools > artifacts/ci/ruff-format-diff.txt 2>&1 || true
       - run: uv run --no-sync python -m ruff check src tests tools
       - run: uv run --no-sync python -m ruff format --check src tests tools
+      - name: Capture pytest diagnostics
+        run: |
+          mkdir -p artifacts/ci
+          uv run --no-sync python -m pytest tests/ -m "not slow" -v --tb=short --junitxml=artifacts/ci/pytest-nonslow.xml > artifacts/ci/pytest-nonslow.txt 2>&1 || true
       - run: uv run --no-sync python -m pytest tests/ -m "not slow" -v --tb=short
       - run: uv run --no-sync python -m pytest tests/ -m slow -v --tb=short
       - run: uv run --no-sync python tools/validate_truth_contract.py
@@ -65,4 +69,6 @@ jobs:
             artifacts/ci/ruff-check.json
             artifacts/ci/ruff-format-check.txt
             artifacts/ci/ruff-format-diff.txt
+            artifacts/ci/pytest-nonslow.txt
+            artifacts/ci/pytest-nonslow.xml
           if-no-files-found: warn
