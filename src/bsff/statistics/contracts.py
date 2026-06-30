@@ -71,11 +71,17 @@ def _is_non_empty_text(value: object) -> bool:
 
 
 def _is_non_empty_sequence(value: object) -> bool:
-    return isinstance(value, Sequence) and not isinstance(value, (str, bytes)) and bool(value)
+    return (
+        isinstance(value, Sequence)
+        and not isinstance(value, (str, bytes))
+        and bool(value)
+    )
 
 
 def _validate_required_mapping_fields(
-    record_id: str, record: Mapping[str, Any], required_fields: Sequence[str]
+    record_id: str,
+    record: Mapping[str, Any],
+    required_fields: Sequence[str],
 ) -> list[str]:
     errors: list[str] = []
     for field in required_fields:
@@ -87,7 +93,11 @@ def _validate_required_mapping_fields(
             errors.append(f"{record_id}: field {field!r} is null")
         elif isinstance(value, str) and not value.strip():
             errors.append(f"{record_id}: field {field!r} is empty")
-        elif isinstance(value, Sequence) and not isinstance(value, (str, bytes)) and not value:
+        elif (
+            isinstance(value, Sequence)
+            and not isinstance(value, (str, bytes))
+            and not value
+        ):
             errors.append(f"{record_id}: field {field!r} is an empty sequence")
     return errors
 
@@ -111,7 +121,9 @@ def validate_claim_record(claim_id: str, record: Mapping[str, Any]) -> list[str]
 
     statuses = record.get("status", [])
     if _is_non_empty_sequence(statuses):
-        invalid = sorted(str(status) for status in statuses if status not in CLAIM_STATUSES)
+        invalid = sorted(
+            str(status) for status in statuses if status not in CLAIM_STATUSES
+        )
         if invalid:
             errors.append(f"{claim_id}: invalid status value(s): {', '.join(invalid)}")
 
@@ -135,7 +147,9 @@ def validate_dataset_record(dataset_id: str, record: Mapping[str, Any]) -> list[
     if status is not None and status not in DATASET_STATUSES:
         errors.append(f"{dataset_id}: invalid dataset status {status!r}")
 
-    if "preprocessing_steps" in record and not _is_non_empty_sequence(record["preprocessing_steps"]):
+    if "preprocessing_steps" in record and not _is_non_empty_sequence(
+        record["preprocessing_steps"]
+    ):
         errors.append(f"{dataset_id}: preprocessing_steps must be a non-empty list")
 
     if "expected_artifact_outputs" in record:
@@ -153,7 +167,12 @@ def validate_metric_contract(record: Mapping[str, Any]) -> list[str]:
     errors = _validate_required_mapping_fields(metric_id, record, REQUIRED_METRIC_FIELDS)
 
     boundary = str(record.get("interpretation_boundary", "")).lower()
-    forbidden_positive_language = ("proved", "confirmed", "clinical-grade", "regulatory-grade")
+    forbidden_positive_language = (
+        "proved",
+        "confirmed",
+        "diagnostic",
+        "therapeutic",
+    )
     if any(term in boundary for term in forbidden_positive_language):
         errors.append(f"{metric_id}: interpretation boundary uses forbidden positive language")
 
