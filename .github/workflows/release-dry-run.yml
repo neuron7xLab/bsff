@@ -35,6 +35,7 @@ jobs:
           mkdir -p artifacts/ci
           uv run --no-sync python -m ruff check src tests tools --output-format=json > artifacts/ci/ruff-check.json || true
           uv run --no-sync python -m ruff format --check src tests tools > artifacts/ci/ruff-format-check.txt 2>&1 || true
+          uv run --no-sync python -m ruff format --diff src tests tools > artifacts/ci/ruff-format-diff.txt 2>&1 || true
       - run: uv run --no-sync python -m ruff check src tests tools
       - run: uv run --no-sync python -m ruff format --check src tests tools
       - run: uv run --no-sync python -m pytest tests/ -m "not slow" -v --tb=short
@@ -63,4 +64,5 @@ jobs:
             artifacts/evidence_manifest.json
             artifacts/ci/ruff-check.json
             artifacts/ci/ruff-format-check.txt
+            artifacts/ci/ruff-format-diff.txt
           if-no-files-found: warn
