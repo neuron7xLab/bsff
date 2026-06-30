@@ -1,6 +1,6 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 <!-- Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab -->
-<!-- GENERATED FILE — edit tools/update_status.py, then run it. Do not edit by hand. -->
+<!-- GENERATED FILE -->
 
 # BSFF status register
 
@@ -8,7 +8,7 @@
 |---|---|
 | package_version | `0.4.0` |
 | canonical_state | `BONN_S2_BRIGHT_LINE_ROBUSTLY_PASSED` |
-| committed_test_count | **709** |
+| committed_test_count | **714** |
 | live_collection_gate | `tools/update_status.py --verify-count --strict-status` |
 | live_collection_count_source | `pytest tests/ --collect-only -p no:cacheprovider` |
 | cli_subcommand_count | 18 |

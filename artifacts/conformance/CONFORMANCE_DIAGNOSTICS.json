@@ -1,6 +1,5 @@
 {
   "command_timeout_seconds": 120,
-  "conformant": 10,
   "contract_id": "bsff_self_conformance_v1",
   "items": [
     {
@@ -13,12 +12,20 @@
         "tools/verify_controls.py"
       ],
       "detail": "python tools/verify_controls.py",
+      "duration_ms": 1357,
+      "exec_argv": [
+        "/usr/bin/python",
+        "tools/verify_controls.py"
+      ],
       "exit": 0,
       "expected_exit": 0,
       "id": "self_falsification_controls",
       "kind": "command",
+      "python_executable": "/usr/bin/python",
       "shell": false,
       "status": "CONFORMANT",
+      "stderr_tail": "",
+      "stdout_tail": "negative: UNSUPPORTED (pass=True)\npositive: SURVIVED (pass=True)\ncontract: negative != SURVIVED AND positive == SURVIVED\nCONTROLS OK — BSFF fails and passes correctly on ground truth.\n",
       "timed_out": false,
       "timeout_seconds": 120
     },
@@ -32,12 +39,20 @@
         "tools/validate_null_registry.py"
       ],
       "detail": "python tools/validate_null_registry.py",
+      "duration_ms": 32,
+      "exec_argv": [
+        "/usr/bin/python",
+        "tools/validate_null_registry.py"
+      ],
       "exit": 0,
       "expected_exit": 0,
       "id": "null_registry_complete",
       "kind": "command",
+      "python_executable": "/usr/bin/python",
       "shell": false,
       "status": "CONFORMANT",
+      "stderr_tail": "",
+      "stdout_tail": "Null registry OK: 3 hypotheses, all complete.\n",
       "timed_out": false,
       "timeout_seconds": 120
     },
@@ -51,12 +66,20 @@
         "tools/validate_threshold_registry.py"
       ],
       "detail": "python tools/validate_threshold_registry.py",
+      "duration_ms": 53,
+      "exec_argv": [
+        "/usr/bin/python",
+        "tools/validate_threshold_registry.py"
+      ],
       "exit": 0,
       "expected_exit": 0,
       "id": "threshold_registry_provenance",
       "kind": "command",
+      "python_executable": "/usr/bin/python",
       "shell": false,
       "status": "CONFORMANT",
+      "stderr_tail": "",
+      "stdout_tail": "Threshold registry OK: 5 thresholds, all with provenance.\n",
       "timed_out": false,
       "timeout_seconds": 120
     },
@@ -72,12 +95,21 @@
         "--quick"
       ],
       "detail": "python tools/validate_surrogate_fidelity.py --quick",
+      "duration_ms": 1091,
+      "exec_argv": [
+        "/usr/bin/python",
+        "tools/validate_surrogate_fidelity.py",
+        "--quick"
+      ],
       "exit": 0,
       "expected_exit": 0,
       "id": "surrogate_fidelity",
       "kind": "command",
+      "python_executable": "/usr/bin/python",
       "shell": false,
       "status": "CONFORMANT",
+      "stderr_tail": "",
+      "stdout_tail": "fixture                marginal  spec_relerr  cov_relrmsd ok\nar1_4ch_phi0.75         0.0e+00     1.11e-02     8.80e-04 PASS\nhenon_1d                0.0e+00     4.18e-03     2.22e-16 PASS\nwhite_1d                0.0e+00     3.21e-03     0.00e+00 PASS\n\nAll surrogate-fidelity checks passed. Wrote artifacts/surrogate_fidelity.json\n",
       "timed_out": false,
       "timeout_seconds": 120
     },
@@ -93,12 +125,21 @@
         "--check"
       ],
       "detail": "python tools/update_status.py --check",
+      "duration_ms": 41,
+      "exec_argv": [
+        "/usr/bin/python",
+        "tools/update_status.py",
+        "--check"
+      ],
       "exit": 0,
       "expected_exit": 0,
       "id": "status_in_sync",
       "kind": "command",
+      "python_executable": "/usr/bin/python",
       "shell": false,
       "status": "CONFORMANT",
+      "stderr_tail": "",
+      "stdout_tail": "STATUS.md: metadata in sync\n",
       "timed_out": false,
       "timeout_seconds": 120
     },
@@ -161,8 +202,5 @@
       "status": "UNVERIFIABLE"
     }
   ],
-  "n_items": 14,
-  "nonconformant": 0,
-  "overall": "PARTIAL",
-  "unverifiable": 4
+  "overall": "PARTIAL"
 }

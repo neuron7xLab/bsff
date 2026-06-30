@@ -1,0 +1,29 @@
+{
+  "cache_hit_count": 0,
+  "cache_hit_ratio": 0.0,
+  "cache_miss_count": 0,
+  "cache_unknown_count": 0,
+  "head_sha": null,
+  "highest_io_steps": [],
+  "highest_rss_steps": [],
+  "install_wall_time_seconds": 0,
+  "io_measurement_coverage": 0.0,
+  "job_count": 0,
+  "longitudinal": {
+    "baseline_available": false,
+    "cache_hit_ratio_delta": null,
+    "install_time_delta_percent": null,
+    "wall_time_delta_percent": null
+  },
+  "measured_step_count": 0,
+  "network_measurement_coverage": 0.0,
+  "policy_depth": {
+    "verdict": "FAIL"
+  },
+  "rss_measurement_coverage": 0.0,
+  "schema_version": 1,
+  "slowest_steps": [],
+  "total_measured_wall_time_seconds": 0,
+  "verdict": "FAIL",
+  "workflow_count": 0
+}
