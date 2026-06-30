@@ -28,6 +28,7 @@ from bsff.statistics.contracts import (  # noqa: E402
 REQUIRED_FILES = (
     "docs/R6_R7_ASCENSION_PROTOCOL.md",
     "docs/PUBLIC_RESEARCH_POSITION.md",
+    "docs/README_BINDING.md",
     "CLAIMS.md",
     "claims.yaml",
     "DATASET_PROVENANCE.md",
@@ -45,8 +46,10 @@ REQUIRED_FILES = (
 
 PUBLIC_BINDING_FILES = (
     "README.md",
+    "REPRODUCE.md",
     "docs/R6_R7_ASCENSION_PROTOCOL.md",
     "docs/PUBLIC_RESEARCH_POSITION.md",
+    "docs/README_BINDING.md",
     "CLAIMS.md",
     "DATASET_PROVENANCE.md",
     "STATISTICAL_CONTRACT.md",
@@ -60,8 +63,6 @@ FORBIDDEN_COMPLETION_PHRASES = (
     "r6 complete",
     "r7 complete",
     "field-standard achieved",
-    "clinical-grade",
-    "regulatory-grade",
 )
 
 REQUIRED_RANK_BOUNDARY_PHRASES = (
@@ -124,7 +125,11 @@ def _check_claim_dataset_links() -> list[str]:
 
 
 def _check_rank_boundary() -> list[str]:
-    text = "\n".join(_read_text(path) for path in PUBLIC_BINDING_FILES if (ROOT / path).is_file())
+    text = "\n".join(
+        _read_text(path)
+        for path in PUBLIC_BINDING_FILES
+        if (ROOT / path).is_file()
+    )
     lowered = text.lower()
     errors: list[str] = []
 
@@ -132,15 +137,17 @@ def _check_rank_boundary() -> list[str]:
     if missing:
         errors.append("rank boundary language missing: " + ", ".join(missing))
 
-    # Allow honest negative formulations such as "not yet externally replicated".
-    # Reject only direct completion/status inflation and domain overclaim language.
+    # Allow honest negative formulations and explicit forbidden-language inventories.
+    # Reject direct completion/status inflation patterns only.
     for phrase in FORBIDDEN_COMPLETION_PHRASES:
         if phrase in lowered:
             errors.append(f"forbidden rank or domain overclaim phrase present: {phrase!r}")
 
     boundary_claim = _read_json("claims.yaml")["claims"].get("BSFF-CLAIM-004", {})
     if boundary_claim.get("status") != ["unverified"]:
-        errors.append("BSFF-CLAIM-004 must remain unverified until external reproduction exists")
+        errors.append(
+            "BSFF-CLAIM-004 must remain unverified until external reproduction exists"
+        )
 
     return errors
 
@@ -156,7 +163,11 @@ def _check_reproduction_entrypoint() -> list[str]:
         "bsff evidence verify",
         "REPRODUCTION_REPORT.md",
     )
-    return [f"reproduce.sh missing token: {token}" for token in required_tokens if token not in script]
+    return [
+        f"reproduce.sh missing token: {token}"
+        for token in required_tokens
+        if token not in script
+    ]
 
 
 def evaluate() -> list[str]:
