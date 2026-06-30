@@ -14,7 +14,7 @@ WORKFLOW_DIR = ROOT / ".github" / "workflows"
 
 def workflow_name(text: str, path: Path) -> str:
     m = re.search(r"^name:\s*(.+)$", text, re.M)
-    return m.group(1).strip().strip('"\'') if m else path.stem
+    return m.group(1).strip().strip("\"'") if m else path.stem
 
 
 def display_path(path: Path) -> str:
@@ -90,7 +90,9 @@ def build_inventory(enforce_all_python_jobs: bool = False) -> dict[str, object]:
         errors.extend(gaps)
     return {
         "schema_version": 1,
-        "enforcement_mode": "ALL_PYTHON_JOBS" if enforce_all_python_jobs else "OBSERVABILITY_BOOTSTRAP",
+        "enforcement_mode": "ALL_PYTHON_JOBS"
+        if enforce_all_python_jobs
+        else "OBSERVABILITY_BOOTSTRAP",
         "workflows": workflows,
         "gaps": gaps,
         "errors": errors,

@@ -23,12 +23,10 @@ def top(items: list[dict[str, Any]], key: str) -> list[dict[str, Any]]:
 
 def aggregate(baseline: Path | None = None, require_baseline: bool = False) -> dict[str, Any]:
     steps = [
-        read_json(path)
-        for path in sorted((ROOT / "artifacts" / "ci" / "steps").glob("**/*.json"))
+        read_json(path) for path in sorted((ROOT / "artifacts" / "ci" / "steps").glob("**/*.json"))
     ]
     caches = [
-        read_json(path)
-        for path in sorted((ROOT / "artifacts" / "ci" / "cache").glob("**/*.json"))
+        read_json(path) for path in sorted((ROOT / "artifacts" / "ci" / "cache").glob("**/*.json"))
     ]
     inventory_path = ROOT / "artifacts" / "ci" / "workflow_inventory.json"
     provenance_path = ROOT / "artifacts" / "ci" / "provenance_depth.json"
@@ -100,11 +98,7 @@ def aggregate(baseline: Path | None = None, require_baseline: bool = False) -> d
         "cache_unknown_count": cache_unknown,
         "cache_hit_ratio": cache_ratio,
         "network_measurement_coverage": (
-            round(
-                sum(1 for step in steps if step.get("network_bytes_sent") is not None)
-                / len(steps),
-                6,
-            )
+            round(sum(1 for step in steps if step.get("network_bytes_sent") is not None) / len(steps), 6)
             if steps
             else 0.0
         ),
