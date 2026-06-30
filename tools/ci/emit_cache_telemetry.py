@@ -38,7 +38,8 @@ def run(argv: list[str] | None = None) -> int:
     cache_hit = parse_bool(args.cache_hit)
     lock_hash = sha256_file(ROOT / args.lockfile)
     pyproject_hash = sha256_file(ROOT / args.pyproject)
-    install = read_json(Path(args.install_telemetry)) if Path(args.install_telemetry).exists() else {}
+    install_path = Path(args.install_telemetry)
+    install = read_json(install_path) if install_path.exists() else {}
     errors: list[str] = []
     if not args.cache_key:
         errors.append("cache_key missing")
