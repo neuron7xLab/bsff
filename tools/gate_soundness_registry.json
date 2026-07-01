@@ -1,7 +1,26 @@
 {
-  "schema": "bsff.gate_soundness_registry/v1",
   "doc": "A gate is an INSTRUMENT only if a negative control proves it FAILS on a known-bad input. 'gates' maps each proven gate tool (relpath) to the pytest nodeid of its negative control. 'unproven' is the honest, frozen debt list of gate tools for which no such negative control was found. gate_soundness.py ratchets: no NEW unproven gate may appear beyond this list.",
   "gates": {
+    "tools/claim_coverage.py": {
+      "negative_control_test": "tests/test_claim_coverage.py::test_negative_control_dangling_claim_id",
+      "rationale": "Feeds a manifest claim_id absent from claims.yaml and asserts FAIL."
+    },
+    "tools/complexity_gate.py": {
+      "negative_control_test": "tests/test_complexity_gate.py::test_flags_non_allowlisted_offender",
+      "rationale": "Feeds a function above the ceiling with no allowlist entry and asserts FAIL."
+    },
+    "tools/determinism_probe.py": {
+      "negative_control_test": "tests/test_determinism_probe.py::test_negative_control_flags_nondeterministic_generator",
+      "rationale": "Feeds a generator writing a timestamp and asserts it is flagged nondeterministic."
+    },
+    "tools/lint_fail_open.py": {
+      "negative_control_test": "tests/test_lint_fail_open.py::test_negative_control_except_returns_zero_is_flagged",
+      "rationale": "Feeds an except-handler that returns 0 and asserts the detector flags it fail-open."
+    },
+    "tools/quality_dashboard.py": {
+      "negative_control_test": "tests/test_quality_dashboard.py::test_dashboard_fails_if_any_dimension_fails",
+      "rationale": "Forces one dimension's --check to FAIL and asserts the composite propagates FAIL."
+    },
     "tools/validate_artifact_schema.py": {
       "negative_control_test": "tests/test_artifact_schema.py::test_governed_artifact_missing_descriptor_field_fails",
       "rationale": "Feeds a governed artifact missing artifact_type and asserts validate() returns not ok."
@@ -39,9 +58,14 @@
       "rationale": "Bogus fact numbers make check() return a non-empty violation list."
     }
   },
+  "schema": "bsff.gate_soundness_registry/v1",
   "unproven": [
     "tools/check_contracts.py",
     "tools/check_github_actions_policy.py",
+    "tools/decision_gate.py",
+    "tools/mutation_kill_gate.py",
+    "tools/mutation_probe.py",
+    "tools/run_replayability_gate.py",
     "tools/validate_architecture_contract.py",
     "tools/validate_forbidden_claims.py",
     "tools/validate_ip_provenance.py",

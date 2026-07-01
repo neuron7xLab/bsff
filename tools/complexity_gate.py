@@ -88,9 +88,11 @@ def evaluate(root=ROOT, paths=DEFAULT_PATHS, allowlist_path=ALLOWLIST_PATH):
     allowlist = _load_allowlist(allowlist_path)
     radon_data = _run_radon(root, paths)
 
+    live_cc = {key: cc for key, cc in _iter_blocks(radon_data, root)}
+
     violations = []
     allowlisted = []
-    for key, cc in sorted(_iter_blocks(radon_data, root)):
+    for key, cc in sorted(live_cc.items()):
         if cc <= CEILING:
             continue
         recorded = allowlist.get(key)
@@ -115,6 +117,30 @@ def evaluate(root=ROOT, paths=DEFAULT_PATHS, allowlist_path=ALLOWLIST_PATH):
             )
         else:
             allowlisted.append({"target": key, "complexity": cc, "allowed": recorded})
+
+    # Stale-allowlist expiry: an allowlisted target that no longer exceeds the
+    # ceiling (refactored below CEILING, or deleted/renamed away) must be removed
+    # from the allowlist. Keeping it hides regressions and rots the ratchet, so
+    # a stale entry fails closed and forces cleanup.
+    for key in sorted(allowlist):
+        cc = live_cc.get(key)
+        if cc is None:
+            violations.append(
+                {
+                    "target": key,
+                    "ceiling": CEILING,
+                    "reason": "stale allowlist entry: target no longer exists",
+                }
+            )
+        elif cc <= CEILING:
+            violations.append(
+                {
+                    "target": key,
+                    "complexity": cc,
+                    "ceiling": CEILING,
+                    "reason": "stale allowlist entry: no longer exceeds ceiling, remove it",
+                }
+            )
 
     return {
         "schema": SCHEMA,
@@ -146,7 +172,7 @@ def main(argv=None):
         for item in report["allowlisted"]:
             print(f"  ~ {item['target']} CC={item['complexity']} (allowed {item['allowed']})")
         for item in report["violations"]:
-            print(f"  - {item['target']} CC={item['complexity']}: {item['reason']}")
+            print(f"  - {item['target']} CC={item.get('complexity', '?')}: {item['reason']}")
 
     if args.check and report["violations"]:
         return 1

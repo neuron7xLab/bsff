@@ -127,3 +127,15 @@ def test_cli_check_exit_code(capsys):
     assert rc == 0
     out = capsys.readouterr().out
     assert "COMPLEXITY_GATE:" in out
+
+
+def test_stale_allowlist_entry_fails(tmp_path):
+    """An allowlisted target now at/below the ceiling, or gone, is stale -> FAIL."""
+    _fixture_src(tmp_path, "def easy(x):\n    return x + 1\n")
+    allow = _write_allowlist(tmp_path, {"pkg/mod.py::easy": 20, "pkg/mod.py::deleted": 20})
+    report = gate.evaluate(root=tmp_path, paths=("pkg",), allowlist_path=allow)
+    assert report["status"] == "FAIL"
+    reasons = " ".join(v["reason"] for v in report["violations"])
+    assert "stale allowlist entry" in reasons
+    targets = {v["target"] for v in report["violations"]}
+    assert {"pkg/mod.py::easy", "pkg/mod.py::deleted"} <= targets

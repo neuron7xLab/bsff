@@ -130,7 +130,14 @@ def evaluate(root: str | Path) -> dict[str, Any]:
     exempt.sort(key=lambda d: d["claim_id"])
     orphan_claims.sort()
 
-    failed = bool(dangling_claim_ids) or bool(missing_evidence_files) or bool(orphan_claims)
+    # An asserted claim with no manifest-bound artifact backing it is a hole in
+    # the bipartite graph, not an advisory: it fails closed like the others.
+    failed = (
+        bool(dangling_claim_ids)
+        or bool(missing_evidence_files)
+        or bool(orphan_claims)
+        or bool(unbacked_claims)
+    )
 
     return {
         "schema": SCHEMA,

@@ -148,3 +148,22 @@ def test_asserted_tokens_trigger_evidence_requirement(
         files=[],
     )
     assert evaluate(root)["status"] == "FAIL"
+
+
+def test_unbacked_asserted_claim_fails(tmp_path: Path) -> None:
+    """An asserted claim whose evidence exists but which no MANIFEST artifact
+    binds (claim_ids) is an unbacked hole in the bipartite graph -> FAIL."""
+    root = _write_root(
+        tmp_path,
+        claims={
+            "BSFF-CLAIM-001": {
+                "status": ["internally_verified"],
+                "evidence_artifacts": ["evidence/a.json"],
+            }
+        },
+        artifacts=[{"path": "claims.yaml", "claim_ids": []}],
+        files=["evidence/a.json"],
+    )
+    result = evaluate(root)
+    assert result["status"] == "FAIL"
+    assert "BSFF-CLAIM-001" in result["unbacked_claims"]

@@ -30,7 +30,11 @@ from pathlib import Path
 SCHEMA = "bsff.gate_soundness/v1"
 
 # Gate tools are the audited surface: validators, checkers, verifiers.
-_GATE_NAME_RE = re.compile(r"^(validate_|check_|verify_).*\.py$")
+# Gate tools: the classic validate_/check_/verify_ family PLUS the
+# meta-verification layer (its own gates must sit inside the soundness surface,
+# not audit everyone else from outside it).
+_GATE_NAME_RE = re.compile(r"^(validate_|check_|verify_).*\.py$|.*(_gate|_probe)\.py$")
+_EXTRA_GATES = frozenset({"lint_fail_open.py", "claim_coverage.py", "quality_dashboard.py"})
 
 # This meta-tool audits gates; it is not itself an audited gate.
 _SELF = "gate_soundness.py"
@@ -48,7 +52,7 @@ def discover_gates(root: Path) -> list[str]:
     for p in sorted(tools_dir.glob("*.py")):
         if p.name == _SELF:
             continue
-        if _GATE_NAME_RE.match(p.name):
+        if _GATE_NAME_RE.match(p.name) or p.name in _EXTRA_GATES:
             gates.append(f"tools/{p.name}")
     return sorted(gates)
 

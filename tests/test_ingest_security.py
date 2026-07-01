@@ -75,3 +75,17 @@ def test_source_file_has_no_raw_fromstring_import() -> None:
     src = Path(ingest.__file__).read_text(encoding="utf-8")
     assert "import xml.etree.ElementTree" not in src
     assert "from defusedxml.ElementTree import" in src
+
+
+def test_non_arxiv_host_rejected():
+    """https alone is not enough: only allowlisted arXiv hosts may be fetched."""
+    from bsff.adjudication.ingest import _ARXIV_API, _validate_url
+
+    for bad in (
+        "https://169.254.169.254/latest/meta-data/",
+        "https://evil.example.com/x",
+        "https://internal.local/secret",
+    ):
+        with pytest.raises(ValueError):
+            _validate_url(bad)
+    assert _validate_url(_ARXIV_API) == _ARXIV_API

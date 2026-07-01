@@ -25,6 +25,9 @@ from .source import SourceDocument
 
 _ARXIV_API = "https://export.arxiv.org/api/query?id_list={id}&max_results=1"
 _ALLOWED_SCHEMES = frozenset({"https"})
+# SSRF host allowlist: https alone still permits fetching internal https
+# services (169.254.169.254, intranet hosts). This ingester talks to arXiv only.
+_ALLOWED_HOSTS = frozenset({"export.arxiv.org", "arxiv.org"})
 _ATOM = {"a": "http://www.w3.org/2005/Atom"}
 _WS = re.compile(r"\s+")
 
@@ -40,12 +43,24 @@ def normalize_arxiv_id(raw: str) -> str:
 
 
 def _validate_url(url: str) -> str:
-    """Reject any URL whose scheme is not in the https allowlist (SSRF/local-file guard)."""
-    scheme = urlsplit(url).scheme.lower()
+    """Fail-closed SSRF guard: scheme must be https AND host must be allowlisted.
+
+    A scheme-only guard still lets an attacker-influenced id/URL reach an
+    internal https endpoint (cloud metadata, intranet). Pinning the host to
+    arXiv closes that: only the endpoints this ingester legitimately calls pass.
+    """
+    parts = urlsplit(url)
+    scheme = parts.scheme.lower()
     if scheme not in _ALLOWED_SCHEMES:
         raise ValueError(
             f"refusing to fetch URL with disallowed scheme '{scheme or '(none)'}': "
             f"only {sorted(_ALLOWED_SCHEMES)} are permitted"
+        )
+    host = (parts.hostname or "").lower()
+    if host not in _ALLOWED_HOSTS:
+        raise ValueError(
+            f"refusing to fetch URL with non-allowlisted host '{host or '(none)'}': "
+            f"only {sorted(_ALLOWED_HOSTS)} are permitted"
         )
     return url
 
