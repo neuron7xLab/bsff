@@ -1,8 +1,112 @@
 {
-  "schema": "bsff.statistical_proof_gate/v1",
-  "status": "PASS",
+  "claim_proofs": [
+    {
+      "artifact_hashes": [
+        {
+          "path": "artifacts/bonn_bright_line/DATASET_MANIFEST.json",
+          "sha256": "c89d0dde45042a7c844fa4ca0b1a0f802acd4bb661e8d288b56370ed9cbbf1aa",
+          "size_bytes": 55523
+        },
+        {
+          "path": "artifacts/bonn_bright_line/MULTI_NULL_ROBUSTNESS.json",
+          "sha256": "2ea20b3fdd33528fc9b506fe4bd11d57feb28199c4c1309537a012e32a726f97",
+          "size_bytes": 846
+        },
+        {
+          "path": "artifacts/bonn_bright_line/S2_BRIGHT_LINE_SUMMARY.json",
+          "sha256": "ff5d5515d37c81caf3c7396ecf864d58cdac69d3a8e4597385aeb963fe577805",
+          "size_bytes": 2019
+        },
+        {
+          "path": "artifacts/bonn_bright_line/S3_CLUSTER_ROBUST_CI.json",
+          "sha256": "b56552f19dab8ac551eb84b9b95eb752827f721bf682de0536ed870da640ef01",
+          "size_bytes": 1394
+        },
+        {
+          "path": "artifacts/bonn_bright_line/S3_CONFIRMATORY_VERDICT.json",
+          "sha256": "562578b74854d17bc0140decc9931e9395c43a077317b249c46fbdc1941c323a",
+          "size_bytes": 1552
+        },
+        {
+          "path": "artifacts/release/CURRENT_TRUTH.json",
+          "sha256": "02917058234fd59b59b863f56845e37a4bb8d04a5ed9c37888f6146f95a1fd4b",
+          "size_bytes": 3318
+        },
+        {
+          "path": "artifacts/release/bonn_bright_line/HASHES.sha256",
+          "sha256": "9c4b020650cdc68c1d9b0f5c737e7f370131a7b4591ee38d805c7ceee783d7e9",
+          "size_bytes": 808
+        },
+        {
+          "path": "docs/VERDICT_SEMANTICS.md",
+          "sha256": "669e9acb7a16775f937ce575ce2b314228d62f5df2fd2545d6912278745814b9",
+          "size_bytes": 2312
+        }
+      ],
+      "claim_id": "BSFF-CLAIM-001",
+      "status": "PASS",
+      "violations": []
+    },
+    {
+      "artifact_hashes": [
+        {
+          "path": "artifacts/bonn_bright_line/DATASET_MANIFEST.json",
+          "sha256": "c89d0dde45042a7c844fa4ca0b1a0f802acd4bb661e8d288b56370ed9cbbf1aa",
+          "size_bytes": 55523
+        },
+        {
+          "path": "artifacts/bonn_bright_line/MULTI_NULL_ROBUSTNESS.json",
+          "sha256": "2ea20b3fdd33528fc9b506fe4bd11d57feb28199c4c1309537a012e32a726f97",
+          "size_bytes": 846
+        },
+        {
+          "path": "artifacts/bonn_bright_line/S2_BRIGHT_LINE_SUMMARY.json",
+          "sha256": "ff5d5515d37c81caf3c7396ecf864d58cdac69d3a8e4597385aeb963fe577805",
+          "size_bytes": 2019
+        },
+        {
+          "path": "artifacts/bonn_bright_line/S3_CLUSTER_ROBUST_CI.json",
+          "sha256": "b56552f19dab8ac551eb84b9b95eb752827f721bf682de0536ed870da640ef01",
+          "size_bytes": 1394
+        },
+        {
+          "path": "artifacts/bonn_bright_line/S3_CONFIRMATORY_VERDICT.json",
+          "sha256": "562578b74854d17bc0140decc9931e9395c43a077317b249c46fbdc1941c323a",
+          "size_bytes": 1552
+        },
+        {
+          "path": "artifacts/bonn_bright_line/S3_PROTOCOL_LOCK.json",
+          "sha256": "a0b6ca884ccad25923f840b5696d5a6e79e4e46524a03a58aef1421523abedd9",
+          "size_bytes": 1458
+        },
+        {
+          "path": "artifacts/release/CURRENT_TRUTH.json",
+          "sha256": "02917058234fd59b59b863f56845e37a4bb8d04a5ed9c37888f6146f95a1fd4b",
+          "size_bytes": 3318
+        },
+        {
+          "path": "artifacts/release/bonn_bright_line/HASHES.sha256",
+          "sha256": "9c4b020650cdc68c1d9b0f5c737e7f370131a7b4591ee38d805c7ceee783d7e9",
+          "size_bytes": 808
+        }
+      ],
+      "claim_id": "BSFF-CLAIM-002",
+      "status": "PASS",
+      "violations": []
+    }
+  ],
   "proof_count": 2,
-  "claim_registry": "claims.yaml",
-  "current_truth": "artifacts/release/CURRENT_TRUTH.json",
-  "note": "Snapshot marker for --check; live claim/artifact validation is recomputed by tools/validate_statistical_proof_gate.py."
+  "schema": "bsff.statistical_proof_gate/v1",
+  "skipped_claims": [
+    {
+      "claim_id": "BSFF-CLAIM-003",
+      "reason": "not an internally verified statistical measurement claim"
+    },
+    {
+      "claim_id": "BSFF-CLAIM-004",
+      "reason": "not an internally verified statistical measurement claim"
+    }
+  ],
+  "status": "PASS",
+  "violations": []
 }
