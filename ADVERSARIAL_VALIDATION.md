@@ -129,7 +129,7 @@ SURVIVED rate exceeds it and turns the oracle red.
 
 `.github/workflows/adversarial-validation.yml` — jobs: `oracle-adversarial-py312`, `mutation-kill-py312`, `wheel-runtime-py312`, `future-python-py313`.
 
-`.github/workflows/ci.yml` — jobs: `lint`, `test`, `slow-tests`, `build`, `nightly-extended`.
+`.github/workflows/ci.yml` — jobs: `lint`, `test`, `meta-verification`, `slow-tests`, `build`, `nightly-extended`.
 
 The report is machine-derived: this file is regenerated from the artifacts
 above and re-verified by `tools/update_adversarial_validation.py --check` in
