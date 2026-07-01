@@ -51,6 +51,15 @@ def _is_measured(claim):
     )
 
 
+def _bound(errs, cid, label, upper, limit):
+    if upper is None:
+        errs.append(cid + ": missing " + label)
+    elif limit is None:
+        errs.append(cid + ": missing limit for " + label)
+    elif upper > limit:
+        errs.append(cid + ": " + label + " exceeds limit")
+
+
 def evaluate(root=ROOT):
     root = Path(root)
     violations = []
@@ -78,17 +87,27 @@ def evaluate(root=ROOT):
             else:
                 hashes.append(_sha(root, rel))
         multi = _data(root, paths.get("multi_null", ""))
-        nulls = multi.get("nulls", {})
-        if not nulls or multi.get("all_nulls_pass") is not True:
-            errs.append(cid + ": null-model outputs are not passing")
         seed = _data(root, paths.get("s3_confirmatory", ""))
         cluster = _data(root, paths.get("cluster_robust_ci", ""))
         summary = _data(root, paths.get("s2_summary", ""))
-        if (
-            _upper(seed.get("G2", {}).get("wilson_95ci")) is None
-            or _upper(cluster.get("cluster_robust_t_95ci")) is None
-        ):
-            errs.append(cid + ": uncertainty interval missing")
+        seed_g2 = seed.get("G2", {})
+        seed_limit = seed_g2.get("ci_upper_threshold")
+        cluster_limit = cluster.get("threshold")
+        if not multi.get("nulls") or multi.get("all_nulls_pass") is not True:
+            errs.append(cid + ": null gate unmet")
+        for name, row in sorted(multi.get("nulls", {}).items()):
+            if row.get("pass") is not True:
+                errs.append(cid + ": null gate unmet for " + str(name))
+            _bound(errs, cid, "null CI for " + str(name), _upper(row.get("wilson_95ci")), seed_limit)
+        _bound(errs, cid, "seed CI", _upper(seed_g2.get("wilson_95ci")), seed_limit)
+        if seed_g2.get("pass") is not True:
+            errs.append(cid + ": seed gate unmet")
+        _bound(errs, cid, "cluster CI", _upper(cluster.get("cluster_robust_t_95ci")), cluster_limit)
+        _bound(errs, cid, "bootstrap CI", _upper(cluster.get("cluster_bootstrap_95ci")), cluster_limit)
+        if cluster.get("cluster_robust_upper_below_threshold") is not True:
+            errs.append(cid + ": cluster gate unmet")
+        if cluster.get("cluster_bootstrap_upper_below_threshold") is not True:
+            errs.append(cid + ": bootstrap gate unmet")
         if (
             len(seed.get("per_seed", [])) < 2
             or len(cluster.get("per_seed_fpr", [])) < 2
@@ -99,14 +118,9 @@ def evaluate(root=ROOT):
             and summary.get("final_state") != "S2_BRIGHT_LINE_PASSED"
         ):
             errs.append(cid + ": dataset-specific result missing")
-        if truth.get("s2_seed_averaged_fpr") != seed.get("G2", {}).get(
-            "ar_null_fpr"
-        ):
+        if truth.get("s2_seed_averaged_fpr") != seed_g2.get("ar_null_fpr"):
             errs.append(cid + ": aggregate-vs-dataset metric mismatch")
-        if (
-            seed.get("G2", {}).get("ci_upper_threshold") != 0.05
-            or cluster.get("threshold") != 0.05
-        ):
+        if seed_limit != 0.05 or cluster_limit != 0.05:
             errs.append(cid + ": failure threshold missing")
         proofs.append(
             {
