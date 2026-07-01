@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
 """Artifact-bound statistical proof gate."""
 
 from __future__ import annotations
