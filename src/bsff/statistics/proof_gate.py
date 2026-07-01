@@ -35,11 +35,7 @@ def _sha(root, rel):
 
 
 def _upper(pair):
-    if (
-        isinstance(pair, list)
-        and len(pair) == 2
-        and isinstance(pair[1], (int, float))
-    ):
+    if isinstance(pair, list) and len(pair) == 2 and isinstance(pair[1], (int, float)):
         return float(pair[1])
     return None
 
@@ -98,20 +94,21 @@ def evaluate(root=ROOT):
         for name, row in sorted(multi.get("nulls", {}).items()):
             if row.get("pass") is not True:
                 errs.append(cid + ": null gate unmet for " + str(name))
-            _bound(errs, cid, "null CI for " + str(name), _upper(row.get("wilson_95ci")), seed_limit)
+            _bound(
+                errs, cid, "null CI for " + str(name), _upper(row.get("wilson_95ci")), seed_limit
+            )
         _bound(errs, cid, "seed CI", _upper(seed_g2.get("wilson_95ci")), seed_limit)
         if seed_g2.get("pass") is not True:
             errs.append(cid + ": seed gate unmet")
         _bound(errs, cid, "cluster CI", _upper(cluster.get("cluster_robust_t_95ci")), cluster_limit)
-        _bound(errs, cid, "bootstrap CI", _upper(cluster.get("cluster_bootstrap_95ci")), cluster_limit)
+        _bound(
+            errs, cid, "bootstrap CI", _upper(cluster.get("cluster_bootstrap_95ci")), cluster_limit
+        )
         if cluster.get("cluster_robust_upper_below_threshold") is not True:
             errs.append(cid + ": cluster gate unmet")
         if cluster.get("cluster_bootstrap_upper_below_threshold") is not True:
             errs.append(cid + ": bootstrap gate unmet")
-        if (
-            len(seed.get("per_seed", [])) < 2
-            or len(cluster.get("per_seed_fpr", [])) < 2
-        ):
+        if len(seed.get("per_seed", [])) < 2 or len(cluster.get("per_seed_fpr", [])) < 2:
             errs.append(cid + ": seed sensitivity missing")
         if (
             summary.get("S2_BRIGHT_LINE_PASSED") is not True
