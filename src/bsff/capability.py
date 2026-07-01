@@ -141,7 +141,11 @@ def strict_readiness() -> tuple[bool, list[str]]:
             missing.append(cap.extra)
     # Deduplicate while preserving order.
     seen: set[str] = set()
-    deduped = [e for e in missing if not (e in seen or seen.add(e))]
+    deduped: list[str] = []
+    for e in missing:
+        if e not in seen:
+            seen.add(e)
+            deduped.append(e)
     return (len(deduped) == 0), deduped
 
 

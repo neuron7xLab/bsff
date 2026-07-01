@@ -31,3 +31,6 @@ artifacts/conformance/CONFORMANCE_DIAGNOSTICS.json
 artifacts/release/CLAIM_SAFETY_REPORT.json
 artifacts/release/STATISTICAL_CLAIMS_REPORT.json
 artifacts/release/TRUTH_CONSISTENCY_CHECK.json
+
+# Computed quality synthesis view (recomputed from gates; not committed truth)
+artifacts/QUALITY_DASHBOARD.json

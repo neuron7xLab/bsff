@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Literal, TypedDict, cast
 
 from .bayesian import jzs_bayes_factor
 from .evidence import StageResult
@@ -11,7 +11,17 @@ from .leakage_detector import any_leakage_flagged
 from .policy import PolicyProfile
 from .schemas import ClaimSpec
 from .stationarity import check_stationarity
-from .surrogate_engine import rank_order_surrogate_test
+from .surrogate_engine import FloatArray, rank_order_surrogate_test
+
+
+class _SurrogateConvergence(TypedDict):
+    all_converged: bool
+    n_nonconverged: int
+    n_surrogates: int
+
+
+class _BayesFactor(TypedDict):
+    BF10: float
 
 
 @dataclass
@@ -31,7 +41,7 @@ class StationarityStage:
     def run(self, context: PipelineContext) -> StageResult:
         if context.policy.stationarity_mode == "off" or context.spec.stationarity_gate == "off":
             return StageResult(self.stage_id, "SKIP", evidence={"reason": "stationarity disabled"})
-        result = check_stationarity(context.signal, alpha=context.policy.alpha)
+        result = check_stationarity(cast(FloatArray, context.signal), alpha=context.policy.alpha)
         context.scratch[self.stage_id] = result
         all_stationary = bool(result["all_stationary"])
         if all_stationary:
@@ -76,7 +86,7 @@ class SurrogateAttackStage:
 
     def run(self, context: PipelineContext) -> StageResult:
         result = rank_order_surrogate_test(
-            context.signal,
+            cast(FloatArray, context.signal),
             n_surrogates=context.policy.surrogate_count,
             alpha=context.policy.alpha,
             seed=context.seed,
@@ -88,13 +98,13 @@ class SurrogateAttackStage:
         )
         context.scratch[self.stage_id] = result
         rejected = bool(result["rejected"])
-        status = "PASS" if rejected else "FAIL"
-        caveats = []
+        status: Literal["PASS", "FAIL"] = "PASS" if rejected else "FAIL"
+        caveats: list[str] = []
         if context.policy.surrogate_count < 99:
             caveats.append(
                 "Low surrogate count: CI smoke evidence, not publication-grade evidence."
             )
-        convergence = result["surrogate_convergence"]
+        convergence = cast(_SurrogateConvergence, result["surrogate_convergence"])
         if not bool(convergence["all_converged"]):
             caveats.append(
                 f"Surrogate null mis-specified: {convergence['n_nonconverged']}/"
@@ -125,12 +135,13 @@ class BayesianEvidenceStage:
             float(surrogate["original_statistic"]), surrogate["surrogate_statistics"]
         )
         context.scratch[self.stage_id] = bf
-        status = "PASS" if float(bf["BF10"]) > 1.0 else "WARN"
+        bf_typed = cast(_BayesFactor, bf)
+        status: Literal["PASS", "WARN"] = "PASS" if float(bf_typed["BF10"]) > 1.0 else "WARN"
         caveats: list[str] = []
         threshold = float(context.policy.bayesian_corroboration_min)
-        if bool(surrogate.get("rejected")) and float(bf["BF10"]) < threshold:
+        if bool(surrogate.get("rejected")) and float(bf_typed["BF10"]) < threshold:
             caveats.append(
-                f"Frequentist rejection not corroborated: BF10={float(bf['BF10']):.3g} < "
+                f"Frequentist rejection not corroborated: BF10={float(bf_typed['BF10']):.3g} < "
                 f"{threshold:.3g}; SURVIVED is demoted to UNSUPPORTED by the conjunction gate."
             )
         return StageResult(self.stage_id, status, evidence=bf, caveats=caveats)

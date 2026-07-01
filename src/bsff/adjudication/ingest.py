@@ -15,13 +15,19 @@ testable offline: the default fetcher is the only part that touches the network.
 from __future__ import annotations
 
 import re
-import xml.etree.ElementTree as ET
 from collections.abc import Callable
+from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
+
+from defusedxml.ElementTree import ParseError, fromstring
 
 from .source import SourceDocument
 
-_ARXIV_API = "http://export.arxiv.org/api/query?id_list={id}&max_results=1"
+_ARXIV_API = "https://export.arxiv.org/api/query?id_list={id}&max_results=1"
+_ALLOWED_SCHEMES = frozenset({"https"})
+# SSRF host allowlist: https alone still permits fetching internal https
+# services (169.254.169.254, intranet hosts). This ingester talks to arXiv only.
+_ALLOWED_HOSTS = frozenset({"export.arxiv.org", "arxiv.org"})
 _ATOM = {"a": "http://www.w3.org/2005/Atom"}
 _WS = re.compile(r"\s+")
 
@@ -36,10 +42,36 @@ def normalize_arxiv_id(raw: str) -> str:
     return cleaned
 
 
+def _validate_url(url: str) -> str:
+    """Fail-closed SSRF guard: scheme must be https AND host must be allowlisted.
+
+    A scheme-only guard still lets an attacker-influenced id/URL reach an
+    internal https endpoint (cloud metadata, intranet). Pinning the host to
+    arXiv closes that: only the endpoints this ingester legitimately calls pass.
+    """
+    parts = urlsplit(url)
+    scheme = parts.scheme.lower()
+    if scheme not in _ALLOWED_SCHEMES:
+        raise ValueError(
+            f"refusing to fetch URL with disallowed scheme '{scheme or '(none)'}': "
+            f"only {sorted(_ALLOWED_SCHEMES)} are permitted"
+        )
+    host = (parts.hostname or "").lower()
+    if host not in _ALLOWED_HOSTS:
+        raise ValueError(
+            f"refusing to fetch URL with non-allowlisted host '{host or '(none)'}': "
+            f"only {sorted(_ALLOWED_HOSTS)} are permitted"
+        )
+    return url
+
+
 def _default_fetch(url: str, *, timeout: float = 30.0) -> bytes:  # pragma: no cover - network
+    _validate_url(url)
     request = Request(url, headers={"User-Agent": "bsff-adjudication/1 (+neuron7xLab)"})
-    with urlopen(request, timeout=timeout) as response:
-        return response.read()
+    # Scheme+host allowlisted by _validate_url above; nosec suppresses static B310.
+    with urlopen(request, timeout=timeout) as response:  # nosec B310
+        data: bytes = response.read()
+        return data
 
 
 def _clean(text: str) -> str:
@@ -49,8 +81,8 @@ def _clean(text: str) -> str:
 def parse_arxiv_atom(xml_bytes: bytes, arxiv_id: str) -> SourceDocument:
     """Parse an arXiv Atom response into a :class:`SourceDocument` (fail-closed)."""
     try:
-        root = ET.fromstring(xml_bytes)
-    except ET.ParseError as exc:
+        root = fromstring(xml_bytes)
+    except ParseError as exc:
         raise ValueError(f"arXiv response is not valid XML: {exc}") from exc
 
     entry = root.find("a:entry", _ATOM)

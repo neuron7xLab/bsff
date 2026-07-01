@@ -1,0 +1,18 @@
+# fail-open lint allowlist (ratchet).
+# One "relpath:rule" per line. Blank lines and #-comments are ignored.
+#
+# ONLY legitimate false-alarms belong here. A real fail-open bug (an
+# except handler that swallows an error into success, or a gate that
+# reports PASS regardless of its verdict) must be FIXED, never listed.
+#
+# The entries below are pure *regenerator* mains: they compute and write
+# artifacts, expose no --check / verdict-to-exit-code contract, and let
+# failures propagate as raised exceptions from their callees. Returning 0
+# unconditionally is correct for them, so the unfailable_gate heuristic is
+# a false positive here.
+tools/calibrate_operating_characteristic.py:unfailable_gate
+tools/calibrate_transfer_entropy.py:unfailable_gate
+tools/export_schemas.py:unfailable_gate
+tools/generate_evidence_bundle.py:unfailable_gate
+tools/generate_provenance_manifest.py:unfailable_gate
+tools/statistical_power_profile.py:unfailable_gate

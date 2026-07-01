@@ -108,7 +108,7 @@ def ocular_blink(
     transient = np.zeros(n_samples, dtype=float)
     for onset in onsets:
         transient += amplitude * np.exp(-((t - onset) ** 2) / (2.0 * sigma**2))
-    out = base.copy()
+    out: FloatArray = base.copy()
     out[0] += transient
     if n_channels > 1:
         out[1] += 0.6 * transient
@@ -153,7 +153,7 @@ def emg_burst(
         window = np.zeros(n_samples, dtype=float)
         window[onset : onset + burst_len] = 1.0
         burst += window * amplitude * rng.normal(size=n_samples)
-    out = base.copy()
+    out: FloatArray = base.copy()
     target = n_channels - 1
     out[target] += burst
     return out
@@ -181,7 +181,7 @@ def line_noise(
     base = _clean_base(n_channels, n_samples, seed)
     rng = np.random.default_rng(seed + 1)
     t = np.arange(n_samples) / fs
-    out = base.copy()
+    out: FloatArray = base.copy()
     for ch in range(n_channels):
         phase = float(rng.uniform(0.0, 2.0 * np.pi))
         out[ch] += amplitude * np.sin(2.0 * np.pi * line_hz * t + phase)
@@ -209,7 +209,7 @@ def slow_drift(
     base = _clean_base(n_channels, n_samples, seed)
     rng = np.random.default_rng(seed + 1)
     t = np.arange(n_samples) / fs
-    out = base.copy()
+    out: FloatArray = base.copy()
     for ch in range(n_channels):
         phase = float(rng.uniform(0.0, 2.0 * np.pi))
         out[ch] += amplitude * np.sin(2.0 * np.pi * drift_hz * t + phase)
@@ -240,7 +240,7 @@ def channel_dropout(
     base = _clean_base(n_channels, n_samples, seed)
     if dropout_channels is None:
         dropout_channels = (n_channels // 2,) if n_channels > 1 else (0,)
-    out = base.copy()
+    out: FloatArray = base.copy()
     for ch in dropout_channels:
         if not (0 <= ch < n_channels):
             raise ValueError(f"dropout channel {ch} out of range for {n_channels} channels")

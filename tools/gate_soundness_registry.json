@@ -1,0 +1,191 @@
+{
+  "doc": "A gate is an INSTRUMENT only if a negative control proves it FAILS on a known-bad input. 'gates' maps each proven gate tool (relpath) to the pytest nodeid of its negative control; a nodeid counts only if it resolves to a top-level (pytest-collectable) test AND its test file references the gate module (static linkage; behavioral proof is delegated to the test-py* CI run). 'unproven' is the VISIBLE, reviewed debt list of gate tools with no such negative control -- not an immutable baseline: it may shrink (prove a gate) or grow (admit a new decorative-risk gate), but growing it is an explicit, auditable line in the diff, not a silent bypass. gate_soundness.py ratchets: any discovered gate that is neither proven nor listed here fails --check closed.",
+  "gates": {
+    "tools/analytic_uniformity_null.py": {
+      "negative_control_test": "tests/test_gate_negatives_statistics.py::test_analytic_uniformity_null_fails_when_engine_is_uncalibrated",
+      "rationale": "uncalibrated engine FPR=1.0 -> FAIL"
+    },
+    "tools/check_contracts.py": {
+      "negative_control_test": "tests/test_gate_negatives_contracts.py::test_check_contracts_gate_fails_on_nonconformant_command",
+      "rationale": "nonconformant contract command -> FAIL"
+    },
+    "tools/check_github_actions_policy.py": {
+      "negative_control_test": "tests/test_gate_negatives_provenance.py::test_github_actions_policy_fails_on_bad_workflow",
+      "rationale": "policy-violating workflow yaml -> FAIL"
+    },
+    "tools/claim_coverage.py": {
+      "negative_control_test": "tests/test_claim_coverage.py::test_negative_control_dangling_claim_id",
+      "rationale": "Feeds a manifest claim_id absent from claims.yaml and asserts FAIL."
+    },
+    "tools/cluster_robust_specificity.py": {
+      "negative_control_test": "tests/test_gate_negatives_statistics.py::test_cluster_robust_specificity_fails_on_overdispersed_seeds",
+      "rationale": "overdispersed seeds push CI upper>0.05 -> FAIL"
+    },
+    "tools/complexity_gate.py": {
+      "negative_control_test": "tests/test_complexity_gate.py::test_flags_non_allowlisted_offender",
+      "rationale": "Feeds a function above the ceiling with no allowlist entry and asserts FAIL."
+    },
+    "tools/decision_gate.py": {
+      "negative_control_test": "tests/test_gate_negatives_contracts.py::test_decision_gate_check_fails_on_stale_decision",
+      "rationale": "stale DECISION.md --check -> FAIL"
+    },
+    "tools/determinism_probe.py": {
+      "negative_control_test": "tests/test_determinism_probe.py::test_negative_control_flags_nondeterministic_generator",
+      "rationale": "Feeds a generator writing a timestamp and asserts it is flagged nondeterministic."
+    },
+    "tools/intent_contract.py": {
+      "negative_control_test": "tests/test_intent_contract.py::test_unratified_intent_fails",
+      "rationale": "Feeds an unratified intent and asserts the meaning-closure gate FAILs."
+    },
+    "tools/lint_fail_open.py": {
+      "negative_control_test": "tests/test_lint_fail_open.py::test_negative_control_except_returns_zero_is_flagged",
+      "rationale": "Feeds an except-handler that returns 0 and asserts the detector flags it fail-open."
+    },
+    "tools/mutation_kill_gate.py": {
+      "negative_control_test": "tests/test_gate_negatives_verify.py::test_mutation_kill_gate_fails_when_every_mutant_survives",
+      "rationale": "all mutants survive -> FAIL"
+    },
+    "tools/mutation_probe.py": {
+      "negative_control_test": "tests/test_gate_negatives_verify.py::test_mutation_probe_fails_when_every_mutant_survives",
+      "rationale": "0 kills, survivors -> FAIL"
+    },
+    "tools/quality_dashboard.py": {
+      "negative_control_test": "tests/test_quality_dashboard.py::test_dashboard_fails_if_any_dimension_fails",
+      "rationale": "Forces one dimension's --check to FAIL and asserts the composite propagates FAIL."
+    },
+    "tools/run_replayability_gate.py": {
+      "negative_control_test": "tests/test_gate_negatives_verify.py::test_replayability_gate_fails_on_divergent_rerun",
+      "rationale": "divergent same-seed rerun -> FAIL"
+    },
+    "tools/validate_architecture_contract.py": {
+      "negative_control_test": "tests/test_gate_negatives_contracts.py::test_architecture_contract_gate_fails_on_tampered_pipeline",
+      "rationale": "tampered pipeline topology/verdict -> FAIL"
+    },
+    "tools/validate_artifact_schema.py": {
+      "negative_control_test": "tests/test_artifact_schema.py::test_governed_artifact_missing_descriptor_field_fails",
+      "rationale": "Feeds a governed artifact missing artifact_type and asserts validate() returns not ok."
+    },
+    "tools/validate_claim_audit.py": {
+      "negative_control_test": "tests/test_adversarial_gates.py::test_claim_audit_rejects_each_violation",
+      "rationale": "Parametrized decorative/soft-state rows; asserts audit reports failures for each."
+    },
+    "tools/validate_current_truth.py": {
+      "negative_control_test": "tests/test_truth_freshness.py::test_stale_pointer_without_freeze_fails",
+      "rationale": "Stale truth pointer with no freeze block yields evaluate_freshness status FAIL."
+    },
+    "tools/validate_forbidden_claims.py": {
+      "negative_control_test": "tests/test_gate_negatives_contracts.py::test_forbidden_claims_gate_fails_on_injected_forbidden_claim",
+      "rationale": "injected forbidden clinical claim -> FAIL"
+    },
+    "tools/validate_ip_provenance.py": {
+      "negative_control_test": "tests/test_gate_negatives_provenance.py::test_ip_provenance_fails_on_missing_files",
+      "rationale": "missing provenance/attribution files -> FAIL"
+    },
+    "tools/validate_lockfiles.py": {
+      "negative_control_test": "tests/test_gate_negatives_provenance.py::test_lockfiles_fails_on_unhashed_pin",
+      "rationale": "pinned-but-unhashed requirement -> FAIL"
+    },
+    "tools/validate_markdown.py": {
+      "negative_control_test": "tests/test_adversarial_gates.py::test_markdown_gate_rejects_each_count_literal",
+      "rationale": "Parametrized bare count literals; asserts find_count_literals flags each."
+    },
+    "tools/validate_mutation_report.py": {
+      "negative_control_test": "tests/test_gate_negatives_contracts.py::test_mutation_report_gate_fails_on_survivors",
+      "rationale": "mutation report with survivors -> FAIL"
+    },
+    "tools/validate_null_registry.py": {
+      "negative_control_test": "tests/test_gate_negatives_statistics.py::test_validate_null_registry_fails_on_incomplete_null",
+      "rationale": "null missing reject_if -> FAIL"
+    },
+    "tools/validate_open_source_readiness.py": {
+      "negative_control_test": "tests/test_gate_negatives_provenance.py::test_open_source_readiness_fails_on_missing_files",
+      "rationale": "missing OSS-hygiene files -> FAIL"
+    },
+    "tools/validate_openai_2026_claims.py": {
+      "negative_control_test": "tests/meta_validation/test_false_survived_claim_rejected.py::test_claim_gate_flags_unsupported_openai_validation",
+      "rationale": "Unsupported 'validated by OpenAI' surface is flagged by _scan_forbidden."
+    },
+    "tools/validate_openai_2026_eval_contract.py": {
+      "negative_control_test": "tests/test_gate_negatives_contracts.py::test_openai_eval_contract_gate_fails_on_missing_evidence",
+      "rationale": "eval evidence artifact missing -> FAIL"
+    },
+    "tools/validate_power_profile.py": {
+      "negative_control_test": "tests/test_gate_negatives_statistics.py::test_validate_power_profile_fails_on_overrun_null_fpr",
+      "rationale": "underpowered null FPR/convergence -> FAIL"
+    },
+    "tools/validate_provenance.py": {
+      "negative_control_test": "tests/test_gate_negatives_provenance.py::test_provenance_fails_on_sbom_hash_mismatch",
+      "rationale": "SBOM digest binding broken -> FAIL"
+    },
+    "tools/validate_r6_contracts.py": {
+      "negative_control_test": "tests/test_gate_negatives_contracts.py::test_r6_contract_gate_fails_on_missing_scaffold",
+      "rationale": "missing r6 scaffold/tokens -> FAIL"
+    },
+    "tools/validate_real_eeg_case.py": {
+      "negative_control_test": "tests/test_real_eeg_drift_gate.py::test_check_fails_closed_on_drift_and_restores_tree",
+      "rationale": "Tampered BF10 in committed verdict makes --check exit 1 with 'drifted'."
+    },
+    "tools/validate_redteam_matrix.py": {
+      "negative_control_test": "tests/meta_validation/test_false_survived_claim_rejected.py::test_redteam_validator_rejects_survived_as_pass",
+      "rationale": "Forged SURVIVED->PASS matrix is rejected for the survived-but-PASS reason."
+    },
+    "tools/validate_release_notes.py": {
+      "negative_control_test": "tests/test_gate_negatives_provenance.py::test_release_notes_fails_on_forbidden_claim",
+      "rationale": "forbidden claim in changelog -> FAIL"
+    },
+    "tools/validate_statistical_claims.py": {
+      "negative_control_test": "tests/test_gate_negatives_statistics.py::test_validate_statistical_claims_fails_on_point_estimate_sold_as_pass",
+      "rationale": "point estimate sold as pass, CI upper>0.05 -> FAIL"
+    },
+    "tools/validate_statistical_proof_gate.py": {
+      "negative_control_test": "tests/test_gate_negatives_statistics.py::test_validate_statistical_proof_gate_fails_on_missing_evidence_artifact",
+      "rationale": "measured claim with absent bound evidence -> FAIL"
+    },
+    "tools/validate_surrogate_fidelity.py": {
+      "negative_control_test": "tests/test_gate_negatives_statistics.py::test_validate_surrogate_fidelity_fails_on_marginal_violating_surrogate",
+      "rationale": "marginal-violating surrogate -> FAIL"
+    },
+    "tools/validate_threshold_registry.py": {
+      "negative_control_test": "tests/test_gate_negatives_statistics.py::test_validate_threshold_registry_fails_on_unprovenanced_threshold",
+      "rationale": "threshold missing source -> FAIL"
+    },
+    "tools/validate_tisean_reference.py": {
+      "negative_control_test": "tests/test_gate_negatives_provenance.py::test_tisean_reference_fails_on_engine_disagreement",
+      "rationale": "IAAFT engine disagreement -> FAIL"
+    },
+    "tools/validate_truth_contract.py": {
+      "negative_control_test": "tests/test_truth_surface.py::test_new_blocked_phrases_are_caught",
+      "rationale": "Forbidden overclaim phrases are detected by find_forbidden_claims."
+    },
+    "tools/validate_validation_corpus.py": {
+      "negative_control_test": "tests/test_gate_negatives_contracts.py::test_validation_corpus_gate_fails_on_clinical_manifest",
+      "rationale": "clinical/non-synthetic manifest -> FAIL"
+    },
+    "tools/validate_wheel_runtime.py": {
+      "negative_control_test": "tests/test_gate_negatives_provenance.py::test_wheel_runtime_fails_when_build_produces_no_wheel",
+      "rationale": "stubbed build produces no wheel -> gate detects missing wheel and returns 1 (decision-logic NC; behavioral build proof = build-package CI job)"
+    },
+    "tools/verify_all.py": {
+      "negative_control_test": "tests/test_gate_negatives_verify.py::test_verify_all_fails_when_a_must_criterion_is_unmet",
+      "rationale": "must_criteria_met False -> FAIL"
+    },
+    "tools/verify_branch_protection.py": {
+      "negative_control_test": "tests/test_gate_negatives_verify.py::test_branch_protection_fails_on_admin_bypass",
+      "rationale": "admin-bypass ruleset never verifies -> FAIL"
+    },
+    "tools/verify_controls.py": {
+      "negative_control_test": "tests/test_gate_negatives_verify.py::test_verify_controls_fails_on_violated_contract",
+      "rationale": "controls_ok False -> FAIL"
+    },
+    "tools/verify_grounding.py": {
+      "negative_control_test": "tests/test_adversarial_gates.py::test_grounding_rejects_wrong_number",
+      "rationale": "Bogus fact numbers make check() return a non-empty violation list."
+    },
+    "tools/verify_honesty.py": {
+      "negative_control_test": "tests/test_gate_negatives_verify.py::test_verify_honesty_fails_when_one_subcheck_fails",
+      "rationale": "one subcheck fails -> FAIL"
+    }
+  },
+  "schema": "bsff.gate_soundness_registry/v1",
+  "unproven": []
+}

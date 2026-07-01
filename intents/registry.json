@@ -1,0 +1,78 @@
+{
+  "schema": "bsff.intent_contract/v1",
+  "note": "Meaning-closure over the chaos->definition edge: each intent is a falsifiable statement, bound to a gate + negative control, ratified by the operator. Verified by tools/intent_contract.py --check.",
+  "intents": {
+    "INTENT-GATE-SOUNDNESS": {
+      "statement": "Every meta-verification gate proves it is falsifiable (a negative control resolving to a defined test); the legacy gate surface is frozen debt, never silently absorbed.",
+      "verification": {
+        "gate": "tools/gate_soundness.py",
+        "negative_control": "tests/test_gate_soundness.py::test_new_gate_without_negative_control_is_unproven_and_fails_ratchet"
+      },
+      "ratified_by": "operator",
+      "status": "ratified"
+    },
+    "INTENT-FAIL-CLOSED": {
+      "statement": "Gate code fails closed: an except-handler that swallows an error into success is detected across tools and src.",
+      "verification": {
+        "gate": "tools/lint_fail_open.py",
+        "negative_control": "tests/test_lint_fail_open.py::test_negative_control_except_returns_zero_is_flagged"
+      },
+      "ratified_by": "operator",
+      "status": "ratified"
+    },
+    "INTENT-CLAIM-COVERAGE": {
+      "statement": "The claim-evidence graph is complete: no dangling, missing-evidence, orphan, or unbacked asserted claim.",
+      "verification": {
+        "gate": "tools/claim_coverage.py",
+        "negative_control": "tests/test_claim_coverage.py::test_negative_control_dangling_claim_id"
+      },
+      "ratified_by": "operator",
+      "status": "ratified"
+    },
+    "INTENT-DETERMINISM": {
+      "statement": "Committed generated artifacts are byte-reproducible AND fresh: nondeterministic or stale-drift artifacts fail closed.",
+      "verification": {
+        "gate": "tools/determinism_probe.py",
+        "negative_control": "tests/test_determinism_probe.py::test_stale_committed_artifact_is_flagged"
+      },
+      "ratified_by": "operator",
+      "status": "ratified"
+    },
+    "INTENT-COMPLEXITY": {
+      "statement": "No function exceeds cyclomatic complexity 15 (ratchet), and stale allowlist entries expire rather than rot the ratchet.",
+      "verification": {
+        "gate": "tools/complexity_gate.py",
+        "negative_control": "tests/test_complexity_gate.py::test_stale_allowlist_entry_fails"
+      },
+      "ratified_by": "operator",
+      "status": "ratified"
+    },
+    "INTENT-SSRF-SAFE": {
+      "statement": "External ingest is SSRF-safe: only https AND allowlisted arXiv hosts may be fetched; XML is parsed defused.",
+      "verification": {
+        "gate": "src/bsff/adjudication/ingest.py",
+        "negative_control": "tests/test_ingest_security.py::test_non_arxiv_host_rejected"
+      },
+      "ratified_by": "operator",
+      "status": "ratified"
+    },
+    "INTENT-DASHBOARD-HONEST": {
+      "statement": "The quality dashboard is a computed composite that cannot fabricate a PASS: a mypy usage error is fail-closed, and any failing dimension propagates.",
+      "verification": {
+        "gate": "tools/quality_dashboard.py",
+        "negative_control": "tests/test_quality_dashboard.py::test_mypy_dimension_is_fail_closed_on_usage_error"
+      },
+      "ratified_by": "operator",
+      "status": "ratified"
+    },
+    "INTENT-MEANING-CLOSURE": {
+      "statement": "Every asserted verification intent is falsifiable, ratified, and bound to a resolving negative control; an unratified or unbound intent fails closed.",
+      "verification": {
+        "gate": "tools/intent_contract.py",
+        "negative_control": "tests/test_intent_contract.py::test_unratified_intent_fails"
+      },
+      "ratified_by": "operator",
+      "status": "ratified"
+    }
+  }
+}

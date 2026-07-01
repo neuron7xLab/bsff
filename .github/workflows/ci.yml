@@ -32,14 +32,20 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: python -m pip install --upgrade pip
-      - run: python -m pip install -e '.[dev]'
+      - run: python -m pip install -e '.[dev,stats,leakage]'
+      - run: python -m pip install mypy==1.18.2 types-jsonschema types-PyYAML
       - run: python -m ruff check src tests tools
       - run: python -m ruff format --check src tests tools
+      # Type gate: src/bsff must pass mypy --strict (config in pyproject.toml).
+      - run: python -m mypy
 
   test:
     name: test-py${{ matrix.python-version }}
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # The unit suite + the full post-test validator battery + coverage lands at
+    # ~10 min on the slowest interpreter (3.12); 15 gives honest headroom so a
+    # borderline run is not killed mid-validator and reported as a code failure.
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -93,7 +99,32 @@ jobs:
           path: |
             artifacts/bsff_phase1_validation.json
             artifacts/evidence_manifest.json
-          if-no-files-found: warn
+          if-no-files-found: error
+
+  meta-verification:
+    name: meta-verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    # Structural / meta gates are Python-version-independent, so they run once
+    # here instead of x4 in the test matrix (where they blew the 10-min budget).
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[dev,leakage,stats,yaml]'
+      - run: python -m pip install mypy==1.18.2 types-jsonschema types-PyYAML
+      - run: python tools/gate_soundness.py --check
+      - run: python tools/lint_fail_open.py --check --include-src
+      - run: python tools/claim_coverage.py --check
+      - run: python tools/complexity_gate.py --check
+      - run: python tools/determinism_probe.py --check
+      - run: python tools/intent_contract.py --check
+      - run: python tools/quality_dashboard.py --check
 
   slow-tests:
     name: slow-tests

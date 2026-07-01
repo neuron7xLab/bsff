@@ -297,8 +297,8 @@ def adjudicate(
         records.append(record_dict)
 
     summary: dict[str, int] = {}
-    for record in records:
-        summary[record["disposition"]] = summary.get(record["disposition"], 0) + 1
+    for rec in records:
+        summary[rec["disposition"]] = summary.get(rec["disposition"], 0) + 1
 
     report: dict[str, Any] = {
         "schema": REPORT_SCHEMA,
