@@ -37,7 +37,7 @@ def _run(root: Path, *cmd: str) -> tuple[int, str]:
     return proc.returncode, (proc.stdout + proc.stderr).strip()
 
 
-def _blocked_runtime(detail: str) -> dict:
+def _blocked_runtime(detail: str) -> dict[str, object]:
     return {
         "command": "bsff",
         "state": "BLOCKED_RUNTIME",
@@ -46,12 +46,12 @@ def _blocked_runtime(detail: str) -> dict:
     }
 
 
-def verify_evidence(root: Path | None = None) -> dict:
+def verify_evidence(root: Path | None = None) -> dict[str, object]:
     """`bsff evidence verify` — coherence, hashes, release gate, raw-data hygiene."""
     repo = find_repo_root(root)
     if repo is None:
         return _blocked_runtime("repository surface not found")
-    checks: list[dict] = []
+    checks: list[dict[str, object]] = []
 
     def add(name: str, rc: int, out: str = "") -> None:
         checks.append(
@@ -100,7 +100,7 @@ def verify_evidence(root: Path | None = None) -> dict:
 
 def reproduce_bonn_s2(
     root: Path | None = None, execute: bool = False, n_segments: int = 100, n_surrogates: int = 199
-) -> dict:
+) -> dict[str, object]:
     """`bsff reproduce bonn-s2` — dry-run verification (default) or full re-execution."""
     repo = find_repo_root(root)
     if repo is None:
@@ -152,7 +152,7 @@ def run_benchmark(
     mode: str = "confirmatory",
     n_segments: int = 100,
     n_surrogates: int = 199,
-) -> dict:
+) -> dict[str, object]:
     """`bsff benchmark bonn-bright-line` — execute the S2 benchmark and emit its verdict."""
     if target != "bonn-bright-line":
         return {

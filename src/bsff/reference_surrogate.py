@@ -28,7 +28,7 @@ Hegger, R., Kantz, H., & Schreiber, T. (1999). Practical implementation of
 from __future__ import annotations
 
 import shutil
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 from numpy.typing import NDArray
@@ -285,7 +285,7 @@ def compare_against_reference(
     # Rank-order p-value stability: run BSFF's own test (the reference IAAFT is
     # used as the inner generator below to show the verdict path is engine-robust).
     bsff_test = rank_order_surrogate_test(data, n_surrogates=19, seed=seed, max_iter=n_iter)
-    p_bsff = float(bsff_test["p_value"])
+    p_bsff = float(cast(float, bsff_test["p_value"]))
     p_ref = _reference_rank_order_p(data, n_surrogates=19, seed=seed, n_iter=n_iter)
     p_stability = abs(p_bsff - p_ref)
 

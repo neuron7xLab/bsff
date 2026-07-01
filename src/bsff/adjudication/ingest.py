@@ -68,9 +68,10 @@ def _validate_url(url: str) -> str:
 def _default_fetch(url: str, *, timeout: float = 30.0) -> bytes:  # pragma: no cover - network
     _validate_url(url)
     request = Request(url, headers={"User-Agent": "bsff-adjudication/1 (+neuron7xLab)"})
-    # Scheme allowlisted by _validate_url above; nosec suppresses the static B310 flag.
+    # Scheme+host allowlisted by _validate_url above; nosec suppresses static B310.
     with urlopen(request, timeout=timeout) as response:  # nosec B310
-        return response.read()
+        data: bytes = response.read()
+        return data
 
 
 def _clean(text: str) -> str:

@@ -84,7 +84,7 @@ def detect_feature_selection_leakage(
     }
 
 
-def any_leakage_flagged(leakage_flags: dict | None) -> bool:
+def any_leakage_flagged(leakage_flags: dict[str, object] | None) -> bool:
     """Fail-closed reduction of a leakage_flags map to a single boolean.
 
     A leak short-circuits surrogate testing, so the consumer side must never

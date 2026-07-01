@@ -207,7 +207,8 @@ def load_series(path: str | Path, *, require_raw: bool = True) -> FloatArray:
                 + "\n  - ".join(reasons)
                 + "\nIf this really is raw data, pass require_raw=False and record the override."
             )
-    return array
+    result: FloatArray = array
+    return result
 
 
 # ----------------------------- data adjudication ----------------------------

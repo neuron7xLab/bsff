@@ -88,7 +88,7 @@ def build_provenance_manifest(
                 size_bytes=path.stat().st_size,
             )
         )
-    manifest = {
+    manifest: dict[str, object] = {
         "schema": "bsff.provenance.v1",
         "project": project,
         "author": author,

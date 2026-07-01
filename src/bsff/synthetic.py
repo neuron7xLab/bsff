@@ -71,7 +71,8 @@ def white_noise_series(n_samples: int = 1024, seed: int = 11) -> FloatArray:
 
 def _standardize(z: FloatArray) -> FloatArray:
     z = z - z.mean()
-    return (z / (z.std() + 1e-12)).astype(float)
+    result: FloatArray = (z / (z.std() + 1e-12)).astype(float)
+    return result
 
 
 def independent_ar_pair(

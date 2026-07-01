@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+from numpy.typing import NDArray
 
 from . import __version__
 from .datasets import check_rawness
@@ -69,7 +70,9 @@ def load_claim(path: str | Path) -> ClaimSpec:
     return spec
 
 
-def load_signal(path: str | Path, spec: ClaimSpec, *, require_raw: bool = True) -> np.ndarray:
+def load_signal(
+    path: str | Path, spec: ClaimSpec, *, require_raw: bool = True
+) -> NDArray[np.float64]:
     """Load a signal array and fail-closed verify it against the contract.
 
     Accepts ``.npy`` (native) or delimited text (``.csv``/``.tsv``/``.txt``).
@@ -126,7 +129,8 @@ def load_signal(path: str | Path, spec: ClaimSpec, *, require_raw: bool = True) 
                 "signals, not preprocessing artefacts. If this truly is raw, re-run with "
                 "require_raw=False / `bsff falsify --allow-nonraw` to record the override."
             )
-    return array
+    result: NDArray[np.float64] = array
+    return result
 
 
 def run_case(

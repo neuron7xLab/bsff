@@ -3,20 +3,45 @@
 from __future__ import annotations
 
 import math
+from typing import Any, TypedDict, cast
 
 from .bayesian import jzs_bayes_factor
 from .leakage_detector import any_leakage_flagged
-from .schemas import ClaimSpec, VerdictJSON
+from .schemas import ClaimSpec, Verdict, VerdictJSON
 from .scope_guard import classify_scope
 from .stationarity import check_stationarity
-from .surrogate_engine import rank_order_surrogate_test
+from .surrogate_engine import FloatArray, rank_order_surrogate_test
+
+
+class _SurrogateConvergence(TypedDict):
+    all_converged: bool
+    n_nonconverged: int
+    n_surrogates: int
+
+
+class _SurrogateResult(TypedDict):
+    original_statistic: float
+    surrogate_statistics: list[float]
+    p_value: float
+    rejected: bool
+    surrogate_convergence: _SurrogateConvergence
+
+
+class _BayesFactor(TypedDict):
+    BF10: float
+    BF01: float
+
+
+class _StationarityResult(TypedDict):
+    all_stationary: bool
+    n_channels_failed: int
 
 
 def evaluate_claim(
     spec: ClaimSpec,
-    signal,
+    signal: FloatArray,
     *,
-    leakage_flags: dict | None = None,
+    leakage_flags: dict[str, Any] | None = None,
     seed: int = 123,
     bayesian_evidence: bool | None = None,
     bayesian_corroboration_min: float = 3.0,
@@ -66,7 +91,7 @@ def evaluate_claim(
 
     stationarity_failed = False
     if spec.stationarity_gate == "required":
-        stat_check = check_stationarity(signal, alpha=spec.alpha)
+        stat_check = cast(_StationarityResult, check_stationarity(signal, alpha=spec.alpha))
         evidence["stationarity_gate"] = stat_check
         if not bool(stat_check["all_stationary"]):
             stationarity_failed = True
@@ -75,18 +100,21 @@ def evaluate_claim(
                 "Interpret surrogate verdict as preprocessing-sensitive."
             )
 
-    result = rank_order_surrogate_test(
-        signal,
-        n_surrogates=spec.surrogate_count,
-        alpha=spec.alpha,
-        seed=seed,
-        max_iter=max_iter,
-        tol=tol,
-        fallback=miaaft_fallback,  # type: ignore[arg-type]
+    result = cast(
+        _SurrogateResult,
+        rank_order_surrogate_test(
+            signal,
+            n_surrogates=spec.surrogate_count,
+            alpha=spec.alpha,
+            seed=seed,
+            max_iter=max_iter,
+            tol=tol,
+            fallback=miaaft_fallback,  # type: ignore[arg-type]
+        ),
     )
     surrogate_stats = result["surrogate_statistics"]
     rejected = bool(result["rejected"])
-    verdict = "SURVIVED" if rejected else "REFUTED"
+    verdict: Verdict = "SURVIVED" if rejected else "REFUTED"
 
     # Fail-closed: a verdict can never exceed UNSUPPORTED when the null model that
     # produced the p-value did not converge to the spectral/covariance constraints.
@@ -118,7 +146,10 @@ def evaluate_claim(
         else bayesian_evidence
     )
     if use_bayes:
-        bf = jzs_bayes_factor(float(result["original_statistic"]), surrogate_stats)
+        bf = cast(
+            _BayesFactor,
+            jzs_bayes_factor(float(result["original_statistic"]), surrogate_stats),
+        )
         evidence["bayesian_evidence"] = bf
         if not rejected:
             # BF01 > 3 is explicit evidence for the null; otherwise the correct

@@ -44,11 +44,11 @@ def _rate(n: int, total: int) -> float:
 
 
 def _is_unanchored(record: dict[str, Any]) -> bool:
-    return record["disposition"] == "QUARANTINED_UNANCHORED"
+    return bool(record["disposition"] == "QUARANTINED_UNANCHORED")
 
 
 def _is_quarantined(record: dict[str, Any]) -> bool:
-    return record["disposition"].startswith("QUARANTINED_")
+    return bool(record["disposition"].startswith("QUARANTINED_"))
 
 
 def adjudicate_batch(
@@ -135,7 +135,7 @@ def adjudicate_batch(
                 }
             )
 
-    report: dict[str, Any] = {
+    batch_report: dict[str, Any] = {
         "schema": BATCH_SCHEMA,
         "tool": "bsff",
         "tool_version": __version__,
@@ -152,5 +152,5 @@ def adjudicate_batch(
         "integrity_flags": integrity_flags,
         "sources": [r["source"] for r in source_reports],
     }
-    report["artifact_sha256"] = stable_sha256(report)
-    return report
+    batch_report["artifact_sha256"] = stable_sha256(batch_report)
+    return batch_report

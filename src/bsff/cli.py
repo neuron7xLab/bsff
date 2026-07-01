@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from typing import Any, TypedDict, cast
 
 from .adjudication import (
     BatchItem,
@@ -36,6 +37,15 @@ from .validation import sha256_bytes
 from .verdict_engine import evaluate_claim
 
 
+class _SurrogateConvergence(TypedDict):
+    all_converged: bool
+
+
+class _SurrogateResult(TypedDict):
+    p_value: float
+    surrogate_convergence: _SurrogateConvergence
+
+
 def validate_kernel(output: Path) -> dict[str, object]:
     output.parent.mkdir(parents=True, exist_ok=True)
 
@@ -47,17 +57,23 @@ def validate_kernel(output: Path) -> dict[str, object]:
         seed=42,
         return_diagnostics=True,
     )
-    ar1 = rank_order_surrogate_test(
-        ar1_multichannel(n_channels=1, n_samples=512, seed=1)[0],
-        n_surrogates=19,
-        alpha=0.05,
-        seed=99,
+    ar1 = cast(
+        _SurrogateResult,
+        rank_order_surrogate_test(
+            ar1_multichannel(n_channels=1, n_samples=512, seed=1)[0],
+            n_surrogates=19,
+            alpha=0.05,
+            seed=99,
+        ),
     )
-    henon = rank_order_surrogate_test(
-        henon_series(n_samples=768, seed=11),
-        n_surrogates=19,
-        alpha=0.05,
-        seed=101,
+    henon = cast(
+        _SurrogateResult,
+        rank_order_surrogate_test(
+            henon_series(n_samples=768, seed=11),
+            n_surrogates=19,
+            alpha=0.05,
+            seed=101,
+        ),
     )
     _features, labels, block_ids = block_design_dataset(n_blocks=12, block_len=16)
     leakage = detect_block_design_leakage(labels, block_ids)
@@ -76,7 +92,7 @@ def validate_kernel(output: Path) -> dict[str, object]:
         x, candidate_iters=(20, 40, 80, 120, 160, 200), tol=1e-3, seed=42
     )
 
-    report = {
+    report: dict[str, object] = {
         "document_ref": "OS-BSFF-CORE-2026.1",
         "pipeline_status": "EXECUTION_COMPLETE",
         "phase": "PHASE_1_OPERATIONAL_KERNEL",
@@ -256,7 +272,7 @@ def _run_adjudicate(args: argparse.Namespace) -> None:
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 
-def _build_batch_item(entry: dict, base: Path) -> BatchItem:
+def _build_batch_item(entry: dict[str, Any], base: Path) -> BatchItem:
     if entry.get("arxiv"):
         source = fetch_arxiv(entry["arxiv"])
     elif entry.get("source_text"):

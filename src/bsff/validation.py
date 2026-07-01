@@ -25,7 +25,8 @@ def sha256_file(path: str | Path) -> str:
 
 
 def load_json(path: str | Path) -> dict[str, Any]:
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    data: dict[str, Any] = json.loads(Path(path).read_text(encoding="utf-8"))
+    return data
 
 
 def canonical_artifact_sha256(report: dict[str, Any]) -> str:
