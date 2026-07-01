@@ -66,7 +66,7 @@ def default_stage_registry() -> StageRegistry:
     registry = StageRegistry()
     registry.extend(
         cast(
-            "list[PipelineStage]",
+            list[PipelineStage],
             [StationarityStage(), LeakageStage(), SurrogateAttackStage(), BayesianEvidenceStage()],
         )
     )
