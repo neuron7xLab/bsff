@@ -73,6 +73,15 @@ CRITICAL_ARTIFACTS = [
         "verified_by": ["tests/test_claim_registry.py"],
         "claim_ids": ["BSFF-CLAIM-001", "BSFF-CLAIM-002", "BSFF-CLAIM-003", "BSFF-CLAIM-004"],
     },
+    {
+        "path": "artifacts/release/STATISTICAL_PROOF_GATE_REPORT.json",
+        "producer_command": "python tools/validate_statistical_proof_gate.py",
+        "verified_by": [
+            "tools/validate_statistical_proof_gate.py",
+            "tests/test_stat_proof_gate.py",
+        ],
+        "claim_ids": ["BSFF-CLAIM-001", "BSFF-CLAIM-002"],
+    },
 ]
 
 

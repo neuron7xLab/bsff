@@ -122,3 +122,35 @@ def test_stale_snapshot_is_detected(tmp_path):
     out.write_text(json.dumps(tampered), encoding="utf-8")
     result = validate_report_in_sync(expected, out)
     assert result and "STALE" in result[0]
+
+
+def test_dataset_format_not_verified_fails(tmp_path):
+    root = _copy_fixture(tmp_path)
+    _rewrite(
+        root / "artifacts/bonn_bright_line/DATASET_MANIFEST.json",
+        lambda data: data.update({"format_verified": False}),
+    )
+    report = evaluate(root)
+    assert report["status"] == "FAIL"
+    assert any("format not verified" in item for item in report["violations"])
+
+
+def test_dataset_zip_hashes_removed_fails(tmp_path):
+    root = _copy_fixture(tmp_path)
+    _rewrite(
+        root / "artifacts/bonn_bright_line/DATASET_MANIFEST.json",
+        lambda data: data.update({"zip_sha256": {}}),
+    )
+    report = evaluate(root)
+    assert report["status"] == "FAIL"
+    assert any("zip hashes missing" in item for item in report["violations"])
+
+
+def test_scope_and_external_claims_are_skipped_not_dropped():
+    """Non-statistical claims (003 scope, 004 external) must be explicitly
+    skipped with a reason, never silently dropped from evaluation."""
+    report = evaluate(ROOT)
+    skipped = {s["claim_id"]: s["reason"] for s in report["skipped_claims"]}
+    assert "BSFF-CLAIM-003" in skipped
+    assert "BSFF-CLAIM-004" in skipped
+    assert all(skipped.values()), "every skip must carry a reason"

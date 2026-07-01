@@ -142,6 +142,11 @@ def evaluate(root=ROOT):
         else:
             if not dsm.get("license"):
                 errs.append(cid + ": dataset license boundary missing")
+            if dsm.get("format_verified") is not True:
+                errs.append(cid + ": dataset format not verified")
+            zips = dsm.get("zip_sha256", {})
+            if not zips or any(not h for h in zips.values()):
+                errs.append(cid + ": dataset zip hashes missing")
             sets = dsm.get("sets", {})
             if not sets:
                 errs.append(cid + ": dataset provenance sets missing")
