@@ -34,7 +34,8 @@ def test_dashboard_aggregates_all_dimensions():
 def test_dashboard_composite_passes_on_real_repo():
     qd = _load("quality_dashboard")
     report = qd.evaluate(ROOT, mypy=False)
-    assert report["composite_status"] == "PASS", report["dimensions"]
+    assert report["composite_status"] == "PASS_INCOMPLETE", report["dimensions"]
+    assert report["skipped"] == ["type_safety"]
 
 
 def test_mypy_dimension_is_fail_closed_on_usage_error(monkeypatch):

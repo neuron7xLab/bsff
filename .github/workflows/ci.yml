@@ -96,7 +96,7 @@ jobs:
           path: |
             artifacts/bsff_phase1_validation.json
             artifacts/evidence_manifest.json
-          if-no-files-found: warn
+          if-no-files-found: error
 
   meta-verification:
     name: meta-verification

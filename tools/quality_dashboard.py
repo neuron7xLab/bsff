@@ -112,13 +112,28 @@ def evaluate(root: Path | str = ROOT, *, mypy: bool = True) -> dict[str, Any]:
     dimensions["determinism"] = _subprocess_gate(root, "determinism_probe")
     if mypy:
         dimensions["type_safety"] = _mypy_dimension(root)
+    else:
+        # Honesty over silent green: skipping mypy does NOT vanish the dimension.
+        # It is surfaced as SKIPPED so a reader never mistakes --no-mypy for a
+        # clean, type-checked PASS. The composite is PASS_INCOMPLETE, not PASS.
+        dimensions["type_safety"] = {
+            "status": "SKIPPED",
+            "reason": "mypy config lands with the strict-type PR; not gated here",
+        }
     statuses = [d.get("status") for d in dimensions.values()]
-    composite = "PASS" if all(s == "PASS" for s in statuses) else "FAIL"
+    skipped = sorted(k for k, v in dimensions.items() if v.get("status") == "SKIPPED")
+    if any(s == "FAIL" for s in statuses):
+        composite = "FAIL"
+    elif skipped:
+        composite = "PASS_INCOMPLETE"
+    else:
+        composite = "PASS"
     return {
         "schema": SCHEMA,
         "composite_status": composite,
         "dimensions_total": len(dimensions),
         "dimensions_passing": sum(1 for s in statuses if s == "PASS"),
+        "skipped": skipped,
         "dimensions": dict(sorted(dimensions.items())),
     }
 
@@ -128,6 +143,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--check", action="store_true", help="exit 1 if composite is FAIL")
     parser.add_argument("--output", default="artifacts/QUALITY_DASHBOARD.json")
     parser.add_argument("--no-mypy", action="store_true", help="skip the type-safety dimension")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="also fail (exit 1) on PASS_INCOMPLETE (a skipped dimension)",
+    )
     args = parser.parse_args(argv)
 
     report = evaluate(ROOT, mypy=not args.no_mypy)
@@ -137,9 +157,18 @@ def main(argv: list[str] | None = None) -> int:
 
     print(f"QUALITY DASHBOARD: {report['composite_status']}")
     print(f"  dimensions: {report['dimensions_passing']}/{report['dimensions_total']} passing")
-    for name, dim in report["dimensions"].items():
-        print(f"  [{dim['status']:4}] {name}")
-    return 0 if not args.check or report["composite_status"] == "PASS" else 1
+    for name, dim in sorted(report["dimensions"].items()):
+        print(f"  [{dim['status']:>7}] {name}")
+    if report["skipped"]:
+        print(f"  NOT a clean PASS — skipped (ungated) dimensions: {report['skipped']}")
+
+    if not args.check:
+        return 0
+    if report["composite_status"] == "FAIL":
+        return 1
+    if report["composite_status"] == "PASS_INCOMPLETE" and args.strict:
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
