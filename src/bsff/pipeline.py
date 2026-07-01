@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 from .evidence import EvidenceGraph, StageResult, stable_sha256
 from .policy import PolicyProfile, adapt_policy_for_signal
-from .registry import StageRegistry
+from .registry import PipelineStage, StageRegistry
 from .schemas import ClaimSpec, VerdictJSON
 from .scope_guard import classify_scope, guard_verdict
 from .stages import (
@@ -65,7 +65,10 @@ class PipelineVerdict:
 def default_stage_registry() -> StageRegistry:
     registry = StageRegistry()
     registry.extend(
-        [StationarityStage(), LeakageStage(), SurrogateAttackStage(), BayesianEvidenceStage()]
+        cast(
+            "list[PipelineStage]",
+            [StationarityStage(), LeakageStage(), SurrogateAttackStage(), BayesianEvidenceStage()],
+        )
     )
     return registry
 

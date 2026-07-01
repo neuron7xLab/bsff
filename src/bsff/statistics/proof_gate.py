@@ -7,6 +7,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[3]
 SCHEMA = "bsff.statistical_proof_gate/v1"
@@ -22,11 +23,12 @@ METRIC_KEYS = (
 )
 
 
-def _data(root, rel):
-    return json.loads((root / rel).read_text(encoding="utf-8"))
+def _data(root: Path, rel: str) -> dict[str, Any]:
+    result: dict[str, Any] = json.loads((root / rel).read_text(encoding="utf-8"))
+    return result
 
 
-def _safe(root, rel):
+def _safe(root: Path, rel: str) -> dict[str, Any]:
     """Read a JSON artifact, returning {} on any absence/parse error.
 
     Lets a missing or malformed result artifact surface as an invariant
@@ -35,12 +37,13 @@ def _safe(root, rel):
     try:
         if not rel:
             return {}
-        return json.loads((root / rel).read_text(encoding="utf-8"))
+        result: dict[str, Any] = json.loads((root / rel).read_text(encoding="utf-8"))
+        return result
     except (OSError, ValueError):
         return {}
 
 
-def _sha(root, rel):
+def _sha(root: Path, rel: str) -> dict[str, Any]:
     path = root / rel
     return {
         "path": rel,
@@ -49,20 +52,26 @@ def _sha(root, rel):
     }
 
 
-def _upper(pair):
+def _upper(pair: Any) -> float | None:
     if isinstance(pair, list) and len(pair) == 2 and isinstance(pair[1], (int, float)):
         return float(pair[1])
     return None
 
 
-def _is_measured(claim):
+def _is_measured(claim: dict[str, Any]) -> bool:
     metrics = " ".join(str(v).lower() for v in claim.get("required_metrics", []))
     return "internally_verified" in claim.get("status", []) and (
         "wilson" in metrics or "cluster" in metrics or "fpr" in metrics
     )
 
 
-def _bound(errs, cid, label, upper, limit):
+def _bound(
+    errs: list[str],
+    cid: str,
+    label: str,
+    upper: float | None,
+    limit: float | None,
+) -> None:
     if upper is None:
         errs.append(cid + ": missing " + label)
     elif limit is None:
@@ -71,11 +80,11 @@ def _bound(errs, cid, label, upper, limit):
         errs.append(cid + ": " + label + " exceeds limit")
 
 
-def evaluate(root=ROOT):
+def evaluate(root: Path | str = ROOT) -> dict[str, Any]:
     root = Path(root)
-    violations = []
-    proofs = []
-    skipped = []
+    violations: list[str] = []
+    proofs: list[dict[str, Any]] = []
+    skipped: list[dict[str, Any]] = []
     claims = _data(root, CLAIMS).get("claims", {})
     truth = _data(root, TRUTH)
     paths = truth.get("artifact_paths", {})
@@ -88,10 +97,10 @@ def evaluate(root=ROOT):
                 }
             )
             continue
-        errs = []
+        errs: list[str] = []
         rels = [TRUTH, *[str(p) for p in claim.get("evidence_artifacts", [])]]
         rels += [paths.get(k, "") for k in METRIC_KEYS]
-        hashes = []
+        hashes: list[dict[str, Any]] = []
         for rel in sorted({p for p in rels if p}):
             if not (root / rel).is_file():
                 errs.append(cid + ": missing artifact " + rel)
@@ -177,12 +186,12 @@ def evaluate(root=ROOT):
     }
 
 
-def write_report(report, output):
+def write_report(report: dict[str, Any], output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-def validate_report_in_sync(expected, output):
+def validate_report_in_sync(expected: dict[str, Any], output: Path) -> list[str]:
     if not output.is_file():
         return ["statistical proof report missing"]
     committed = json.loads(output.read_text(encoding="utf-8"))

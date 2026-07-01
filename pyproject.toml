@@ -65,6 +65,25 @@ ignore = ["E501"]
 quote-style = "double"
 indent-style = "space"
 
+[tool.mypy]
+python_version = "3.10"
+strict = true
+files = ["src/bsff"]
+
+# Third-party libraries that ship no type stubs. Untyped-import is a library
+# gap, not a project defect, so it is silenced per-module rather than globally.
+[[tool.mypy.overrides]]
+module = [
+    "moabb.*",
+    "scipy.*",
+    "sklearn.*",
+    "statsmodels.*",
+    "pandas_flavor.*",
+    "pingouin.*",
+    "mne.*",
+]
+ignore_missing_imports = true
+
 [project.urls]
 Homepage = "https://github.com/neuron7xLab/bsff"
 Repository = "https://github.com/neuron7xLab/bsff"

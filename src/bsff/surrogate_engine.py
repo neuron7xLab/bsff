@@ -105,15 +105,18 @@ def var_phase_randomized_surrogate(
     if x.shape[1] % 2 == 0:
         phase[:, -1] = 0.0
     white_surr = np.fft.irfft(np.abs(white_fft) * np.exp(1j * phase), n=x.shape[1], axis=1)
-    surrogate = transform @ white_surr + mean
+    surrogate: FloatArray = transform @ white_surr + mean
     if return_diagnostics:
-        diag = {
+        diag: dict[str, float | str] = {
             "engine": "var_phase_randomized_surrogate",
             "covariance_rmsd": covariance_rmsd(x, surrogate),
             "covariance_relative_rmsd": covariance_relative_rmsd(x, surrogate),
         }
         return (surrogate if np.asarray(signal).ndim == 2 else surrogate[0], diag)
-    return surrogate if np.asarray(signal).ndim == 2 else surrogate[0]
+    if np.asarray(signal).ndim == 2:
+        return surrogate
+    row: FloatArray = surrogate[0]
+    return row
 
 
 def miaaft_surrogate(

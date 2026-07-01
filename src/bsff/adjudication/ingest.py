@@ -39,7 +39,8 @@ def normalize_arxiv_id(raw: str) -> str:
 def _default_fetch(url: str, *, timeout: float = 30.0) -> bytes:  # pragma: no cover - network
     request = Request(url, headers={"User-Agent": "bsff-adjudication/1 (+neuron7xLab)"})
     with urlopen(request, timeout=timeout) as response:
-        return response.read()
+        data: bytes = response.read()
+        return data
 
 
 def _clean(text: str) -> str:

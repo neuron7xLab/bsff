@@ -28,6 +28,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from typing import TypedDict, cast
 
 import numpy as np
 from numpy.typing import NDArray
@@ -41,9 +42,27 @@ FloatArray = NDArray[np.float64]
 Generator = Callable[[int, int], FloatArray]
 
 
+class _SurrogateConvergence(TypedDict):
+    all_converged: bool
+
+
+class _SurrogateResult(TypedDict):
+    original_statistic: float
+    surrogate_statistics: list[float]
+    rejected: bool
+    surrogate_convergence: _SurrogateConvergence
+
+
+class _BayesFactor(TypedDict):
+    BF10: float
+
+
 def _ar1(phi: float) -> Generator:
     def gen(n_samples: int, seed: int) -> FloatArray:
-        return ar1_multichannel(n_channels=1, n_samples=n_samples, phi=phi, seed=seed)[0]
+        series: FloatArray = ar1_multichannel(
+            n_channels=1, n_samples=n_samples, phi=phi, seed=seed
+        )[0]
+        return series
 
     return gen
 
@@ -162,20 +181,26 @@ def measure_operating_characteristic(
         bf_rejections: list[float] = []
         for s in range(n_seeds):
             signal = cls.generator(n_samples, seed_offset + s)
-            r = rank_order_surrogate_test(
-                signal,
-                n_surrogates=surrogate_count,
-                alpha=alpha,
-                seed=test_seed,
-                max_iter=max_iter,
-                tol=tol,
+            r = cast(
+                _SurrogateResult,
+                rank_order_surrogate_test(
+                    signal,
+                    n_surrogates=surrogate_count,
+                    alpha=alpha,
+                    seed=test_seed,
+                    max_iter=max_iter,
+                    tol=tol,
+                ),
             )
             rejected = bool(r["rejected"])
             converged = bool(r["surrogate_convergence"]["all_converged"])
             if not (rejected and converged):
                 continue
             freq_survive += 1
-            bf = jzs_bayes_factor(float(r["original_statistic"]), r["surrogate_statistics"])
+            bf = cast(
+                _BayesFactor,
+                jzs_bayes_factor(float(r["original_statistic"]), r["surrogate_statistics"]),
+            )
             bf10 = float(bf["BF10"])
             bf_rejections.append(bf10)
             if bf10 >= corroboration_min:
