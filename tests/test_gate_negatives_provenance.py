@@ -23,8 +23,6 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-import pytest
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 TOOLS_DIR = REPO_ROOT / "tools"
 
@@ -206,16 +204,8 @@ def test_github_actions_policy_fails_on_bad_workflow(tmp_path, monkeypatch, caps
     assert "pull_request_target:" in out
 
 
-# --------------------------------------------------------------------------- #
-# 8. validate_wheel_runtime.py  — RESISTANT to offline negative-controlling      #
-# --------------------------------------------------------------------------- #
-@pytest.mark.skip(
-    reason="RESISTANT: validate_wheel_runtime builds a real wheel (python -m build) "
-    "and pip-installs it into a fresh virtualenv from a package index (network). Its "
-    "only failure modes require breaking the build toolchain, denying the network, or "
-    "stubbing subprocess/_run -- each either needs live infrastructure or defeats the "
-    "gate's own purpose. No smallest-known-bad *input* exists offline without faking "
-    "the gate's execution, so no honest negative control is constructed here."
-)
-def test_wheel_runtime_negative_control_resistant():  # pragma: no cover
-    raise AssertionError("documented RESISTANT; see skip reason")
+# validate_wheel_runtime.py is RESISTANT to offline negative-controlling — it
+# builds a real wheel and pip-installs it from an index (network). No skipped
+# stub is left here (the repo forbids skip/xfail on core tests); it stays honest
+# unproven debt in gate_soundness_registry.json with an explicit rationale, its
+# behavioral proof delegated to the build-package CI job.
