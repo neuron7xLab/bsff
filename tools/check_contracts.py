@@ -17,7 +17,7 @@ from pathlib import Path
 # script or imported by its path.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from run_contract_conformance import main as _conformance_main  # noqa: E402
+from run_contract_conformance import main as _conformance_main
 
 
 def main(argv: list[str] | None = None) -> int:
