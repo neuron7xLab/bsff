@@ -27,6 +27,21 @@
       "versionInfo": "0.4.0"
     },
     {
+      "SPDXID": "SPDXRef-Package-defusedxml",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:pypi/defusedxml@0.7.1",
+          "referenceType": "purl"
+        }
+      ],
+      "filesAnalyzed": false,
+      "licenseConcluded": "Python Software Foundation License",
+      "name": "defusedxml",
+      "versionInfo": "0.7.1"
+    },
+    {
       "SPDXID": "SPDXRef-Package-numpy",
       "downloadLocation": "NOASSERTION",
       "externalRefs": [
@@ -167,6 +182,11 @@
       "relatedSpdxElement": "SPDXRef-Package-bsff",
       "relationshipType": "DESCRIBES",
       "spdxElementId": "SPDXRef-DOCUMENT"
+    },
+    {
+      "relatedSpdxElement": "SPDXRef-Package-defusedxml",
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-Package-bsff"
     },
     {
       "relatedSpdxElement": "SPDXRef-Package-numpy",

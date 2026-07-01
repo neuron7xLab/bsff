@@ -5,6 +5,19 @@
       "licenses": [
         {
           "license": {
+            "id": "Python Software Foundation License"
+          }
+        }
+      ],
+      "name": "defusedxml",
+      "purl": "pkg:pypi/defusedxml@0.7.1",
+      "type": "library",
+      "version": "0.7.1"
+    },
+    {
+      "licenses": [
+        {
+          "license": {
             "id": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0"
           }
         }
