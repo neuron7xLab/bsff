@@ -21,3 +21,13 @@ artifacts/*.tmp
 # release certificate is a runtime proof, regenerated (root embeds live counts)
 artifacts/certificate/
 examples/bonn_bright_line/bonn_data/
+
+# Write-only validation exhaust: regenerated every run with nondeterministic
+# fields (git_commit / timestamp_utc / duration_ms). No gate --checks them and
+# nothing reads the committed bytes, so tracking them only manufactured phantom
+# tree drift that distorted the next computation. Generators still emit them;
+# CI uploads them as run-artifacts. (Frozen scientific evidence is NOT here.)
+artifacts/conformance/CONFORMANCE_DIAGNOSTICS.json
+artifacts/release/CLAIM_SAFETY_REPORT.json
+artifacts/release/STATISTICAL_CLAIMS_REPORT.json
+artifacts/release/TRUTH_CONSISTENCY_CHECK.json

@@ -1,0 +1,150 @@
+{
+  "schema_version": "2026.06",
+  "registry_status": "foundational_scaffold",
+  "rank_target": "R6_independently_reproducible_research_software",
+  "claims": {
+    "BSFF-CLAIM-001": {
+      "statement": "BSFF adjudicates bounded BCI/EEG signal claims by attempting falsification under stated attacks and emits SURVIVED, REFUTED, UNSUPPORTED, or QUARANTINED verdicts.",
+      "scientific_scope": "Claim-level falsification for signal-processing evidence under declared null models, controls, thresholds, and provenance constraints.",
+      "excluded_scope": "Clinical diagnosis, therapeutic effect, regulatory/device approval, universal BCI authority, and final proof of brain nonlinear dynamics.",
+      "forbidden_overclaims": [
+        "proves clinical utility",
+        "diagnoses disease",
+        "validates all BCI claims",
+        "confirms brain nonlinear dynamics",
+        "regulatory grade"
+      ],
+      "required_datasets": [
+        "synthetic_controlled_v0",
+        "bonn_andrzejak_2001_s2"
+      ],
+      "required_null_models": [
+        "shuffled_label_null",
+        "phase_randomized_surrogate",
+        "ar_colored_noise_null",
+        "iaaft_surrogate"
+      ],
+      "required_metrics": [
+        "false_positive_rate",
+        "power",
+        "wilson_confidence_interval",
+        "cluster_robust_interval"
+      ],
+      "uncertainty_method": "Wilson interval plus seed-level or cluster-aware interval where repeated segments create clustered observations.",
+      "failure_condition": "The claim fails if specificity, null-model robustness, provenance, or bounded verdict semantics cannot be reproduced from committed artifacts.",
+      "reproduction_command": "python -m pip install -e \".[dev,stats]\" && bsff evidence verify && bsff reproduce bonn-s2",
+      "evidence_artifacts": [
+        "artifacts/release/CURRENT_TRUTH.json",
+        "artifacts/release/bonn_bright_line/HASHES.sha256",
+        "docs/VERDICT_SEMANTICS.md"
+      ],
+      "reviewer_note": "This claim is about bounded falsification semantics, not about medical or regulatory validation.",
+      "status": [
+        "internally_verified"
+      ]
+    },
+    "BSFF-CLAIM-002": {
+      "statement": "The current Bonn S2 bright-line evidence is internally hash-backed and reports robust specificity under the committed release evidence package.",
+      "scientific_scope": "Internal release evidence for the committed Bonn/Andrzejak S2 falsification case and its declared null-model battery.",
+      "excluded_scope": "External multi-dataset replication, BNCI execution, medical diagnosis, and universal EEG benchmark status.",
+      "forbidden_overclaims": [
+        "externally replicated",
+        "BNCI validated",
+        "clinical EEG validator",
+        "universal EEG truth"
+      ],
+      "required_datasets": [
+        "bonn_andrzejak_2001_s2"
+      ],
+      "required_null_models": [
+        "ar_colored_noise_null",
+        "iaaft_surrogate",
+        "phase_randomized_surrogate"
+      ],
+      "required_metrics": [
+        "seed_averaged_false_positive_rate",
+        "wilson_confidence_interval",
+        "cluster_bootstrap_interval",
+        "design_effect"
+      ],
+      "uncertainty_method": "Per-seed false-positive counts with Wilson and cluster-robust intervals.",
+      "failure_condition": "The claim fails if committed evidence hashes drift, null-model CI upper bounds exceed the declared threshold, or reproduction cannot verify the frozen evidence anchor.",
+      "reproduction_command": "bsff evidence verify && bsff reproduce bonn-s2",
+      "evidence_artifacts": [
+        "artifacts/release/CURRENT_TRUTH.json",
+        "artifacts/bonn_bright_line/S3_PROTOCOL_LOCK.json",
+        "artifacts/release/bonn_bright_line/HASHES.sha256"
+      ],
+      "reviewer_note": "Current status is internal evidence only; R6 requires external reproduction.",
+      "status": [
+        "internally_verified"
+      ]
+    },
+    "BSFF-CLAIM-003": {
+      "statement": "BSFF intentionally quarantines out-of-scope claims instead of converting them into unsupported positive conclusions.",
+      "scientific_scope": "Claim-boundary enforcement for unsupported clinical, regulatory, therapeutic, or universal authority language.",
+      "excluded_scope": "Determining truth of out-of-domain claims or providing medical/regulatory certification.",
+      "forbidden_overclaims": [
+        "clinical grade",
+        "FDA ready",
+        "therapeutic proof",
+        "diagnostic claim accepted"
+      ],
+      "required_datasets": [
+        "synthetic_controlled_v0"
+      ],
+      "required_null_models": [
+        "negative_control_claim_language"
+      ],
+      "required_metrics": [
+        "quarantine_trigger_coverage",
+        "forbidden_claim_rejection"
+      ],
+      "uncertainty_method": "Deterministic policy gate with explicit forbidden-claim pattern coverage.",
+      "failure_condition": "The claim fails if a forbidden clinical/regulatory/therapeutic claim is emitted as SURVIVED rather than QUARANTINED or UNSUPPORTED.",
+      "reproduction_command": "python tools/validate_forbidden_claims.py",
+      "evidence_artifacts": [
+        "docs/VERDICT_SEMANTICS.md",
+        "artifacts/release/CURRENT_TRUTH.json"
+      ],
+      "reviewer_note": "This is a safety and scope-control claim, not a biomedical efficacy claim.",
+      "status": [
+        "internally_verified"
+      ]
+    },
+    "BSFF-CLAIM-004": {
+      "statement": "BSFF is not yet R6/R7 because external hostile reproduction, multi-dataset replication, and stable v1.0 API evidence are not yet complete.",
+      "scientific_scope": "Rank-boundary claim limiting current repository status to pre-R6 until independent reproduction exists.",
+      "excluded_scope": "Any assertion that current internal evidence alone establishes field-standard status.",
+      "forbidden_overclaims": [
+        "field standard",
+        "externally validated",
+        "peer reviewed",
+        "v1.0 stable"
+      ],
+      "required_datasets": [
+        "external_replication_dataset_tbd"
+      ],
+      "required_null_models": [
+        "external_reviewer_selected_nulls"
+      ],
+      "required_metrics": [
+        "external_reproduction_pass",
+        "api_stability_contract",
+        "doi_release_integrity"
+      ],
+      "uncertainty_method": "Rank remains bounded until independent reproduction produces a public PASS report.",
+      "failure_condition": "The claim fails if the repository claims R6/R7 status without public external reproduction evidence.",
+      "reproduction_command": "bash reproduce.sh --clean --verify --run-paper",
+      "evidence_artifacts": [
+        "docs/R6_R7_ASCENSION_PROTOCOL.md",
+        "ARTIFACT_EVALUATION.md",
+        "RELEASE_CHECKLIST.md"
+      ],
+      "reviewer_note": "This claim is a self-limiting honesty contract.",
+      "status": [
+        "unverified"
+      ]
+    }
+  }
+}

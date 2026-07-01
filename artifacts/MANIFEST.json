@@ -4,7 +4,7 @@
   "package": "bsff",
   "generator": "tools/generate_manifest.py",
   "version": "0.4.0",
-  "test_count": 721,
+  "test_count": 737,
   "release_gates": [
     "truth_contract",
     "architecture_contract",
@@ -21,6 +21,95 @@
   ],
   "outputs": [
     "artifacts/MANIFEST.json"
+  ],
+  "artifacts": [
+    {
+      "path": "claims.yaml",
+      "sha256": "9c6b7b2257f8aef64ac2aa72814907a0c1db3880a33f69f1d3a0fe7c64fd81fd",
+      "size_bytes": 6892,
+      "producer_command": "hand-authored claim registry (source of truth)",
+      "verified_by": [
+        "tools/validate_r6_contracts.py",
+        "tests/test_claim_registry.py"
+      ],
+      "claim_ids": [
+        "BSFF-CLAIM-001",
+        "BSFF-CLAIM-002",
+        "BSFF-CLAIM-003",
+        "BSFF-CLAIM-004"
+      ]
+    },
+    {
+      "path": "contracts/bsff_contract.yaml",
+      "sha256": "888bb9860f7e3702fccf84ce1c5eac48da211d253804492070ee29e60861b298",
+      "size_bytes": 2271,
+      "producer_command": "hand-authored self-conformance contract (source of truth)",
+      "verified_by": [
+        "tools/run_contract_conformance.py",
+        "tools/check_contracts.py"
+      ],
+      "claim_ids": [
+        "BSFF-CLAIM-001",
+        "BSFF-CLAIM-002",
+        "BSFF-CLAIM-003",
+        "BSFF-CLAIM-004"
+      ]
+    },
+    {
+      "path": "reproduce.sh",
+      "sha256": "d8f4b86d8a674a29eddee797fa16e76304852824886fae5eef773ce0cb41a343",
+      "size_bytes": 3663,
+      "producer_command": "hand-authored reproduction entrypoint (source of truth)",
+      "verified_by": [
+        "tools/validate_r6_contracts.py"
+      ],
+      "claim_ids": [
+        "BSFF-CLAIM-001",
+        "BSFF-CLAIM-002",
+        "BSFF-CLAIM-003"
+      ]
+    },
+    {
+      "path": "artifacts/release/bonn_bright_line/HASHES.sha256",
+      "sha256": "9c4b020650cdc68c1d9b0f5c737e7f370131a7b4591ee38d805c7ceee783d7e9",
+      "size_bytes": 808,
+      "producer_command": "frozen Bonn S2 bright-line evidence hash manifest",
+      "verified_by": [
+        "bsff evidence verify"
+      ],
+      "claim_ids": [
+        "BSFF-CLAIM-001",
+        "BSFF-CLAIM-002"
+      ]
+    },
+    {
+      "path": "STATISTICAL_CONTRACT.md",
+      "sha256": "33935b783a75fbc8cad87ae8094474f330e2160ac59d86e02e3bd2b480c5ed3e",
+      "size_bytes": 1880,
+      "producer_command": "hand-authored statistical contract (source of truth)",
+      "verified_by": [
+        "tools/validate_statistical_claims.py"
+      ],
+      "claim_ids": [
+        "BSFF-CLAIM-001",
+        "BSFF-CLAIM-002"
+      ]
+    },
+    {
+      "path": "CLAIMS.md",
+      "sha256": "3af2eaf18b3b04e180982efd54c64ff72210747c118fd2b6da2d9ee4165f180a",
+      "size_bytes": 2102,
+      "producer_command": "hand-authored public claim ledger (source of truth)",
+      "verified_by": [
+        "tests/test_claim_registry.py"
+      ],
+      "claim_ids": [
+        "BSFF-CLAIM-001",
+        "BSFF-CLAIM-002",
+        "BSFF-CLAIM-003",
+        "BSFF-CLAIM-004"
+      ]
+    }
   ],
   "verdict": "GENERATED",
   "source_of_truth": "pyproject.toml + STATUS.md"
