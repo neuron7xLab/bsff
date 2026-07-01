@@ -66,15 +66,26 @@ def _headline(
 
 
 def _mypy_dimension(root: Path) -> dict[str, Any]:
-    """Recompute the type-safety dimension: strict errors over src/bsff."""
+    """Recompute the type-safety dimension: strict errors over src/bsff.
+
+    Fail-closed: PASS only when mypy actually ran clean (returncode 0). A
+    usage/config/fatal error (returncode 2 — e.g. no [tool.mypy] config, so
+    nothing was type-checked) writes its message to stderr and must NEVER be
+    read as PASS. Counting stdout errors alone would fabricate a green here.
+    """
     proc = subprocess.run(
         [sys.executable, "-m", "mypy"],
         cwd=root,
         capture_output=True,
         text=True,
     )
-    errors = sum(1 for line in proc.stdout.splitlines() if ": error:" in line)
-    return {"status": "PASS" if errors == 0 else "FAIL", "strict_errors": errors}
+    combined = proc.stdout + proc.stderr
+    errors = sum(1 for line in combined.splitlines() if ": error:" in line)
+    return {
+        "status": "PASS" if proc.returncode == 0 else "FAIL",
+        "strict_errors": errors,
+        "mypy_returncode": proc.returncode,
+    }
 
 
 def _subprocess_gate(root: Path, tool: str) -> dict[str, Any]:

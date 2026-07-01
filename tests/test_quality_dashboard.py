@@ -37,6 +37,23 @@ def test_dashboard_composite_passes_on_real_repo():
     assert report["composite_status"] == "PASS", report["dimensions"]
 
 
+def test_mypy_dimension_is_fail_closed_on_usage_error(monkeypatch):
+    """A mypy usage/config error (returncode 2, message on stderr) must be FAIL,
+    never a fabricated PASS from an empty stdout — negative control against the
+    vacuous-pass this dashboard is meant to prevent in others."""
+    qd = _load("quality_dashboard")
+
+    class _FakeProc:
+        returncode = 2
+        stdout = ""
+        stderr = "mypy: error: Missing target module, package, files, or command."
+
+    monkeypatch.setattr(qd.subprocess, "run", lambda *a, **k: _FakeProc())
+    dim = qd._mypy_dimension(ROOT)
+    assert dim["status"] == "FAIL", dim
+    assert dim["mypy_returncode"] == 2
+
+
 def test_dashboard_fails_if_any_dimension_fails(monkeypatch):
     """Composite must be FAIL when even one gate's --check fails — negative control.
 
