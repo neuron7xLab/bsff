@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
 """Validate artifact-bound statistical proof for BSFF claim evidence."""
 
 from __future__ import annotations
@@ -24,14 +23,12 @@ from bsff.statistics.proof_gate import (  # noqa: E402
 
 def main(argv: list[str] | None = None, *, root: Path | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--check", action="store_true", help="validate the committed proof report snapshot")
+    parser.add_argument("--check", action="store_true")
     parser.add_argument("--output", default=DEFAULT_REPORT)
     args = parser.parse_args(argv)
-
     resolved_root = ROOT if root is None else root
     output = resolved_root / args.output
     report = evaluate(resolved_root)
-
     if args.check:
         sync_violations = validate_report_in_sync(report, output)
         if sync_violations:
@@ -42,7 +39,6 @@ def main(argv: list[str] | None = None, *, root: Path | None = None) -> int:
             }
     else:
         write_report(report, output)
-
     print(f"STATISTICAL_PROOF_GATE: {report['status']}")
     print(f"proof_count: {report['proof_count']}")
     for violation in report["violations"]:
