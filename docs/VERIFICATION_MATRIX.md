@@ -24,8 +24,8 @@ and the concrete **failure mode** it catches.
 
 - **Negative-control scope.** The *meta-verification gates* (rows 1–8) each ship a
   negative control. The legacy `tools/` gate surface is **not** fully
-  negative-controlled: `gate_soundness` reports **15 proven / 31 frozen unproven**
-  of 46 — the frozen list is the honest debt map, held by a ratchet, not a claim
+  negative-controlled: `gate_soundness` reports **45 proven / 1 frozen unproven**
+  of 46 (only validate_wheel_runtime, RESISTANT offline) — the frozen list is the honest debt map, held by a ratchet, not a claim
   of universal soundness.
 - **CI dashboard is the structural (reduced) dashboard.** The meta-verification job
   runs `quality_dashboard.py --check --no-mypy`: it gates dimensions 1–5. The
@@ -52,7 +52,7 @@ than overclaimed away:
   decorator-swallowed exceptions. It is a ratchet, not a proof.
 - **Complexity depends on radon**; a property radon under-counts is under-counted
   here. The ratchet floors *reported* CC (now including nested closures).
-- **Determinism guards the registered set** (7 generators), not the whole tree
+- **Determinism guards the registered set** (4 env-invariant, stdlib/hash-pure generators), not the whole tree
   (~100 artifacts); registration is the ratchet. Its `git checkout --` restore of
   stray writes is **sound only in a single-writer worktree** (CI guarantees this);
   a concurrent editor's change can be misattributed and reverted.
