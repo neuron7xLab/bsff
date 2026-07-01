@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -29,6 +30,73 @@ RELEASE_GATES = [
     "release_check_strict",
     "codeql_high",
 ]
+
+# Critical artifacts bound by content hash. Each must be a DETERMINISTIC,
+# tracked source/evidence file (never nondeterministic run-exhaust). Because
+# build_core() embeds each file's live sha256, any content change that is not
+# re-manifested makes `generate_manifest.py --check` (the manifest_sync gate)
+# fail — this is the fail-closed artifact-integrity binding, not a listing.
+CRITICAL_ARTIFACTS = [
+    {
+        "path": "claims.yaml",
+        "producer_command": "hand-authored claim registry (source of truth)",
+        "verified_by": ["tools/validate_r6_contracts.py", "tests/test_claim_registry.py"],
+        "claim_ids": ["BSFF-CLAIM-001", "BSFF-CLAIM-002", "BSFF-CLAIM-003", "BSFF-CLAIM-004"],
+    },
+    {
+        "path": "contracts/bsff_contract.yaml",
+        "producer_command": "hand-authored self-conformance contract (source of truth)",
+        "verified_by": ["tools/run_contract_conformance.py", "tools/check_contracts.py"],
+        "claim_ids": ["BSFF-CLAIM-001", "BSFF-CLAIM-002", "BSFF-CLAIM-003", "BSFF-CLAIM-004"],
+    },
+    {
+        "path": "reproduce.sh",
+        "producer_command": "hand-authored reproduction entrypoint (source of truth)",
+        "verified_by": ["tools/validate_r6_contracts.py"],
+        "claim_ids": ["BSFF-CLAIM-001", "BSFF-CLAIM-002", "BSFF-CLAIM-003"],
+    },
+    {
+        "path": "artifacts/release/bonn_bright_line/HASHES.sha256",
+        "producer_command": "frozen Bonn S2 bright-line evidence hash manifest",
+        "verified_by": ["bsff evidence verify"],
+        "claim_ids": ["BSFF-CLAIM-001", "BSFF-CLAIM-002"],
+    },
+    {
+        "path": "STATISTICAL_CONTRACT.md",
+        "producer_command": "hand-authored statistical contract (source of truth)",
+        "verified_by": ["tools/validate_statistical_claims.py"],
+        "claim_ids": ["BSFF-CLAIM-001", "BSFF-CLAIM-002"],
+    },
+    {
+        "path": "CLAIMS.md",
+        "producer_command": "hand-authored public claim ledger (source of truth)",
+        "verified_by": ["tests/test_claim_registry.py"],
+        "claim_ids": ["BSFF-CLAIM-001", "BSFF-CLAIM-002", "BSFF-CLAIM-003", "BSFF-CLAIM-004"],
+    },
+]
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _bound_artifacts() -> list[dict]:
+    bound: list[dict] = []
+    for entry in CRITICAL_ARTIFACTS:
+        path = ROOT / entry["path"]
+        if not path.is_file():
+            raise SystemExit(f"critical artifact missing, cannot hash-bind: {entry['path']}")
+        bound.append(
+            {
+                "path": entry["path"],
+                "sha256": _sha256(path),
+                "size_bytes": path.stat().st_size,
+                "producer_command": entry["producer_command"],
+                "verified_by": entry["verified_by"],
+                "claim_ids": entry["claim_ids"],
+            }
+        )
+    return bound
 
 
 def _version() -> str:
@@ -57,6 +125,7 @@ def build_core() -> dict:
         "release_gates": RELEASE_GATES,
         "inputs": ["pyproject.toml", "STATUS.md"],
         "outputs": ["artifacts/MANIFEST.json"],
+        "artifacts": _bound_artifacts(),
         "verdict": "GENERATED",
         "source_of_truth": "pyproject.toml + STATUS.md",
     }
