@@ -24,8 +24,8 @@ and the concrete **failure mode** it catches.
 
 - **Negative-control scope.** The *meta-verification gates* (rows 1–8) each ship a
   negative control. The legacy `tools/` gate surface is **not** fully
-  negative-controlled: `gate_soundness` reports **45 proven / 1 frozen unproven**
-  of 46 (only validate_wheel_runtime, RESISTANT offline) — the frozen list is the honest debt map, held by a ratchet, not a claim
+  negative-controlled: `gate_soundness` reports **46 proven / 0 unproven**
+  of 46 — every discoverable gate negative-controlled — the frozen list is the honest debt map, held by a ratchet, not a claim
   of universal soundness.
 - **CI dashboard is the structural (reduced) dashboard.** The meta-verification job
   runs `quality_dashboard.py --check --no-mypy`: it gates dimensions 1–5. The

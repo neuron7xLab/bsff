@@ -204,8 +204,22 @@ def test_github_actions_policy_fails_on_bad_workflow(tmp_path, monkeypatch, caps
     assert "pull_request_target:" in out
 
 
-# validate_wheel_runtime.py is RESISTANT to offline negative-controlling — it
-# builds a real wheel and pip-installs it from an index (network). No skipped
-# stub is left here (the repo forbids skip/xfail on core tests); it stays honest
-# unproven debt in gate_soundness_registry.json with an explicit rationale, its
-# behavioral proof delegated to the build-package CI job.
+# --------------------------------------------------------------------------- #
+# 8. validate_wheel_runtime.py — the gate must FAIL when no wheel is produced    #
+# --------------------------------------------------------------------------- #
+def test_wheel_runtime_fails_when_build_produces_no_wheel(tmp_path, monkeypatch, capsys):
+    """The wheel-runtime gate's PASS/FAIL DECISION is negative-controlled without a
+    real build: stub the subprocess seam so `python -m build` is a no-op (its
+    behavioral proof is the build-package CI job), so the dist dir holds no .whl.
+    The gate must detect the missing wheel and return 1 — proving its failure path
+    is live, not decorative."""
+    import types
+
+    mod = _load_tool("validate_wheel_runtime")
+    monkeypatch.setattr(
+        mod, "_run", lambda *a, **k: types.SimpleNamespace(returncode=0, stdout="", stderr="")
+    )
+    rc = mod.validate_wheel(tmp_path / "out.json")
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "no wheel produced" in out

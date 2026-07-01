@@ -161,6 +161,10 @@
       "negative_control_test": "tests/test_gate_negatives_contracts.py::test_validation_corpus_gate_fails_on_clinical_manifest",
       "rationale": "clinical/non-synthetic manifest -> FAIL"
     },
+    "tools/validate_wheel_runtime.py": {
+      "negative_control_test": "tests/test_gate_negatives_provenance.py::test_wheel_runtime_fails_when_build_produces_no_wheel",
+      "rationale": "stubbed build produces no wheel -> gate detects missing wheel and returns 1 (decision-logic NC; behavioral build proof = build-package CI job)"
+    },
     "tools/verify_all.py": {
       "negative_control_test": "tests/test_gate_negatives_verify.py::test_verify_all_fails_when_a_must_criterion_is_unmet",
       "rationale": "must_criteria_met False -> FAIL"
@@ -183,10 +187,5 @@
     }
   },
   "schema": "bsff.gate_soundness_registry/v1",
-  "unproven": [
-    "tools/validate_wheel_runtime.py"
-  ],
-  "unproven_rationale": {
-    "tools/validate_wheel_runtime.py": "RESISTANT offline: builds a real wheel + pip-installs from an index (network); no smallest-known-bad input fails it without faking the run. Behavioral proof only in the build-package CI job."
-  }
+  "unproven": []
 }
