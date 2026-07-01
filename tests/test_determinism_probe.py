@@ -2,12 +2,16 @@
 # Copyright (c) 2026 Yaroslav Vasylenko / neuron7xLab
 """Tests for the byte-determinism probe.
 
-Two guarantees are exercised:
+Guarantees exercised:
 
   * positive: the real registered generators are byte-deterministic, the probe
     reports ``PASS``, and it leaves the working tree untouched;
-  * negative control: a deliberately nondeterministic "generator" (it writes the
-    current wall-clock time) is correctly flagged as nondeterministic.
+  * negative control (nondeterminism): a "generator" that writes the current
+    wall-clock time is flagged nondeterministic;
+  * negative control (staleness): a deterministic generator whose committed bytes
+    drift from a fresh regeneration is flagged stale;
+  * negative control (hermeticity / Hole 4): a generator that writes an undeclared
+    sibling file is flagged ``impure`` and the stray write is restored.
 """
 
 from __future__ import annotations
@@ -44,8 +48,11 @@ def test_registry_is_nonempty_and_well_formed() -> None:
             assert (ROOT / rel).is_file(), f"{gen.name}: missing committed output {rel}"
 
 
+@pytest.mark.slow
 def test_evaluate_pass_and_tree_unchanged() -> None:
-    """Real generators are deterministic and the probe does not dirty the tree."""
+    """Real generators are deterministic, hermetic, and the probe does not dirty
+    the tree. Marked ``slow``: it spawns every registered generator twice (one of
+    them, the analytic-uniformity null, runs for minutes)."""
     tracked_before = {rel: (ROOT / rel).read_bytes() for gen in dp.REGISTRY for rel in gen.outputs}
     status_before = _git_status_lines(ROOT)
 
@@ -54,9 +61,12 @@ def test_evaluate_pass_and_tree_unchanged() -> None:
     assert report["schema"] == "bsff.determinism/v1"
     assert report["status"] == "PASS", report
     assert report["nondeterministic"] == []
+    assert report["stale"] == []
+    assert report["impure"] == []
     assert len(report["checked"]) == len(dp.REGISTRY)
     for entry in report["checked"]:
         assert entry["deterministic"] is True, entry
+        assert entry["side_effects"] == [], entry
 
     # Every probed artifact must be byte-identical to what we started with.
     for rel, original in tracked_before.items():
@@ -121,9 +131,11 @@ def test_deterministic_temp_generator_passes(tmp_path: Path) -> None:
     assert report["status"] == "PASS", report
     assert report["nondeterministic"] == []
     assert report["stale"] == []
+    assert report["impure"] == []
     (entry,) = report["checked"]
     assert entry["deterministic"] is True
     assert entry["committed_match"] is True
+    assert entry["side_effects"] == []  # hermetic: only the declared output written
     assert out.read_bytes() == original_bytes
 
 
@@ -166,6 +178,46 @@ def test_failing_generator_is_flagged(tmp_path: Path) -> None:
     assert entry["deterministic"] is False
     assert "exited 3" in entry["reason"]
     assert out.read_bytes() == b"committed"
+
+
+def test_negative_control_flags_undeclared_sibling_write(tmp_path: Path) -> None:
+    """Hole 4 negative control. A generator that writes its declared output
+    deterministically but ALSO writes to an *undeclared* sibling is not hermetic:
+    it is flagged ``impure`` (a FAIL) and the stray sibling is restored, leaving
+    the tree clean. The declared output is deliberately deterministic AND fresh so
+    the ONLY defect is the undeclared write — proving side-effect detection, not
+    some other dimension, is what fails it."""
+    gen_script = tmp_path / "leaky_gen.py"
+    gen_script.write_text(
+        "import random\n"
+        "from pathlib import Path\n"
+        "# Declared output: deterministic constant.\n"
+        "Path('out.txt').write_text('always-the-same')\n"
+        "# Undeclared sibling: nondeterministic AND outside the declared outputs.\n"
+        "Path('sibling.txt').write_text(str(random.random()))\n",
+        encoding="utf-8",
+    )
+    out = tmp_path / "out.txt"
+    out.write_text("always-the-same", encoding="utf-8")  # committed == regeneration
+    original_bytes = out.read_bytes()
+    sibling = tmp_path / "sibling.txt"
+    assert not sibling.exists()
+
+    leaky = dp.Generator(name="leaky_writer", argv=("leaky_gen.py",), outputs=("out.txt",))
+    report = dp.evaluate(tmp_path, registry=(leaky,))
+
+    assert report["status"] == "FAIL", report
+    assert report["impure"] == ["leaky_writer"]
+    assert report["nondeterministic"] == []
+    assert report["stale"] == []
+    (entry,) = report["checked"]
+    assert entry["deterministic"] is True  # the declared output is deterministic
+    assert entry["side_effects"] == ["sibling.txt"]
+    assert "not hermetic" in entry["reason"]
+
+    # Tree hygiene: the stray sibling is removed and the declared output restored.
+    assert not sibling.exists(), "probe left the undeclared sibling write behind"
+    assert out.read_bytes() == original_bytes
 
 
 def test_missing_output_raises(tmp_path: Path) -> None:

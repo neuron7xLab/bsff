@@ -129,6 +129,83 @@ def test_cli_check_exit_code(capsys):
     assert "COMPLEXITY_GATE:" in out
 
 
+_NESTED_CLOSURE_FN = (
+    "def outer(x):\n"
+    "    def inner(y):\n"
+    + "".join(f"        if y == {i}:\n            return {i}\n" for i in range(20))
+    + "        return -1\n"
+    "    return inner(x)\n"
+)
+
+
+def test_closure_complexity_is_scored(tmp_path):
+    """Hole 8: a trivial outer wrapping a 20-branch inner closure must FAIL.
+
+    Without closure recursion the hot logic hidden in the nested ``def`` is
+    invisible and the outer function (CC=1) sails under the ceiling.
+    """
+    _fixture_src(tmp_path, _NESTED_CLOSURE_FN)
+    allow = _write_allowlist(tmp_path, {})
+    report = gate.evaluate(root=tmp_path, paths=("pkg",), allowlist_path=allow)
+    assert report["status"] == "FAIL"
+    offenders = {v["target"]: v["complexity"] for v in report["violations"]}
+    assert "pkg/mod.py::outer.inner" in offenders
+    assert offenders["pkg/mod.py::outer.inner"] > gate.CEILING
+    # The trivial outer itself must not be reported as an offender.
+    assert "pkg/mod.py::outer" not in offenders
+
+
+def test_allowlisted_closure_is_tolerated(tmp_path):
+    """Negative control: a closure recorded at its real CC is frozen debt."""
+    _fixture_src(tmp_path, _NESTED_CLOSURE_FN)
+    live = gate.evaluate(
+        root=tmp_path, paths=("pkg",), allowlist_path=_write_allowlist(tmp_path, {})
+    )
+    cc = next(
+        v["complexity"] for v in live["violations"] if v["target"] == "pkg/mod.py::outer.inner"
+    )
+    allow = _write_allowlist(tmp_path, {"pkg/mod.py::outer.inner": cc})
+    report = gate.evaluate(root=tmp_path, paths=("pkg",), allowlist_path=allow)
+    assert report["status"] == "PASS"
+    assert report["allowlisted"][0]["target"] == "pkg/mod.py::outer.inner"
+
+
+def test_inflated_allowlist_entry_fails(tmp_path):
+    """Hole 9: an entry recorded well above the live CC fails as inflated.
+
+    Recording 40 while the real CC is ~16 would silently tolerate any
+    regression up to 40; the inflation guard forces it back to the real value.
+    """
+    _fixture_src(tmp_path, _COMPLEX_FN)
+    live = gate.evaluate(
+        root=tmp_path, paths=("pkg",), allowlist_path=_write_allowlist(tmp_path, {})
+    )
+    real_cc = live["violations"][0]["complexity"]
+    inflated = real_cc + 24  # e.g. record 40+ while the real CC is ~21
+    allow = _write_allowlist(tmp_path, {"pkg/mod.py::hard": inflated})
+    report = gate.evaluate(root=tmp_path, paths=("pkg",), allowlist_path=allow)
+    assert report["status"] == "FAIL"
+    inflated_v = [v for v in report["violations"] if "inflated" in v["reason"]]
+    assert inflated_v, report["violations"]
+    v = inflated_v[0]
+    assert v["target"] == "pkg/mod.py::hard"
+    assert v["complexity"] == real_cc
+    assert v["allowed"] == inflated
+
+
+def test_exact_allowlist_value_is_not_inflated(tmp_path):
+    """Guard: recording the exact live CC must NOT trip the inflation check."""
+    _fixture_src(tmp_path, _COMPLEX_FN)
+    live = gate.evaluate(
+        root=tmp_path, paths=("pkg",), allowlist_path=_write_allowlist(tmp_path, {})
+    )
+    cc = live["violations"][0]["complexity"]
+    allow = _write_allowlist(tmp_path, {"pkg/mod.py::hard": cc})
+    report = gate.evaluate(root=tmp_path, paths=("pkg",), allowlist_path=allow)
+    assert report["status"] == "PASS"
+    assert not any("inflated" in v["reason"] for v in report["violations"])
+
+
 def test_stale_allowlist_entry_fails(tmp_path):
     """An allowlisted target now at/below the ceiling, or gone, is stale -> FAIL."""
     _fixture_src(tmp_path, "def easy(x):\n    return x + 1\n")

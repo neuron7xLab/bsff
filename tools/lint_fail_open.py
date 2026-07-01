@@ -23,6 +23,34 @@ allowlisted.
 
     python tools/lint_fail_open.py            # print JSON report
     python tools/lint_fail_open.py --check    # CI: exit 1 on new findings
+
+Scope and known limitations
+---------------------------
+Detecting fail-open code over arbitrary Python is **undecidable**: whether a
+handler can reach a success exit on a live path is a reachability/dataflow
+question no purely-syntactic walker can settle in general. This module is a
+*best-effort ratchet*, not a proof of fail-closed-ness. It deliberately does
+NOT claim completeness. Concretely, the following shapes are known to evade
+detection and are accepted as residual gaps:
+
+  * ``except ...: pass`` where the swallowed error later reaches a
+    fall-through ``return 0`` elsewhere in a non-gate helper. The handler
+    itself contains no success exit, and cross-statement dataflow (does the
+    swallow feed the later success?) is not modelled.
+  * A success value laundered through computation, e.g. ``return len(errors)``
+    where ``errors`` is provably always empty. Only literal / trivially
+    name-resolved constants are recognised; arithmetic and container state
+    are not evaluated.
+  * Exceptions swallowed by a *decorator* (e.g. a ``@suppress_errors`` wrapper)
+    rather than by an in-body ``except``. The linter never follows into
+    decorator implementations.
+
+What *is* recognised (best-effort): success ``return``/``sys.exit`` inside an
+``except`` handler, including a returned module-level ``NAME = 0`` constant;
+gate functions with only constant-success exits; and it correctly treats
+``sys.exit(1)``/``sys.exit(2)`` as genuine failure exits (escape hatches) while
+ignoring obviously-dead decoy guards (``assert True``, ``if False:``/``if 0:``)
+so a live-path success exit is still flagged.
 """
 
 from __future__ import annotations
@@ -48,16 +76,73 @@ def _is_gate_name(name: str) -> bool:
     return name in _GATE_EXACT or name.startswith(_GATE_PREFIXES)
 
 
-def _is_success_return(node: ast.Return) -> bool:
-    """True if ``node`` returns a hard-coded success value (0 or True)."""
+def _is_success_value(val: object) -> bool:
+    """True if ``val`` is a hard-coded success sentinel (``0`` or ``True``)."""
+    if val is True:
+        return True
+    return type(val) is int and val == 0
+
+
+def _is_success_return(node: ast.Return, consts: dict[str, object] | None = None) -> bool:
+    """True if ``node`` returns a hard-coded success value (0 or True).
+
+    ``consts`` maps module-level ``NAME = <constant>`` bindings, so a bare
+    ``return EXIT_SUCCESS`` where ``EXIT_SUCCESS = 0`` also counts (Hole 2).
+    """
     value = node.value
     if value is None:
         return False
     if isinstance(value, ast.Constant):
-        val = value.value
-        if val is True:
-            return True
-        return isinstance(val, int) and not isinstance(val, bool) and val == 0
+        return _is_success_value(value.value)
+    if consts is not None and isinstance(value, ast.Name) and value.id in consts:
+        return _is_success_value(consts[value.id])
+    return False
+
+
+def _module_constants(tree: ast.Module) -> dict[str, object]:
+    """Resolve simple module-level ``NAME = <constant>`` bindings.
+
+    Only top-level, single-target assignments to a literal are captured; a
+    name reassigned more than once is dropped (ambiguous). This is a shallow
+    resolver, not a dataflow engine (see module docstring on limitations).
+    """
+    seen: dict[str, int] = {}
+    consts: dict[str, object] = {}
+    for stmt in tree.body:
+        if not isinstance(stmt, ast.Assign):
+            continue
+        if len(stmt.targets) != 1 or not isinstance(stmt.targets[0], ast.Name):
+            continue
+        if not isinstance(stmt.value, ast.Constant):
+            continue
+        name = stmt.targets[0].id
+        seen[name] = seen.get(name, 0) + 1
+        consts[name] = stmt.value.value
+    return {k: v for k, v in consts.items() if seen.get(k, 0) == 1}
+
+
+def _is_success_exit(node: ast.AST) -> bool:
+    """True if ``node`` is a success ``sys.exit``/``exit``/``os._exit`` call.
+
+    A no-arg ``exit()`` or an ``exit(0)``/``exit(None)`` terminates the process
+    reporting success; inside an ``except`` handler that is a fail-open (Hole 3).
+    """
+    if not isinstance(node, ast.Call):
+        return False
+    func = node.func
+    name = None
+    if isinstance(func, ast.Name):
+        name = func.id
+    elif isinstance(func, ast.Attribute):
+        name = func.attr
+    if name not in ("exit", "_exit"):
+        return False
+    if not node.args:
+        return True
+    arg = node.args[0]
+    if isinstance(arg, ast.Constant):
+        v = arg.value
+        return v is None or (type(v) is int and v == 0)
     return False
 
 
@@ -85,7 +170,14 @@ def _walk_local(body: list[ast.stmt]):
     while stack:
         node = stack.pop()
         yield node
-        for child in ast.iter_child_nodes(node):
+        # Dead-branch pruning: a constant-tested ``if`` executes only one arm,
+        # so a decoy escape hatch buried in the unreachable arm (``if False:
+        # sys.exit(1)``) must not mask a live-path fail-open (Hole 4).
+        if isinstance(node, ast.If) and isinstance(node.test, ast.Constant):
+            children: list[ast.AST] = list(node.body if node.test.value else node.orelse)
+        else:
+            children = list(ast.iter_child_nodes(node))
+        for child in children:
             if isinstance(
                 child,
                 (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef),
@@ -95,9 +187,20 @@ def _walk_local(body: list[ast.stmt]):
 
 
 def _has_escape_hatch(nodes: list[ast.AST]) -> bool:
-    """True if any node is a raise or a nonzero ``sys.exit``/``exit``/assert."""
+    """True if any node is a genuine failure exit (escape hatch).
+
+    A raise, a failing ``assert``, or a nonzero/non-constant ``sys.exit``
+    counts. ``assert True`` (a no-op that can never fail) does not, so it
+    cannot be used as a decoy fail-closed guard (Hole 4).
+    """
     for node in nodes:
-        if isinstance(node, (ast.Raise, ast.Assert)):
+        if isinstance(node, ast.Raise):
+            return True
+        if isinstance(node, ast.Assert):
+            # ``assert True`` / ``assert 1`` never fires; only a fallible
+            # assertion is a real escape hatch.
+            if isinstance(node.test, ast.Constant) and node.test.value:
+                continue
             return True
         if isinstance(node, ast.Call):
             func = node.func
@@ -107,12 +210,18 @@ def _has_escape_hatch(nodes: list[ast.AST]) -> bool:
             elif isinstance(func, ast.Attribute):
                 name = func.attr
             if name in ("exit", "_exit"):
-                # sys.exit()/exit()/os._exit(): nonzero or non-constant => can fail.
+                # sys.exit()/exit()/os._exit(): only exit code 0/None is a
+                # *success* exit. Anything else -- including sys.exit(1) and
+                # sys.exit(2) -- is a genuine failure exit / escape hatch.
+                # Guard with ``type(v) is int`` because Python evaluates
+                # ``1 == True``, which previously misclassified sys.exit(1)
+                # as success (Bug 7).
                 if not node.args:
-                    continue
+                    continue  # exit() == exit(0): a success exit, not a hatch.
                 arg = node.args[0]
                 if isinstance(arg, ast.Constant):
-                    if arg.value not in (0, None, True):
+                    v = arg.value
+                    if not (v is None or (type(v) is int and v == 0)):
                         return True
                 else:
                     return True
@@ -125,18 +234,29 @@ def _snippet(lines: list[str], lineno: int) -> str:
     return ""
 
 
-def _check_except(handler: ast.ExceptHandler, lines: list[str]) -> dict | None:
+def _check_except(
+    handler: ast.ExceptHandler,
+    lines: list[str],
+    consts: dict[str, object] | None = None,
+) -> dict | None:
     body_nodes = list(_walk_local(handler.body))
     if _has_escape_hatch(body_nodes):
         return None  # re-raises or exits nonzero => fail closed.
     for node in body_nodes:
-        if isinstance(node, ast.Return) and _is_success_return(node):
+        if isinstance(node, ast.Return) and _is_success_return(node, consts):
             return {
                 "line": node.lineno,
                 "rule": RULE_EXCEPT,
                 "snippet": _snippet(lines, node.lineno),
             }
         if isinstance(node, ast.Expr) and _is_pass_print(node.value):
+            return {
+                "line": node.lineno,
+                "rule": RULE_EXCEPT,
+                "snippet": _snippet(lines, node.lineno),
+            }
+        # A success process-exit inside the handler is itself fail-open (Hole 3).
+        if isinstance(node, ast.Expr) and _is_success_exit(node.value):
             return {
                 "line": node.lineno,
                 "rule": RULE_EXCEPT,
@@ -177,10 +297,11 @@ def analyze_source(source: str) -> list[dict]:
     """Return findings (line/rule/snippet) for one source string."""
     tree = ast.parse(source)
     lines = source.splitlines()
+    consts = _module_constants(tree)
     findings: list[dict] = []
     for node in ast.walk(tree):
         if isinstance(node, ast.ExceptHandler):
-            found = _check_except(node, lines)
+            found = _check_except(node, lines, consts)
             if found is not None:
                 findings.append(found)
         elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):

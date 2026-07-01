@@ -10,14 +10,23 @@ over that edge, per three invariants a ratified intent must satisfy:
 
   1. FALSIFIABLE   — the intent names a verification (gate + negative-control
                      nodeid) that provably FAILS on the negation of the intent;
-                     the nodeid must resolve to a real, AST-defined test function.
+                     the nodeid must resolve to a real, top-level (pytest-
+                     collectable) AST-defined test function -- a def nested
+                     inside another function is uncollectable and rejected.
   2. RATIFIED      — the intent carries an explicit ``ratified_by`` (a human
                      oracle pre-committed to it), i.e. it is not self-asserted.
-  3. BOUND         — the verification gate file actually exists on disk.
+  3. BOUND         — the verification gate file actually exists on disk, AND the
+                     negative-control test FILE statically references the gate
+                     module it falsifies (import or string), so the control
+                     cannot point at an unrelated ``assert True`` test. This
+                     linkage is necessary-not-sufficient: full behavioral proof
+                     (the control actually FAILS the gate) is delegated to the
+                     ``test-py*`` CI run that executes the suite.
 
-An intent that is unratified, or whose verification does not resolve, FAILs
-closed. This transfers the trust point from the tool's fluency to the operator's
-ratification: everything after ratification is mechanized.
+An intent that is unratified, or whose verification does not resolve or does not
+link to its gate, FAILs closed. This transfers the trust point from the tool's
+fluency to the operator's ratification: everything after ratification is
+mechanized.
 """
 
 from __future__ import annotations
@@ -42,8 +51,37 @@ def _load_registry(root: Path) -> dict:
     return data
 
 
+def _resolves_top_level(tree: ast.Module, func_spec: str) -> bool:
+    """True iff ``func_spec`` names a test pytest can collect at the top level.
+
+    ``func_spec`` is the nodeid segment after the file (``test_foo`` or
+    ``TestBar::test_baz``). Only functions defined directly in the module body,
+    and methods defined directly in the body of a top-level class, resolve. A
+    def NESTED inside another function is uncollectable by pytest and MUST NOT
+    resolve (previously ``ast.walk`` descended into inner defs and wrongly
+    resolved them).
+    """
+    parts = [p for p in func_spec.split("::") if p]
+    if len(parts) == 1:
+        name = parts[0]
+        return any(
+            isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == name
+            for n in tree.body
+        )
+    if len(parts) == 2:
+        cls_name, meth_name = parts
+        for n in tree.body:
+            if isinstance(n, ast.ClassDef) and n.name == cls_name:
+                return any(
+                    isinstance(m, (ast.FunctionDef, ast.AsyncFunctionDef)) and m.name == meth_name
+                    for m in n.body
+                )
+    return False
+
+
 def _nodeid_resolves(root: Path, nodeid: object) -> bool:
-    """True iff ``file::func`` names a real file AND an AST-defined function."""
+    """True iff ``file::func`` names a real file AND a top-level, pytest-
+    collectable AST-defined function (a nested/inner def does NOT resolve)."""
     if not isinstance(nodeid, str) or "::" not in nodeid:
         return False
     rel, _, func = nodeid.partition("::")
@@ -55,10 +93,27 @@ def _nodeid_resolves(root: Path, nodeid: object) -> bool:
         tree = ast.parse(path.read_text(encoding="utf-8"))
     except (OSError, SyntaxError):
         return False
-    return any(
-        isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == base
-        for n in ast.walk(tree)
-    )
+    return _resolves_top_level(tree, base)
+
+
+def _test_references_gate(root: Path, nodeid: object, gate: object) -> bool:
+    """True if the negative-control test FILE references the gate module.
+
+    Static linkage: the test source must mention the gate module name (import or
+    string) so the control cannot point at an unrelated ``assert True`` test.
+    Necessary-not-sufficient; behavioral proof is delegated to the CI test run.
+    """
+    if not isinstance(nodeid, str) or "::" not in nodeid or not isinstance(gate, str):
+        return False
+    stem = Path(gate).stem
+    rel = nodeid.partition("::")[0]
+    path = root / rel
+    if not stem or not path.is_file():
+        return False
+    try:
+        return stem in path.read_text(encoding="utf-8")
+    except OSError:
+        return False
 
 
 def _evaluate_intent(root: Path, intent_id: str, intent: object) -> list[str]:
@@ -78,10 +133,16 @@ def _evaluate_intent(root: Path, intent_id: str, intent: object) -> list[str]:
     gate = verification.get("gate")
     if not isinstance(gate, str) or not (root / gate).is_file():
         errors.append(f"{intent_id}: verification gate missing: {gate!r}")
-    if not _nodeid_resolves(root, verification.get("negative_control")):
+    negative_control = verification.get("negative_control")
+    if not _nodeid_resolves(root, negative_control):
         errors.append(
             f"{intent_id}: negative_control does not resolve to a defined test: "
-            f"{verification.get('negative_control')!r}"
+            f"{negative_control!r}"
+        )
+    elif not _test_references_gate(root, negative_control, gate):
+        errors.append(
+            f"{intent_id}: negative_control test does not reference gate "
+            f"{gate!r} (decorative link): {negative_control!r}"
         )
     return errors
 

@@ -167,3 +167,132 @@ def test_unbacked_asserted_claim_fails(tmp_path: Path) -> None:
     result = evaluate(root)
     assert result["status"] == "FAIL"
     assert "BSFF-CLAIM-001" in result["unbacked_claims"]
+
+
+# --- Hole 1: fail-closed asserted-predicate -----------------------------
+@pytest.mark.parametrize(
+    "status",
+    [
+        ["verified"],  # not in the old substring vocabulary -> used to slip to exempt
+        ["survived"],
+        ["internally-verified"],  # hyphen variant of the old token
+        ["typo_status_xyz"],  # unknown/mistyped -> must fail closed to asserted
+        ["unverified", "verified"],  # mixed: one non-exempt token -> asserted
+    ],
+)
+def test_negative_control_nonexempt_status_is_asserted(tmp_path: Path, status: list[str]) -> None:
+    """A status not drawn entirely from the closed EXEMPT vocabulary must be
+    treated as ASSERTED: with no evidence it is an orphan -> FAIL, never
+    silently exempt."""
+    root = _write_root(
+        tmp_path,
+        claims={"BSFF-CLAIM-001": {"status": status, "evidence_artifacts": []}},
+        artifacts=[{"path": "claims.yaml", "claim_ids": ["BSFF-CLAIM-001"]}],
+        files=[],
+    )
+
+    result = evaluate(root)
+
+    assert result["status"] == "FAIL"
+    assert "BSFF-CLAIM-001" in result["orphan_claims"]
+    exempt_ids = [e["claim_id"] for e in result["exempt"]]
+    assert "BSFF-CLAIM-001" not in exempt_ids
+
+
+# --- Hole 2: evidence must be a non-empty regular file -------------------
+def test_negative_control_empty_evidence_file_fails(tmp_path: Path) -> None:
+    """A 0-byte evidence file does not satisfy the completeness requirement."""
+    root = _write_root(
+        tmp_path,
+        claims={
+            "BSFF-CLAIM-001": {
+                "status": ["internally_verified"],
+                "evidence_artifacts": ["evidence/empty.json"],
+            }
+        },
+        artifacts=[{"path": "claims.yaml", "claim_ids": ["BSFF-CLAIM-001"]}],
+        files=[],  # create the evidence file empty, below
+    )
+    empty = root / "evidence" / "empty.json"
+    empty.parent.mkdir(parents=True, exist_ok=True)
+    empty.write_bytes(b"")  # 0 bytes
+
+    result = evaluate(root)
+
+    assert result["status"] == "FAIL"
+    missing = [m["path"] for m in result["missing_evidence_files"]]
+    assert "evidence/empty.json" in missing
+
+
+def test_negative_control_directory_evidence_fails(tmp_path: Path) -> None:
+    """A directory at the evidence path is not a valid artifact."""
+    root = _write_root(
+        tmp_path,
+        claims={
+            "BSFF-CLAIM-001": {
+                "status": ["internally_verified"],
+                "evidence_artifacts": ["evidence/as_dir"],
+            }
+        },
+        artifacts=[{"path": "claims.yaml", "claim_ids": ["BSFF-CLAIM-001"]}],
+        files=[],
+    )
+    (root / "evidence" / "as_dir").mkdir(parents=True, exist_ok=True)
+
+    result = evaluate(root)
+
+    assert result["status"] == "FAIL"
+    missing = [m["path"] for m in result["missing_evidence_files"]]
+    assert "evidence/as_dir" in missing
+
+
+# --- Hole 3: phantom manifest path cannot back a claim ------------------
+def test_negative_control_phantom_manifest_path_unbacks_claim(
+    tmp_path: Path,
+) -> None:
+    """A claim 'backed' only by a manifest artifact whose path does not exist
+    (or is empty) is unbacked -> FAIL. Real evidence still exists on disk, so
+    the failure is specifically the unbacked hole."""
+    root = _write_root(
+        tmp_path,
+        claims={
+            "BSFF-CLAIM-001": {
+                "status": ["internally_verified"],
+                "evidence_artifacts": ["evidence/a.json"],
+            }
+        },
+        artifacts=[
+            {"path": "does/not/exist.json", "claim_ids": ["BSFF-CLAIM-001"]},
+        ],
+        files=["evidence/a.json"],
+    )
+
+    result = evaluate(root)
+
+    assert result["status"] == "FAIL"
+    assert result["missing_evidence_files"] == []
+    assert "BSFF-CLAIM-001" in result["unbacked_claims"]
+    # the phantom path contributes nothing to the coverage matrix
+    assert result["coverage_matrix"]["BSFF-CLAIM-001"] == []
+
+
+def test_negative_control_empty_manifest_path_unbacks_claim(tmp_path: Path) -> None:
+    """A manifest artifact whose path exists but is a 0-byte file also fails to
+    back the claim."""
+    root = _write_root(
+        tmp_path,
+        claims={
+            "BSFF-CLAIM-001": {
+                "status": ["internally_verified"],
+                "evidence_artifacts": ["evidence/a.json"],
+            }
+        },
+        artifacts=[{"path": "empty_backer.json", "claim_ids": ["BSFF-CLAIM-001"]}],
+        files=["evidence/a.json"],
+    )
+    (root / "empty_backer.json").write_bytes(b"")  # 0 bytes -> not a real backer
+
+    result = evaluate(root)
+
+    assert result["status"] == "FAIL"
+    assert "BSFF-CLAIM-001" in result["unbacked_claims"]

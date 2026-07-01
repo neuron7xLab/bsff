@@ -123,3 +123,74 @@ def test_gate_with_assert_not_flagged() -> None:
     source = "def check():\n    assert invariant()\n    return 0\n"
     findings = lint_fail_open.analyze_source(source)
     assert all(f["rule"] != "unfailable_gate" for f in findings)
+
+
+def test_bug7_sys_exit_one_is_failure_exit_not_success() -> None:
+    """Bug 7: ``sys.exit(1)``/``(2)`` are failure exits (escape hatches).
+
+    Python evaluates ``1 == True``, which previously misclassified
+    ``sys.exit(1)`` as a success exit. Only ``exit(0)``/``exit()`` is success.
+    """
+    for code in (1, 2):
+        closed = (
+            "def check():\n"
+            "    try:\n"
+            "        risky()\n"
+            "    except Exception:\n"
+            f"        sys.exit({code})\n"
+        )
+        assert lint_fail_open.analyze_source(closed) == [], code
+    # Companion: exit(0) is a success exit and IS flagged (the 0-vs-1 line).
+    opened = "def check():\n    try:\n        risky()\n    except Exception:\n        sys.exit(0)\n"
+    assert any(f["rule"] == "fail_open_except" for f in lint_fail_open.analyze_source(opened))
+
+
+def test_negative_control_except_sys_exit_zero_is_flagged() -> None:
+    """Hole 3: a success process-exit inside an ``except`` is fail-open."""
+    source = "def check():\n    try:\n        risky()\n    except Exception:\n        sys.exit(0)\n"
+    findings = lint_fail_open.analyze_source(source)
+    assert any(f["rule"] == "fail_open_except" for f in findings)
+
+
+def test_negative_control_dead_decoy_hatch_does_not_mask_success() -> None:
+    """Hole 4: dead ``assert True`` / ``if False:`` guards must not fail-close."""
+    source = (
+        "def check():\n"
+        "    try:\n"
+        "        risky()\n"
+        "    except Exception:\n"
+        "        assert True\n"
+        "        if False:\n"
+        "            sys.exit(1)\n"
+        "        return 0\n"
+    )
+    findings = lint_fail_open.analyze_source(source)
+    assert any(f["rule"] == "fail_open_except" for f in findings)
+
+
+def test_negative_control_except_returns_module_constant_zero_is_flagged() -> None:
+    """Hole 2: ``return EXIT_SUCCESS`` where ``EXIT_SUCCESS = 0`` is fail-open."""
+    source = (
+        "EXIT_SUCCESS = 0\n"
+        "def check():\n"
+        "    try:\n"
+        "        risky()\n"
+        "    except Exception:\n"
+        "        return EXIT_SUCCESS\n"
+    )
+    findings = lint_fail_open.analyze_source(source)
+    assert any(f["rule"] == "fail_open_except" for f in findings)
+
+
+def test_module_constant_nonzero_not_flagged() -> None:
+    """Control: ``return EXIT_FAILURE`` where ``EXIT_FAILURE = 1`` fails closed."""
+    source = (
+        "EXIT_FAILURE = 1\n"
+        "def check():\n"
+        "    try:\n"
+        "        risky()\n"
+        "    except Exception:\n"
+        "        return EXIT_FAILURE\n"
+    )
+    findings = lint_fail_open.analyze_source(source)
+    assert all(f["rule"] != "fail_open_except" for f in findings)

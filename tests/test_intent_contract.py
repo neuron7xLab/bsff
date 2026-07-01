@@ -35,8 +35,11 @@ def _write_registry(tmp_path: Path, intents: dict) -> Path:
         "def main():\n    return 0\n", encoding="utf-8"
     )
     (tmp_path / "tests").mkdir(exist_ok=True)
+    # The test file must reference the gate module (static linkage) or the gate
+    # is treated as a decorative, unlinked control.
     (tmp_path / "tests" / "test_real.py").write_text(
-        "def test_real_negative_control():\n    assert True\n", encoding="utf-8"
+        "import real_gate  # noqa: F401\n\n\ndef test_real_negative_control():\n    assert True\n",
+        encoding="utf-8",
     )
     return tmp_path
 

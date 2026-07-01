@@ -10,11 +10,20 @@ current genuinely-hard offenders so this behaves as a *ratchet*: new or
 edited code cannot exceed the ceiling, while existing debt stays visible
 and bounded until it is decomposed.
 
+Every function is scored, including nested functions and closures: radon
+reports closures under a parent block's ``closures`` list, so the scorer
+recurses into them and keys them by their dotted lineage
+(``relpath::outer.inner`` / ``relpath::Class.method.helper``). Hiding hot
+logic in a nested ``def`` therefore no longer evades the ceiling.
+
 Allowlist semantics (``tools/complexity_allowlist.json``):
   ``"relpath::qualified_name" -> recorded_cc``
-An offender is tolerated only if it is allowlisted AND its live CC has not
-risen above the recorded value. A live CC above the recorded value (or an
-allowlist entry whose function no longer exceeds the ceiling) is surfaced.
+An offender is tolerated only if it is allowlisted AND its live CC exactly
+equals the recorded value (``live_cc <= recorded``). A live CC above the
+recorded value is a ratchet regression; an allowlist entry whose function no
+longer exceeds the ceiling, or whose recorded value is *inflated* above the
+live CC (``recorded > live_cc``, which would open a silent regression
+corridor), is surfaced and fails the gate.
 """
 
 from __future__ import annotations
@@ -62,8 +71,26 @@ def _load_allowlist(path=ALLOWLIST_PATH):
     return {str(k): int(v) for k, v in allow.items()}
 
 
+def _walk_block(rel, block, prefix):
+    """Yield ``(key, complexity)`` for ``block`` and every nested closure.
+
+    ``prefix`` is the dotted qualified name of ``block`` (e.g. ``outer`` or
+    ``Class.method``); each closure extends it (``outer.inner``). Radon nests
+    closures under ``block["closures"]`` and never flattens them, so without
+    this recursion complexity hidden inside a nested ``def`` would be invisible
+    to the ratchet.
+    """
+    yield f"{rel}::{prefix}", int(block["complexity"])
+    for closure in block.get("closures") or []:
+        if not isinstance(closure, dict) or "complexity" not in closure:
+            continue
+        child = closure.get("name", "")
+        child_prefix = f"{prefix}.{child}" if prefix else child
+        yield from _walk_block(rel, closure, child_prefix)
+
+
 def _iter_blocks(radon_data, root):
-    """Yield ``(key, complexity)`` for every function/method radon reported."""
+    """Yield ``(key, complexity)`` for every function/method/closure reported."""
     root = Path(root)
     for file_path, blocks in radon_data.items():
         try:
@@ -73,7 +100,7 @@ def _iter_blocks(radon_data, root):
         for block in blocks:
             if not isinstance(block, dict) or "complexity" not in block:
                 continue
-            yield f"{rel}::{_qualified_name(block)}", int(block["complexity"])
+            yield from _walk_block(rel, block, _qualified_name(block))
 
 
 def evaluate(root=ROOT, paths=DEFAULT_PATHS, allowlist_path=ALLOWLIST_PATH):
@@ -122,7 +149,11 @@ def evaluate(root=ROOT, paths=DEFAULT_PATHS, allowlist_path=ALLOWLIST_PATH):
     # ceiling (refactored below CEILING, or deleted/renamed away) must be removed
     # from the allowlist. Keeping it hides regressions and rots the ratchet, so
     # a stale entry fails closed and forces cleanup.
+    # Inflation guard: an entry recorded ABOVE the live CC (recorded > live_cc)
+    # opens a silent regression corridor up to the recorded value, so the entry
+    # must be pinned to the real CC. It fails closed and forces the correction.
     for key in sorted(allowlist):
+        recorded = allowlist[key]
         cc = live_cc.get(key)
         if cc is None:
             violations.append(
@@ -139,6 +170,16 @@ def evaluate(root=ROOT, paths=DEFAULT_PATHS, allowlist_path=ALLOWLIST_PATH):
                     "complexity": cc,
                     "ceiling": CEILING,
                     "reason": "stale allowlist entry: no longer exceeds ceiling, remove it",
+                }
+            )
+        elif recorded > cc:
+            violations.append(
+                {
+                    "target": key,
+                    "complexity": cc,
+                    "allowed": recorded,
+                    "ceiling": CEILING,
+                    "reason": "inflated allowlist entry: recorded CC exceeds live CC, lower it to the real value",
                 }
             )
 

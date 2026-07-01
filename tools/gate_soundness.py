@@ -9,15 +9,25 @@ FAILS. A gate with only "passes on the real repo" tests is decorative -- it
 could be replaced by ``print("PASS")`` and no test would notice.
 
 This tool reads ``gate_soundness_registry.json`` (the curated map of gate tool
--> negative-control nodeid, plus a frozen ``unproven`` debt list), discovers the
-live set of gate tools, and reports which gates are proven. As a CLI with
-``--check`` it enforces a **ratchet**: the set of unproven gates may shrink but
-never GROW beyond the committed frozen list. A newly added gate must ship a
-negative control (registry entry whose test file exists) or be explicitly added
-to the frozen ``unproven`` list -- otherwise ``--check`` fails closed (exit 1).
+-> negative-control nodeid, plus an ``unproven`` debt list), discovers the live
+set of gate tools, and reports which gates are proven. As a CLI with ``--check``
+it enforces a **ratchet**: a newly discovered gate that is neither proven nor
+listed in ``unproven`` is a ``new_unproven`` violation and fails closed (exit 1).
 
-The honest ``unproven`` list is the finding: it is the map of decorative-risk
-gates, not a bug to be hidden.
+The ``unproven`` list is NOT an immutable baseline the tool secretly enforces:
+it is the VISIBLE, reviewed debt. It can shrink (prove a gate) and it can grow
+(admit a new decorative-risk gate), but growing it is an EXPLICIT, auditable act
+in the diff -- a reviewer sees the line added -- not a silent bypass. The finding
+is the list itself: the map of decorative-risk gates, honestly on the record.
+
+Proof has two layers. A registry entry counts as *proven* only if its
+negative-control nodeid (1) resolves to a **top-level**, pytest-collectable test
+function or ``Test*``-class method -- a def nested inside another function is
+uncollectable and rejected -- and (2) the test FILE statically **references the
+gate module** it falsifies (import or string mention), so a nodeid cannot point
+at an unrelated ``assert True`` test. This static linkage is necessary but not
+sufficient: full behavioral proof (the negative control actually FAILS the gate
+on bad input) is delegated to the ``test-py*`` CI run that executes the suite.
 """
 
 from __future__ import annotations
@@ -36,7 +46,18 @@ SCHEMA = "bsff.gate_soundness/v1"
 # not audit everyone else from outside it).
 _GATE_NAME_RE = re.compile(r"^(validate_|check_|verify_).*\.py$|.*(_gate|_probe)\.py$")
 _EXTRA_GATES = frozenset(
-    {"lint_fail_open.py", "claim_coverage.py", "quality_dashboard.py", "intent_contract.py"}
+    {
+        "lint_fail_open.py",
+        "claim_coverage.py",
+        "quality_dashboard.py",
+        "intent_contract.py",
+        # CI-enforcing gates outside the naming convention (``--check`` in
+        # ci.yml). Without listing them here they would be invisible to this
+        # audit -- an unaudited gate is exactly the decorative-risk this tool
+        # exists to surface. They enter as honest ``unproven`` debt.
+        "cluster_robust_specificity.py",
+        "analytic_uniformity_null.py",
+    }
 )
 
 # This meta-tool audits gates; it is not itself an audited gate.
@@ -76,30 +97,77 @@ def load_registry(root: Path) -> dict:
     return data
 
 
+def _resolves_top_level(tree: ast.Module, func_spec: str) -> bool:
+    """True iff ``func_spec`` names a test pytest can collect at the top level.
+
+    ``func_spec`` is the nodeid segment after the file (e.g. ``test_foo`` or
+    ``TestBar::test_baz``). Only functions defined **directly in the module
+    body**, and methods defined **directly in the body of a top-level class**
+    (collected via a ``Class::method`` nodeid), resolve. A def NESTED inside
+    another function is unreachable by pytest collection and MUST NOT resolve
+    (Hole 2: ``ast.walk`` used to descend into inner defs and wrongly resolve).
+    """
+    parts = [p for p in func_spec.split("::") if p]
+    if len(parts) == 1:
+        name = parts[0]
+        return any(
+            isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == name
+            for n in tree.body
+        )
+    if len(parts) == 2:
+        cls_name, meth_name = parts
+        for n in tree.body:
+            if isinstance(n, ast.ClassDef) and n.name == cls_name:
+                return any(
+                    isinstance(m, (ast.FunctionDef, ast.AsyncFunctionDef)) and m.name == meth_name
+                    for m in n.body
+                )
+    return False
+
+
 def _nodeid_function_defined(path: Path, func: str) -> bool:
-    """True if ``func`` is defined as a top-level test function in ``path``.
+    """True if ``func`` names a top-level, pytest-collectable test in ``path``.
 
     Uses AST so a decorative nodeid whose function does not actually exist (a
-    renamed/deleted test) cannot count as a negative control. The leading
-    segment before any ``[param]`` is matched, so parametrized tests resolve.
+    renamed/deleted test) cannot count as a negative control. The trailing
+    ``[param]`` is stripped, so parametrized tests resolve; a nested/inner def
+    does not (see ``_resolves_top_level``).
     """
     base = func.split("[", 1)[0]
     try:
         tree = ast.parse(path.read_text(encoding="utf-8"))
     except (OSError, SyntaxError):
         return False
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == base:
-            return True
-    return False
+    return _resolves_top_level(tree, base)
 
 
-def _is_proven(root: Path, entry: object) -> bool:
-    """A gate is proven only if its negative-control nodeid resolves to a real,
-    defined test function — not merely an existing file.
+def _test_references_gate(path: Path, gate: str) -> bool:
+    """True if the negative-control test FILE references the gate module.
 
-    Defeats two decorative-entry failure modes: a nodeid pointing at a deleted
-    file, AND a nodeid naming a function that does not exist in an existing file.
+    Static linkage (Hole 1): the test source must mention the gate module name
+    (import or string) so a nodeid cannot point at an unrelated ``assert True``
+    test that never exercises the gate. This is necessary-not-sufficient --
+    behavioral proof (the test actually FAILS the gate on bad input) is
+    delegated to the ``test-py*`` CI run that executes the suite.
+    """
+    stem = Path(gate).stem
+    if not stem:
+        return False
+    try:
+        source = path.read_text(encoding="utf-8")
+    except OSError:
+        return False
+    return stem in source
+
+
+def _is_proven(root: Path, gate: str, entry: object) -> bool:
+    """A gate is proven only if its negative-control nodeid (a) resolves to a
+    real, top-level, pytest-collectable test function, AND (b) lives in a test
+    file that statically references the gate module under test.
+
+    Defeats three decorative-entry failure modes: a nodeid pointing at a deleted
+    file, a nodeid naming a function absent from (or nested inside) an existing
+    file, and a nodeid pointing at a real but unrelated test.
     """
     if not isinstance(entry, dict):
         return False
@@ -109,6 +177,8 @@ def _is_proven(root: Path, entry: object) -> bool:
     test_file, _, func = nodeid.partition("::")
     path = root / test_file
     if not path.is_file() or not func.strip():
+        return False
+    if not _test_references_gate(path, gate):
         return False
     return _nodeid_function_defined(path, func.strip())
 
@@ -129,7 +199,7 @@ def evaluate(root: Path | str) -> dict:
     unproven: list[str] = []
     proven_count = 0
     for gate in gates:
-        if gate in reg_gates and _is_proven(root, reg_gates[gate]):
+        if gate in reg_gates and _is_proven(root, gate, reg_gates[gate]):
             proven_count += 1
         else:
             unproven.append(gate)

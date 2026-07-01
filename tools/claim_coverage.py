@@ -9,16 +9,20 @@ The claim registry (``claims.yaml``, JSON-compatible) and the release manifest
 
 This tool proves the graph is COMPLETE:
 
-* every *asserted* claim (status implies it is asserted, e.g. contains
-  ``internally_verified`` or ``committed_evidence``) references at least one
-  evidence artifact and every referenced artifact EXISTS on disk;
+* every *asserted* claim references at least one evidence artifact and every
+  referenced artifact is an existing, NON-EMPTY regular file on disk;
 * every ``artifacts[*].claim_ids`` entry in the manifest names a claim that
   actually EXISTS in the registry (no dangling claim id);
-* every asserted claim SHOULD be backed by at least one manifest-bound
-  artifact (reported as ``unbacked_claims``, advisory).
+* every asserted claim is backed by at least one manifest-bound artifact whose
+  ``path`` is itself an existing non-empty file (a claim backed only by a
+  phantom/empty path is reported as ``unbacked_claims`` and FAILs).
 
-Claims whose status is scope-only / ``unverified`` are exempt from the
-evidence-existence requirement but are enumerated (with a reason) under
+A claim is *asserted* (subject to the completeness requirement) UNLESS its
+status is drawn entirely from an explicit, closed EXEMPT vocabulary of
+scope-only / unverified tokens (see ``EXEMPT_TOKENS``). This is deliberately
+fail-closed: an unknown, mistyped, or hyphen-variant status (``verified``,
+``survived``, ``internally-verified``) is treated as ASSERTED and checked,
+never silently exempted. Exempt claims are enumerated (with a reason) under
 ``exempt`` so the exemption is explicit and auditable.
 
 Exit code 1 on FAIL (any dangling claim id, missing evidence file, or an
@@ -35,14 +39,33 @@ from typing import Any
 
 SCHEMA = "bsff.claim_coverage/v1"
 
-# Status tokens that mark a claim as *asserted* (subject to the evidence
-# completeness requirement).
-ASSERTED_TOKENS = ("internally_verified", "committed_evidence")
+# Closed vocabulary of scope-only / unverified status tokens. A claim is
+# EXEMPT from the evidence-completeness requirement only when *every* one of
+# its status tokens is drawn from this set. Any other non-empty token (an
+# unknown/mistyped/hyphen-variant status) fails closed into the ASSERTED path
+# and is fully checked -- exemption is never granted by omission.
+EXEMPT_TOKENS = frozenset(
+    {
+        "unverified",
+        "external_required",
+        "preregistered",
+        "scope_only",
+        "draft",
+    }
+)
 
 
 def _load_json(path: Path) -> Any:
     """Load a JSON-compatible document (claims.yaml is JSON-compatible)."""
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _is_nonempty_file(path: Path) -> bool:
+    """True iff ``path`` is an existing, non-empty *regular* file.
+
+    An empty file or a directory does not count as a real artifact.
+    """
+    return path.is_file() and path.stat().st_size > 0
 
 
 def _status_tokens(status: Any) -> list[str]:
@@ -57,8 +80,16 @@ def _status_tokens(status: Any) -> list[str]:
 
 
 def _is_asserted(status: Any) -> bool:
-    tokens = _status_tokens(status)
-    return any(any(tok in t for tok in ASSERTED_TOKENS) for t in tokens)
+    """Fail-closed assertion test.
+
+    A claim is asserted unless it carries at least one status token and
+    *every* token is an explicit member of :data:`EXEMPT_TOKENS`. A claim with
+    no status, or whose status contains any non-exempt token, is asserted.
+    """
+    tokens = [t for t in _status_tokens(status) if t]
+    if not tokens:
+        return False
+    return not all(tok in EXEMPT_TOKENS for tok in tokens)
 
 
 def evaluate(root: str | Path) -> dict[str, Any]:
@@ -98,7 +129,7 @@ def evaluate(root: str | Path) -> dict[str, Any]:
             continue
 
         for rel in sorted(evidence):
-            if not (root / rel).exists():
+            if not _is_nonempty_file(root / rel):
                 missing_evidence_files.append({"claim_id": claim_id, "path": rel})
 
     # --- direction 2: manifest claim_ids -> registry --------------------
@@ -110,12 +141,17 @@ def evaluate(root: str | Path) -> dict[str, Any]:
         claim_ids = art.get("claim_ids", []) or []
         if not claim_ids:
             continue
-        bound_artifacts += 1
         art_path = str(art.get("path", ""))
+        # An artifact only *backs* a claim if its own path is a real, non-empty
+        # file on disk; a phantom or empty path cannot provide evidentiary
+        # support even if the claim id it names is valid.
+        art_backs = bool(art_path) and _is_nonempty_file(root / art_path)
+        if art_backs:
+            bound_artifacts += 1
         for cid in claim_ids:
             if cid not in known_claim_ids:
                 dangling_claim_ids.append({"claim_id": cid, "artifact": art_path})
-            else:
+            elif art_backs:
                 coverage_matrix.setdefault(cid, []).append(art_path)
 
     for cid in coverage_matrix:
