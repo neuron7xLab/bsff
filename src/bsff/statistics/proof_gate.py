@@ -35,7 +35,11 @@ def _sha(root, rel):
 
 
 def _upper(pair):
-    if isinstance(pair, list) and len(pair) == 2 and isinstance(pair[1], (int, float)):
+    if (
+        isinstance(pair, list)
+        and len(pair) == 2
+        and isinstance(pair[1], (int, float))
+    ):
         return float(pair[1])
     return None
 
@@ -80,22 +84,29 @@ def evaluate(root=ROOT):
         seed = _data(root, paths.get("s3_confirmatory", ""))
         cluster = _data(root, paths.get("cluster_robust_ci", ""))
         summary = _data(root, paths.get("s2_summary", ""))
-        if _upper(seed.get("G2", {}).get("wilson_95ci")) is None or _upper(
-            cluster.get("cluster_robust_t_95ci")
-        ) is None:
+        if (
+            _upper(seed.get("G2", {}).get("wilson_95ci")) is None
+            or _upper(cluster.get("cluster_robust_t_95ci")) is None
+        ):
             errs.append(cid + ": uncertainty interval missing")
-        if len(seed.get("per_seed", [])) < 2 or len(cluster.get("per_seed_fpr", [])) < 2:
+        if (
+            len(seed.get("per_seed", [])) < 2
+            or len(cluster.get("per_seed_fpr", [])) < 2
+        ):
             errs.append(cid + ": seed sensitivity missing")
         if (
             summary.get("S2_BRIGHT_LINE_PASSED") is not True
             and summary.get("final_state") != "S2_BRIGHT_LINE_PASSED"
         ):
             errs.append(cid + ": dataset-specific result missing")
-        if truth.get("s2_seed_averaged_fpr") != seed.get("G2", {}).get("ar_null_fpr"):
+        if truth.get("s2_seed_averaged_fpr") != seed.get("G2", {}).get(
+            "ar_null_fpr"
+        ):
             errs.append(cid + ": aggregate-vs-dataset metric mismatch")
-        if seed.get("G2", {}).get("ci_upper_threshold") != 0.05 or cluster.get(
-            "threshold"
-        ) != 0.05:
+        if (
+            seed.get("G2", {}).get("ci_upper_threshold") != 0.05
+            or cluster.get("threshold") != 0.05
+        ):
             errs.append(cid + ": failure threshold missing")
         proofs.append(
             {
