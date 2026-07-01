@@ -1,0 +1,8 @@
+{
+  "schema": "bsff.statistical_proof_gate/v1",
+  "status": "PASS",
+  "proof_count": 2,
+  "claim_registry": "claims.yaml",
+  "current_truth": "artifacts/release/CURRENT_TRUTH.json",
+  "note": "Snapshot marker for --check; live claim/artifact validation is recomputed by tools/validate_statistical_proof_gate.py."
+}
