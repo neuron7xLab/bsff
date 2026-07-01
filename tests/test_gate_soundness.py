@@ -143,3 +143,37 @@ def test_registry_negative_control_files_exist():
         test_file = nodeid.split("::", 1)[0]
         assert (ROOT / test_file).is_file(), f"{gate}: missing {test_file}"
         assert entry["rationale"].strip()
+
+
+def test_registry_entry_with_missing_function_is_not_proven(tmp_path):
+    """A nodeid whose FILE exists but whose function is not defined does NOT
+    count as proven — file existence alone is not a negative control (AST check)."""
+    gs = _load()
+    tools_dir = tmp_path / "tools"
+    tools_dir.mkdir()
+    _make_gate(tools_dir, "validate_decorated.py")
+    tests_dir = tmp_path / "tests"
+    tests_dir.mkdir()
+    # The file exists but does NOT define the cited function.
+    (tests_dir / "test_real_file.py").write_text(
+        "def test_something_else():\n    assert True\n", encoding="utf-8"
+    )
+    (tools_dir / "gate_soundness_registry.json").write_text(
+        json.dumps(
+            {
+                "gates": {
+                    "tools/validate_decorated.py": {
+                        "negative_control_test": "tests/test_real_file.py::test_ghost_function",
+                        "rationale": "file exists, function does not",
+                    }
+                },
+                "unproven": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    result = gs.evaluate(tmp_path)
+    assert result["proven"] == 0
+    assert "tools/validate_decorated.py" in result["new_unproven"]
+    assert result["status"] == "FAIL"

@@ -171,24 +171,29 @@ def evaluate(
 ) -> dict[str, object]:
     """Run every registered generator twice and report byte-determinism.
 
-    The gate is *run-twice byte identity*: a generator is nondeterministic if two
-    consecutive regenerations produce different bytes, or if it fails to run. The
-    committed-bytes match is recorded per generator for transparency but does not
-    by itself drive the status (a stale-but-deterministic artifact is a drift
-    problem, not a nondeterminism problem). The working tree is always restored.
+    Two failure modes, both fail-closed, because artifact-bound verification needs
+    both: (1) *nondeterministic* — two consecutive regenerations differ, or the
+    generator fails to run; (2) *stale* — the committed bytes do not match a fresh
+    regeneration, so the repository ships an artifact that no longer reflects its
+    source (a deterministic-but-drifted artifact is still a broken proof). The
+    working tree is always restored.
     """
     checked: list[dict[str, object]] = []
     nondeterministic: list[str] = []
+    stale: list[str] = []
     for gen in registry:
         entry = _probe_one(root, gen)
         checked.append(entry)
         if not entry["deterministic"]:
             nondeterministic.append(str(entry["name"]))
-    status = "PASS" if not nondeterministic else "FAIL"
+        elif not entry["committed_match"]:
+            stale.append(str(entry["name"]))
+    status = "PASS" if not nondeterministic and not stale else "FAIL"
     return {
         "schema": SCHEMA,
         "checked": checked,
         "nondeterministic": nondeterministic,
+        "stale": stale,
         "status": status,
     }
 

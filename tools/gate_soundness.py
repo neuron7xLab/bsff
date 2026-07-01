@@ -23,6 +23,7 @@ gates, not a bug to be hidden.
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import re
 from pathlib import Path
@@ -73,19 +74,41 @@ def load_registry(root: Path) -> dict:
     return data
 
 
-def _is_proven(root: Path, entry: object) -> bool:
-    """A gate is proven only if its negative-control test file actually exists.
+def _nodeid_function_defined(path: Path, func: str) -> bool:
+    """True if ``func`` is defined as a top-level test function in ``path``.
 
-    This defeats decorative registry entries: naming a nodeid that points at a
-    deleted or non-existent test does not count as a negative control.
+    Uses AST so a decorative nodeid whose function does not actually exist (a
+    renamed/deleted test) cannot count as a negative control. The leading
+    segment before any ``[param]`` is matched, so parametrized tests resolve.
+    """
+    base = func.split("[", 1)[0]
+    try:
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+    except (OSError, SyntaxError):
+        return False
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == base:
+            return True
+    return False
+
+
+def _is_proven(root: Path, entry: object) -> bool:
+    """A gate is proven only if its negative-control nodeid resolves to a real,
+    defined test function — not merely an existing file.
+
+    Defeats two decorative-entry failure modes: a nodeid pointing at a deleted
+    file, AND a nodeid naming a function that does not exist in an existing file.
     """
     if not isinstance(entry, dict):
         return False
     nodeid = entry.get("negative_control_test")
-    if not isinstance(nodeid, str) or not nodeid.strip():
+    if not isinstance(nodeid, str) or "::" not in nodeid:
         return False
-    test_file = nodeid.split("::", 1)[0]
-    return (root / test_file).is_file()
+    test_file, _, func = nodeid.partition("::")
+    path = root / test_file
+    if not path.is_file() or not func.strip():
+        return False
+    return _nodeid_function_defined(path, func.strip())
 
 
 def evaluate(root: Path | str) -> dict:

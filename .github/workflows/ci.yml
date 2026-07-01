@@ -115,7 +115,7 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -e '.[dev,leakage,stats,yaml]'
       - run: python tools/gate_soundness.py --check
-      - run: python tools/lint_fail_open.py --check
+      - run: python tools/lint_fail_open.py --check --include-src
       - run: python tools/claim_coverage.py --check
       - run: python tools/complexity_gate.py --check
       - run: python tools/determinism_probe.py --check
