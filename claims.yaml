@@ -102,7 +102,7 @@
       ],
       "uncertainty_method": "Deterministic policy gate with explicit forbidden-claim pattern coverage.",
       "failure_condition": "The claim fails if a forbidden clinical/regulatory/therapeutic claim is emitted as SURVIVED rather than QUARANTINED or UNSUPPORTED.",
-      "reproduction_command": "python tools/check_forbidden_claims.py",
+      "reproduction_command": "python tools/validate_forbidden_claims.py",
       "evidence_artifacts": [
         "docs/VERDICT_SEMANTICS.md",
         "artifacts/release/CURRENT_TRUTH.json"
