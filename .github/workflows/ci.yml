@@ -119,6 +119,7 @@ jobs:
       - run: python tools/claim_coverage.py --check
       - run: python tools/complexity_gate.py --check
       - run: python tools/determinism_probe.py --check
+      - run: python tools/intent_contract.py --check
       - run: python tools/quality_dashboard.py --check --no-mypy
 
   slow-tests:

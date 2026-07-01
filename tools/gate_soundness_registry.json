@@ -13,6 +13,10 @@
       "negative_control_test": "tests/test_determinism_probe.py::test_negative_control_flags_nondeterministic_generator",
       "rationale": "Feeds a generator writing a timestamp and asserts it is flagged nondeterministic."
     },
+    "tools/intent_contract.py": {
+      "negative_control_test": "tests/test_intent_contract.py::test_unratified_intent_fails",
+      "rationale": "Feeds an unratified intent and asserts the meaning-closure gate FAILs."
+    },
     "tools/lint_fail_open.py": {
       "negative_control_test": "tests/test_lint_fail_open.py::test_negative_control_except_returns_zero_is_flagged",
       "rationale": "Feeds an except-handler that returns 0 and asserts the detector flags it fail-open."

@@ -9,6 +9,7 @@ and the concrete **failure mode** it catches.
 
 | # | Spec claim | Implementation surface | Gate (`--check`) | Negative control (nodeid) | CI job | Report | Failure mode caught |
 |---|---|---|---|---|---|---|---|
+| 0 | Intent→spec edge is closed (chaos→definition) | `intents/registry.json` | `intent_contract.py` | `test_intent_contract.py::test_unratified_intent_fails` | meta-verification | ratified/total | an intent that is unratified, unbound, or points at a ghost negative control (unverified human→spec translation) |
 | 1 | Every gate is an instrument, not a label | `tools/*` gate surface (43 gates) | `gate_soundness.py` | `test_gate_soundness.py::test_new_gate_without_negative_control_is_unproven_and_fails_ratchet` (+ AST nodeid resolution) | meta-verification | registry (`gate_soundness_registry.json`) | a decorative gate (no negative control) or a decorative nodeid (function absent) slips into the proven set |
 | 2 | Gate code fails closed | `tools/*` (+ `src/` via `--include-src`) | `lint_fail_open.py` | `test_lint_fail_open.py::test_negative_control_except_returns_zero_is_flagged` | meta-verification | inline findings + `fail_open_allowlist.txt` | an `except → return 0/True/PASS` swallowing an error into success |
 | 3 | Claim↔evidence graph is complete | `claims.yaml` × `artifacts/MANIFEST.json` | `claim_coverage.py` | `test_claim_coverage.py::test_negative_control_dangling_claim_id` | meta-verification | coverage matrix | dangling claim id, missing evidence file, orphan or **unbacked** asserted claim |

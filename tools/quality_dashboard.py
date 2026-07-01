@@ -30,6 +30,7 @@ _INPROC: tuple[tuple[str, str, tuple[str, ...]], ...] = (
     ("fail_open", "lint_fail_open", ("findings",)),
     ("claim_coverage", "claim_coverage", ("claims", "bound_artifacts")),
     ("complexity", "complexity_gate", ("ceiling", "violations")),
+    ("intent_closure", "intent_contract", ("intents_total", "ratified")),
 )
 
 

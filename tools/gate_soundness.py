@@ -35,7 +35,9 @@ SCHEMA = "bsff.gate_soundness/v1"
 # meta-verification layer (its own gates must sit inside the soundness surface,
 # not audit everyone else from outside it).
 _GATE_NAME_RE = re.compile(r"^(validate_|check_|verify_).*\.py$|.*(_gate|_probe)\.py$")
-_EXTRA_GATES = frozenset({"lint_fail_open.py", "claim_coverage.py", "quality_dashboard.py"})
+_EXTRA_GATES = frozenset(
+    {"lint_fail_open.py", "claim_coverage.py", "quality_dashboard.py", "intent_contract.py"}
+)
 
 # This meta-tool audits gates; it is not itself an audited gate.
 _SELF = "gate_soundness.py"
