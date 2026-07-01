@@ -66,7 +66,10 @@ quote-style = "double"
 indent-style = "space"
 
 [tool.mypy]
-python_version = "3.10"
+# Matches the CI lint runner (3.12); the runtime floor (3.10) is enforced by
+# ruff target-version + the 3.10-3.13 test matrix. Pinning 3.12 here avoids
+# choking on third-party stubs that use PEP 695 `type` statements.
+python_version = "3.12"
 strict = true
 files = ["src/bsff"]
 
