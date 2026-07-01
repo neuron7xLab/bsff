@@ -39,7 +39,10 @@ jobs:
   test:
     name: test-py${{ matrix.python-version }}
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # The unit suite + the full post-test validator battery + coverage lands at
+    # ~10 min on the slowest interpreter (3.12); 15 gives honest headroom so a
+    # borderline run is not killed mid-validator and reported as a code failure.
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
