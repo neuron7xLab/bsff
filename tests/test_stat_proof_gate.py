@@ -6,7 +6,11 @@ import json
 import shutil
 from pathlib import Path
 
-from bsff.statistics.proof_gate import DEFAULT_REPORT, evaluate, validate_report_in_sync
+from bsff.statistics.proof_gate import (
+    DEFAULT_REPORT,
+    evaluate,
+    validate_report_in_sync,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 NEEDED = (
@@ -49,11 +53,15 @@ def test_seed_ci_above_threshold_fails(tmp_path):
     root = _copy_fixture(tmp_path)
     _rewrite(
         root / "artifacts/bonn_bright_line/S3_CONFIRMATORY_VERDICT.json",
-        lambda data: data["G2"].update({"wilson_95ci": [0.9, 0.99], "pass": True}),
+        lambda data: data["G2"].update(
+            {"wilson_95ci": [0.9, 0.99], "pass": True}
+        ),
     )
     report = evaluate(root)
     assert report["status"] == "FAIL"
-    assert any("seed CI" in item and "exceeds" in item for item in report["violations"])
+    assert any(
+        "seed CI" in item and "exceeds" in item for item in report["violations"]
+    )
 
 
 def test_cluster_ci_above_threshold_fails(tmp_path):
@@ -69,4 +77,6 @@ def test_cluster_ci_above_threshold_fails(tmp_path):
     )
     report = evaluate(root)
     assert report["status"] == "FAIL"
-    assert any("cluster CI" in item and "exceeds" in item for item in report["violations"])
+    assert any(
+        "cluster CI" in item and "exceeds" in item for item in report["violations"]
+    )
