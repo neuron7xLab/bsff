@@ -39,6 +39,12 @@ dependency closure, gated by ``generate_sbom.py --check`` in the build job) and
 fixed-seed numeric nulls (float results can shift across numpy/scipy versions).
 Timestamp/commit-embedding producers (provenance manifests, current-truth) are
 also out of scope and must NOT be registered.
+Environment isolation is the hard invariant: a registered generator's output
+must be a pure function of the COMMITTED SOURCE BYTES, independent of any
+installed library version. Anything touching numpy/scipy floats, the dependency
+closure (SBOM), or the analysis pipeline is env-dependent -- its committed bytes
+would drift under a different lock (e.g. the hermetic offline env) and is
+EXCLUDED. Only stdlib hash / schema / count generators qualify.
 
     python tools/determinism_probe.py            # print JSON report
     python tools/determinism_probe.py --check     # exit 1 if any generator is nondeterministic
@@ -109,13 +115,6 @@ REGISTRY: tuple[Generator, ...] = (
         name="compute_scorecard",
         argv=("tools/compute_scorecard.py",),
         outputs=("artifacts/actions_99_scorecard.json",),
-    ),
-    # Red-team matrix: deterministic enumeration serialized with sort_keys; no
-    # embedded timestamps.
-    Generator(
-        name="generate_redteam_matrix",
-        argv=("tools/generate_redteam_matrix.py",),
-        outputs=("artifacts/redteam/redteam_matrix.json",),
     ),
 )
 
