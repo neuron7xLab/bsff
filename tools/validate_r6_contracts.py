@@ -125,15 +125,11 @@ def _check_claim_dataset_links() -> list[str]:
 
 
 def _check_rank_boundary() -> list[str]:
-    text = "\n".join(
-        _read_text(path) for path in PUBLIC_BINDING_FILES if (ROOT / path).is_file()
-    )
+    text = "\n".join(_read_text(path) for path in PUBLIC_BINDING_FILES if (ROOT / path).is_file())
     lowered = text.lower()
     errors: list[str] = []
 
-    missing = [
-        phrase for phrase in REQUIRED_RANK_BOUNDARY_PHRASES if phrase not in lowered
-    ]
+    missing = [phrase for phrase in REQUIRED_RANK_BOUNDARY_PHRASES if phrase not in lowered]
     if missing:
         errors.append("rank boundary language missing: " + ", ".join(missing))
 
@@ -141,15 +137,11 @@ def _check_rank_boundary() -> list[str]:
     # Reject direct completion/status inflation patterns only.
     for phrase in FORBIDDEN_COMPLETION_PHRASES:
         if phrase in lowered:
-            errors.append(
-                f"forbidden rank or domain overclaim phrase present: {phrase!r}"
-            )
+            errors.append(f"forbidden rank or domain overclaim phrase present: {phrase!r}")
 
     boundary_claim = _read_json("claims.yaml")["claims"].get("BSFF-CLAIM-004", {})
     if boundary_claim.get("status") != ["unverified"]:
-        errors.append(
-            "BSFF-CLAIM-004 must remain unverified until external reproduction exists"
-        )
+        errors.append("BSFF-CLAIM-004 must remain unverified until external reproduction exists")
 
     return errors
 
@@ -166,9 +158,7 @@ def _check_reproduction_entrypoint() -> list[str]:
         "REPRODUCTION_REPORT.md",
     )
     return [
-        f"reproduce.sh missing token: {token}"
-        for token in required_tokens
-        if token not in script
+        f"reproduce.sh missing token: {token}" for token in required_tokens if token not in script
     ]
 
 
