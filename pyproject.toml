@@ -85,6 +85,7 @@ module = [
     "pandas_flavor.*",
     "pingouin.*",
     "mne.*",
+    "defusedxml.*",
 ]
 ignore_missing_imports = true
 

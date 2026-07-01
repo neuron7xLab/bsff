@@ -7,6 +7,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[3]
 SCHEMA = "bsff.statistical_proof_gate/v1"
@@ -22,11 +23,12 @@ METRIC_KEYS = (
 )
 
 
-def _data(root, rel):
-    return json.loads((root / rel).read_text(encoding="utf-8"))
+def _data(root: Path, rel: str) -> dict[str, Any]:
+    data: dict[str, Any] = json.loads((root / rel).read_text(encoding="utf-8"))
+    return data
 
 
-def _safe(root, rel):
+def _safe(root: Path, rel: str) -> dict[str, Any]:
     """Read a JSON artifact, returning {} on any absence/parse error.
 
     Lets a missing or malformed result artifact surface as an invariant
@@ -35,12 +37,13 @@ def _safe(root, rel):
     try:
         if not rel:
             return {}
-        return json.loads((root / rel).read_text(encoding="utf-8"))
+        data: dict[str, Any] = json.loads((root / rel).read_text(encoding="utf-8"))
+        return data
     except (OSError, ValueError):
         return {}
 
 
-def _sha(root, rel):
+def _sha(root: Path, rel: str) -> dict[str, Any]:
     path = root / rel
     return {
         "path": rel,
@@ -49,20 +52,20 @@ def _sha(root, rel):
     }
 
 
-def _upper(pair):
+def _upper(pair: Any) -> float | None:
     if isinstance(pair, list) and len(pair) == 2 and isinstance(pair[1], (int, float)):
         return float(pair[1])
     return None
 
 
-def _is_measured(claim):
+def _is_measured(claim: dict[str, Any]) -> bool:
     metrics = " ".join(str(v).lower() for v in claim.get("required_metrics", []))
     return "internally_verified" in claim.get("status", []) and (
         "wilson" in metrics or "cluster" in metrics or "fpr" in metrics
     )
 
 
-def _bound(errs, cid, label, upper, limit):
+def _bound(errs: list[str], cid: str, label: str, upper: float | None, limit: float | None) -> None:
     if upper is None:
         errs.append(cid + ": missing " + label)
     elif limit is None:
@@ -71,7 +74,9 @@ def _bound(errs, cid, label, upper, limit):
         errs.append(cid + ": " + label + " exceeds limit")
 
 
-def _check_artifacts(errs, cid, root, rels):
+def _check_artifacts(
+    errs: list[str], cid: str, root: Path, rels: list[str]
+) -> list[dict[str, Any]]:
     """Hash every referenced artifact; a missing one is a clean violation."""
     hashes = []
     for rel in sorted({p for p in rels if p}):
@@ -82,7 +87,9 @@ def _check_artifacts(errs, cid, root, rels):
     return hashes
 
 
-def _check_null_gate(errs, cid, multi, seed_limit):
+def _check_null_gate(
+    errs: list[str], cid: str, multi: dict[str, Any], seed_limit: float | None
+) -> None:
     """Multi-null battery: aggregate pass plus per-null pass and CI bound."""
     if not multi.get("nulls") or multi.get("all_nulls_pass") is not True:
         errs.append(cid + ": null gate unmet")
@@ -92,14 +99,18 @@ def _check_null_gate(errs, cid, multi, seed_limit):
         _bound(errs, cid, "null CI for " + str(name), _upper(row.get("wilson_95ci")), seed_limit)
 
 
-def _check_seed_gate(errs, cid, seed_g2, seed_limit):
+def _check_seed_gate(
+    errs: list[str], cid: str, seed_g2: dict[str, Any], seed_limit: float | None
+) -> None:
     """Seed-averaged confirmatory gate: CI bound plus pass flag."""
     _bound(errs, cid, "seed CI", _upper(seed_g2.get("wilson_95ci")), seed_limit)
     if seed_g2.get("pass") is not True:
         errs.append(cid + ": seed gate unmet")
 
 
-def _check_cluster_gate(errs, cid, cluster, cluster_limit):
+def _check_cluster_gate(
+    errs: list[str], cid: str, cluster: dict[str, Any], cluster_limit: float | None
+) -> None:
     """Cluster-robust and bootstrap CI bounds plus below-threshold flags."""
     _bound(errs, cid, "cluster CI", _upper(cluster.get("cluster_robust_t_95ci")), cluster_limit)
     _bound(errs, cid, "bootstrap CI", _upper(cluster.get("cluster_bootstrap_95ci")), cluster_limit)
@@ -109,13 +120,23 @@ def _check_cluster_gate(errs, cid, cluster, cluster_limit):
         errs.append(cid + ": bootstrap gate unmet")
 
 
-def _check_seed_sensitivity(errs, cid, seed, cluster):
+def _check_seed_sensitivity(
+    errs: list[str], cid: str, seed: dict[str, Any], cluster: dict[str, Any]
+) -> None:
     """Both confirmatory tracks must carry >= 2 per-seed observations."""
     if len(seed.get("per_seed", [])) < 2 or len(cluster.get("per_seed_fpr", [])) < 2:
         errs.append(cid + ": seed sensitivity missing")
 
 
-def _check_dataset_metrics(errs, cid, summary, truth, seed_g2, seed_limit, cluster_limit):
+def _check_dataset_metrics(
+    errs: list[str],
+    cid: str,
+    summary: dict[str, Any],
+    truth: dict[str, Any],
+    seed_g2: dict[str, Any],
+    seed_limit: float | None,
+    cluster_limit: float | None,
+) -> None:
     """Dataset-specific bright line, aggregate/dataset agreement, thresholds."""
     if (
         summary.get("S2_BRIGHT_LINE_PASSED") is not True
@@ -128,7 +149,7 @@ def _check_dataset_metrics(errs, cid, summary, truth, seed_g2, seed_limit, clust
         errs.append(cid + ": failure threshold missing")
 
 
-def _check_provenance(errs, cid, dsm):
+def _check_provenance(errs: list[str], cid: str, dsm: dict[str, Any]) -> None:
     """I8 provenance binding: the dataset behind the measurement must be
     identity/license/hash/sample-count bound, not merely referenced."""
     if not dsm:
@@ -152,9 +173,15 @@ def _check_provenance(errs, cid, dsm):
             errs.append(cid + ": dataset set " + sid + " per-file hash/sample missing")
 
 
-def _evaluate_claim(cid, claim, root, truth, paths):
+def _evaluate_claim(
+    cid: str,
+    claim: dict[str, Any],
+    root: Path,
+    truth: dict[str, Any],
+    paths: dict[str, Any],
+) -> dict[str, Any]:
     """Run every invariant check for one measured claim; return proof record."""
-    errs = []
+    errs: list[str] = []
     rels = [TRUTH, *[str(p) for p in claim.get("evidence_artifacts", [])]]
     rels += [paths.get(k, "") for k in METRIC_KEYS]
     hashes = _check_artifacts(errs, cid, root, rels)
@@ -179,11 +206,11 @@ def _evaluate_claim(cid, claim, root, truth, paths):
     }
 
 
-def evaluate(root=ROOT):
+def evaluate(root: Path | str = ROOT) -> dict[str, Any]:
     root = Path(root)
-    violations = []
-    proofs = []
-    skipped = []
+    violations: list[str] = []
+    proofs: list[dict[str, Any]] = []
+    skipped: list[dict[str, Any]] = []
     claims = _data(root, CLAIMS).get("claims", {})
     truth = _data(root, TRUTH)
     paths = truth.get("artifact_paths", {})
@@ -211,12 +238,12 @@ def evaluate(root=ROOT):
     }
 
 
-def write_report(report, output):
+def write_report(report: dict[str, Any], output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-def validate_report_in_sync(expected, output):
+def validate_report_in_sync(expected: dict[str, Any], output: Path) -> list[str]:
     if not output.is_file():
         return ["statistical proof report missing"]
     committed = json.loads(output.read_text(encoding="utf-8"))

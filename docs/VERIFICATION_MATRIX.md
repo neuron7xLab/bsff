@@ -18,7 +18,7 @@ and the concrete **failure mode** it catches.
 | 6 | Statistical claims are proof-bound | `CURRENT_TRUTH` result artifacts | `validate_statistical_proof_gate.py` | `test_stat_proof_gate.py::test_seed_ci_above_threshold_fails` | test-py* | `STATISTICAL_PROOF_GATE_REPORT.json` | null/CI/seed/dataset/provenance invariant broken |
 | 7 | Ingest is SSRF-safe | `src/bsff/adjudication/ingest.py` | (unit) | `test_ingest_security.py::test_non_arxiv_host_rejected` | test-py* | — | non-https scheme **or** non-allowlisted host reaches `urlopen`; XXE via stdlib XML |
 | 8 | Composite quality is one computed verdict | dimensions 1–5 | `quality_dashboard.py` | `test_quality_dashboard.py::test_dashboard_fails_if_any_dimension_fails` | meta-verification | `artifacts/QUALITY_DASHBOARD.json` (gitignored) | any dimension FAIL not propagating to the composite |
-| 9 | `src/bsff` passes mypy `--strict` | `src/bsff` types | `python -m mypy` | (config-gated; usage error is FAIL) | *(strict-type PR #114)* | — | untyped/incorrect types; a mypy usage/crash fabricating a PASS |
+| 9 | `src/bsff` passes mypy `--strict` | `src/bsff` types | `python -m mypy` | (config-gated; usage error is FAIL) | lint-ruff + meta-verification | — | untyped/incorrect types; a mypy usage/crash fabricating a PASS |
 
 ## Scope boundaries (no overclaim)
 
@@ -27,12 +27,11 @@ and the concrete **failure mode** it catches.
   negative-controlled: `gate_soundness` reports **46 proven / 0 unproven**
   of 46 — every discoverable gate negative-controlled — the frozen list is the honest debt map, held by a ratchet, not a claim
   of universal soundness.
-- **CI dashboard is the structural (reduced) dashboard.** The meta-verification job
-  runs `quality_dashboard.py --check --no-mypy`: it gates dimensions 1–5. The
-  **type-safety dimension (row 9) is enforced by the separate strict-type PR**,
-  which adds the `[tool.mypy]` config; without that config `_mypy_dimension` is
-  fail-closed (a usage error is FAIL, never a vacuous PASS), so type-safety is
-  excluded from *this* PR's composite rather than faked into it.
+- **Type-safety is now enforced in this PR.** `[tool.mypy] strict` (merged from the
+  strict-type work) gates `src/bsff` at 0 errors in the lint job, AND the
+  meta-verification job runs `quality_dashboard.py --check` WITH mypy, so the
+  composite is PASS (not PASS_INCOMPLETE). `--no-mypy` remains available for a
+  fast local run and honestly reports SKIPPED / PASS_INCOMPLETE — never silent green.
 - **Proof strength.** `gate_soundness` proves a negative control **exists, is a
   top-level pytest-collectable function, AND its test file references the gate
   module** (static linkage). Behavioral proof (the control actually FAILS the
@@ -61,6 +60,5 @@ than overclaimed away:
   establishes that.
 - **The `unproven` list is visible reviewed debt**, not an enforced immutable
   baseline: growing it is an explicit, auditable diff line.
-- **Type-safety (row 9) is not CI-enforced in this PR** (no `[tool.mypy]` config
-  here); it lands with the strict-type PR. The CI dashboard runs `--no-mypy`; the
-  dimension is fail-closed, so it is excluded, never faked.
+- **Type-safety IS CI-enforced** (mypy --strict, 0 errors) in both the lint job and
+  the meta-verification dashboard; a mypy usage/crash is fail-closed (FAIL).
