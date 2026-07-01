@@ -1,0 +1,69 @@
+{
+  "schema": "bsff.gate_soundness_registry/v1",
+  "doc": "A gate is an INSTRUMENT only if a negative control proves it FAILS on a known-bad input. 'gates' maps each proven gate tool (relpath) to the pytest nodeid of its negative control. 'unproven' is the honest, frozen debt list of gate tools for which no such negative control was found. gate_soundness.py ratchets: no NEW unproven gate may appear beyond this list.",
+  "gates": {
+    "tools/validate_artifact_schema.py": {
+      "negative_control_test": "tests/test_artifact_schema.py::test_governed_artifact_missing_descriptor_field_fails",
+      "rationale": "Feeds a governed artifact missing artifact_type and asserts validate() returns not ok."
+    },
+    "tools/validate_claim_audit.py": {
+      "negative_control_test": "tests/test_adversarial_gates.py::test_claim_audit_rejects_each_violation",
+      "rationale": "Parametrized decorative/soft-state rows; asserts audit reports failures for each."
+    },
+    "tools/validate_current_truth.py": {
+      "negative_control_test": "tests/test_truth_freshness.py::test_stale_pointer_without_freeze_fails",
+      "rationale": "Stale truth pointer with no freeze block yields evaluate_freshness status FAIL."
+    },
+    "tools/validate_markdown.py": {
+      "negative_control_test": "tests/test_adversarial_gates.py::test_markdown_gate_rejects_each_count_literal",
+      "rationale": "Parametrized bare count literals; asserts find_count_literals flags each."
+    },
+    "tools/validate_openai_2026_claims.py": {
+      "negative_control_test": "tests/meta_validation/test_false_survived_claim_rejected.py::test_claim_gate_flags_unsupported_openai_validation",
+      "rationale": "Unsupported 'validated by OpenAI' surface is flagged by _scan_forbidden."
+    },
+    "tools/validate_real_eeg_case.py": {
+      "negative_control_test": "tests/test_real_eeg_drift_gate.py::test_check_fails_closed_on_drift_and_restores_tree",
+      "rationale": "Tampered BF10 in committed verdict makes --check exit 1 with 'drifted'."
+    },
+    "tools/validate_redteam_matrix.py": {
+      "negative_control_test": "tests/meta_validation/test_false_survived_claim_rejected.py::test_redteam_validator_rejects_survived_as_pass",
+      "rationale": "Forged SURVIVED->PASS matrix is rejected for the survived-but-PASS reason."
+    },
+    "tools/validate_truth_contract.py": {
+      "negative_control_test": "tests/test_truth_surface.py::test_new_blocked_phrases_are_caught",
+      "rationale": "Forbidden overclaim phrases are detected by find_forbidden_claims."
+    },
+    "tools/verify_grounding.py": {
+      "negative_control_test": "tests/test_adversarial_gates.py::test_grounding_rejects_wrong_number",
+      "rationale": "Bogus fact numbers make check() return a non-empty violation list."
+    }
+  },
+  "unproven": [
+    "tools/check_contracts.py",
+    "tools/check_github_actions_policy.py",
+    "tools/validate_architecture_contract.py",
+    "tools/validate_forbidden_claims.py",
+    "tools/validate_ip_provenance.py",
+    "tools/validate_lockfiles.py",
+    "tools/validate_mutation_report.py",
+    "tools/validate_null_registry.py",
+    "tools/validate_open_source_readiness.py",
+    "tools/validate_openai_2026_eval_contract.py",
+    "tools/validate_power_profile.py",
+    "tools/validate_provenance.py",
+    "tools/validate_r6_contracts.py",
+    "tools/validate_release_notes.py",
+    "tools/validate_statistical_claims.py",
+    "tools/validate_statistical_proof_gate.py",
+    "tools/validate_surrogate_fidelity.py",
+    "tools/validate_threshold_registry.py",
+    "tools/validate_tisean_reference.py",
+    "tools/validate_validation_corpus.py",
+    "tools/validate_wheel_runtime.py",
+    "tools/verify_all.py",
+    "tools/verify_branch_protection.py",
+    "tools/verify_controls.py",
+    "tools/verify_honesty.py"
+  ]
+}

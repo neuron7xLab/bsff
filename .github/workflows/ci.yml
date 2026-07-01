@@ -83,6 +83,13 @@ jobs:
       - run: python tools/update_status.py --verify-count --strict-status
       - run: python tools/generate_manifest.py --check
       - run: python tools/validate_artifact_schema.py
+      # Meta-verification layer: the gates that check the gates + structural integrity.
+      - run: python tools/gate_soundness.py --check
+      - run: python tools/lint_fail_open.py --check
+      - run: python tools/claim_coverage.py --check
+      - run: python tools/complexity_gate.py --check
+      - run: python tools/determinism_probe.py --check
+      - run: python tools/quality_dashboard.py --check --no-mypy
       - run: python tools/cluster_robust_specificity.py --check
       - run: python tools/analytic_uniformity_null.py --check
       - run: bsff release-check --strict --output artifacts/release

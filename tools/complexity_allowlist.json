@@ -1,0 +1,16 @@
+{
+  "_comment": "Cyclomatic-complexity ratchet allowlist. Maps 'relpath::qualified_name' -> current CC for genuinely-hard functions that already exceed the ceiling (15). These are grandfathered/frozen debt: new or edited code MUST stay <= 15, but existing entries here are tolerated at (or below) the recorded CC. Lowering an entry's real CC below the recorded value is fine; exceeding it is a violation. Remove an entry once its function is decomposed under the ceiling.",
+  "allowlist": {
+    "src/bsff/bids.py::load_bids_eeg": 27,
+    "src/bsff/json_schema.py::_schema_for_type": 16,
+    "src/bsff/normalize.py::write_edf": 26,
+    "src/bsff/normalize.py::read_edf": 21,
+    "src/bsff/scope_guard.py::_detect_category": 16,
+    "src/bsff/cli.py::main": 18,
+    "src/bsff/pipeline.py::FalsificationPipeline._collapse_verdict": 16,
+    "src/bsff/surrogate_engine.py::miaaft_surrogate": 22,
+    "src/bsff/validation.py::validate_phase1_artifact": 16,
+    "src/bsff/verdict_engine.py::evaluate_claim": 17,
+    "src/bsff/adjudication/batch.py::adjudicate_batch": 20
+  }
+}

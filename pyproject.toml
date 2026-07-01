@@ -13,6 +13,7 @@ dependencies = [
   "numpy>=1.24",
   "scipy>=1.11",
   "statsmodels>=0.14",
+  "defusedxml>=0.7",
 ]
 
 [project.scripts]
@@ -20,7 +21,7 @@ bsff = "bsff.cli:main"
 bsff-validate = "bsff.cli:main"
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "pytest-cov", "pytest-benchmark>=4", "ruff>=0.8", "build>=1.2", "hypothesis>=6", "jsonschema>=4"]
+dev = ["pytest>=8", "pytest-cov", "pytest-benchmark>=4", "ruff>=0.8", "build>=1.2", "hypothesis>=6", "jsonschema>=4", "radon>=6"]
 stats = ["pingouin>=0.5.5"]
 leakage = ["scikit-learn>=1.4"]
 yaml = ["pyyaml>=6"]

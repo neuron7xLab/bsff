@@ -71,6 +71,114 @@ def _bound(errs, cid, label, upper, limit):
         errs.append(cid + ": " + label + " exceeds limit")
 
 
+def _check_artifacts(errs, cid, root, rels):
+    """Hash every referenced artifact; a missing one is a clean violation."""
+    hashes = []
+    for rel in sorted({p for p in rels if p}):
+        if not (root / rel).is_file():
+            errs.append(cid + ": missing artifact " + rel)
+        else:
+            hashes.append(_sha(root, rel))
+    return hashes
+
+
+def _check_null_gate(errs, cid, multi, seed_limit):
+    """Multi-null battery: aggregate pass plus per-null pass and CI bound."""
+    if not multi.get("nulls") or multi.get("all_nulls_pass") is not True:
+        errs.append(cid + ": null gate unmet")
+    for name, row in sorted(multi.get("nulls", {}).items()):
+        if row.get("pass") is not True:
+            errs.append(cid + ": null gate unmet for " + str(name))
+        _bound(errs, cid, "null CI for " + str(name), _upper(row.get("wilson_95ci")), seed_limit)
+
+
+def _check_seed_gate(errs, cid, seed_g2, seed_limit):
+    """Seed-averaged confirmatory gate: CI bound plus pass flag."""
+    _bound(errs, cid, "seed CI", _upper(seed_g2.get("wilson_95ci")), seed_limit)
+    if seed_g2.get("pass") is not True:
+        errs.append(cid + ": seed gate unmet")
+
+
+def _check_cluster_gate(errs, cid, cluster, cluster_limit):
+    """Cluster-robust and bootstrap CI bounds plus below-threshold flags."""
+    _bound(errs, cid, "cluster CI", _upper(cluster.get("cluster_robust_t_95ci")), cluster_limit)
+    _bound(errs, cid, "bootstrap CI", _upper(cluster.get("cluster_bootstrap_95ci")), cluster_limit)
+    if cluster.get("cluster_robust_upper_below_threshold") is not True:
+        errs.append(cid + ": cluster gate unmet")
+    if cluster.get("cluster_bootstrap_upper_below_threshold") is not True:
+        errs.append(cid + ": bootstrap gate unmet")
+
+
+def _check_seed_sensitivity(errs, cid, seed, cluster):
+    """Both confirmatory tracks must carry >= 2 per-seed observations."""
+    if len(seed.get("per_seed", [])) < 2 or len(cluster.get("per_seed_fpr", [])) < 2:
+        errs.append(cid + ": seed sensitivity missing")
+
+
+def _check_dataset_metrics(errs, cid, summary, truth, seed_g2, seed_limit, cluster_limit):
+    """Dataset-specific bright line, aggregate/dataset agreement, thresholds."""
+    if (
+        summary.get("S2_BRIGHT_LINE_PASSED") is not True
+        and summary.get("final_state") != "S2_BRIGHT_LINE_PASSED"
+    ):
+        errs.append(cid + ": dataset-specific result missing")
+    if truth.get("s2_seed_averaged_fpr") != seed_g2.get("ar_null_fpr"):
+        errs.append(cid + ": aggregate-vs-dataset metric mismatch")
+    if seed_limit != 0.05 or cluster_limit != 0.05:
+        errs.append(cid + ": failure threshold missing")
+
+
+def _check_provenance(errs, cid, dsm):
+    """I8 provenance binding: the dataset behind the measurement must be
+    identity/license/hash/sample-count bound, not merely referenced."""
+    if not dsm:
+        errs.append(cid + ": dataset provenance manifest missing")
+        return
+    if not dsm.get("license"):
+        errs.append(cid + ": dataset license boundary missing")
+    if dsm.get("format_verified") is not True:
+        errs.append(cid + ": dataset format not verified")
+    zips = dsm.get("zip_sha256", {})
+    if not zips or any(not h for h in zips.values()):
+        errs.append(cid + ": dataset zip hashes missing")
+    sets = dsm.get("sets", {})
+    if not sets:
+        errs.append(cid + ": dataset provenance sets missing")
+    for sid, spec in sorted(sets.items()):
+        files = spec.get("files", [])
+        if spec.get("n_files", 0) < 1 or len(files) != spec.get("n_files"):
+            errs.append(cid + ": dataset set " + sid + " file count inconsistent")
+        if any(not f.get("sha256") or f.get("n_samples", 0) < 1 for f in files):
+            errs.append(cid + ": dataset set " + sid + " per-file hash/sample missing")
+
+
+def _evaluate_claim(cid, claim, root, truth, paths):
+    """Run every invariant check for one measured claim; return proof record."""
+    errs = []
+    rels = [TRUTH, *[str(p) for p in claim.get("evidence_artifacts", [])]]
+    rels += [paths.get(k, "") for k in METRIC_KEYS]
+    hashes = _check_artifacts(errs, cid, root, rels)
+    multi = _safe(root, paths.get("multi_null", ""))
+    seed = _safe(root, paths.get("s3_confirmatory", ""))
+    cluster = _safe(root, paths.get("cluster_robust_ci", ""))
+    summary = _safe(root, paths.get("s2_summary", ""))
+    seed_g2 = seed.get("G2", {})
+    seed_limit = seed_g2.get("ci_upper_threshold")
+    cluster_limit = cluster.get("threshold")
+    _check_null_gate(errs, cid, multi, seed_limit)
+    _check_seed_gate(errs, cid, seed_g2, seed_limit)
+    _check_cluster_gate(errs, cid, cluster, cluster_limit)
+    _check_seed_sensitivity(errs, cid, seed, cluster)
+    _check_dataset_metrics(errs, cid, summary, truth, seed_g2, seed_limit, cluster_limit)
+    _check_provenance(errs, cid, _safe(root, paths.get("dataset_manifest", "")))
+    return {
+        "claim_id": cid,
+        "status": "FAIL" if errs else "PASS",
+        "artifact_hashes": hashes,
+        "violations": errs,
+    }
+
+
 def evaluate(root=ROOT):
     root = Path(root)
     violations = []
@@ -88,83 +196,9 @@ def evaluate(root=ROOT):
                 }
             )
             continue
-        errs = []
-        rels = [TRUTH, *[str(p) for p in claim.get("evidence_artifacts", [])]]
-        rels += [paths.get(k, "") for k in METRIC_KEYS]
-        hashes = []
-        for rel in sorted({p for p in rels if p}):
-            if not (root / rel).is_file():
-                errs.append(cid + ": missing artifact " + rel)
-            else:
-                hashes.append(_sha(root, rel))
-        multi = _safe(root, paths.get("multi_null", ""))
-        seed = _safe(root, paths.get("s3_confirmatory", ""))
-        cluster = _safe(root, paths.get("cluster_robust_ci", ""))
-        summary = _safe(root, paths.get("s2_summary", ""))
-        seed_g2 = seed.get("G2", {})
-        seed_limit = seed_g2.get("ci_upper_threshold")
-        cluster_limit = cluster.get("threshold")
-        if not multi.get("nulls") or multi.get("all_nulls_pass") is not True:
-            errs.append(cid + ": null gate unmet")
-        for name, row in sorted(multi.get("nulls", {}).items()):
-            if row.get("pass") is not True:
-                errs.append(cid + ": null gate unmet for " + str(name))
-            _bound(
-                errs, cid, "null CI for " + str(name), _upper(row.get("wilson_95ci")), seed_limit
-            )
-        _bound(errs, cid, "seed CI", _upper(seed_g2.get("wilson_95ci")), seed_limit)
-        if seed_g2.get("pass") is not True:
-            errs.append(cid + ": seed gate unmet")
-        _bound(errs, cid, "cluster CI", _upper(cluster.get("cluster_robust_t_95ci")), cluster_limit)
-        _bound(
-            errs, cid, "bootstrap CI", _upper(cluster.get("cluster_bootstrap_95ci")), cluster_limit
-        )
-        if cluster.get("cluster_robust_upper_below_threshold") is not True:
-            errs.append(cid + ": cluster gate unmet")
-        if cluster.get("cluster_bootstrap_upper_below_threshold") is not True:
-            errs.append(cid + ": bootstrap gate unmet")
-        if len(seed.get("per_seed", [])) < 2 or len(cluster.get("per_seed_fpr", [])) < 2:
-            errs.append(cid + ": seed sensitivity missing")
-        if (
-            summary.get("S2_BRIGHT_LINE_PASSED") is not True
-            and summary.get("final_state") != "S2_BRIGHT_LINE_PASSED"
-        ):
-            errs.append(cid + ": dataset-specific result missing")
-        if truth.get("s2_seed_averaged_fpr") != seed_g2.get("ar_null_fpr"):
-            errs.append(cid + ": aggregate-vs-dataset metric mismatch")
-        if seed_limit != 0.05 or cluster_limit != 0.05:
-            errs.append(cid + ": failure threshold missing")
-        # I8 provenance binding: the dataset behind the measurement must be
-        # identity/license/hash/sample-count bound, not merely referenced.
-        dsm = _safe(root, paths.get("dataset_manifest", ""))
-        if not dsm:
-            errs.append(cid + ": dataset provenance manifest missing")
-        else:
-            if not dsm.get("license"):
-                errs.append(cid + ": dataset license boundary missing")
-            if dsm.get("format_verified") is not True:
-                errs.append(cid + ": dataset format not verified")
-            zips = dsm.get("zip_sha256", {})
-            if not zips or any(not h for h in zips.values()):
-                errs.append(cid + ": dataset zip hashes missing")
-            sets = dsm.get("sets", {})
-            if not sets:
-                errs.append(cid + ": dataset provenance sets missing")
-            for sid, spec in sorted(sets.items()):
-                files = spec.get("files", [])
-                if spec.get("n_files", 0) < 1 or len(files) != spec.get("n_files"):
-                    errs.append(cid + ": dataset set " + sid + " file count inconsistent")
-                if any(not f.get("sha256") or f.get("n_samples", 0) < 1 for f in files):
-                    errs.append(cid + ": dataset set " + sid + " per-file hash/sample missing")
-        proofs.append(
-            {
-                "claim_id": cid,
-                "status": "FAIL" if errs else "PASS",
-                "artifact_hashes": hashes,
-                "violations": errs,
-            }
-        )
-        violations.extend(errs)
+        proof = _evaluate_claim(cid, claim, root, truth, paths)
+        proofs.append(proof)
+        violations.extend(proof["violations"])
     if not proofs:
         violations.append("no internally verified statistical measurement claims found")
     return {
