@@ -26,6 +26,20 @@ def _data(root, rel):
     return json.loads((root / rel).read_text(encoding="utf-8"))
 
 
+def _safe(root, rel):
+    """Read a JSON artifact, returning {} on any absence/parse error.
+
+    Lets a missing or malformed result artifact surface as an invariant
+    violation (clean FAIL) instead of raising out of evaluate().
+    """
+    try:
+        if not rel:
+            return {}
+        return json.loads((root / rel).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
 def _sha(root, rel):
     path = root / rel
     return {
@@ -83,10 +97,10 @@ def evaluate(root=ROOT):
                 errs.append(cid + ": missing artifact " + rel)
             else:
                 hashes.append(_sha(root, rel))
-        multi = _data(root, paths.get("multi_null", ""))
-        seed = _data(root, paths.get("s3_confirmatory", ""))
-        cluster = _data(root, paths.get("cluster_robust_ci", ""))
-        summary = _data(root, paths.get("s2_summary", ""))
+        multi = _safe(root, paths.get("multi_null", ""))
+        seed = _safe(root, paths.get("s3_confirmatory", ""))
+        cluster = _safe(root, paths.get("cluster_robust_ci", ""))
+        summary = _safe(root, paths.get("s2_summary", ""))
         seed_g2 = seed.get("G2", {})
         seed_limit = seed_g2.get("ci_upper_threshold")
         cluster_limit = cluster.get("threshold")
@@ -120,6 +134,23 @@ def evaluate(root=ROOT):
             errs.append(cid + ": aggregate-vs-dataset metric mismatch")
         if seed_limit != 0.05 or cluster_limit != 0.05:
             errs.append(cid + ": failure threshold missing")
+        # I8 provenance binding: the dataset behind the measurement must be
+        # identity/license/hash/sample-count bound, not merely referenced.
+        dsm = _safe(root, paths.get("dataset_manifest", ""))
+        if not dsm:
+            errs.append(cid + ": dataset provenance manifest missing")
+        else:
+            if not dsm.get("license"):
+                errs.append(cid + ": dataset license boundary missing")
+            sets = dsm.get("sets", {})
+            if not sets:
+                errs.append(cid + ": dataset provenance sets missing")
+            for sid, spec in sorted(sets.items()):
+                files = spec.get("files", [])
+                if spec.get("n_files", 0) < 1 or len(files) != spec.get("n_files"):
+                    errs.append(cid + ": dataset set " + sid + " file count inconsistent")
+                if any(not f.get("sha256") or f.get("n_samples", 0) < 1 for f in files):
+                    errs.append(cid + ": dataset set " + sid + " per-file hash/sample missing")
         proofs.append(
             {
                 "claim_id": cid,
@@ -150,6 +181,10 @@ def validate_report_in_sync(expected, output):
     if not output.is_file():
         return ["statistical proof report missing"]
     committed = json.loads(output.read_text(encoding="utf-8"))
-    if committed.get("schema") != expected.get("schema") or committed.get("status") != "PASS":
+    if committed.get("status") != "PASS":
         return ["STATISTICAL_PROOF_GATE_REPORT.json is not a PASS snapshot"]
+    # Full recompute comparison (like MANIFEST --check): a stale snapshot must
+    # not mask a regressed live evaluation. Byte-stable via sort_keys on write.
+    if committed != expected:
+        return ["STATISTICAL_PROOF_GATE_REPORT.json is STALE vs live recomputation"]
     return []
